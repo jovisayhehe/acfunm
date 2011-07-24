@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+ android:background="@drawable/titlebar_bg" 
+ android:layout_width="fill_parent" 
+ android:layout_height="44.0dip"
+  >
+      <TextView 
+    android:textSize="18.0sp" 
+    android:textColor="#ffffffff" 
+    android:gravity="center_vertical" 
+    android:layout_gravity="center" 
+    android:id="@+id/title_text" 
+    android:layout_width="wrap_content" 
+    android:layout_height="fill_parent" 
+    />
+</FrameLayout>

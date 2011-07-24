@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+<LinearLayout 
+	android:measureAllChildren="true"
+	android:layout_width="fill_parent" 
+	android:layout_height="fill_parent"
+	android:layout_weight="1" 
+	android:id="@+id/contentbody">
+</LinearLayout>
+    
+<LinearLayout
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:layout_alignParentBottom="true"
+	android:background="@drawable/tabview_bg"
+>
+
+<TextView
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:text="首页"
+	android:textColor="#FFFFFF"	
+	android:drawableTop="@drawable/home"
+	android:gravity="center"
+	android:layout_weight="1.0"
+	android:id="@+id/main_home_txt"
+/>
+
+<TextView
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:text="频道"
+	android:textColor="#FFFFFF"	
+	android:drawableTop="@drawable/channel"
+	android:gravity="center"
+	 android:layout_weight="1.0"
+	android:id="@+id/main_channel_txt"
+/>
+
+<TextView
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:text="搜索"
+	android:textColor="#FFFFFF"	
+	android:drawableTop="@drawable/search"
+	android:gravity="center"
+    android:layout_weight="1.0"
+	android:id="@+id/main_search_txt"
+/>
+
+<TextView
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:text="收藏"
+	android:textColor="#FFFFFF"	
+	android:drawableTop="@drawable/favorites_folder"
+	android:gravity="center"
+    android:layout_weight="1.0"
+	android:id="@+id/main_favorites_txt"
+/>
+
+<TextView
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:text="更多"
+	android:textColor="#FFFFFF"	
+	android:drawableTop="@drawable/more"
+	android:gravity="center"
+    android:layout_weight="1.0"
+	android:id="@+id/main_more_txt"
+/>
+
+</LinearLayout>
+</LinearLayout>

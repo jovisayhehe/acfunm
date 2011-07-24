@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+ xmlns:android="http://schemas.android.com/apk/res/android"
+ android:layout_width="fill_parent" 
+ android:layout_height="wrap_content"
+ android:background="@drawable/titlebar_bg"
+  >
+     <TextView 
+    android:textSize="18.0sp" 
+    android:textColor="#FFFFFF" 
+    android:gravity="center_vertical" 
+    android:layout_gravity="center" 
+    android:id="@+id/title_text" 
+   	android:text="首页"
+    android:layout_width="wrap_content" 
+    android:layout_height="fill_parent" 
+    />
+     <Button 
+     android:textColor="#FFFFFF" 
+     android:layout_gravity="right" 
+     android:background="@drawable/button_search_bg"
+     android:id="@+id/home_refresh_btn"
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content"
+     android:text="刷新" />
+</FrameLayout>
+
