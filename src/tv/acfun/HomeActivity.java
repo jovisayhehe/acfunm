@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import tv.acfun.util.GetLinkandTitle;
+import tv.acfun.util.Util;
 
 
 
@@ -29,23 +30,21 @@ public class HomeActivity extends Activity {
 	private ListView homelistview;
 	private List<Map<String, Object>> data;
 	private ListViewAdaper adaper;
-	private ProgressDialog pdialog;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		
 		setContentView(R.layout.homelayout);
 		Button ref_btn = (Button) findViewById(R.id.home_refresh_btn);
 		homelistview = (ListView) findViewById(R.id.homelistviw);
 		homelistview.setCacheColorHint(0);
 		Buttonlistener listener = new Buttonlistener();
 		ref_btn.setOnClickListener(listener);
+		
 		InitListView(true);
 	}
 
 	public void InitListView(final boolean first) {
-		pdialog = ProgressDialog.show(HomeActivity.this, "菊花转动中...", "请稍后");
 		new Thread(){
 			public void run(){		
 				try {
@@ -53,21 +52,22 @@ public class HomeActivity extends Activity {
 					runOnUiThread(new Runnable() {
 						public void run() {
 						if(first){
+							getParent().findViewById(R.id.bottom_bar).setVisibility(View.VISIBLE);
+							getParent().findViewById(R.id.contentbody).setVisibility(View.VISIBLE);
+							getParent().findViewById(R.id.start_an).setVisibility(View.GONE);
+							Util.backScreen(getParent());
 							adaper = new ListViewAdaper(HomeActivity.this,data);
 							homelistview.setAdapter(adaper);
 						}else{
 							adaper.setData(data);
 							adaper.notifyDataSetChanged();
 						}
-
-						 pdialog.dismiss();
 						} 
 					});	
 					
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-					pdialog.dismiss();
 				}
 			}	
 		}.start();

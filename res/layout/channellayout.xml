@@ -3,12 +3,14 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
+  android:orientation="vertical"
   >
-  
-  <ImageView
+<include layout="@layout/titlebar"/>
+
+  <ListView
   android:layout_width="fill_parent"
-  android:layout_height="fill_parent"
-  android:src="@drawable/logo"
+  android:layout_height="wrap_content"
+  android:id="@+id/channellistviw"
   />
-  
+
 </LinearLayout>

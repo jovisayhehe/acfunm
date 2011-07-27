@@ -26,7 +26,7 @@ public class Util {
         final Window win = act.getWindow();
         win.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
      		   WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        act.requestWindowFeature(Window.FEATURE_NO_TITLE);
+       // act.requestWindowFeature(Window.FEATURE_NO_TITLE);
 	}
 	
 	

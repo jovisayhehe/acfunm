@@ -9,7 +9,9 @@
 	android:layout_width="fill_parent" 
 	android:layout_height="fill_parent"
 	android:layout_weight="1" 
-	android:id="@+id/contentbody">
+	android:id="@+id/contentbody"
+	android:visibility="gone"
+	>
 </LinearLayout>
     
 <LinearLayout
@@ -18,6 +20,8 @@
 	android:layout_height="wrap_content"
 	android:layout_alignParentBottom="true"
 	android:background="@drawable/tabview_bg"
+	android:id="@+id/bottom_bar"
+	android:visibility="gone"
 >
 
 <TextView
@@ -26,6 +30,7 @@
 	android:text="首页"
 	android:textColor="#FFFFFF"	
 	android:drawableTop="@drawable/home"
+	android:background="@drawable/bottom_bar_txt_bg"
 	android:gravity="center"
 	android:layout_weight="1.0"
 	android:id="@+id/main_home_txt"
@@ -37,6 +42,7 @@
 	android:text="频道"
 	android:textColor="#FFFFFF"	
 	android:drawableTop="@drawable/channel"
+	android:background="@drawable/bottom_bar_txt_bg"
 	android:gravity="center"
 	 android:layout_weight="1.0"
 	android:id="@+id/main_channel_txt"
@@ -48,6 +54,7 @@
 	android:text="搜索"
 	android:textColor="#FFFFFF"	
 	android:drawableTop="@drawable/search"
+	android:background="@drawable/bottom_bar_txt_bg"
 	android:gravity="center"
     android:layout_weight="1.0"
 	android:id="@+id/main_search_txt"
@@ -59,6 +66,7 @@
 	android:text="收藏"
 	android:textColor="#FFFFFF"	
 	android:drawableTop="@drawable/favorites_folder"
+	android:background="@drawable/bottom_bar_txt_bg"
 	android:gravity="center"
     android:layout_weight="1.0"
 	android:id="@+id/main_favorites_txt"
@@ -70,10 +78,19 @@
 	android:text="更多"
 	android:textColor="#FFFFFF"	
 	android:drawableTop="@drawable/more"
+	android:background="@drawable/bottom_bar_txt_bg"
 	android:gravity="center"
     android:layout_weight="1.0"
 	android:id="@+id/main_more_txt"
 />
 
+</LinearLayout>
+
+<LinearLayout 
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="#FFFFFF"
+	android:id="@+id/start_an"
+>
 </LinearLayout>
 </LinearLayout>

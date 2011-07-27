@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector
   xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true" android:drawable="@drawable/button_search_p" />
-    <item android:drawable="@drawable/button_search_n" />
+    <item android:state_pressed="true" android:drawable="@drawable/menu_refresh_p" />
+    <item android:drawable="@drawable/menu_refresh" />
 </selector>
