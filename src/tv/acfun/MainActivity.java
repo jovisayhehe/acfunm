@@ -41,7 +41,10 @@ public class MainActivity extends ActivityGroup {
     	search_txt = (TextView) findViewById(R.id.main_search_txt);
     	favorites_txt = (TextView) findViewById(R.id.main_favorites_txt);
     	more_txt = (TextView) findViewById(R.id.main_more_txt);
-    	
+    	LinearLayout startan = (LinearLayout) findViewById(R.id.start_an);
+    	int acfaces[] = {R.drawable.a,R.drawable.b,R.drawable.c,R.drawable.d,R.drawable.e,R.drawable.f};
+    	int n = (int)(Math.random()*5);
+    	startan.setBackgroundResource(acfaces[n]);
     	ButtonListener listener = new ButtonListener();
     	
     	home_txt.setOnClickListener(listener);

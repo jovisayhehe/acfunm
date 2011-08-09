@@ -49,6 +49,7 @@ public class HomeActivity extends Activity {
 			public void run(){		
 				try {
 					data = getListData();
+					sleep(3000);
 					runOnUiThread(new Runnable() {
 						public void run() {
 						if(first){
