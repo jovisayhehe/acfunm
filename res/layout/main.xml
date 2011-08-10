@@ -44,7 +44,7 @@
 	android:drawableTop="@drawable/channel"
 	android:background="@drawable/bottom_bar_txt_bg"
 	android:gravity="center"
-	 android:layout_weight="1.0"
+	android:layout_weight="1.0"
 	android:id="@+id/main_channel_txt"
 />
 

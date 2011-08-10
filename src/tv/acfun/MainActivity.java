@@ -63,11 +63,11 @@ public class MainActivity extends ActivityGroup {
 			switch (v.getId()) {
 			case R.id.main_home_txt:
 				setEnaled(home_txt);
-				 addActivity("home", HomeActivity.class);
+				addActivity("home", HomeActivity.class);
 				break;
 			case R.id.main_channel_txt:
 				setEnaled(channel_txt);
-				 addActivity("channel", ChannelActivity.class);
+				addActivity("channel", ChannelActivity.class);
 				break;
 			case R.id.main_search_txt:
 				setEnaled(search_txt);
@@ -86,97 +86,76 @@ public class MainActivity extends ActivityGroup {
     }
 	private void setEnaled(TextView tview) {
 		tview.setEnabled(false);
-		tview.setBackgroundResource(R.drawable.bottom_txt_bg_p_l);
 		switch (tview.getId()) {
 		case R.id.main_home_txt:
 			tview.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.homel, 0, 0);
 			channel_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.channel, 0, 0);
 			channel_txt.setEnabled(true);
-			channel_txt.setBackgroundColor(00000000);
 			
 			search_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.search, 0, 0);
 			search_txt.setEnabled(true);
-			search_txt.setBackgroundColor(00000000);
 			
 			favorites_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.favorites_folder, 0, 0);
 			favorites_txt.setEnabled(true);
-			favorites_txt.setBackgroundColor(00000000);
 			
 			more_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.more, 0, 0);
 			more_txt.setEnabled(true);
-			more_txt.setBackgroundColor(00000000);
 			break;
 		case R.id.main_channel_txt:
 			tview.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.channell, 0, 0);
 			home_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.home, 0, 0);
 			home_txt.setEnabled(true);
-			home_txt.setBackgroundColor(00000000);
 			
 			search_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.search, 0, 0);
 			search_txt.setEnabled(true);
-			search_txt.setBackgroundColor(00000000);
 			
 			favorites_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.favorites_folder, 0, 0);
 			favorites_txt.setEnabled(true);
-			favorites_txt.setBackgroundColor(00000000);
 			
 			more_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.more, 0, 0);
 			more_txt.setEnabled(true);
-			more_txt.setBackgroundColor(00000000);
 			break;
 		case R.id.main_search_txt:
 			tview.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.searchl, 0, 0);
 			home_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.home, 0, 0);
 			home_txt.setEnabled(true);
-			home_txt.setBackgroundColor(00000000);
 			
 			channel_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.channel, 0, 0);
 			channel_txt.setEnabled(true);
-			channel_txt.setBackgroundColor(00000000);
 			
 			favorites_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.favorites_folder, 0, 0);
 			favorites_txt.setEnabled(true);
-			favorites_txt.setBackgroundColor(00000000);
 			
 			more_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.more, 0, 0);
 			more_txt.setEnabled(true);
-			more_txt.setBackgroundColor(00000000);
 			break;
 		case R.id.main_favorites_txt:
 			tview.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.favorites_folderl, 0, 0);
 			home_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.home, 0, 0);
 			home_txt.setEnabled(true);
-			home_txt.setBackgroundColor(00000000);
 			
 			channel_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.channel, 0, 0);
 			channel_txt.setEnabled(true);
-			channel_txt.setBackgroundColor(00000000);
 			
 			search_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.search, 0, 0);
 			search_txt.setEnabled(true);
-			search_txt.setBackgroundColor(00000000);
 			
 			more_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.more, 0, 0);
 			more_txt.setEnabled(true);
-			more_txt.setBackgroundColor(00000000);
 			break;
 		case R.id.main_more_txt:
 			tview.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.morel, 0, 0);
 			home_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.home, 0, 0);
 			home_txt.setEnabled(true);
-			home_txt.setBackgroundColor(00000000);
 			
 			channel_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.channel, 0, 0);
 			channel_txt.setEnabled(true);
-			channel_txt.setBackgroundColor(00000000);
 			
 			search_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.search, 0, 0);
 			search_txt.setEnabled(true);
-			search_txt.setBackgroundColor(00000000);
 			
 			favorites_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.favorites_folder, 0, 0);
 			favorites_txt.setEnabled(true);
-			favorites_txt.setBackgroundColor(00000000);
 			break;
 		default:
 			break;
