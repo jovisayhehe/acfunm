@@ -353,6 +353,7 @@ public class GetLinkandTitle {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		return arts;
 	}
 	
@@ -385,39 +386,39 @@ public Map<String,Object> getPage(String address) throws IOException{
 		return feeds;
 	}
 
-public Video getNVideo(String address) throws IOException {
-	Connection c = Jsoup.connect(address);
-	Document doc = c.get();
-	Elements ems = doc.select("embed");
-	Video video = new Video();
-	
-	Elements ems2 = doc.getElementsByAttributeValue("class", "g");
-	Elements ems3 = doc.getElementsByAttributeValue("class", "b");
-	video.setUptime(ems2.text()+ems3.text());
-	String vars = ems.attr("flashvars");
-	//得到播放地址
-	 Pattern pattern = Pattern.compile("\\d+");
-	 Matcher matcher = pattern.matcher(vars);
-	 if(matcher.find()){
-		 vars =  matcher.group();
-	 }
+	public Video getNVideo(String address) throws IOException {
+		Connection c = Jsoup.connect(address);
+		Document doc = c.get();
+		Elements ems = doc.select("embed");
+		Video video = new Video();
 
-	 String path = "http://v.iask.com/v_play.php?vid=" + vars;
-	 Connection c1 = Jsoup.connect(path);
-	 Document doc1 = c1.get();
-	 Elements ems1 = doc1.select("url");
-	 if(ems1.size()!=0){
-		 ArrayList<String> adds = new ArrayList<String>();
-		 String add = null;
-		 for(Element em:ems1){
-			add =  em.text();
-			adds.add(add);
-		 }
-		video.setPlaylink(adds);
-	 }
-	 video.setVideodes("");
-	 video.setReviewlink(address);
-	return video;
-}
+		Elements ems2 = doc.getElementsByAttributeValue("class", "g");
+		Elements ems3 = doc.getElementsByAttributeValue("class", "b");
+		video.setUptime(ems2.text() + ems3.text());
+		String vars = ems.attr("flashvars");
+		// 得到播放地址
+		Pattern pattern = Pattern.compile("\\d+");
+		Matcher matcher = pattern.matcher(vars);
+		if (matcher.find()) {
+			vars = matcher.group();
+		}
+
+		String path = "http://v.iask.com/v_play.php?vid=" + vars;
+		Connection c1 = Jsoup.connect(path);
+		Document doc1 = c1.get();
+		Elements ems1 = doc1.select("url");
+		if (ems1.size() != 0) {
+			ArrayList<String> adds = new ArrayList<String>();
+			String add = null;
+			for (Element em : ems1) {
+				add = em.text();
+				adds.add(add);
+			}
+			video.setPlaylink(adds);
+		}
+		video.setVideodes("");
+		video.setReviewlink(address);
+		return video;
+	}
 
 }

@@ -1,16 +1,23 @@
 package tv.acfun;
 
+
 import tv.acfun.util.Util;
 import android.app.Activity;
 import android.app.ActivityGroup;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,9 +36,13 @@ public class MainActivity extends ActivityGroup {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         Util.fullScreen(this);
         setContentView(R.layout.main);
-        InitView();
-        addActivity("home", HomeActivity.class);
-        setEnaled(home_txt);
+        if(!Util.isNetWorkActive(this)){
+        	showDialog(998);
+        }else{
+        	 InitView();
+             addActivity("home", HomeActivity.class);
+             setEnaled(home_txt);
+        }
     }
     
     public void InitView(){
@@ -173,5 +184,24 @@ public class MainActivity extends ActivityGroup {
 		.getDecorView()
 		);
 	}
+
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		// TODO Auto-generated method stub
+		ImageView img = new ImageView(MainActivity.this);
+		img.setImageResource(R.drawable.neterror);
+		return new AlertDialog.Builder(MainActivity.this)
+        .setTitle("喂！再怎么也要准备好网络在来吧！")
+        .setView(img)
+        .setPositiveButton("退出", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                finish();
+            }
+        })
+        .create();
+	}
+	
+	
     
 }
