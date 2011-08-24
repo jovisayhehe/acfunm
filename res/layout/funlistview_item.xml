@@ -24,5 +24,6 @@
   android:scrollHorizontally="true"
   android:marqueeRepeatLimit="marquee_forever"
   android:ellipsize="marquee"
+  android:singleLine="true"
   />
 </LinearLayout>

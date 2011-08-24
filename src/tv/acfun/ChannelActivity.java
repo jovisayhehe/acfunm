@@ -1,5 +1,6 @@
 package tv.acfun;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -25,22 +27,33 @@ import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 public class ChannelActivity extends Activity {
 	private ListView channellist;
+	private ListView channellist_content;
 	private ListViewAdaper adaper;
 	private GetLinkandTitle geter;
 	private TextView TitletextView;
-	private ArrayList<Map<String, Object>> listdata;
+	private Button return_btn;
+	private ArrayList<ArrayList<Map<String, Object>>> lists = new ArrayList<ArrayList<Map<String,Object>>>();
+	private ArrayList<Boolean> isfrists = new ArrayList<Boolean>();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.channellayout);
 		
+		for(int i=0;i<7;i++){
+			isfrists.add(true);
+		}
+		
+		for(int i=0;i<7;i++){
+			lists.add(new ArrayList<Map<String,Object>>());
+		}
 		
 		TitletextView = (TextView) findViewById(R.id.title_text);
 		TitletextView.setText("频道");
@@ -48,42 +61,64 @@ public class ChannelActivity extends Activity {
 		channellist = (ListView) findViewById(R.id.channellistviw);
 		channellist.setAdapter(new ChannelListViewAdaper(this));
 		
-		adaper = new ListViewAdaper(ChannelActivity.this, null);
+		channellist_content = (ListView) findViewById(R.id.channel_content_listviw);
+		
+		adaper = new ListViewAdaper(ChannelActivity.this, lists.get(0));
+		channellist_content.setAdapter(adaper);
+		
+		
+		
+		return_btn = (Button) findViewById(R.id.channell_return_btn);
+		return_btn.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				channellist.setVisibility(View.VISIBLE);
+				channellist_content.setVisibility(View.GONE);
+				return_btn.setVisibility(View.INVISIBLE);
+			}
+		});
+		
+		
 		channellist.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
+				channellist.setVisibility(View.GONE);
+				channellist_content.setVisibility(View.VISIBLE);
+				return_btn.setVisibility(View.VISIBLE);
 				switch (position) {
 				case 0:
 					//文章
-					TitletextView.setText("文章");
-					adaper.setData(getListData("http://www.acfun.tv/plus/list.php?tid=10"));
-					channellist.setAdapter(adaper);
+					refreshList("文章", position, "http://www.acfun.tv/m/list.php?cid=13");
+					
 					break;
 				case 1:
 					//娱乐
-					
+					refreshList("娱乐", position, "http://www.acfun.tv/m/list.php?cid=10");
 					break;
 				case 2:
 					//短影
-					
+					refreshList("短影", position, "http://www.acfun.tv/m/list.php?cid=14");
 					break;
 				case 3:
 					//动画
-					
+					refreshList("动画", position, "http://www.acfun.tv/m/list.php?cid=1");
 					break;
 				case 4:
 					//音乐
-					
+					refreshList("音乐", position, "http://www.acfun.tv/m/list.php?cid=8");
 					break;
 				case 5:
 					//游戏
+					refreshList("游戏", position, "http://www.acfun.tv/m/list.php?cid=9");
 					break;
 				case 6:
 					//番剧
-					
+					refreshList("番剧", position, "http://www.acfun.tv/m/last.php?cid=7");
 					break;
 
 				default:
@@ -184,22 +219,41 @@ public class ChannelActivity extends Activity {
 		
 	}
 	
-	 private List<Map<String, Object>> getListData(String address) {
-		 
-	        listdata = new ArrayList<Map<String, Object>>();      
+	 private void getListData(String address,int pos) {
+		 	
 	        GetLinkandTitle linkandTitle = new GetLinkandTitle();
-	        List<Article> arts =  linkandTitle.getNewArtTitleandLink(address);
-	        if(!arts.isEmpty()){
-	        for(Article art:arts){
-	        	Map<String, Object> map = new HashMap<String, Object>();
-	        	map.put("title", art.getArttitle());
-	        	map.put("link", art.getArtlink());
-	        	map.put("hit", "n");
-	        	listdata.add(map);
-	        }
-	        }
-	       return listdata;
+	        List<Article> arts;
+			try {
+				arts = linkandTitle.getTitleandLink(address);
+		        if(!arts.isEmpty()){
+			        for(Article art:arts){
+			        	Map<String, Object> map = new HashMap<String, Object>();
+			        	map.put("title", art.getArttitle());
+			        	map.put("link", art.getArtlink());
+			        	map.put("hit", "n");
+			        	lists.get(pos).add(map);
+			        }
+			        }
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				isfrists.remove(pos);
+				isfrists.add(pos, true);
+				e.printStackTrace();
+			}
 	    }
 	
+	 private void refreshList(String title,int position,String address){
+			TitletextView.setText(title);
+			if(isfrists.get(position)){
+				isfrists.remove(position);
+				isfrists.add(position, false);
+				getListData(address,position);
+				adaper.setData(lists.get(position));
+				adaper.notifyDataSetInvalidated();
+			}else{
+				adaper.setData(lists.get(position));
+				adaper.notifyDataSetInvalidated();
+			}
+	 }
 
 }

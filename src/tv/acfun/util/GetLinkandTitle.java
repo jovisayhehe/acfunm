@@ -334,11 +334,11 @@ public class GetLinkandTitle {
 		return feeds;
 	}
 	//我来!!
-	public List<Article> getTitleandLink(String address){
+	public List<Article> getTitleandLink(String address) throws IOException{
 
 		List<Article> arts = new ArrayList<Article>();
 		Connection c = Jsoup.connect(address);
-		try {
+	
 			Document doc = c.get();
 			Elements ems =doc.getElementsByAttributeValue("class", "i");
 			for(Element em:ems){
@@ -348,12 +348,6 @@ public class GetLinkandTitle {
 				article.setArttitle(link.text());
 				arts.add(article);
 			}
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 		return arts;
 	}
 	
