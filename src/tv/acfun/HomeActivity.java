@@ -19,6 +19,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -30,17 +32,19 @@ public class HomeActivity extends Activity {
 	private ListView homelistview;
 	private List<Map<String, Object>> data;
 	private ListViewAdaper adaper;
+	private Button ref_btn;
+	private Animation localAnimation;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.homelayout);
-		Button ref_btn = (Button) findViewById(R.id.home_refresh_btn);
+		ref_btn = (Button) findViewById(R.id.home_refresh_btn);
 		homelistview = (ListView) findViewById(R.id.homelistviw);
 		homelistview.setCacheColorHint(0);
 		Buttonlistener listener = new Buttonlistener();
 		ref_btn.setOnClickListener(listener);
-		
+		localAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh_drawable_default);
 		InitListView(true);
 	}
 
@@ -62,6 +66,7 @@ public class HomeActivity extends Activity {
 						}else{
 							adaper.setData(data);
 							adaper.notifyDataSetChanged();
+							ref_btn.clearAnimation();
 						}
 						} 
 					});	
@@ -97,6 +102,7 @@ public class HomeActivity extends Activity {
 			// TODO Auto-generated method stub
 			switch (v.getId()) {
 			case R.id.home_refresh_btn:
+				ref_btn.startAnimation(localAnimation);
 				InitListView(false);
 				break;
 

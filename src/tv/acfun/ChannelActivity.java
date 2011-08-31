@@ -13,8 +13,10 @@ import tv.acfun.util.GetLinkandTitle;
 import acfun.domain.Article;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,6 +24,7 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
@@ -29,6 +32,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -41,6 +46,9 @@ public class ChannelActivity extends Activity {
 	private Button return_btn;
 	private ArrayList<ArrayList<Map<String, Object>>> lists = new ArrayList<ArrayList<Map<String,Object>>>();
 	private ArrayList<Boolean> isfrists = new ArrayList<Boolean>();
+	private TextView footview;
+	private int state;
+	private int[] pid ={1,1,1,1,1,1,1};
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -62,6 +70,61 @@ public class ChannelActivity extends Activity {
 		channellist.setAdapter(new ChannelListViewAdaper(this));
 		
 		channellist_content = (ListView) findViewById(R.id.channel_content_listviw);
+		footview = new TextView(this);
+		footview.setTextColor(Color.RED);
+		footview.setTextSize(30);
+		footview.setGravity(Gravity.CENTER_HORIZONTAL);
+		footview.setText("loadmore....");
+		channellist_content.addFooterView(footview);
+		
+		footview.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				switch (state) {
+				case 0:
+				pid[state]++;
+				String path = "http://www.acfun.tv/m/list.php?pid="+String.valueOf(pid[state])+"&tid=7424&order=no&cid=13";
+				addtolist(path, state);
+					break;
+				case 1:
+					pid[state]++;
+					String path1 = "http://www.acfun.tv/m/list.php?pid="+String.valueOf(pid[state])+"&tid=16087&order=no&cid=10";
+					addtolist(path1, state);
+					break;
+				case 2:
+					pid[state]++;
+					String path2 = "http://www.acfun.tv/m/list.php?pid="+String.valueOf(pid[state])+"&tid=3461&order=no&cid=14";
+					addtolist(path2, state);
+					break;
+				case 3:
+					pid[state]++;
+					String path3 = "http://www.acfun.tv/m/list.php?pid="+String.valueOf(pid[state])+"&tid=17818&order=no&cid=1";
+					addtolist(path3, state);
+					break;
+				case 4:
+					pid[state]++;
+					String path4 = "http://www.acfun.tv/m/list.php?pid="+String.valueOf(pid[state])+"&tid=16171&order=no&cid=8";
+					addtolist(path4, state);
+					break;
+				case 5:
+					pid[state]++;
+					String path5 = "http://www.acfun.tv/m/list.php?pid="+String.valueOf(pid[state])+"&tid=16676&order=no&cid=9";
+					addtolist(path5, state);
+					break;
+				case 6:
+					pid[state]++;
+					String path6 = "http://www.acfun.tv/m/list.php?pid="+String.valueOf(pid[state])+"&tid=6151&order=no&cid=7";
+					addtolist(path6, state);
+					break;
+
+				default:
+					break;
+				}
+			}
+		});
+		
 		
 		adaper = new ListViewAdaper(ChannelActivity.this, lists.get(0));
 		channellist_content.setAdapter(adaper);
@@ -93,32 +156,39 @@ public class ChannelActivity extends Activity {
 				switch (position) {
 				case 0:
 					//文章
+					state=position;
 					refreshList("文章", position, "http://www.acfun.tv/m/list.php?cid=13");
 					
 					break;
 				case 1:
 					//娱乐
+					state=position;
 					refreshList("娱乐", position, "http://www.acfun.tv/m/list.php?cid=10");
 					break;
 				case 2:
 					//短影
+					state=position;
 					refreshList("短影", position, "http://www.acfun.tv/m/list.php?cid=14");
 					break;
 				case 3:
 					//动画
+					state=position;
 					refreshList("动画", position, "http://www.acfun.tv/m/list.php?cid=1");
 					break;
 				case 4:
 					//音乐
+					state=position;
 					refreshList("音乐", position, "http://www.acfun.tv/m/list.php?cid=8");
 					break;
 				case 5:
 					//游戏
+					state=position;
 					refreshList("游戏", position, "http://www.acfun.tv/m/list.php?cid=9");
 					break;
 				case 6:
 					//番剧
-					refreshList("番剧", position, "http://www.acfun.tv/m/last.php?cid=7");
+					state=position;
+					refreshList("番剧", position, "http://www.acfun.tv/m/list.php?cid=7");
 					break;
 
 				default:
@@ -242,18 +312,45 @@ public class ChannelActivity extends Activity {
 			}
 	    }
 	
-	 private void refreshList(String title,int position,String address){
+	 private void refreshList(String title,final int position,final String address){
 			TitletextView.setText(title);
 			if(isfrists.get(position)){
 				isfrists.remove(position);
 				isfrists.add(position, false);
-				getListData(address,position);
-				adaper.setData(lists.get(position));
-				adaper.notifyDataSetInvalidated();
+				new Thread(){
+					public void run(){
+						getListData(address,position);
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								// TODO Auto-generated method stub
+								adaper.setData(lists.get(position));
+								adaper.notifyDataSetInvalidated();
+							}
+						});
+					}
+				}.start();
 			}else{
 				adaper.setData(lists.get(position));
 				adaper.notifyDataSetInvalidated();
 			}
+	 }
+	 
+	 private void addtolist(final String path,final int sta){
+		 new Thread(){
+			 public void run(){
+				 getListData(path, sta);
+				 runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						adaper.setData(lists.get(sta));
+						adaper.notifyDataSetChanged();
+					}
+				});
+			 }
+		 }.start();
 	 }
 
 }
