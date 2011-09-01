@@ -13,6 +13,8 @@ import tv.acfun.util.GetLinkandTitle;
 import acfun.domain.Article;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,6 +37,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class ChannelActivity extends Activity {
@@ -47,6 +50,8 @@ public class ChannelActivity extends Activity {
 	private ArrayList<ArrayList<Map<String, Object>>> lists = new ArrayList<ArrayList<Map<String,Object>>>();
 	private ArrayList<Boolean> isfrists = new ArrayList<Boolean>();
 	private TextView footview;
+	private ImageView imgprogress;
+	private Animation localAnimation;
 	private int state;
 	private int[] pid ={1,1,1,1,1,1,1};
 	@Override
@@ -69,19 +74,23 @@ public class ChannelActivity extends Activity {
 		channellist = (ListView) findViewById(R.id.channellistviw);
 		channellist.setAdapter(new ChannelListViewAdaper(this));
 		
+		localAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh_drawable_default);
 		channellist_content = (ListView) findViewById(R.id.channel_content_listviw);
-		footview = new TextView(this);
-		footview.setTextColor(Color.RED);
-		footview.setTextSize(30);
-		footview.setGravity(Gravity.CENTER_HORIZONTAL);
-		footview.setText("loadmore....");
-		channellist_content.addFooterView(footview);
+		//LinearLayout.LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+		//linearLayout.setLayoutParams(params);
 		
-		footview.setOnClickListener(new OnClickListener() {
+		imgprogress = new ImageView(ChannelActivity.this);
+		Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.manman);
+		imgprogress.setImageBitmap(bitmap);
+		
+		channellist_content.addFooterView(imgprogress);
+		
+		imgprogress.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
+				imgprogress.startAnimation(localAnimation);
 				switch (state) {
 				case 0:
 				pid[state]++;
@@ -347,6 +356,7 @@ public class ChannelActivity extends Activity {
 						// TODO Auto-generated method stub
 						adaper.setData(lists.get(sta));
 						adaper.notifyDataSetChanged();
+						imgprogress.clearAnimation();
 					}
 				});
 			 }
