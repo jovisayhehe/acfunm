@@ -1,6 +1,7 @@
 package tv.acfun.util;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +16,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import acfun.domain.Acfun;
+import acfun.domain.AcfunContent;
 import acfun.domain.Article;
+import acfun.domain.SearchResults;
 import acfun.domain.Video;
 import android.util.Log;
 
@@ -413,6 +416,69 @@ public Map<String,Object> getPage(String address) throws IOException{
 		video.setVideodes("");
 		video.setReviewlink(address);
 		return video;
+	}
+	
+	
+	private static String binaryToString(byte[] b) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("%");
+		for (int i = 0; i < b.length; i++) {
+			int v = b[i] & 0xff;
+			if (i > 0)
+				sb.append("%");
+			sb.append(Integer.toHexString(v / 16));
+			sb.append(Integer.toHexString(v % 16));
+		}
+		return sb.toString();
+	}
+	
+	public ArrayList<SearchResults> GetSearchResults(String word,String sort,String group,int page) throws IOException{
+		
+		byte[] utf8 = word.getBytes("UTF8");
+		Connection c = Jsoup.connect("http://search.acfun.tv/Search.aspx?q="+binaryToString(utf8)+"&order="+sort+"&group="+group);
+	
+			ArrayList<SearchResults> results = new ArrayList<SearchResults>();
+			Document doc = c.get();
+			Elements ems = doc.getElementsByAttributeValue("class", "leftA");
+			for(Element em:ems){
+				SearchResults result = new SearchResults();
+				Elements aems = em.select("a");
+				result.setTitle(aems.get(0).text());
+				result.setLink(aems.get(0).attr("href"));
+				result.setCon(aems.get(1).text());
+				result.setInfo(em.getElementsByAttributeValue("class", "leftIntro").text());
+				String info = em.getElementsByAttributeValue("class", "info").text();
+				
+				String[] strs = info.split("：");
+				result.setDate(strs[1].substring(0, strs[1].length()-3));
+				result.setHit(strs[3].substring(0, strs[3].length()-2));
+				result.setFavor(strs[4]);
+				
+				results.add(result);
+			}
+			return results;
+	}
+	
+	
+	public AcfunContent getContent(String id) throws IOException{
+		Connection c = Jsoup.connect("http://www.acfun.tv/api/?id="+id+"&type=xml&current=yes&charset=utf8");
+		Document doc = c.get();
+		AcfunContent content = new AcfunContent();
+		content.setArctitle(doc.getElementsByTag("arctitle").text());
+		content.setID( doc.getElementsByTag("ID").text());
+		content.setPubdate(doc.getElementsByTag("pubdate").text());
+		content.setTypeid(doc.getElementsByTag("typeid").text());
+		content.setMemberID(doc.getElementsByTag("memberID").text());
+		content.setUsername(doc.getElementsByTag("username").text());
+		content.setDescription(doc.getElementsByTag("description").text());
+		content.setVideo(doc.getElementsByTag("video").text());
+		content.setTypename( doc.getElementsByTag("typename").text());
+		content.setKeywords(doc.getElementsByTag("keywords").text());
+		content.setClick(doc.getElementsByTag("click").text());
+		content.setStow(doc.getElementsByTag("stow").text());
+		
+		return content;
+		
 	}
 
 }
