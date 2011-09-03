@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+android:layout_gravity="top" 
+android:orientation="horizontal" 
+android:background="@drawable/titlebar_bg" 
+android:layout_width="fill_parent" 
+android:layout_height="44.0dip"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <FrameLayout 
+    android:layout_gravity="center_vertical" 
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content"
+    >
+        <EditText 
+        android:textSize="15.0sp" 
+        android:layout_gravity="center_vertical" 
+        android:id="@+id/search_text" 
+        android:background="@drawable/edittext_search" 
+        android:layout_width="270.0dip"
+        android:layout_height="45.0dip"
+        android:hint="少年来一发！" 
+        android:singleLine="true"
+        android:imeOptions="actionSearch" 
+        />
+        <ImageView 
+        android:layout_gravity="right|center" 
+        android:id="@+id/clear_search" 
+        android:visibility="gone" 
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content" 
+        android:src="@drawable/image_clear_search" />
+    </FrameLayout>
+    <Button 
+    android:layout_gravity="center_vertical" 
+    android:id="@+id/search_button" 
+    android:background="@drawable/button_find_bg"
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content" 
+    android:layout_marginLeft="10.0dip" 
+    />
+</LinearLayout>

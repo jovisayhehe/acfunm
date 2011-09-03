@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  android:orientation="vertical"
+  >
+  <TextView
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:textSize="18sp"
+  android:id="@+id/seach_list_item_title"
+  />
+  <TextView
+  android:layout_marginTop="5dip"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:id="@+id/search_list_item_info"
+  />
+  
+  <LinearLayout
+  android:orientation="horizontal"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  >
+  <TextView
+  android:layout_width="100dip"
+  android:layout_height="wrap_content"
+  android:id="@+id/search_list_item_date"
+  android:textSize="10sp"
+  />
+  <TextView
+  android:layout_width="100dip"
+  android:layout_height="wrap_content"
+  android:textColor="#CCFFFF"
+  android:textSize="15sp"
+  android:id="@+id/search_list_item_con"
+  />
+  <TextView
+  android:layout_width="50dip"
+  android:layout_height="wrap_content"
+  android:id="@+id/search_list_item_hit"
+  android:textSize="10sp"
+  />
+  
+  <TextView
+  android:layout_width="50dip"
+  android:layout_height="wrap_content"
+  android:id="@+id/search_list_item_favor"
+  android:textSize="10sp"
+  />
+  </LinearLayout>
+</LinearLayout>

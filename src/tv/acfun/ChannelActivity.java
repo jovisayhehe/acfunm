@@ -58,7 +58,7 @@ public class ChannelActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.channellayout);
+		setContentView(R.layout.channel_layout);
 		
 		for(int i=0;i<7;i++){
 			isfrists.add(true);

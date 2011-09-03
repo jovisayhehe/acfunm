@@ -54,6 +54,7 @@ public class ListViewAdaper extends BaseAdapter{
 		}
 		holder.title.setText(String.valueOf(data.get(position).get("title")));
 		holder.positiontitle.setText(String.valueOf(position+1)+".");
+		convertView.setTag(convertView.getId(),data.get(position).get("link"));
 		return convertView;
 	}
 	

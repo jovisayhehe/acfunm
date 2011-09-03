@@ -14,7 +14,10 @@ import tv.acfun.util.Util;
 import acfun.domain.Acfun;
 import acfun.domain.Video;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -24,9 +27,11 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class HomeActivity extends Activity {
 	private ListView homelistview;
@@ -38,7 +43,7 @@ public class HomeActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.homelayout);
+		setContentView(R.layout.home_layout);
 		ref_btn = (Button) findViewById(R.id.home_refresh_btn);
 		homelistview = (ListView) findViewById(R.id.homelistviw);
 		homelistview.setCacheColorHint(0);
@@ -46,6 +51,19 @@ public class HomeActivity extends Activity {
 		ref_btn.setOnClickListener(listener);
 		localAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh_drawable_default);
 		InitListView(true);
+		homelistview.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				// TODO Auto-generated method stub
+				String link = (String) arg1.getTag(arg1.getId());
+				String strs[] = link.split("/");
+				link = strs[4].substring(2);
+				
+			}
+			
+		});
 	}
 
 	public void InitListView(final boolean first) {
@@ -73,6 +91,7 @@ public class HomeActivity extends Activity {
 					
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
+					showDialog(998);
 					e.printStackTrace();
 				}
 			}	
@@ -111,5 +130,24 @@ public class HomeActivity extends Activity {
 			}
 		}
 		
+	}
+	
+	
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		// TODO Auto-generated method stub
+		ImageView img = new ImageView(HomeActivity.this);
+		img.setImageResource(R.drawable.neterror);
+		return new AlertDialog.Builder(HomeActivity.this)
+        .setTitle("网络连接超时或异常...")
+        .setView(img)
+        .setPositiveButton("退出", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                finish();
+                getParent().finish();
+            }
+        })
+        .create();
 	}
 }

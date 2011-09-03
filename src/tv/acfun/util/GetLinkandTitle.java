@@ -443,10 +443,10 @@ public Map<String,Object> getPage(String address) throws IOException{
 			for(Element em:ems){
 				SearchResults result = new SearchResults();
 				Elements aems = em.select("a");
-				result.setTitle(aems.get(0).text());
+				result.setTitle(aems.get(0).html());
 				result.setLink(aems.get(0).attr("href"));
 				result.setCon(aems.get(1).text());
-				result.setInfo(em.getElementsByAttributeValue("class", "leftIntro").text());
+				result.setInfo(em.getElementsByAttributeValue("class", "leftIntro").html());
 				String info = em.getElementsByAttributeValue("class", "info").text();
 				
 				String[] strs = info.split("：");

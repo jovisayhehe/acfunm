@@ -82,6 +82,7 @@ public class MainActivity extends ActivityGroup {
 				break;
 			case R.id.main_search_txt:
 				setEnaled(search_txt);
+				addActivity("search", SearchActivity.class);
 				break;
 			case R.id.main_favorites_txt:
 				setEnaled(favorites_txt);
