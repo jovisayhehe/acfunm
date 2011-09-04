@@ -43,7 +43,7 @@ import android.widget.TextView;
 public class ChannelActivity extends Activity {
 	private ListView channellist;
 	private ListView channellist_content;
-	private ListViewAdaper adaper;
+	private Channell_ContentListViewAdaper adaper;
 	private GetLinkandTitle geter;
 	private TextView TitletextView;
 	private Button return_btn;
@@ -52,8 +52,10 @@ public class ChannelActivity extends Activity {
 	private TextView footview;
 	private ImageView imgprogress;
 	private Animation localAnimation;
+	private Animation titleAnimation;
 	private int state;
 	private int[] pid ={1,1,1,1,1,1,1};
+	private TextView titleview;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -75,6 +77,7 @@ public class ChannelActivity extends Activity {
 		channellist.setAdapter(new ChannelListViewAdaper(this));
 		
 		localAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh_drawable_default);
+		titleAnimation = AnimationUtils.loadAnimation(this, R.anim.title_press);
 		channellist_content = (ListView) findViewById(R.id.channel_content_listviw);
 		//LinearLayout.LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
 		//linearLayout.setLayoutParams(params);
@@ -135,7 +138,7 @@ public class ChannelActivity extends Activity {
 		});
 		
 		
-		adaper = new ListViewAdaper(ChannelActivity.this, lists.get(0));
+		adaper = new Channell_ContentListViewAdaper(ChannelActivity.this, lists.get(0));
 		channellist_content.setAdapter(adaper);
 		
 		
@@ -159,9 +162,8 @@ public class ChannelActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
-				channellist.setVisibility(View.GONE);
-				channellist_content.setVisibility(View.VISIBLE);
-				return_btn.setVisibility(View.VISIBLE);
+				titleview = (TextView) view.findViewById(R.id.channelist_item_txt);
+				titleview.startAnimation(localAnimation);
 				switch (position) {
 				case 0:
 					//文章
@@ -203,6 +205,7 @@ public class ChannelActivity extends Activity {
 				default:
 					break;
 				}
+				view.clearAnimation();
 			}
 			
 		});
@@ -309,7 +312,8 @@ public class ChannelActivity extends Activity {
 			        	Map<String, Object> map = new HashMap<String, Object>();
 			        	map.put("title", art.getArttitle());
 			        	map.put("link", art.getArtlink());
-			        	map.put("hit", "n");
+			        	map.put("art", art.getArt());
+			        	map.put("uptime", art.getUptime());
 			        	lists.get(pos).add(map);
 			        }
 			        }
@@ -334,6 +338,8 @@ public class ChannelActivity extends Activity {
 							public void run() {
 								// TODO Auto-generated method stub
 								adaper.setData(lists.get(position));
+								titleview.clearAnimation();
+								setVisibility();
 								adaper.notifyDataSetInvalidated();
 							}
 						});
@@ -341,6 +347,8 @@ public class ChannelActivity extends Activity {
 				}.start();
 			}else{
 				adaper.setData(lists.get(position));
+				titleview.clearAnimation();
+				setVisibility();
 				adaper.notifyDataSetInvalidated();
 			}
 	 }
@@ -362,5 +370,11 @@ public class ChannelActivity extends Activity {
 			 }
 		 }.start();
 	 }
+
+	public void setVisibility() {
+		channellist.setVisibility(View.GONE);
+		channellist_content.setVisibility(View.VISIBLE);
+		return_btn.setVisibility(View.VISIBLE);
+	}
 
 }

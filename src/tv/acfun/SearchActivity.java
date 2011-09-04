@@ -38,6 +38,7 @@ public class SearchActivity extends Activity implements OnEditorActionListener{
 		clear_btn = (ImageView) findViewById(R.id.clear_search);
 		search_btn = (Button) findViewById(R.id.search_button);
 		search_list = (ListView) findViewById(R.id.searchlistviw);
+		search_list.setCacheColorHint(0);
 		data = new ArrayList<SearchResults>();
 		adapter = new SearchListViewAdaper(this, data);
 		search_list.setAdapter(adapter);

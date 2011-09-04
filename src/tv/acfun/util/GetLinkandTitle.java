@@ -36,7 +36,10 @@ public class GetLinkandTitle {
 			for(Element em:elms){
 					Video video = new Video();
 					Elements link = em.select("a[href]");
-					video.setVideolink(Acfun.getAcfun()+link.attr("href"));
+					String id = link.attr("href");
+					String strs[] = id.split("/");
+					id = strs[2].substring(2);
+					video.setVideolink(id);
 					video.setVideotitle(link.text());
 					videos.add(video);
 			}
@@ -347,8 +350,11 @@ public class GetLinkandTitle {
 			for(Element em:ems){
 				Article article = new Article();
 				Elements link = em.select("a[href]");
-				article.setArtlink("http://www.acfun.tv/m/"+link.attr("href"));
+				String id = link.attr("href").split("&")[0].substring(12);
+				article.setArtlink(id);
 				article.setArttitle(link.text());
+				article.setArt(em.getElementsByAttributeValue("class", "g").text());
+				article.setUptime(em.getElementsByAttributeValue("class", "b").text());
 				arts.add(article);
 			}
 		return arts;
@@ -444,7 +450,9 @@ public Map<String,Object> getPage(String address) throws IOException{
 				SearchResults result = new SearchResults();
 				Elements aems = em.select("a");
 				result.setTitle(aems.get(0).html());
-				result.setLink(aems.get(0).attr("href"));
+				String id = aems.get(0).attr("href");
+				id = id.split("/")[4].substring(2);
+				result.setLink(id);
 				result.setCon(aems.get(1).text());
 				result.setInfo(em.getElementsByAttributeValue("class", "leftIntro").html());
 				String info = em.getElementsByAttributeValue("class", "info").text();

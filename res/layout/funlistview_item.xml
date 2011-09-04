@@ -4,6 +4,7 @@
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
   android:orientation="horizontal"
+  android:background="@drawable/channel_content_item_bg_ck"
   >
   <TextView
   android:layout_width="25dip"
@@ -19,11 +20,9 @@
   android:textColor="#FFFFFF"
   android:textSize="16dip"
   android:textStyle="bold"
-  android:paddingTop="8dip"
-  android:paddingBottom="8dip"
+  android:paddingTop="15dip"
+  android:paddingBottom="15dip"
   android:scrollHorizontally="true"
-  android:marqueeRepeatLimit="marquee_forever"
-  android:ellipsize="marquee"
   android:singleLine="true"
   />
 </LinearLayout>

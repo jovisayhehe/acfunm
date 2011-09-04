@@ -57,9 +57,8 @@ public class HomeActivity extends Activity {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				// TODO Auto-generated method stub
-				String link = (String) arg1.getTag(arg1.getId());
-				String strs[] = link.split("/");
-				link = strs[4].substring(2);
+				String id = (String) arg1.getTag(arg1.getId());
+				Toast.makeText(HomeActivity.this, id, 1).show();
 				
 			}
 			
@@ -71,7 +70,6 @@ public class HomeActivity extends Activity {
 			public void run(){		
 				try {
 					data = getListData();
-					sleep(1000);
 					runOnUiThread(new Runnable() {
 						public void run() {
 						if(first){
@@ -91,7 +89,11 @@ public class HomeActivity extends Activity {
 					
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
-					showDialog(998);
+					runOnUiThread(new Runnable() {
+						public void run() {
+							showDialog(998);
+						} 
+					});	
 					e.printStackTrace();
 				}
 			}	
