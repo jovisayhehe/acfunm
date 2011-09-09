@@ -69,6 +69,7 @@ public class SearchListViewAdaper extends BaseAdapter {
 		holder.con.setText(sResults.getCon());
 		holder.hit.setText("点击"+sResults.getHit());
 		holder.favor.setText("收藏"+sResults.getFavor());
+		convertView.setTag(convertView.getId(),sResults.getLink());
 		return convertView;
 	}
 	

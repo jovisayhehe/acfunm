@@ -81,7 +81,7 @@ public class HomeActivity extends Activity {
 							homelistview.setAdapter(adaper);
 						}else{
 							adaper.setData(data);
-							adaper.notifyDataSetChanged();
+							adaper.notifyDataSetInvalidated();
 							ref_btn.clearAnimation();
 						}
 						} 

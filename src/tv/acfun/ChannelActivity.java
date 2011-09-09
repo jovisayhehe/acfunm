@@ -39,6 +39,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ChannelActivity extends Activity {
 	private ListView channellist;
@@ -77,7 +78,7 @@ public class ChannelActivity extends Activity {
 		channellist.setAdapter(new ChannelListViewAdaper(this));
 		
 		localAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh_drawable_default);
-		titleAnimation = AnimationUtils.loadAnimation(this, R.anim.title_press);
+		//titleAnimation = AnimationUtils.loadAnimation(this, R.anim.title_press);
 		channellist_content = (ListView) findViewById(R.id.channel_content_listviw);
 		//LinearLayout.LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
 		//linearLayout.setLayoutParams(params);
@@ -210,6 +211,18 @@ public class ChannelActivity extends Activity {
 			
 		});
 		
+		channellist_content.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				String id1 = (String) view.getTag(view.getId());
+				Toast.makeText(ChannelActivity.this, id1, 1).show();
+			}
+			
+		});
+		
 		
         AnimationSet set = new AnimationSet(true);
 
@@ -319,6 +332,15 @@ public class ChannelActivity extends Activity {
 			        }
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
+				runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						titleview.clearAnimation();
+						Toast.makeText(ChannelActivity.this, "网络连接超时..", 1).show();
+					}
+				});
 				isfrists.remove(pos);
 				isfrists.add(pos, true);
 				e.printStackTrace();
@@ -376,5 +398,6 @@ public class ChannelActivity extends Activity {
 		channellist_content.setVisibility(View.VISIBLE);
 		return_btn.setVisibility(View.VISIBLE);
 	}
+	
 
 }

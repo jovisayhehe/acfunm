@@ -13,7 +13,11 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -29,6 +33,7 @@ public class SearchActivity extends Activity implements OnEditorActionListener{
 	private ListView search_list;
 	private SearchListViewAdaper adapter;
 	private ArrayList<SearchResults> data;
+	private Animation localAnimation;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -37,6 +42,7 @@ public class SearchActivity extends Activity implements OnEditorActionListener{
 		search_text = (EditText) findViewById(R.id.search_text);
 		clear_btn = (ImageView) findViewById(R.id.clear_search);
 		search_btn = (Button) findViewById(R.id.search_button);
+		localAnimation = AnimationUtils.loadAnimation(this, R.anim.title_press);
 		search_list = (ListView) findViewById(R.id.searchlistviw);
 		search_list.setCacheColorHint(0);
 		data = new ArrayList<SearchResults>();
@@ -99,6 +105,18 @@ public class SearchActivity extends Activity implements OnEditorActionListener{
 				}
 			}
 		});
+		
+		search_list.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				String id1 = (String) view.getTag(view.getId());
+				Toast.makeText(SearchActivity.this, id1, 1).show();
+			}
+			
+		});
 	}
 	
 	
@@ -116,14 +134,25 @@ public class SearchActivity extends Activity implements OnEditorActionListener{
 	
 	
 	private void InitList(final String word){
+		search_btn.startAnimation(localAnimation);
 		final GetLinkandTitle linkandTitle = new GetLinkandTitle();
 		new Thread(){
 			public void run(){
 				try {
 					data = linkandTitle.GetSearchResults(word, "008d30f9-cdd4-440f-9149-85f5e3a75f42", "-1", 0);
+					search_btn.clearAnimation();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					Toast.makeText(SearchActivity.this, "网络超时或异常", 1).show();
+					
+					runOnUiThread(new Runnable() {
+						
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							search_btn.clearAnimation();
+							Toast.makeText(SearchActivity.this, "网络连接超时..", 1).show();
+						}
+					});
 					e.printStackTrace();
 				}
 				runOnUiThread(new Runnable() {
