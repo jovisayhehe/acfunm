@@ -31,6 +31,7 @@ public class DetailActivity extends Activity {
 	
 	private void startAnm(){
 		Animation am = new TranslateAnimation ( 0, 380, 0, 800);
+		am.setDetachWallpaper(true);
 	    am.setDuration(400);
 	    am.setRepeatCount(0);
 	    fov_btn.setAnimation(am);

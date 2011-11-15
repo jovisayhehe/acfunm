@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+     >
 <LinearLayout
  android:layout_width="480px" 
  android:layout_height="wrap_content"
  android:orientation="horizontal" 
  android:background="@drawable/titlebar_bg"
+ android:id="@+id/detail_top"
   >
      <TextView 
     android:textSize="18.0sp" 
@@ -28,10 +29,45 @@
      android:layout_gravity="left" 
      android:layout_marginLeft="10dip"
       />
-</LinearLayout>    
-    <Button
+</LinearLayout>
+
+	<ImageView
+	android:layout_width="240px"
+	android:layout_height="180px"
+	android:src="@drawable/temp"
+	android:layout_below="@id/detail_top"
+	android:id="@+id/detail_img"
+	/>
+	<TextView
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:layout_below="@id/detail_top"
+	android:layout_toRightOf="@id/detail_img"
+	android:id="@+id/detail_up"
+	android:text="投稿"
+	/>
+	
+	<TextView
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:layout_toRightOf="@id/detail_img"
+	android:layout_below="@id/detail_up"
+	android:id="@+id/detail_time"
+	android:text="投稿时间"
+	/>
+	<TextView
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:text="点击"
+	android:layout_toRightOf="@id/detail_img"
+	android:layout_below="@id/detail_time"
+	android:id="@+id/detail_hit"
+	/>
+	 <Button
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:layout_toRightOf="@id/detail_img"
+	android:layout_below="@id/detail_hit"
     android:id="@+id/detail_fov_btn"
     android:text="收藏"
     />
@@ -39,12 +75,21 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:id="@+id/detail_fov_btn_v"
+    android:layout_toRightOf="@id/detail_img"
+	android:layout_below="@id/detail_hit"
     android:text="收藏"
     android:visibility="gone"
     />
-    <TextView
-    android:layout_width="fill_parent"
-    android:layout_height="700px"
-    android:text="-"
-    />
-</LinearLayout>
+<ScrollView
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+android:layout_below="@id/detail_img"
+>
+<TextView
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:text="信息"
+/>
+</ScrollView>
+
+</RelativeLayout>

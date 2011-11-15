@@ -78,7 +78,7 @@ android:layout_height="wrap_content"
 	android:layout_height="wrap_content"
 	android:textColor="#FFFFFF"
 	android:text="11"
-	android:textSize="12px"
+	android:textSize="20px"
 	android:layout_marginLeft="20px"
 	android:background="@drawable/number"
  />
