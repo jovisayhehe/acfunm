@@ -30,6 +30,8 @@ public class MainActivity extends ActivityGroup {
 	private TextView favorites_txt;
 	private TextView more_txt;
 	private LinearLayout view = null;
+	
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

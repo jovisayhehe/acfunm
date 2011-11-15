@@ -29,6 +29,10 @@
         android:screenOrientation="portrait"
         android:launchMode="singleTask"
         />
+        <activity
+        android:name=".DetailActivity"
+        android:screenOrientation="portrait"
+        />
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>

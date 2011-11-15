@@ -59,19 +59,30 @@
     android:layout_weight="1.0"
 	android:id="@+id/main_search_txt"
 />
-
+<FrameLayout 
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+>
 <TextView
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
-	android:text="收藏"
+	android:text="收藏下载"
 	android:textColor="#FFFFFF"	
 	android:drawableTop="@drawable/favorites_folder"
 	android:background="@drawable/bottom_bar_txt_bg"
 	android:gravity="center"
-    android:layout_weight="1.0"
 	android:id="@+id/main_favorites_txt"
 />
-
+<Button 
+    android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:textColor="#FFFFFF"
+	android:text="11"
+	android:textSize="12px"
+	android:layout_marginLeft="20px"
+	android:background="@drawable/number"
+ />
+</FrameLayout>
 <TextView
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"

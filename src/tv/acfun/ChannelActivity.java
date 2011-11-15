@@ -13,6 +13,7 @@ import tv.acfun.util.GetLinkandTitle;
 import acfun.domain.Article;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -219,6 +220,8 @@ public class ChannelActivity extends Activity {
 				// TODO Auto-generated method stub
 				String id1 = (String) view.getTag(view.getId());
 				Toast.makeText(ChannelActivity.this, id1, 1).show();
+				
+				((MainActivity)ChannelActivity.this.getParent()).addActivity("detail", DetailActivity.class);
 			}
 			
 		});
