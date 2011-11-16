@@ -21,6 +21,19 @@ import android.util.Log;
 
 public class Parser {
 	
+	public static String ParserAcId(String id){
+		
+		
+		return id;
+	}
+	
+	
+	public static String ParserSinavideo(String vid){
+		
+		
+		return vid;
+	}
+	
 	public static String ParserQQvideo(String vid) throws IOException{
 		String url = "http://vv.video.qq.com/geturl?ran=0.16436194255948067&otype=xml&vid="+vid+"&platform=1&format=2";
 		Connection c = Jsoup.connect(url);

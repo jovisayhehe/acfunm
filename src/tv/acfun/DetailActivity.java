@@ -54,12 +54,6 @@ public class DetailActivity extends Activity {
 		
 		title.setText(infos.get(0));
 		fromtxt = infos.get(1);
-		try {
-			Parser.ParserYoukuvideo("XMzIyMjY0Njk2");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	private void startAnm(View v){

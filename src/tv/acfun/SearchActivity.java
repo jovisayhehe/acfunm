@@ -139,7 +139,7 @@ public class SearchActivity extends Activity implements OnEditorActionListener{
 		new Thread(){
 			public void run(){
 				try {
-					data = linkandTitle.GetSearchResults(word, "008d30f9-cdd4-440f-9149-85f5e3a75f42", "-1", 0);
+					data = linkandTitle.GetSearchResults(word, "088d7595-3b27-46c6-a7c5-0cb1bb5dbcff", "-1", 0);
 					search_btn.clearAnimation();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
