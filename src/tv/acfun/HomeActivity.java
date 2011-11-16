@@ -58,7 +58,10 @@ public class HomeActivity extends Activity {
 					long arg3) {
 				// TODO Auto-generated method stub
 				String id = (String) arg1.getTag(arg1.getId());
-				Toast.makeText(HomeActivity.this, id, 1).show();
+				ArrayList<String> infos = new ArrayList<String>();
+				infos.add(id);
+				infos.add("home");
+				((MainActivity)HomeActivity.this.getParent()).addActivity("detail", DetailActivity.class,infos);
 				
 			}
 			

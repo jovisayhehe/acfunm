@@ -10,15 +10,6 @@
  android:background="@drawable/titlebar_bg"
  android:id="@+id/detail_top"
   >
-     <TextView 
-    android:textSize="18.0sp" 
-    android:textColor="#FFFFFF" 
-    android:gravity="center_vertical" 
-    android:layout_gravity="center" 
-    android:id="@+id/detail_title_text" 
-    android:layout_width="wrap_content" 
-    android:layout_height="wrap_content" 
-    />
      <Button 
      android:background="@drawable/button_return_bg"
      android:id="@+id/detail_return_btn"
@@ -29,6 +20,18 @@
      android:layout_gravity="left" 
      android:layout_marginLeft="10dip"
       />
+     
+    <TextView 
+    android:textSize="18.0sp" 
+    android:textColor="#FFFFFF"
+    android:paddingLeft="30px"
+    android:gravity="center_vertical" 
+    android:layout_gravity="center" 
+    android:id="@+id/detail_title_text" 
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content" 
+    android:text="test"
+    />
 </LinearLayout>
 
 	<ImageView
@@ -63,27 +66,11 @@
 	android:layout_below="@id/detail_time"
 	android:id="@+id/detail_hit"
 	/>
-	 <Button
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_toRightOf="@id/detail_img"
-	android:layout_below="@id/detail_hit"
-    android:id="@+id/detail_fov_btn"
-    android:text="收藏"
-    />
-    <Button
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/detail_fov_btn_v"
-    android:layout_toRightOf="@id/detail_img"
-	android:layout_below="@id/detail_hit"
-    android:text="收藏"
-    android:visibility="gone"
-    />
 <ScrollView
 android:layout_width="fill_parent"
-android:layout_height="fill_parent"
+android:layout_height="150px"
 android:layout_below="@id/detail_img"
+android:id="@+id/detail_scro_info"
 >
 <TextView
 android:layout_width="fill_parent"
@@ -91,5 +78,57 @@ android:layout_height="wrap_content"
 android:text="信息"
 />
 </ScrollView>
-
+<LinearLayout 
+	android:orientation="horizontal"
+	android:layout_below="@id/detail_scro_info"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+>
+	<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/detail_fov_btn"
+    android:drawableLeft="@drawable/detail_item_favorites"
+    android:background="@drawable/detail_item_bg"
+    android:text="收藏"
+    android:drawablePadding="15px"
+    android:layout_weight="1.0"
+    android:gravity="center_vertical"
+    />
+	
+	<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/detail_downloads_btn"
+    android:drawableLeft="@drawable/detail_item_download"
+    android:background="@drawable/detail_item_bg"
+    android:text="下载"
+    android:drawablePadding="15px"
+    android:layout_weight="1.0"
+    android:gravity="center_vertical"
+    />
+	
+	<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/detail_reply_btn"
+    android:drawableLeft="@drawable/detail_item_reply"
+    android:background="@drawable/detail_item_bg"
+    android:text="评论"
+    android:drawablePadding="15px"
+    android:layout_weight="1.0"
+    android:gravity="center_vertical"
+    />
+	<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/detail_share_btn"
+    android:drawableLeft="@drawable/detail_item_share"
+    android:background="@drawable/detail_item_bg"
+    android:text="分享"
+    android:layout_weight="1.0"
+    android:drawablePadding="15px"
+    android:gravity="center_vertical"
+    />
+	</LinearLayout>
 </RelativeLayout>

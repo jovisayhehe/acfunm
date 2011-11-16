@@ -219,9 +219,10 @@ public class ChannelActivity extends Activity {
 					int position, long id) {
 				// TODO Auto-generated method stub
 				String id1 = (String) view.getTag(view.getId());
-				Toast.makeText(ChannelActivity.this, id1, 1).show();
-				
-				((MainActivity)ChannelActivity.this.getParent()).addActivity("detail", DetailActivity.class);
+				ArrayList<String> infos = new ArrayList<String>();
+				infos.add(id1);
+				infos.add("channel");
+				((MainActivity)ChannelActivity.this.getParent()).addActivity("detail", DetailActivity.class,infos);
 			}
 			
 		});

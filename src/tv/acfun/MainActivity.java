@@ -1,6 +1,9 @@
 package tv.acfun;
 
 
+import java.util.ArrayList;
+
+
 import tv.acfun.util.Util;
 import android.app.Activity;
 import android.app.ActivityGroup;
@@ -27,7 +30,7 @@ public class MainActivity extends ActivityGroup {
 	private TextView home_txt;
 	private TextView channel_txt;
 	private TextView search_txt;
-	private TextView favorites_txt;
+	private TextView download_txt;
 	private TextView more_txt;
 	private LinearLayout view = null;
 	
@@ -42,7 +45,7 @@ public class MainActivity extends ActivityGroup {
         	showDialog(998);
         }else{
         	 InitView();
-             addActivity("home", HomeActivity.class);
+             addActivity("home", HomeActivity.class,null);
              setEnaled(home_txt);
         }
     }
@@ -52,7 +55,7 @@ public class MainActivity extends ActivityGroup {
     	home_txt = (TextView) findViewById(R.id.main_home_txt);
     	channel_txt = (TextView) findViewById(R.id.main_channel_txt);
     	search_txt = (TextView) findViewById(R.id.main_search_txt);
-    	favorites_txt = (TextView) findViewById(R.id.main_favorites_txt);
+    	download_txt = (TextView) findViewById(R.id.main_favorites_txt);
     	more_txt = (TextView) findViewById(R.id.main_more_txt);
     	LinearLayout startan = (LinearLayout) findViewById(R.id.start_an);
     	int acfaces[] = {R.drawable.a,R.drawable.b,R.drawable.c,R.drawable.d,R.drawable.e,R.drawable.f};
@@ -63,7 +66,7 @@ public class MainActivity extends ActivityGroup {
     	home_txt.setOnClickListener(listener);
     	channel_txt.setOnClickListener(listener);
     	search_txt.setOnClickListener(listener);
-    	favorites_txt.setOnClickListener(listener);
+    	download_txt.setOnClickListener(listener);
     	more_txt.setOnClickListener(listener);
     }
     
@@ -76,18 +79,18 @@ public class MainActivity extends ActivityGroup {
 			switch (v.getId()) {
 			case R.id.main_home_txt:
 				setEnaled(home_txt);
-				addActivity("home", HomeActivity.class);
+				addActivity("home", HomeActivity.class,null);
 				break;
 			case R.id.main_channel_txt:
 				setEnaled(channel_txt);
-				addActivity("channel", ChannelActivity.class);
+				addActivity("channel", ChannelActivity.class,null);
 				break;
 			case R.id.main_search_txt:
 				setEnaled(search_txt);
-				addActivity("search", SearchActivity.class);
+				addActivity("search", SearchActivity.class,null);
 				break;
 			case R.id.main_favorites_txt:
-				setEnaled(favorites_txt);
+				setEnaled(download_txt);
 				break;
 			case R.id.main_more_txt:
 				setEnaled(more_txt);
@@ -109,8 +112,8 @@ public class MainActivity extends ActivityGroup {
 			search_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.search, 0, 0);
 			search_txt.setEnabled(true);
 			
-			favorites_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.favorites_folder, 0, 0);
-			favorites_txt.setEnabled(true);
+			download_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.downloads, 0, 0);
+			download_txt.setEnabled(true);
 			
 			more_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.more, 0, 0);
 			more_txt.setEnabled(true);
@@ -123,8 +126,8 @@ public class MainActivity extends ActivityGroup {
 			search_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.search, 0, 0);
 			search_txt.setEnabled(true);
 			
-			favorites_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.favorites_folder, 0, 0);
-			favorites_txt.setEnabled(true);
+			download_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.downloads, 0, 0);
+			download_txt.setEnabled(true);
 			
 			more_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.more, 0, 0);
 			more_txt.setEnabled(true);
@@ -137,14 +140,14 @@ public class MainActivity extends ActivityGroup {
 			channel_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.channel, 0, 0);
 			channel_txt.setEnabled(true);
 			
-			favorites_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.favorites_folder, 0, 0);
-			favorites_txt.setEnabled(true);
+			download_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.downloads, 0, 0);
+			download_txt.setEnabled(true);
 			
 			more_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.more, 0, 0);
 			more_txt.setEnabled(true);
 			break;
 		case R.id.main_favorites_txt:
-			tview.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.favorites_folderl, 0, 0);
+			tview.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.downloads_l, 0, 0);
 			home_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.home, 0, 0);
 			home_txt.setEnabled(true);
 			
@@ -168,8 +171,8 @@ public class MainActivity extends ActivityGroup {
 			search_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.search, 0, 0);
 			search_txt.setEnabled(true);
 			
-			favorites_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.favorites_folder, 0, 0);
-			favorites_txt.setEnabled(true);
+			download_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.downloads, 0, 0);
+			download_txt.setEnabled(true);
 			break;
 		default:
 			break;
@@ -177,15 +180,20 @@ public class MainActivity extends ActivityGroup {
 	}
 	
 	
-	public void addActivity(String id,Class<?> clazz ) {
+	public void addActivity(String id,Class<?> clazz,ArrayList<String> value) {
 		
-		view.removeAllViews();
-		view.addView(
-		getLocalActivityManager().startActivity(id,
-				new Intent(MainActivity.this,clazz)
-		.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-		.getDecorView()
-		);
+		if(view!=null){
+			view.removeAllViews();
+		}
+		
+		Intent intent = new Intent(MainActivity.this, clazz)
+		.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		if(value!=null){
+			intent.putStringArrayListExtra("info", value);
+		}
+		view.addView(getLocalActivityManager().startActivity(
+				id,intent)
+				.getDecorView());
 	}
 
 	@Override
