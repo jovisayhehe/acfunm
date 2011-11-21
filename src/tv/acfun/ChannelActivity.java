@@ -95,6 +95,7 @@ public class ChannelActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
+				imgprogress.setEnabled(false);
 				imgprogress.startAnimation(localAnimation);
 				switch (state) {
 				case 0:
@@ -318,11 +319,10 @@ public class ChannelActivity extends Activity {
 		
 	}
 	
-	 private void getListData(String address,int pos) {
+	 private void getListData(String address,int pos) throws IOException {
 		 	
 	        GetLinkandTitle linkandTitle = new GetLinkandTitle();
 	        List<Article> arts;
-			try {
 				arts = linkandTitle.getTitleandLink(address);
 		        if(!arts.isEmpty()){
 			        for(Article art:arts){
@@ -334,21 +334,7 @@ public class ChannelActivity extends Activity {
 			        	lists.get(pos).add(map);
 			        }
 			        }
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				runOnUiThread(new Runnable() {
-					
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						titleview.clearAnimation();
-						Toast.makeText(ChannelActivity.this, "网络连接超时..", 1).show();
-					}
-				});
-				isfrists.remove(pos);
-				isfrists.add(pos, true);
-				e.printStackTrace();
-			}
+
 	    }
 	
 	 private void refreshList(String title,final int position,final String address){
@@ -358,17 +344,33 @@ public class ChannelActivity extends Activity {
 				isfrists.add(position, false);
 				new Thread(){
 					public void run(){
-						getListData(address,position);
-						runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								// TODO Auto-generated method stub
-								adaper.setData(lists.get(position));
-								titleview.clearAnimation();
-								setVisibility();
-								adaper.notifyDataSetInvalidated();
-							}
-						});
+						try {
+							getListData(address,position);
+							runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									// TODO Auto-generated method stub
+									adaper.setData(lists.get(position));
+									titleview.clearAnimation();
+									setVisibility();
+									adaper.notifyDataSetInvalidated();
+								}
+							});
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							titleview.clearAnimation();
+							isfrists.remove(position);
+							isfrists.add(position, true);
+							runOnUiThread(new Runnable() {
+								
+								@Override
+								public void run() {
+									// TODO Auto-generated method stub
+									Toast.makeText(ChannelActivity.this, "网络连接超时..", 1).show();
+								}
+							});
+							e.printStackTrace();
+						}
 					}
 				}.start();
 			}else{
@@ -382,7 +384,22 @@ public class ChannelActivity extends Activity {
 	 private void addtolist(final String path,final int sta){
 		 new Thread(){
 			 public void run(){
-				 getListData(path, sta);
+				 try {
+					getListData(path, sta);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					runOnUiThread(new Runnable() {
+						
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							imgprogress.clearAnimation();
+							imgprogress.setEnabled(true);
+							Toast.makeText(ChannelActivity.this, "网络连接超时..", 1).show();
+						}
+					});
+					e.printStackTrace();
+				}
 				 runOnUiThread(new Runnable() {
 					
 					@Override
@@ -391,6 +408,7 @@ public class ChannelActivity extends Activity {
 						adaper.setData(lists.get(sta));
 						adaper.notifyDataSetChanged();
 						imgprogress.clearAnimation();
+						imgprogress.setEnabled(true);
 					}
 				});
 			 }

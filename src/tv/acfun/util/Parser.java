@@ -21,8 +21,32 @@ import android.util.Log;
 
 public class Parser {
 	
-	public static String ParserAcId(String id){
+	public static String ParserAcId(String id) throws IOException{
 		
+		Connection c = Jsoup.connect("http://www.acfun.tv/m/art.php?aid="+id);
+		Document doc = c.get();
+		Elements ems = doc.getElementsByTag("embed");
+		for(Element em:ems){
+			String fvars = em.attr("flashvars");
+			if(fvars!=null&&!fvars.equals("")&&fvars!=""){
+				System.out.println(fvars);
+				String[] attrs = fvars.split("\\&");
+				String type=attrs[0].split("\\=")[1];
+				System.out.println(type);
+				
+				String id1 = attrs[1].split("\\=")[1];
+				System.out.println(id1);
+				
+			}else{
+				String attr = em.attr("src").split("\\?")[1];
+				String type=attr.split("\\&")[1].split("\\=")[1];
+				String id1 = attr.split("\\&")[0].split("\\=")[1];
+				System.out.println(attr);
+				System.out.println(type);
+				System.out.println(id1);
+			}
+			
+			}
 		
 		return id;
 	}
