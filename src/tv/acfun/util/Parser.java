@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -32,6 +33,7 @@ public class Parser {
 				System.out.println(fvars);
 				String[] attrs = fvars.split("\\&");
 				String type=attrs[0].split("\\=")[1];
+				
 				System.out.println(type);
 				
 				String id1 = attrs[1].split("\\=")[1];
@@ -51,11 +53,31 @@ public class Parser {
 		return id;
 	}
 	
+	public static String ParserVideopath(String type,String id){
+		if(type.equals("video")){
+			//新浪
+		}else if(type.equals("youku")){
+			
+		}else if(type.equals("qq")){
+			
+		}else if(type.equals("tudou")){
+			
+		}
+		
+		return id;
+	}
 	
-	public static String ParserSinavideo(String vid){
+	public static ArrayList<String> getSinaflv(String id) throws IOException{
+		ArrayList<String> paths = new ArrayList<String>();
+		String url = "http://v.iask.com/v_play.php?vid="+id;
+		Connection c = Jsoup.connect(url);
+		Document doc = c.get();
+		Elements ems = doc.getElementsByTag("url");
+		for(Element em:ems){
+			paths.add(em.text());
+		}
 		
-		
-		return vid;
+		return paths;
 	}
 	
 	public static String ParserQQvideo(String vid) throws IOException{
@@ -65,6 +87,10 @@ public class Parser {
 		Elements ems = doc.getElementsByTag("url");
 		String vurls[] = ems.text().split("\\?");
 		return vurls[0];
+	}
+	public static String ParserQQvideof(String vid) throws IOException{
+		String url = "vstore.qq.com/+"+vid+".flv";
+		return url;
 	}
 	
 	public static String ParserTudouvideo(String iid) throws IOException{
@@ -79,6 +105,20 @@ public class Parser {
 		}
 		return iid;
 	}
+	
+	
+	public static ArrayList<String> ParserYoukuFlv(String id) throws IOException{
+		ArrayList<String> paths = new ArrayList<String>();
+		String url = "http://www.flvcd.com/parse.php?kw=http://v.youku.com/v_show/id_"+id+"==.html";
+		Connection c = Jsoup.connect(url);
+		Document doc = c.get();
+		Elements ems = doc.getElementsByAttributeValue("class", "mn STYLE4").get(3).getElementsByTag("a");
+		for(Element em:ems){
+			paths.add(em.attr("href"));
+		}
+		return paths;
+	}
+	
 	
 	public static String ParserYoukuvideo(String id) throws Exception{
 
