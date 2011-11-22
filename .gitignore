@@ -1,3 +1,5 @@
 bin/*
 gen/*
 .DS_Store
+
+gen/tv/acfun/R.java
