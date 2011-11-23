@@ -82,6 +82,7 @@ public class DetailActivity extends Activity {
 				try {
 					
 					content = Parser.getContent(id);
+					
 					runOnUiThread(new Runnable() {
 						public void run() {
 							

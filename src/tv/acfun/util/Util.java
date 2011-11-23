@@ -28,7 +28,13 @@ public class Util {
      		   WindowManager.LayoutParams.FLAG_FULLSCREEN);
        // act.requestWindowFeature(Window.FEATURE_NO_TITLE);
 	}
-	
+	public static void fullScreent(Activity act){
+		
+        final Window win = act.getWindow();
+        win.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+     		   WindowManager.LayoutParams.FLAG_FULLSCREEN);
+       act.requestWindowFeature(Window.FEATURE_NO_TITLE);
+	}
 	
 	public static void backScreen(Activity act){
 		

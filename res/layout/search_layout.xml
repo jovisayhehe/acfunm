@@ -6,6 +6,27 @@
   android:orientation="vertical"
   >
   <include layout="@layout/titlebar_search" />
+  <LinearLayout
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:orientation="horizontal"
+  android:id="@+id/search_set_menu"
+  android:visibility="gone"
+  >
+  <Spinner
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content"
+  android:background="@drawable/button_spinner_bg"
+  android:layout_marginLeft="45px"
+  />
+  <Spinner
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content"
+  android:background="@drawable/button_spinner_bg"
+  android:layout_marginLeft="25px"
+  />
+  
+  </LinearLayout>
   <ListView
   android:layout_width="fill_parent"
   android:layout_height="wrap_content"

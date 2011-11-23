@@ -7,6 +7,7 @@ import tv.acfun.util.GetLinkandTitle;
 
 import acfun.domain.SearchResults;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,12 +16,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -30,18 +33,37 @@ public class SearchActivity extends Activity implements OnEditorActionListener{
 	private EditText search_text;
 	private ImageView clear_btn;
 	private Button search_btn;
+	private Button searchset_btn;
 	private ListView search_list;
 	private SearchListViewAdaper adapter;
 	private ArrayList<SearchResults> data;
 	private Animation localAnimation;
+	private LinearLayout setline;
+	private Animation mShowAction = null;   
+    private Animation mHiddenAction = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.search_layout);
+		
+		
+		mShowAction = new TranslateAnimation(Animation.ZORDER_BOTTOM, 0.0f,   
+                Animation.ZORDER_BOTTOM, 0.0f, Animation.ZORDER_BOTTOM,   
+                0.0f, Animation.ZORDER_BOTTOM, 0.0f);   
+        mShowAction.setDuration(500);   
+        mHiddenAction = new TranslateAnimation(Animation.ZORDER_BOTTOM,   
+                0.0f, Animation.ZORDER_BOTTOM, 0.0f,   
+                Animation.ZORDER_BOTTOM, 0.0f, Animation.ZORDER_BOTTOM,   
+                0.0f);   
+        mHiddenAction.setDuration(500);   
+		
 		search_text = (EditText) findViewById(R.id.search_text);
 		clear_btn = (ImageView) findViewById(R.id.clear_search);
 		search_btn = (Button) findViewById(R.id.search_button);
+		searchset_btn = (Button) findViewById(R.id.searchset_button);
+		setline = (LinearLayout) findViewById(R.id.search_set_menu);
 		localAnimation = AnimationUtils.loadAnimation(this, R.anim.title_press);
 		search_list = (ListView) findViewById(R.id.searchlistviw);
 		search_list.setCacheColorHint(0);
@@ -103,6 +125,22 @@ public class SearchActivity extends Activity implements OnEditorActionListener{
 				}else{
 					InitList(str);
 				}
+			}
+		});
+		
+		searchset_btn.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if(setline.getVisibility()==View.GONE){
+					setline.startAnimation(mShowAction);   
+					setline.setVisibility(View.VISIBLE);
+				}else if(setline.getVisibility()==View.VISIBLE){
+					setline.startAnimation(mHiddenAction);   
+					setline.setVisibility(View.GONE);
+				}
+				
 			}
 		});
 		

@@ -33,6 +33,10 @@
         android:name=".DetailActivity"
         android:screenOrientation="portrait"
         />
+        <activity
+        android:name=".WebViewActivity"
+        android:screenOrientation="landscape"
+        />
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
