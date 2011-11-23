@@ -22,21 +22,26 @@
       />
      
     <TextView 
-    android:textSize="18.0sp" 
+    android:textSize="14.0sp" 
     android:textColor="#FFFFFF"
-    android:paddingLeft="30px"
+    android:paddingLeft="10px"
     android:gravity="center_vertical" 
     android:layout_gravity="center" 
     android:id="@+id/detail_title_text" 
-    android:layout_width="wrap_content" 
+    android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
-    android:text="test"
+    android:singleLine="true"  
+    android:ellipsize="marquee"  
+    android:focusable="true"  
+    android:marqueeRepeatLimit="marquee_forever"  
+    android:focusableInTouchMode="true"  
+    android:scrollHorizontally="true"
     />
 </LinearLayout>
 
 	<ImageView
-	android:layout_width="240px"
-	android:layout_height="180px"
+	android:layout_width="200px"
+	android:layout_height="160px"
 	android:src="@drawable/temp"
 	android:layout_below="@id/detail_top"
 	android:id="@+id/detail_img"
@@ -66,6 +71,14 @@
 	android:layout_below="@id/detail_time"
 	android:id="@+id/detail_hit"
 	/>
+	<TextView
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:text="收藏"
+	android:layout_toRightOf="@id/detail_img"
+	android:layout_below="@id/detail_hit"
+	android:id="@+id/detail_fov"
+	/>
 <ScrollView
 android:layout_width="fill_parent"
 android:layout_height="150px"
@@ -76,9 +89,10 @@ android:id="@+id/detail_scro_info"
 android:layout_width="fill_parent"
 android:layout_height="wrap_content"
 android:text="信息"
+android:id="@+id/detail_info"
 />
 </ScrollView>
-
+	
      <LinearLayout 
     android:layout_width="fill_parent"
     android:layout_height="48px"

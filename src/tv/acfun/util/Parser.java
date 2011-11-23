@@ -16,6 +16,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import acfun.domain.AcfunContent;
 import android.util.Log;
 
 
@@ -53,18 +54,19 @@ public class Parser {
 		return id;
 	}
 	
-	public static String ParserVideopath(String type,String id){
+	public static ArrayList<String> ParserVideopath(String type,String id) throws IOException{
 		if(type.equals("video")){
 			//新浪
+			return getSinaflv(id);
 		}else if(type.equals("youku")){
-			
+			return ParserYoukuFlv(id);
 		}else if(type.equals("qq")){
-			
+			return ParserQQvideof(id);
 		}else if(type.equals("tudou")){
 			
 		}
 		
-		return id;
+		return null;
 	}
 	
 	public static ArrayList<String> getSinaflv(String id) throws IOException{
@@ -88,9 +90,11 @@ public class Parser {
 		String vurls[] = ems.text().split("\\?");
 		return vurls[0];
 	}
-	public static String ParserQQvideof(String vid) throws IOException{
+	public static ArrayList<String> ParserQQvideof(String vid) throws IOException{
 		String url = "vstore.qq.com/+"+vid+".flv";
-		return url;
+		ArrayList<String> urls = new ArrayList<String>();
+		urls.add(url);
+		return urls;
 	}
 	
 	public static String ParserTudouvideo(String iid) throws IOException{
@@ -117,6 +121,30 @@ public class Parser {
 			paths.add(em.attr("href"));
 		}
 		return paths;
+	}
+	
+	
+	
+	
+	public static AcfunContent getContent(String id) throws IOException{
+		Connection c = Jsoup.connect("http://www.acfun.tv/api/?id="+id+"&type=xml&current=yes&charset=utf8");
+		Document doc = c.get();
+		AcfunContent content = new AcfunContent();
+		content.setArctitle(doc.getElementsByTag("arctitle").text());
+		//content.setID( doc.getElementsByTag("ID").text());
+		content.setPubdate(doc.getElementsByTag("pubdate").text());
+		//content.setTypeid(doc.getElementsByTag("typeid").text());
+		//content.setMemberID(doc.getElementsByTag("memberID").text());
+		content.setUsername(doc.getElementsByTag("username").text());
+		content.setDescription(doc.getElementsByTag("description").text());
+		//content.setVideo(doc.getElementsByTag("video").text());
+	//	content.setTypename( doc.getElementsByTag("typename").text());
+		content.setKeywords(doc.getElementsByTag("keywords").text());
+		content.setClick(doc.getElementsByTag("click").text());
+		content.setStow(doc.getElementsByTag("stow").text());
+		
+		return content;
+		
 	}
 	
 	

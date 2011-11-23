@@ -467,26 +467,4 @@ public Map<String,Object> getPage(String address) throws IOException{
 			return results;
 	}
 	
-	
-	public AcfunContent getContent(String id) throws IOException{
-		Connection c = Jsoup.connect("http://www.acfun.tv/api/?id="+id+"&type=xml&current=yes&charset=utf8");
-		Document doc = c.get();
-		AcfunContent content = new AcfunContent();
-		content.setArctitle(doc.getElementsByTag("arctitle").text());
-		content.setID( doc.getElementsByTag("ID").text());
-		content.setPubdate(doc.getElementsByTag("pubdate").text());
-		content.setTypeid(doc.getElementsByTag("typeid").text());
-		content.setMemberID(doc.getElementsByTag("memberID").text());
-		content.setUsername(doc.getElementsByTag("username").text());
-		content.setDescription(doc.getElementsByTag("description").text());
-		content.setVideo(doc.getElementsByTag("video").text());
-		content.setTypename( doc.getElementsByTag("typename").text());
-		content.setKeywords(doc.getElementsByTag("keywords").text());
-		content.setClick(doc.getElementsByTag("click").text());
-		content.setStow(doc.getElementsByTag("stow").text());
-		
-		return content;
-		
-	}
-
 }

@@ -5,12 +5,17 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import org.json.JSONObject;
 
 import tv.acfun.util.Parser;
+import tv.acfun.util.Util;
 
+import acfun.domain.AcfunContent;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -31,6 +36,12 @@ public class DetailActivity extends Activity {
 	private TextView reply_btn;
 	private TextView share_btn;
 	private String fromtxt;
+	private AcfunContent content;
+	private TextView up_txt;
+	private TextView time_txt;
+	private TextView hit_txt;
+	private TextView info_txt;
+	private TextView fov_txt;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -39,8 +50,14 @@ public class DetailActivity extends Activity {
 		
 		ArrayList<String> infos = getIntent().getStringArrayListExtra("info");
 		
-		return_btn = (Button) findViewById(R.id.detail_return_btn);
 		title = (TextView) findViewById(R.id.detail_title_text);
+		up_txt = (TextView) findViewById(R.id.detail_up);
+		time_txt = (TextView) findViewById(R.id.detail_time);
+		hit_txt = (TextView) findViewById(R.id.detail_hit);
+		info_txt = (TextView) findViewById(R.id.detail_info);
+		fov_txt = (TextView) findViewById(R.id.detail_fov);
+		
+		return_btn = (Button) findViewById(R.id.detail_return_btn);
 		fov_btn = (TextView) findViewById(R.id.detail_fov_btn);
 		down_btn = (TextView) findViewById(R.id.detail_downloads_btn);
 		reply_btn = (TextView) findViewById(R.id.detail_reply_btn);
@@ -52,8 +69,46 @@ public class DetailActivity extends Activity {
 		reply_btn.setOnClickListener(listener);
 		share_btn.setOnClickListener(listener);
 		
-		title.setText(infos.get(0));
 		fromtxt = infos.get(1);
+		InitViewData(infos.get(0));
+		
+	}
+	
+	
+	
+	public void InitViewData(final String id) {
+		new Thread(){
+			public void run(){		
+				try {
+					
+					content = Parser.getContent(id);
+					runOnUiThread(new Runnable() {
+						public void run() {
+							
+							title.setText(content.getArctitle());
+							up_txt.setText("投稿:"+content.getUsername());
+							Date date = new Date(Long.parseLong(content.getPubdate()));
+							 DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM,DateFormat.MEDIUM,Locale.CHINA);
+							  String dt = df.format(date);
+							time_txt.setText("时间:"+dt);
+							hit_txt.setText("点击:"+content.getClick());
+							info_txt.setText(content.getDescription());
+							fov_txt.setText("收藏:"+content.getStow());
+							
+						} 
+					});	
+					
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					runOnUiThread(new Runnable() {
+						public void run() {
+							
+						} 
+					});	
+					e.printStackTrace();
+				}
+			}	
+		}.start();
 	}
 	
 	private void startAnm(View v){
