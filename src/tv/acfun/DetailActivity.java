@@ -17,6 +17,7 @@ import tv.acfun.util.Util;
 
 import acfun.domain.AcfunContent;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
@@ -42,6 +43,7 @@ public class DetailActivity extends Activity {
 	private TextView hit_txt;
 	private TextView info_txt;
 	private TextView fov_txt;
+	private String vid;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -70,7 +72,8 @@ public class DetailActivity extends Activity {
 		share_btn.setOnClickListener(listener);
 		
 		fromtxt = infos.get(1);
-		InitViewData(infos.get(0));
+		vid = infos.get(0);
+		InitViewData(vid);
 		
 	}
 	
@@ -165,6 +168,12 @@ public class DetailActivity extends Activity {
 				
 				break;
 			case R.id.detail_share_btn:
+				String shareurl = "http://www.acfun.tv/v/ac"+vid;
+				Intent intent=new Intent(Intent.ACTION_SEND);  
+				intent.setType("text/plain");  
+				intent.putExtra(Intent.EXTRA_SUBJECT, "分享");  
+				intent.putExtra(Intent.EXTRA_TEXT, shareurl);  
+				startActivity(Intent.createChooser(intent, getTitle()));  
 				
 				break;
 			default:

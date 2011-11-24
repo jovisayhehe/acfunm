@@ -11,6 +11,7 @@
   android:layout_height="wrap_content"
   android:orientation="horizontal"
   android:id="@+id/search_set_menu"
+  android:background="#262626"
   android:visibility="gone"
   >
   <Spinner
