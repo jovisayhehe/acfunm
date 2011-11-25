@@ -8,6 +8,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 import org.json.JSONObject;
@@ -19,14 +20,20 @@ import acfun.domain.AcfunContent;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class DetailActivity extends Activity {
 	
@@ -44,6 +51,11 @@ public class DetailActivity extends Activity {
 	private TextView info_txt;
 	private TextView fov_txt;
 	private String vid;
+	private TableRow part_row;
+	private TableRow fpart_row;
+	private ArrayList<HashMap<String, String>> partlist;
+	private ArrayList<String> fpartlist;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -58,6 +70,9 @@ public class DetailActivity extends Activity {
 		hit_txt = (TextView) findViewById(R.id.detail_hit);
 		info_txt = (TextView) findViewById(R.id.detail_info);
 		fov_txt = (TextView) findViewById(R.id.detail_fov);
+		
+		part_row = (TableRow) findViewById(R.id.detail_part_row);
+		fpart_row = (TableRow) findViewById(R.id.detail_fpart_row);
 		
 		return_btn = (Button) findViewById(R.id.detail_return_btn);
 		fov_btn = (TextView) findViewById(R.id.detail_fov_btn);
@@ -85,7 +100,7 @@ public class DetailActivity extends Activity {
 				try {
 					
 					content = Parser.getContent(id);
-					
+					partlist = Parser.ParserAcId(id);
 					runOnUiThread(new Runnable() {
 						public void run() {
 							
@@ -98,6 +113,19 @@ public class DetailActivity extends Activity {
 							hit_txt.setText("点击:"+content.getClick());
 							info_txt.setText(content.getDescription());
 							fov_txt.setText("收藏:"+content.getStow());
+							for(int i=0;i<partlist.size();i++){
+								TextView tv = new TextView(DetailActivity.this);
+								TableRow.LayoutParams params = new TableRow.LayoutParams(56, 56);
+								params.setMargins(10, 4, 0, 4);
+								tv.setLayoutParams(params);
+								tv.setBackgroundColor(Color.GRAY);
+								tv.setGravity(Gravity.CENTER);
+								tv.setTextSize(20);
+								tv.setText(String.valueOf(i+1));
+								tv.setTag(partlist.get(i));
+								tv.setOnClickListener(new PartListener());
+								part_row.addView(tv);
+							}
 							
 						} 
 					});	
@@ -179,6 +207,68 @@ public class DetailActivity extends Activity {
 			default:
 				break;
 			}
+		}
+		
+	}
+	
+	private final class PartListener implements OnClickListener{
+
+		@Override
+		public void onClick(View arg0) {
+			// TODO Auto-generated method stub
+			final HashMap<String, String> map = (HashMap<String, String>) arg0.getTag();
+			new Thread(){
+				public void run(){		
+					try {
+						fpartlist = Parser.ParserVideopath(map.get("type"), map.get("id"));
+						runOnUiThread(new Runnable() {
+							public void run() {
+								fpart_row.removeAllViews();
+								for(int i=0;i<fpartlist.size();i++){
+									TextView tv = new TextView(DetailActivity.this);
+									TableRow.LayoutParams params = new TableRow.LayoutParams(56, 56);
+									params.setMargins(10, 4, 0, 4);
+									tv.setLayoutParams(params);
+									tv.setBackgroundColor(Color.BLACK);
+									tv.setGravity(Gravity.CENTER);
+									tv.setTextSize(20);
+									tv.setText(String.valueOf(i+1));
+									tv.setTag(fpartlist.get(i));
+									tv.setOnClickListener(new FPartListener());
+									fpart_row.addView(tv);
+								}
+								
+							} 
+						});	
+						
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						runOnUiThread(new Runnable() {
+							public void run() {
+								
+							} 
+						});	
+						e.printStackTrace();
+					}
+				}	
+			}.start();
+		}
+		
+	}
+	
+	private final class FPartListener implements OnClickListener{
+
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			String flvpath = (String) v.getTag();
+			Toast.makeText(DetailActivity.this, flvpath, 1).show();
+			//Test
+			String playlink = (String) v.getTag();
+			Intent it = new Intent(Intent.ACTION_VIEW);  
+	        Uri uri = Uri.parse(flvpath);  
+	        it.setDataAndType(uri , "video/flv");  
+	        startActivity(it);
 		}
 		
 	}
