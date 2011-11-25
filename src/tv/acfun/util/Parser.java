@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,35 +24,36 @@ import android.util.Log;
 
 public class Parser {
 	
-	public static String ParserAcId(String id) throws IOException{
+	public static ArrayList<HashMap<String, String>> ParserAcId(String id) throws IOException{
 		
 		Connection c = Jsoup.connect("http://www.acfun.tv/m/art.php?aid="+id);
 		Document doc = c.get();
 		Elements ems = doc.getElementsByTag("embed");
+		ArrayList<HashMap<String, String>> parts = new ArrayList<HashMap<String, String>>();
 		for(Element em:ems){
 			String fvars = em.attr("flashvars");
 			if(fvars!=null&&!fvars.equals("")&&fvars!=""){
-				System.out.println(fvars);
 				String[] attrs = fvars.split("\\&");
 				String type=attrs[0].split("\\=")[1];
-				
-				System.out.println(type);
-				
 				String id1 = attrs[1].split("\\=")[1];
-				System.out.println(id1);
+				HashMap<String, String> map = new HashMap<String, String>();
+				map.put("type", type);
+				map.put("id", id1);
+				parts.add(map);
 				
 			}else{
 				String attr = em.attr("src").split("\\?")[1];
 				String type=attr.split("\\&")[1].split("\\=")[1];
 				String id1 = attr.split("\\&")[0].split("\\=")[1];
-				System.out.println(attr);
-				System.out.println(type);
-				System.out.println(id1);
+				HashMap<String, String> map = new HashMap<String, String>();
+				map.put("type", type);
+				map.put("id", id1);
+				parts.add(map);
 			}
 			
 			}
 		
-		return id;
+		return parts;
 	}
 	
 	public static ArrayList<String> ParserVideopath(String type,String id) throws IOException{
