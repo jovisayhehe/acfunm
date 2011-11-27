@@ -64,10 +64,10 @@
 <TextView
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
-	android:text="下载"
+	android:text="收藏"
 	android:textColor="#FFFFFF"	
 	android:layout_weight="1.0"
-	android:drawableTop="@drawable/downloads"
+	android:drawableTop="@drawable/favorites_folder"
 	android:background="@drawable/bottom_bar_txt_bg"
 	android:gravity="center"
 	android:id="@+id/main_favorites_txt"

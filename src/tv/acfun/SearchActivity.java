@@ -151,7 +151,10 @@ public class SearchActivity extends Activity implements OnEditorActionListener{
 					int position, long id) {
 				// TODO Auto-generated method stub
 				String id1 = (String) view.getTag(view.getId());
-				Toast.makeText(SearchActivity.this, id1, 1).show();
+				ArrayList<String> infos = new ArrayList<String>();
+				infos.add(id1);
+				infos.add("channel");
+				((MainActivity)SearchActivity.this.getParent()).addActivity("detail", DetailActivity.class,infos);
 			}
 			
 		});

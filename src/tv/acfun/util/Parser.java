@@ -1,14 +1,20 @@
 package tv.acfun.util;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.http.HttpRequest;
+import org.apache.http.client.HttpClient;
+import org.apache.http.protocol.HttpRequestExecutor;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Connection;
@@ -122,11 +128,57 @@ public class Parser {
 		for(Element em:ems){
 			paths.add(em.attr("href"));
 		}
-		return paths;
+		for(String path: paths){
+			URL urlp = new URL(path);
+			URLConnection conn = urlp.openConnection();
+		    String patht = conn.getHeaderField("Location");	
+		}
+		ArrayList<String> rpaths = new ArrayList<String>();
+		for(String path:paths){
+			rpaths.add(getLocationJump(path, false, false));
+		}
+		return rpaths;
 	}
 	
 	
-	
+	/*感谢c大提供的方法-cALMER-flvshow -w-*/
+	public static String getLocationJump(String httpurl,String agent,boolean followRedirects){
+		String location=httpurl;
+		try{
+		 URL url = new URL(httpurl);
+		 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		 if(!followRedirects){
+			 conn.setInstanceFollowRedirects(false);
+			 conn.setFollowRedirects(false);
+		 }
+         
+		 conn.addRequestProperty("User-Agent", agent);
+     	 conn.setRequestProperty("User-Agent", agent);
+         location=conn.getHeaderField("Location");
+         if(location==null){
+        	 location=httpurl;
+         }
+        if(!location.equalsIgnoreCase(httpurl)){
+        	 location=getLocationJump(location,agent,followRedirects);
+        	 
+         }
+         }catch (FileNotFoundException e) {
+	            e.printStackTrace();
+	            
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	       return location;
+	}
+	 
+	/*感谢c大提供的方法-cALMER-flvshow*/
+	 public static String getLocationJump(String paramString, boolean paramBoolean1, boolean paramBoolean2)
+	  {
+	    String str = "Lavf52.106.0";
+	    if (!paramBoolean1)
+	      str = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/534.16 (KHTML, like Gecko) Chrome/10.0.648.151 Safari/534.16";
+	    return getLocationJump(paramString, str, paramBoolean2);
+	  }
 	
 	public static AcfunContent getContent(String id) throws IOException{
 		Connection c = Jsoup.connect("http://www.acfun.tv/api/?id="+id+"&type=xml&current=yes&charset=utf8");
@@ -231,6 +283,7 @@ public class Parser {
 		return System.currentTimeMillis() + "" + i1 + "" + i2;
 	}
 	
+	  
 	public static String readData(InputStream inSream, String charsetName) throws Exception{
 	    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 	    byte[] buffer = new byte[1024];

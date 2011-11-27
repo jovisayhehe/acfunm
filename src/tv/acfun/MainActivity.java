@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
@@ -70,6 +71,16 @@ public class MainActivity extends ActivityGroup {
     	more_txt.setOnClickListener(listener);
     }
     
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+	    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+	    	showDialog(88);
+	        return true;
+	    }
+
+	    return super.onKeyDown(keyCode, event);
+	}
     
     private final class ButtonListener implements OnClickListener{
 
@@ -91,9 +102,11 @@ public class MainActivity extends ActivityGroup {
 				break;
 			case R.id.main_favorites_txt:
 				setEnaled(download_txt);
+				
 				break;
 			case R.id.main_more_txt:
 				setEnaled(more_txt);
+				addActivity("search", MoreActivity.class,null);
 				break;
 			default:
 				break;
@@ -112,7 +125,7 @@ public class MainActivity extends ActivityGroup {
 			search_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.search, 0, 0);
 			search_txt.setEnabled(true);
 			
-			download_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.downloads, 0, 0);
+			download_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.favorites_folder, 0, 0);
 			download_txt.setEnabled(true);
 			
 			more_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.more, 0, 0);
@@ -126,7 +139,7 @@ public class MainActivity extends ActivityGroup {
 			search_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.search, 0, 0);
 			search_txt.setEnabled(true);
 			
-			download_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.downloads, 0, 0);
+			download_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.favorites_folder, 0, 0);
 			download_txt.setEnabled(true);
 			
 			more_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.more, 0, 0);
@@ -140,14 +153,14 @@ public class MainActivity extends ActivityGroup {
 			channel_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.channel, 0, 0);
 			channel_txt.setEnabled(true);
 			
-			download_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.downloads, 0, 0);
+			download_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.favorites_folder, 0, 0);
 			download_txt.setEnabled(true);
 			
 			more_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.more, 0, 0);
 			more_txt.setEnabled(true);
 			break;
 		case R.id.main_favorites_txt:
-			tview.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.downloads_l, 0, 0);
+			tview.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.favorites_folderl, 0, 0);
 			home_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.home, 0, 0);
 			home_txt.setEnabled(true);
 			
@@ -171,7 +184,7 @@ public class MainActivity extends ActivityGroup {
 			search_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.search, 0, 0);
 			search_txt.setEnabled(true);
 			
-			download_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.downloads, 0, 0);
+			download_txt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.favorites_folder, 0, 0);
 			download_txt.setEnabled(true);
 			break;
 		default:
@@ -199,18 +212,36 @@ public class MainActivity extends ActivityGroup {
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		// TODO Auto-generated method stub
-		ImageView img = new ImageView(MainActivity.this);
-		img.setImageResource(R.drawable.neterror);
-		return new AlertDialog.Builder(MainActivity.this)
-        .setTitle("喂！再怎么也要准备好网络在来吧！")
-        .setView(img)
-        .setPositiveButton("退出", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
+		if(id==998){
+			ImageView img = new ImageView(MainActivity.this);
+			img.setImageResource(R.drawable.neterror);
+			return new AlertDialog.Builder(MainActivity.this)
+					.setTitle("喂！再怎么也要准备好网络在来吧！").setView(img)
+					.setPositiveButton("退出", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int whichButton) {
 
-                finish();
-            }
-        })
-        .create();
+							finish();
+						}
+					}).create();
+		}else{
+			ImageView img = new ImageView(MainActivity.this);
+			img.setImageResource(R.drawable.neterror);
+			return new AlertDialog.Builder(MainActivity.this)
+					.setTitle("确认退出吗?").setView(img)
+					.setPositiveButton("退出", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int whichButton) {
+
+							finish();
+						}
+					}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int whichButton) {
+							dialog.dismiss();
+						
+						}
+					})
+					
+					.create();	
+		}
 	}
 	
 	

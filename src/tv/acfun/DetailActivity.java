@@ -24,6 +24,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
@@ -92,7 +93,7 @@ public class DetailActivity extends Activity {
 		
 	}
 	
-	
+
 	
 	public void InitViewData(final String id) {
 		new Thread(){
@@ -182,6 +183,8 @@ public class DetailActivity extends Activity {
 					((MainActivity)DetailActivity.this.getParent()).addActivity(fromtxt, ChannelActivity.class,null);
 				}else if(fromtxt.endsWith("home")){
 					((MainActivity)DetailActivity.this.getParent()).addActivity(fromtxt, HomeActivity.class,null);
+				}else if(fromtxt.endsWith("search")){
+					((MainActivity)DetailActivity.this.getParent()).addActivity(fromtxt, SearchActivity.class,null);
 				}
 				
 				break;
