@@ -153,7 +153,7 @@ public class SearchActivity extends Activity implements OnEditorActionListener{
 				String id1 = (String) view.getTag(view.getId());
 				ArrayList<String> infos = new ArrayList<String>();
 				infos.add(id1);
-				infos.add("channel");
+				infos.add("search");
 				((MainActivity)SearchActivity.this.getParent()).addActivity("detail", DetailActivity.class,infos);
 			}
 			

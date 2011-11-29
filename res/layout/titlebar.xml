@@ -2,7 +2,7 @@
 <FrameLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
  android:background="@drawable/titlebar_bg" 
- android:layout_width="fill_parent" 
+ android:layout_width="480px" 
  android:layout_height="wrap_content"
   >
     <TextView 

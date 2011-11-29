@@ -102,7 +102,7 @@ public class MainActivity extends ActivityGroup {
 				break;
 			case R.id.main_favorites_txt:
 				setEnaled(download_txt);
-				
+				addActivity("favorites", FavoritesActivity.class,null);
 				break;
 			case R.id.main_more_txt:
 				setEnaled(more_txt);

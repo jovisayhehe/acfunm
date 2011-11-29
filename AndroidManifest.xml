@@ -32,7 +32,6 @@
         <activity
         android:name=".FavoritesActivity"
         android:screenOrientation="portrait"
-        android:launchMode="singleTask"
         />
         <activity
         android:name=".MoreActivity"

@@ -85,7 +85,7 @@ public class HomeActivity extends Activity {
 						}else{
 							adaper.setData(data);
 							adaper.notifyDataSetInvalidated();
-							//homelistview.setSelection(0);
+							homelistview.setSelection(0);
 							ref_btn.clearAnimation();
 						}
 						} 

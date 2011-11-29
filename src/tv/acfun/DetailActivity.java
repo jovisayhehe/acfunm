@@ -13,6 +13,7 @@ import java.util.Locale;
 
 import org.json.JSONObject;
 
+import tv.acfun.db.DBService;
 import tv.acfun.util.Parser;
 import tv.acfun.util.Util;
 
@@ -86,7 +87,7 @@ public class DetailActivity extends Activity {
 		down_btn.setOnClickListener(listener);
 		reply_btn.setOnClickListener(listener);
 		share_btn.setOnClickListener(listener);
-		
+		fov_btn.setEnabled(false);
 		fromtxt = infos.get(1);
 		vid = infos.get(0);
 		InitViewData(vid);
@@ -104,7 +105,7 @@ public class DetailActivity extends Activity {
 					partlist = Parser.ParserAcId(id);
 					runOnUiThread(new Runnable() {
 						public void run() {
-							
+							fov_btn.setEnabled(true);
 							title.setText(content.getArctitle());
 							up_txt.setText("投稿:"+content.getUsername());
 							Date date = new Date(Long.parseLong(content.getPubdate()));
@@ -191,6 +192,8 @@ public class DetailActivity extends Activity {
 			case R.id.detail_fov_btn:
 				fov_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.detail_item_favorites_l, 0, 0, 0);
 				fov_btn.setEnabled(false);
+				new DBService(DetailActivity.this).addtoFov(vid, title.getText().toString(), String.valueOf(System.currentTimeMillis()));
+				Toast.makeText(DetailActivity.this, "收藏成功", 1).show();
 				break;
 			case R.id.detail_downloads_btn:
 				

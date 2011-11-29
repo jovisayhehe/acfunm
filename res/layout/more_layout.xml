@@ -1,6 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent">
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  android:orientation="vertical"
+  >
+  <include layout="@layout/titlebar" />
+  <Button
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:textColor="#FFFFFF"
+  android:textSize="35px"
+  android:paddingLeft="20px"
+  android:background="@drawable/more_item_bg"
+  android:text="观看历史"
+  />
+  <Button
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:text="设置"
+  android:textColor="#FFFFFF"
+  android:textSize="35px"
+  android:paddingLeft="20px"
+  android:background="@drawable/more_item_bg"
+  />
+  <Button
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:text="关于"
+  android:textColor="#FFFFFF"
+  android:textSize="35px"
+  android:paddingLeft="20px"
+  android:background="@drawable/more_item_bg"
+  />
 </LinearLayout>

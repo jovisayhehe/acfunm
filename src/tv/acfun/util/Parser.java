@@ -99,7 +99,7 @@ public class Parser {
 		return vurls[0];
 	}
 	public static ArrayList<String> ParserQQvideof(String vid) throws IOException{
-		String url = "vstore.qq.com/+"+vid+".flv";
+		String url = "http://web.qqvideo.tc.qq.com/" + vid + ".flv";
 		ArrayList<String> urls = new ArrayList<String>();
 		urls.add(url);
 		return urls;
