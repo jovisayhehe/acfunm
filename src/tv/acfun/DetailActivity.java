@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import org.json.JSONObject;
+import org.stagex.danmaku.activity.PlayerActivity;
 
 import tv.acfun.db.DBService;
 import tv.acfun.util.Parser;
@@ -269,12 +270,18 @@ public class DetailActivity extends Activity {
 			// TODO Auto-generated method stub
 			String flvpath = (String) v.getTag();
 			Toast.makeText(DetailActivity.this, flvpath, 1).show();
-			//Test
+//			//Test
+//			String playlink = (String) v.getTag();
+//			Intent it = new Intent(Intent.ACTION_VIEW);  
+//	        Uri uri = Uri.parse(flvpath);  
+//	        it.setDataAndType(uri , "video/flv");  
+//	        startActivity(it);
 			String playlink = (String) v.getTag();
-			Intent it = new Intent(Intent.ACTION_VIEW);  
-	        Uri uri = Uri.parse(flvpath);  
-	        it.setDataAndType(uri , "video/flv");  
-	        startActivity(it);
+			Uri uri = Uri.parse(flvpath);
+			Intent intent = new Intent(DetailActivity.this, PlayerActivity.class);
+			intent.setAction(Intent.ACTION_VIEW);
+			intent.setData(uri);
+			DetailActivity.this.startActivity(intent);
 		}
 		
 	}

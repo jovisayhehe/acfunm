@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <include layout="@layout/player_video" />
+
+    <include layout="@layout/player_control" />
+
+    <include layout="@layout/player_misc" />
+
+</FrameLayout>

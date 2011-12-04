@@ -46,6 +46,11 @@
         android:name=".WebViewActivity"
         android:screenOrientation="landscape"
         />
+        <activity
+        android:name="org.stagex.danmaku.activity.PlayerActivity"
+        android:screenOrientation="landscape"
+        android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+        />
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>

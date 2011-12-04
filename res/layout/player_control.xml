@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/player_control_bar"
+    android:orientation="vertical"
+    android:layout_gravity="bottom"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" 
+    android:visibility="invisible" >
+
+	<LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/player_text_position"
+            android:text="@string/nulltime"
+            android:gravity="center"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:layout_gravity="center" />
+
+		<SeekBar
+            android:id="@+id/player_seekbar_progress"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:layout_marginTop="4dip"
+            android:layout_marginBottom="4dip" />
+
+        <TextView
+            android:id="@+id/player_text_length"
+            android:text="@string/nulltime"
+            android:gravity="center"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:layout_gravity="center" />
+
+	</LinearLayout>
+
+	<LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+		<ImageButton
+            android:id="@+id/player_button_toggle_message"
+            android:background="@drawable/btn_message_0"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dip"
+            android:layout_marginTop="4dip"
+            android:layout_marginRight="8dip"
+            android:layout_marginBottom="4dip" />
+
+        <ImageButton
+            android:id="@+id/player_button_switch_audio"
+            android:visibility="gone"
+            android:background="@drawable/btn_switch_audio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dip"
+            android:layout_marginTop="4dip"
+            android:layout_marginRight="8dip"
+            android:layout_marginBottom="4dip" />
+
+        <ImageButton
+            android:id="@+id/player_button_switch_subtitle"
+            android:visibility="gone"
+            android:background="@drawable/btn_switch_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dip"
+            android:layout_marginTop="4dip"
+            android:layout_marginRight="8dip"
+            android:layout_marginBottom="4dip" />
+
+		<ImageButton
+            android:id="@+id/player_button_toggle_play"
+            android:background="@drawable/btn_play_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dip"
+            android:layout_marginTop="4dip"
+            android:layout_marginRight="8dip"
+            android:layout_marginBottom="4dip" />
+
+		<ImageButton
+            android:id="@+id/player_button_switch_aspect_ratio"
+            android:background="@drawable/btn_aspect_ratio_0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dip"
+            android:layout_marginTop="4dip"
+            android:layout_marginRight="8dip"
+            android:layout_marginBottom="4dip" />
+
+	</LinearLayout>
+
+</LinearLayout>
