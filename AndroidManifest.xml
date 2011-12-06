@@ -34,6 +34,10 @@
         android:screenOrientation="portrait"
         />
         <activity
+        android:name=".HistoryActivity"
+        android:screenOrientation="portrait"
+        />
+        <activity
         android:name=".MoreActivity"
         android:screenOrientation="portrait"
         android:launchMode="singleTask"
@@ -41,6 +45,7 @@
         <activity
         android:name=".DetailActivity"
         android:screenOrientation="portrait"
+        android:launchMode="singleTask"
         />
         <activity
         android:name=".WebViewActivity"

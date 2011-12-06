@@ -63,6 +63,7 @@ public class DetailActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		Util.fullScreennt(this);
 		setContentView(R.layout.detail_layout);
 		
 		ArrayList<String> infos = getIntent().getStringArrayListExtra("info");
@@ -91,6 +92,9 @@ public class DetailActivity extends Activity {
 		fov_btn.setEnabled(false);
 		fromtxt = infos.get(1);
 		vid = infos.get(0);
+		if(fromtxt!="history"&&!fromtxt.equals("history")){
+			new DBService(DetailActivity.this).addtoHis(vid, infos.get(2), String.valueOf(System.currentTimeMillis()));
+		}
 		InitViewData(vid);
 		
 	}
@@ -181,13 +185,14 @@ public class DetailActivity extends Activity {
 			// TODO Auto-generated method stub
 			switch (v.getId()) {
 			case R.id.detail_return_btn:
-				if(fromtxt.endsWith("channel")){
-					((MainActivity)DetailActivity.this.getParent()).addActivity(fromtxt, ChannelActivity.class,null);
-				}else if(fromtxt.endsWith("home")){
-					((MainActivity)DetailActivity.this.getParent()).addActivity(fromtxt, HomeActivity.class,null);
-				}else if(fromtxt.endsWith("search")){
-					((MainActivity)DetailActivity.this.getParent()).addActivity(fromtxt, SearchActivity.class,null);
-				}
+//				if(fromtxt.endsWith("channel")){
+//					((MainActivity)DetailActivity.this.getParent()).addActivity(fromtxt, ChannelActivity.class,null);
+//				}else if(fromtxt.endsWith("home")){
+//					((MainActivity)DetailActivity.this.getParent()).addActivity(fromtxt, HomeActivity.class,null);
+//				}else if(fromtxt.endsWith("search")){
+//					((MainActivity)DetailActivity.this.getParent()).addActivity(fromtxt, SearchActivity.class,null);
+//				}
+				DetailActivity.this.finish();
 				
 				break;
 			case R.id.detail_fov_btn:

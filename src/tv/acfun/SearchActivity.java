@@ -154,7 +154,9 @@ public class SearchActivity extends Activity implements OnEditorActionListener{
 				ArrayList<String> infos = new ArrayList<String>();
 				infos.add(id1);
 				infos.add("search");
-				((MainActivity)SearchActivity.this.getParent()).addActivity("detail", DetailActivity.class,infos);
+				Intent intent = new Intent(SearchActivity.this, DetailActivity.class);
+				intent.putStringArrayListExtra("info", infos);
+				SearchActivity.this.startActivity(intent);
 			}
 			
 		});

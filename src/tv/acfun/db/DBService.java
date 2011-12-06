@@ -31,8 +31,11 @@ public class DBService {
 		db.close();
 	}
 	
-	public void addtoHis(String id,String title){
-		
+	public void addtoHis(String id,String title,String time){
+		db.execSQL("INSERT INTO HISTORY(VIDEOID,TITLE,TIME)" +
+				"VALUES(?,?,?)", new Object[]{id,title
+				 ,time});
+		db.close();
 	}
 	
 	public void addtoSHis(String id,String title){
@@ -43,8 +46,9 @@ public class DBService {
 		
 	}
 	
-	public void cleanHis(String id,String title){
-		
+	public void cleanHis(){
+		db.execSQL("DELETE FROM HISTORY");
+		db.close();
 	}
 	
 	public void cleanSHis(String id,String title){
@@ -68,7 +72,19 @@ public class DBService {
 	}
 	
 	public ArrayList<HashMap<String, String>> getHiss(){
-		return null;
+		ArrayList<HashMap<String, String>> hiss = new ArrayList<HashMap<String, String>>();
+		Cursor cursor = db.rawQuery("SELECT * FROM HISTORY",null);
+		while(cursor.moveToNext()){
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("id", cursor.getString(cursor.getColumnIndex("VIDEOID")));
+		map.put("title", cursor.getString(cursor.getColumnIndex("TITLE")));
+		map.put("time", cursor.getString(cursor.getColumnIndex("TIME")));
+		hiss.add(map);
+		}
+		cursor.close();
+		db.close();
+
+		return hiss;
 		
 	}
 	public ArrayList<HashMap<String, String>> getSHiss(){

@@ -61,8 +61,10 @@ public class HomeActivity extends Activity {
 				ArrayList<String> infos = new ArrayList<String>();
 				infos.add(id);
 				infos.add("home");
-				((MainActivity)HomeActivity.this.getParent()).addActivity("detail", DetailActivity.class,infos);
-				
+				infos.add((String) data.get(arg2).get("title"));
+				Intent intent = new Intent(HomeActivity.this, DetailActivity.class);
+				intent.putStringArrayListExtra("info", infos);
+				HomeActivity.this.startActivity(intent);
 			}
 			
 		});

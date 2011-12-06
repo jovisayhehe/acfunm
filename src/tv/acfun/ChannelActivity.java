@@ -223,7 +223,12 @@ public class ChannelActivity extends Activity {
 				ArrayList<String> infos = new ArrayList<String>();
 				infos.add(id1);
 				infos.add("channel");
-				((MainActivity)ChannelActivity.this.getParent()).addActivity("detail", DetailActivity.class,infos);
+				TextView tv = (TextView) view.findViewById(R.id.channellist_content_item_title);
+				String ti  = tv.getText().toString();
+				infos.add(ti);
+				Intent intent = new Intent(ChannelActivity.this, DetailActivity.class);
+				intent.putStringArrayListExtra("info", infos);
+				ChannelActivity.this.startActivity(intent);
 			}
 			
 		});

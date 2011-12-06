@@ -4,7 +4,6 @@ import tv.acfun.util.Util;
 import android.app.Activity;
 import android.os.Bundle;
 import android.webkit.WebChromeClient;
-import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
 
 public class WebViewActivity extends Activity {
@@ -21,7 +20,7 @@ public class WebViewActivity extends Activity {
 		webview = (WebView) findViewById(R.id.webview);
 		webview.getSettings().setJavaScriptEnabled(true);     
 		webview.setWebChromeClient(new WebChromeClient());
-		webview.getSettings().setPluginState(PluginState.ON);
+		//webview.getSettings().setPluginState(PluginState.ON);
 		webview.loadUrl("http://www.acfun.tv/newflvplayer/playert.swf");
 	}
 

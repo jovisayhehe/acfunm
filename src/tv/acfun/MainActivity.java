@@ -50,8 +50,8 @@ public class MainActivity extends ActivityGroup {
              setEnaled(home_txt);
         }
     }
-    
-    public void InitView(){
+
+	public void InitView(){
     	view = (LinearLayout) findViewById(R.id.contentbody);
     	home_txt = (TextView) findViewById(R.id.main_home_txt);
     	channel_txt = (TextView) findViewById(R.id.main_channel_txt);
@@ -80,6 +80,17 @@ public class MainActivity extends ActivityGroup {
 	    }
 
 	    return super.onKeyDown(keyCode, event);
+	}
+	
+    
+    @Override
+	public boolean dispatchKeyEvent(KeyEvent event) {
+		// TODO Auto-generated method stub
+	    if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+	    	showDialog(88);
+	        return true;
+	    }
+		return super.dispatchKeyEvent(event);
 	}
     
     private final class ButtonListener implements OnClickListener{
