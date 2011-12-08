@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <FrameLayout
+ android:layout_width="fill_parent" 
+ android:layout_height="wrap_content"
+ android:orientation="horizontal" 
+ android:background="@drawable/titlebar_bg"
+ android:id="@+id/detail_top"
+  >
+     <Button 
+     android:background="@drawable/button_return_bg"
+     android:id="@+id/set_return_btn"
+     android:text="返回"
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content"
+     android:textColor="#FFFFFF" 
+     android:layout_gravity="left" 
+     android:layout_marginLeft="10dip"
+      />
+     
+    <TextView 
+    android:textSize="18.0sp" 
+    android:textColor="#FFFFFF"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:text="设置"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    />
+</FrameLayout>
+<RadioGroup 
+ android:layout_width="fill_parent"
+ android:layout_height="wrap_content"
+ android:id="@+id/set_radio_g"
+>
+        <RadioButton
+      android:id="@+id/set_radio_dif"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:checked="true"
+      android:text="默认播放器"
+    	/>
+      <RadioButton
+      android:id="@+id/set_radio_flash"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="flash播放器"
+    	/>
+      <RadioButton
+      android:id="@+id/set_radio_ex"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="外部播放器"
+    	/>
+</RadioGroup>
+</LinearLayout>

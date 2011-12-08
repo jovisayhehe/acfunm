@@ -8,6 +8,8 @@ import tv.acfun.util.GetLinkandTitle;
 import acfun.domain.SearchResults;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -38,9 +40,12 @@ public class SearchActivity extends Activity implements OnEditorActionListener{
 	private SearchListViewAdaper adapter;
 	private ArrayList<SearchResults> data;
 	private Animation localAnimation;
+	private Animation imgAnimation;
 	private LinearLayout setline;
-	private Animation mShowAction = null;   
-    private Animation mHiddenAction = null;
+    private ImageView imgprogress;
+    private int totalpage;
+    private int indexpage=1;
+    private String word;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,25 +53,20 @@ public class SearchActivity extends Activity implements OnEditorActionListener{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.search_layout);
 		
-		
-		mShowAction = new TranslateAnimation(Animation.ZORDER_BOTTOM, 0.0f,   
-                Animation.ZORDER_BOTTOM, 0.0f, Animation.ZORDER_BOTTOM,   
-                0.0f, Animation.ZORDER_BOTTOM, 0.0f);   
-        mShowAction.setDuration(500);   
-        mHiddenAction = new TranslateAnimation(Animation.ZORDER_BOTTOM,   
-                0.0f, Animation.ZORDER_BOTTOM, 0.0f,   
-                Animation.ZORDER_BOTTOM, 0.0f, Animation.ZORDER_BOTTOM,   
-                0.0f);   
-        mHiddenAction.setDuration(500);   
-		
 		search_text = (EditText) findViewById(R.id.search_text);
 		clear_btn = (ImageView) findViewById(R.id.clear_search);
 		search_btn = (Button) findViewById(R.id.search_button);
 		searchset_btn = (Button) findViewById(R.id.searchset_button);
 		setline = (LinearLayout) findViewById(R.id.search_set_menu);
 		localAnimation = AnimationUtils.loadAnimation(this, R.anim.title_press);
+		imgAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh_drawable_default);
 		search_list = (ListView) findViewById(R.id.searchlistviw);
 		search_list.setCacheColorHint(0);
+		imgprogress = new ImageView(this);
+		Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.manman);
+		imgprogress.setImageBitmap(bitmap);
+		imgprogress.setVisibility(View.GONE);
+		search_list.addFooterView(imgprogress);
 		data = new ArrayList<SearchResults>();
 		adapter = new SearchListViewAdaper(this, data);
 		search_list.setAdapter(adapter);
@@ -134,11 +134,31 @@ public class SearchActivity extends Activity implements OnEditorActionListener{
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				if(setline.getVisibility()==View.GONE){
-					setline.startAnimation(mShowAction);   
 					setline.setVisibility(View.VISIBLE);
 				}else if(setline.getVisibility()==View.VISIBLE){
-					setline.startAnimation(mHiddenAction);   
 					setline.setVisibility(View.GONE);
+				}
+				
+			}
+		});
+		
+		imgprogress.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				imgprogress.setEnabled(false);
+				imgprogress.startAnimation(imgAnimation);
+				indexpage+=1;
+				if(indexpage>totalpage){
+					imgprogress.clearAnimation();
+					imgprogress.setVisibility(View.GONE);
+				}else if(indexpage==totalpage){
+					addtolist(indexpage);
+					imgprogress.clearAnimation();
+					imgprogress.setVisibility(View.GONE);
+				}else{
+					addtolist(indexpage);
 				}
 				
 			}
@@ -154,6 +174,9 @@ public class SearchActivity extends Activity implements OnEditorActionListener{
 				ArrayList<String> infos = new ArrayList<String>();
 				infos.add(id1);
 				infos.add("search");
+				TextView tv = (TextView) view.findViewById(R.id.seach_list_item_title);
+				String ti  = tv.getText().toString();
+				infos.add(ti);
 				Intent intent = new Intent(SearchActivity.this, DetailActivity.class);
 				intent.putStringArrayListExtra("info", infos);
 				SearchActivity.this.startActivity(intent);
@@ -178,11 +201,15 @@ public class SearchActivity extends Activity implements OnEditorActionListener{
 	
 	private void InitList(final String word){
 		search_btn.startAnimation(localAnimation);
+		this.word = word;
+		data.clear();
 		final GetLinkandTitle linkandTitle = new GetLinkandTitle();
 		new Thread(){
 			public void run(){
 				try {
-					data = linkandTitle.GetSearchResults(word, "088d7595-3b27-46c6-a7c5-0cb1bb5dbcff", "-1", 0);
+					ArrayList<Object> rsandtotal = linkandTitle.GetSearchResults(word, "088d7595-3b27-46c6-a7c5-0cb1bb5dbcff", "-1", 1);
+					data = (ArrayList<SearchResults>) rsandtotal.get(0);
+					totalpage = (Integer) rsandtotal.get(1);
 					search_btn.clearAnimation();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -202,14 +229,54 @@ public class SearchActivity extends Activity implements OnEditorActionListener{
 					@Override
 					public void run() {
 						// TODO Auto-generated method stub
+						if(totalpage>1){
+							imgprogress.setVisibility(View.VISIBLE);
+						}
 						adapter.setData(data);
 						adapter.notifyDataSetInvalidated();
+						Toast.makeText(SearchActivity.this, String.valueOf(totalpage), 1).show();
 					}
 				});
 			}
 		}.start();
 		
 	}
+	
+	 private void addtolist(final int page){
+		 final GetLinkandTitle linkandTitle = new GetLinkandTitle();
+		 new Thread(){
+			 public void run(){
+				 try {
+						ArrayList<Object> rsandtotal = linkandTitle.GetSearchResults(word, "088d7595-3b27-46c6-a7c5-0cb1bb5dbcff", "-1", page);
+						data.addAll((ArrayList<SearchResults>) rsandtotal.get(0));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					runOnUiThread(new Runnable() {
+						
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							imgprogress.clearAnimation();
+							imgprogress.setEnabled(true);
+							Toast.makeText(SearchActivity.this, "网络连接超时..", 1).show();
+						}
+					});
+					e.printStackTrace();
+				}
+				 runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						adapter.setData(data);
+						adapter.notifyDataSetChanged();
+						imgprogress.clearAnimation();
+						imgprogress.setEnabled(true);
+					}
+				});
+			 }
+		 }.start();
+	 }
 	
 	
 	

@@ -187,7 +187,7 @@ public class Parser {
 		content.setArctitle(doc.getElementsByTag("arctitle").text());
 		//content.setID( doc.getElementsByTag("ID").text());
 		content.setPubdate(doc.getElementsByTag("pubdate").text());
-		//content.setTypeid(doc.getElementsByTag("typeid").text());
+		content.setTypeid(doc.getElementsByTag("typeid").text());
 		//content.setMemberID(doc.getElementsByTag("memberID").text());
 		content.setUsername(doc.getElementsByTag("username").text());
 		content.setDescription(doc.getElementsByTag("description").text());

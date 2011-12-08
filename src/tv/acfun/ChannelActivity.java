@@ -259,37 +259,30 @@ public class ChannelActivity extends Activity {
 		public ChannelListViewAdaper(Context context) {
 			this.mInflater =LayoutInflater.from(context);
 			HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("img", R.drawable.art);
 			map.put("txt", "文  章");
 			titledata.add(map);
 			
 			HashMap<String, Object> map1 = new HashMap<String, Object>();
-			map1.put("img", R.drawable.fun);
 			map1.put("txt", "娱  乐");
 			titledata.add(map1);
 			
 			HashMap<String, Object> map2 = new HashMap<String, Object>();
-			map2.put("img", R.drawable.movie);
 			map2.put("txt", "短  影");
 			titledata.add(map2);
 			
 			HashMap<String, Object> map3 = new HashMap<String, Object>();
-			map3.put("img", R.drawable.an);
 			map3.put("txt", "动  画");
 			titledata.add(map3);
 			
 			HashMap<String, Object> map4 = new HashMap<String, Object>();
-			map4.put("img", R.drawable.music);
 			map4.put("txt", "音  乐");
 			titledata.add(map4);
 			
 			HashMap<String, Object> map5 = new HashMap<String, Object>();
-			map5.put("img", R.drawable.game);
 			map5.put("txt", "游  戏");
 			titledata.add(map5);
 			
 			HashMap<String, Object> map6 = new HashMap<String, Object>();
-			map6.put("img", R.drawable.fanju);
 			map6.put("txt", "番  剧");
 			titledata.add(map6);
 		}
@@ -315,9 +308,7 @@ public class ChannelActivity extends Activity {
 		public View getView(int arg0, View convertView, ViewGroup arg2) {
 			// TODO Auto-generated method stub
 				convertView = mInflater.inflate(R.layout.channellist_item, null);
-				ImageView imgview = (ImageView) convertView.findViewById(R.id.channelist_item_img);
 				TextView textView = (TextView) convertView.findViewById(R.id.channelist_item_txt);
-				imgview.setBackgroundResource((Integer) titledata.get(arg0).get("img"));
 				textView.setText((String) titledata.get(arg0).get("txt"));
 				return convertView;
 		}

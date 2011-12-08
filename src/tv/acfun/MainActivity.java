@@ -11,6 +11,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -34,7 +35,7 @@ public class MainActivity extends ActivityGroup {
 	private TextView download_txt;
 	private TextView more_txt;
 	private LinearLayout view = null;
-	
+	public static int playcode;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,6 +70,9 @@ public class MainActivity extends ActivityGroup {
     	search_txt.setOnClickListener(listener);
     	download_txt.setOnClickListener(listener);
     	more_txt.setOnClickListener(listener);
+    	SharedPreferences sharedPreferences = getSharedPreferences(  
+                "config", Activity.MODE_PRIVATE);
+    	playcode = sharedPreferences.getInt("playcode", 0);
     }
     
 	@Override

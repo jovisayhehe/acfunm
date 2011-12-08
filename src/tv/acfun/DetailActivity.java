@@ -58,6 +58,7 @@ public class DetailActivity extends Activity {
 	private TableRow fpart_row;
 	private ArrayList<HashMap<String, String>> partlist;
 	private ArrayList<String> fpartlist;
+	private int typeid;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +112,7 @@ public class DetailActivity extends Activity {
 					runOnUiThread(new Runnable() {
 						public void run() {
 							fov_btn.setEnabled(true);
+							typeid =Integer.parseInt(content.getTypeid());
 							title.setText(content.getArctitle());
 							up_txt.setText("投稿:"+content.getUsername());
 							Date date = new Date(Long.parseLong(content.getPubdate()));
@@ -120,19 +122,34 @@ public class DetailActivity extends Activity {
 							hit_txt.setText("点击:"+content.getClick());
 							info_txt.setText(content.getDescription());
 							fov_txt.setText("收藏:"+content.getStow());
-							for(int i=0;i<partlist.size();i++){
+							if(typeid!=13){
+								for(int i=0;i<partlist.size();i++){
+									TextView tv = new TextView(DetailActivity.this);
+									TableRow.LayoutParams params = new TableRow.LayoutParams(56, 56);
+									params.setMargins(10, 4, 0, 4);
+									tv.setLayoutParams(params);
+									tv.setBackgroundColor(Color.GRAY);
+									tv.setGravity(Gravity.CENTER);
+									tv.setTextSize(20);
+									tv.setText(String.valueOf(i+1));
+									tv.setTag(partlist.get(i));
+									tv.setOnClickListener(new PartListener());
+									part_row.addView(tv);
+								}
+							}else{
 								TextView tv = new TextView(DetailActivity.this);
-								TableRow.LayoutParams params = new TableRow.LayoutParams(56, 56);
+								TableRow.LayoutParams params = new TableRow.LayoutParams(200, 56);
 								params.setMargins(10, 4, 0, 4);
 								tv.setLayoutParams(params);
 								tv.setBackgroundColor(Color.GRAY);
 								tv.setGravity(Gravity.CENTER);
 								tv.setTextSize(20);
-								tv.setText(String.valueOf(i+1));
-								tv.setTag(partlist.get(i));
+								tv.setText("查看文章");
+								tv.setTag(id);
 								tv.setOnClickListener(new PartListener());
 								part_row.addView(tv);
 							}
+							
 							
 						} 
 					});	
@@ -208,7 +225,7 @@ public class DetailActivity extends Activity {
 				
 				break;
 			case R.id.detail_share_btn:
-				String shareurl = "http://www.acfun.tv/v/ac"+vid;
+				String shareurl =title.getText().toString()+"http://www.acfun.tv/v/ac"+vid+"/"+"[acfun android]";
 				Intent intent=new Intent(Intent.ACTION_SEND);  
 				intent.setType("text/plain");  
 				intent.putExtra(Intent.EXTRA_SUBJECT, "分享");  
@@ -228,42 +245,51 @@ public class DetailActivity extends Activity {
 		@Override
 		public void onClick(View arg0) {
 			// TODO Auto-generated method stub
-			final HashMap<String, String> map = (HashMap<String, String>) arg0.getTag();
-			new Thread(){
-				public void run(){		
-					try {
-						fpartlist = Parser.ParserVideopath(map.get("type"), map.get("id"));
-						runOnUiThread(new Runnable() {
-							public void run() {
-								fpart_row.removeAllViews();
-								for(int i=0;i<fpartlist.size();i++){
-									TextView tv = new TextView(DetailActivity.this);
-									TableRow.LayoutParams params = new TableRow.LayoutParams(56, 56);
-									params.setMargins(10, 4, 0, 4);
-									tv.setLayoutParams(params);
-									tv.setBackgroundColor(Color.BLACK);
-									tv.setGravity(Gravity.CENTER);
-									tv.setTextSize(20);
-									tv.setText(String.valueOf(i+1));
-									tv.setTag(fpartlist.get(i));
-									tv.setOnClickListener(new FPartListener());
-									fpart_row.addView(tv);
-								}
-								
-							} 
-						});	
-						
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						runOnUiThread(new Runnable() {
-							public void run() {
-								
-							} 
-						});	
-						e.printStackTrace();
-					}
-				}	
-			}.start();
+			if(typeid==13){
+				String id = (String) arg0.getTag();
+				String ur = "http://www.acfun.tv/m/art.php?aid="+id;
+				Uri uri =Uri.parse(ur); 
+				Intent it = new Intent(Intent.ACTION_VIEW,uri); 
+				startActivity(it);
+			}else{
+				final HashMap<String, String> map = (HashMap<String, String>) arg0.getTag();
+				new Thread(){
+					public void run(){		
+						try {
+							fpartlist = Parser.ParserVideopath(map.get("type"), map.get("id"));
+							runOnUiThread(new Runnable() {
+								public void run() {
+									fpart_row.removeAllViews();
+									for(int i=0;i<fpartlist.size();i++){
+										TextView tv = new TextView(DetailActivity.this);
+										TableRow.LayoutParams params = new TableRow.LayoutParams(56, 56);
+										params.setMargins(10, 4, 0, 4);
+										tv.setLayoutParams(params);
+										tv.setBackgroundColor(Color.BLACK);
+										tv.setGravity(Gravity.CENTER);
+										tv.setTextSize(20);
+										tv.setText(String.valueOf(i+1));
+										tv.setTag(fpartlist.get(i));
+										tv.setOnClickListener(new FPartListener());
+										fpart_row.addView(tv);
+									}
+									
+								} 
+							});	
+							
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							runOnUiThread(new Runnable() {
+								public void run() {
+									
+								} 
+							});	
+							e.printStackTrace();
+						}
+					}	
+				}.start();
+			}
+
 		}
 		
 	}
@@ -281,7 +307,7 @@ public class DetailActivity extends Activity {
 //	        Uri uri = Uri.parse(flvpath);  
 //	        it.setDataAndType(uri , "video/flv");  
 //	        startActivity(it);
-			String playlink = (String) v.getTag();
+		//	String playlink = (String) v.getTag();
 			Uri uri = Uri.parse(flvpath);
 			Intent intent = new Intent(DetailActivity.this, PlayerActivity.class);
 			intent.setAction(Intent.ACTION_VIEW);

@@ -38,7 +38,8 @@ public class MoreActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				
+				Intent intent = new Intent(MoreActivity.this, SetActivity.class);
+				startActivity(intent);
 			}
 		});
 		
@@ -47,7 +48,8 @@ public class MoreActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				
+				Intent intent = new Intent(MoreActivity.this, AboutActivity.class);
+				startActivity(intent);
 			}
 		});
 	}

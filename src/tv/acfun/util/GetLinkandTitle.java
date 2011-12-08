@@ -438,11 +438,11 @@ public Map<String,Object> getPage(String address) throws IOException{
 		return sb.toString();
 	}
 	
-	public ArrayList<SearchResults> GetSearchResults(String word,String sort,String group,int page) throws IOException{
+	public ArrayList<Object> GetSearchResults(String word,String sort,String group,int page) throws IOException{
 		
 		byte[] utf8 = word.getBytes("UTF8");
-		Connection c = Jsoup.connect("http://search.acfun.tv/Search.aspx?q="+binaryToString(utf8)+"&order="+sort+"&group="+group);
-	
+		Connection c = Jsoup.connect("http://search.acfun.tv/Search.aspx?"+"page="+String.valueOf(page)+"&q="+binaryToString(utf8)+"&order="+sort+"&group="+group);
+			ArrayList<Object> rsandtotalpage = new ArrayList<Object>();
 			ArrayList<SearchResults> results = new ArrayList<SearchResults>();
 			Document doc = c.get();
 			Elements ems = doc.getElementsByAttributeValue("class", "leftA");
@@ -464,7 +464,21 @@ public Map<String,Object> getPage(String address) throws IOException{
 				
 				results.add(result);
 			}
-			return results;
+			rsandtotalpage.add(results);
+			Elements pageems = doc.getElementsByAttributeValue("id", "index");
+			if(pageems!=null&&pageems.size()>0){
+				Elements aems = pageems.first().getElementsByTag("a");
+				if(aems!=null&&aems.size()>0){
+					Integer totalpage = Integer.parseInt(aems.last().text());
+					rsandtotalpage.add(totalpage);
+				}else{
+					rsandtotalpage.add(0);
+				}
+			}else{
+				rsandtotalpage.add(0);
+			}
+			
+			return rsandtotalpage;
 	}
 	
 }

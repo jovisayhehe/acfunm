@@ -6,19 +6,12 @@
   android:layout_height="fill_parent"
   android:background="@drawable/channel_content_item_bg_ck"
   >
-  
-  <ImageView
-  android:layout_width="wrap_content"
-  android:layout_height="wrap_content"
-  android:id="@+id/channelist_item_img"
-  />
-	
 	<TextView 
-	android:layout_width="wrap_content"
+	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:id="@+id/channelist_item_txt"
 	android:textColor="#FFFFFF"
 	android:textSize="35sp"
-	android:layout_marginLeft="70dip"
+	android:gravity="center"
 	/>
 </LinearLayout>

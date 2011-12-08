@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build.VERSION;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -43,5 +44,10 @@ public class Util {
 	public static void backScreen(Activity act){
 		
 		act.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+	}
+	
+	public static boolean isSmallertfroyo(){
+		
+		return Integer.parseInt(VERSION.SDK)<8;  
 	}
 }
