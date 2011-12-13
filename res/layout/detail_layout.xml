@@ -92,12 +92,35 @@ android:text="信息"
 android:id="@+id/detail_info"
 />
 </ScrollView>
-	
+	<LinearLayout
+    android:gravity="center_vertical|center_horizontal"
+    android:orientation="horizontal"
+    android:id="@+id/detail_loading"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/detail_scro_info"
+    >
+    <ProgressBar
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/progressBarStyleSmall"
+        >
+    </ProgressBar>
+    <TextView
+        android:id="@+id/current_action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5.0dip"
+        android:text="loading"
+        >
+    </TextView>
+</LinearLayout>
      <LinearLayout 
     android:layout_width="fill_parent"
     android:layout_height="64px"
     android:orientation="horizontal"
-    android:layout_below="@id/detail_scro_info"
+    android:layout_below="@id/detail_loading"
     android:background="#4B4B4B"
     android:id="@+id/detail_part_line"
     >	
@@ -154,6 +177,7 @@ android:id="@+id/detail_info"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:layout_marginTop="10px"
+	android:id="@+id/detail_item_line"
 >
 	<TextView
     android:layout_width="wrap_content"
@@ -179,6 +203,7 @@ android:id="@+id/detail_info"
     android:layout_weight="1.0"
     android:layout_marginLeft="10px"
     android:gravity="center_vertical"
+    android:visibility="gone"
     />
 	
 	<TextView

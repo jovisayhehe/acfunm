@@ -25,6 +25,7 @@ import org.jsoup.select.Elements;
 
 import acfun.domain.AcfunContent;
 import android.util.Log;
+import android.widget.Toast;
 
 
 
@@ -36,29 +37,47 @@ public class Parser {
 		Document doc = c.get();
 		Elements ems = doc.getElementsByTag("embed");
 		ArrayList<HashMap<String, String>> parts = new ArrayList<HashMap<String, String>>();
-		for(Element em:ems){
-			String fvars = em.attr("flashvars");
-			if(fvars!=null&&!fvars.equals("")&&fvars!=""){
-				String[] attrs = fvars.split("\\&");
-				String type=attrs[0].split("\\=")[1];
-				String id1 = attrs[1].split("\\=")[1];
-				HashMap<String, String> map = new HashMap<String, String>();
-				map.put("type", type);
-				map.put("id", id1);
-				parts.add(map);
-				
-			}else{
-				String attr = em.attr("src").split("\\?")[1];
-				String type=attr.split("\\&")[1].split("\\=")[1];
-				String id1 = attr.split("\\&")[0].split("\\=")[1];
-				HashMap<String, String> map = new HashMap<String, String>();
-				map.put("type", type);
-				map.put("id", id1);
-				parts.add(map);
-			}
+		if(ems.size()==0){
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put("type", "");
+			map.put("id", "");
 			
-			}
-		
+			parts.add(map);
+		}else{
+			for(Element em:ems){
+				String fvars = em.attr("flashvars");
+				if(fvars!=null&&!fvars.equals("")&&fvars!=""){
+					String[] attrs = fvars.split("\\&");
+					String type=attrs[0].split("\\=")[1];
+					String id1 = attrs[1].split("\\=")[1];
+					HashMap<String, String> map = new HashMap<String, String>();
+					map.put("type", type);
+					map.put("id", id1);
+					map.put("vars", fvars);
+					parts.add(map);
+					
+				}else{
+					if(em.attr("src").split("\\?").length>1){
+						String attr = em.attr("src").split("\\?")[1];
+						String type=attr.split("\\&")[1].split("\\=")[1];
+						String id1 = attr.split("\\&")[0].split("\\=")[1];
+						HashMap<String, String> map = new HashMap<String, String>();
+						map.put("type", type);
+						map.put("id", id1);
+						map.put("vars", attr);
+						parts.add(map);
+					}else{
+						String attr = em.attr("src");
+						HashMap<String, String> map = new HashMap<String, String>();
+						map.put("type", "game");
+						map.put("id", attr);
+						
+						parts.add(map);
+					}
+				}
+				
+				}
+		}
 		return parts;
 	}
 	
@@ -187,7 +206,11 @@ public class Parser {
 		content.setArctitle(doc.getElementsByTag("arctitle").text());
 		//content.setID( doc.getElementsByTag("ID").text());
 		content.setPubdate(doc.getElementsByTag("pubdate").text());
-		content.setTypeid(doc.getElementsByTag("typeid").text());
+		if(doc.getElementsByTag("typeid").size()!=0){
+			content.setTypeid(doc.getElementsByTag("typeid").text());
+		}else{
+			content.setTypeid("0");
+		}
 		//content.setMemberID(doc.getElementsByTag("memberID").text());
 		content.setUsername(doc.getElementsByTag("username").text());
 		content.setDescription(doc.getElementsByTag("description").text());

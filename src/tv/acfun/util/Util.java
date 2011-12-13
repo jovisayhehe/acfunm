@@ -48,6 +48,6 @@ public class Util {
 	
 	public static boolean isSmallertfroyo(){
 		
-		return Integer.parseInt(VERSION.SDK)<8;  
+		return VERSION.SDK_INT<8;  
 	}
 }

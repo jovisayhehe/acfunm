@@ -3,12 +3,15 @@ package tv.acfun;
 import tv.acfun.util.Util;
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
 
 public class WebViewActivity extends Activity {
 	
 	private WebView webview;
+	private String path;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -16,12 +19,12 @@ public class WebViewActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		Util.fullScreent(this);
 		setContentView(R.layout.webview_layout);
-		
+		path = getIntent().getStringExtra("path");
 		webview = (WebView) findViewById(R.id.webview);
 		webview.getSettings().setJavaScriptEnabled(true);     
 		webview.setWebChromeClient(new WebChromeClient());
-		//webview.getSettings().setPluginState(PluginState.ON);
-		webview.loadUrl("http://www.acfun.tv/newflvplayer/playert.swf");
+		webview.getSettings().setPluginState(PluginState.ON);
+		webview.loadUrl(path);
 	}
 
 	@Override

@@ -5,7 +5,23 @@
   android:layout_height="fill_parent"
   android:orientation="vertical"
   >
-  <include layout="@layout/titlebar" />
+       <FrameLayout
+ android:layout_width="fill_parent" 
+ android:layout_height="wrap_content"
+ android:orientation="horizontal" 
+ android:background="@drawable/titlebar_bg"
+ android:id="@+id/detail_top"
+  >
+    <TextView 
+    android:textSize="18.0sp" 
+    android:textColor="#FFFFFF"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:id="@+id/title_text" 
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    />
+</FrameLayout>
   
   <ListView
   android:layout_width="fill_parent"

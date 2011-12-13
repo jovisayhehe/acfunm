@@ -207,7 +207,7 @@ public class SearchActivity extends Activity implements OnEditorActionListener{
 		new Thread(){
 			public void run(){
 				try {
-					ArrayList<Object> rsandtotal = linkandTitle.GetSearchResults(word, "088d7595-3b27-46c6-a7c5-0cb1bb5dbcff", "-1", 1);
+					ArrayList<Object> rsandtotal = linkandTitle.GetSearchResults(word, "b597c70a-68d7-46de-bd39-81a2bd035fc3", "-1", 1);
 					data = (ArrayList<SearchResults>) rsandtotal.get(0);
 					totalpage = (Integer) rsandtotal.get(1);
 					search_btn.clearAnimation();

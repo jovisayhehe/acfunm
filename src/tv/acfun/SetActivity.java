@@ -32,6 +32,9 @@ public class SetActivity extends Activity {
 		radioe = (RadioButton) this.findViewById(R.id.set_radio_ex);
 		radiof = (RadioButton) this.findViewById(R.id.set_radio_flash);
 		
+		if(Util.isSmallertfroyo()){
+			radiof.setVisibility(View.GONE);
+		}
 		switch (MainActivity.playcode) {
 		case 0:
 			radiod.setChecked(true);

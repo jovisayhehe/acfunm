@@ -31,6 +31,14 @@ public class DBService {
 		db.close();
 	}
 	
+	public boolean isFoved(String id){
+		Cursor cursor = db.rawQuery("SELECT VIDEOID FROM FAVORITES WHERE VIDEOID = ?",new String[]{id});
+		boolean isexist = cursor.moveToFirst();
+		cursor.close();
+		db.close();
+		return isexist ;
+	}
+	
 	public void addtoHis(String id,String title,String time){
 		db.execSQL("INSERT INTO HISTORY(VIDEOID,TITLE,TIME)" +
 				"VALUES(?,?,?)", new Object[]{id,title
@@ -38,8 +46,10 @@ public class DBService {
 		db.close();
 	}
 	
-	public void addtoSHis(String id,String title){
-		
+	public void addtoSHis(String title){
+		db.execSQL("INSERT INTO SEARCHHISTORY(TITLE)" +
+				"VALUES(?,?,?)", new Object[]{title});
+		db.close();
 	}
 	
 	public void deltoSFov(String id){
@@ -52,12 +62,13 @@ public class DBService {
 	}
 	
 	public void cleanSHis(String id,String title){
-		
+		db.execSQL("DELETE FROM SEARCHHISTORY");
+		db.close();
 	}
 	
 	public ArrayList<HashMap<String, String>> getFovs(){
 		ArrayList<HashMap<String, String>> fovs = new ArrayList<HashMap<String, String>>();
-		Cursor cursor = db.rawQuery("SELECT * FROM FAVORITES",null);
+		Cursor cursor = db.rawQuery("SELECT * FROM FAVORITES ORDER BY _ID DESC",null);
 		while(cursor.moveToNext()){
 		HashMap<String, String> map = new HashMap<String, String>();
 		map.put("id", cursor.getString(cursor.getColumnIndex("VIDEOID")));
@@ -73,7 +84,7 @@ public class DBService {
 	
 	public ArrayList<HashMap<String, String>> getHiss(){
 		ArrayList<HashMap<String, String>> hiss = new ArrayList<HashMap<String, String>>();
-		Cursor cursor = db.rawQuery("SELECT * FROM HISTORY",null);
+		Cursor cursor = db.rawQuery("SELECT * FROM HISTORY ORDER BY _ID DESC",null);
 		while(cursor.moveToNext()){
 		HashMap<String, String> map = new HashMap<String, String>();
 		map.put("id", cursor.getString(cursor.getColumnIndex("VIDEOID")));
@@ -87,9 +98,15 @@ public class DBService {
 		return hiss;
 		
 	}
-	public ArrayList<HashMap<String, String>> getSHiss(){
-		return null;
-		
+	public ArrayList<String> getSHiss(){
+		ArrayList<String> shiss = new ArrayList<String>();
+		Cursor cursor = db.rawQuery("SELECT * FROM SEARCHHISTORY",null);
+		while(cursor.moveToNext()){
+			shiss.add(cursor.getString(cursor.getColumnIndex("TITLE")));
+		}
+		cursor.close();
+		db.close();
+		return shiss;
 	}
 	
 }

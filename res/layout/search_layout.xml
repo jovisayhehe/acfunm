@@ -26,7 +26,6 @@
   android:background="@drawable/button_spinner_bg"
   android:layout_marginLeft="25px"
   />
-  
   </LinearLayout>
   <ListView
   android:layout_width="fill_parent"
