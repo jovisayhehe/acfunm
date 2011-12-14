@@ -338,6 +338,8 @@ public class DetailActivity extends Activity {
 					if(playcode==2){
 						final HashMap<String, String> map = (HashMap<String, String>) arg0.getTag();
 						String path = "http://www.acfun.tv/newflvplayer/playert.swf?"+map.get("vars");
+			//			String path = "http://static.acfun.tv/ACFlashPlayer.swf?"+map.get("vars");
+						
 						Intent intent = new Intent(DetailActivity.this, WebViewActivity.class);
 						intent.putExtra("path", path);
 						startActivity(intent);

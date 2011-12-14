@@ -11,6 +11,8 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.http.HttpRequest;
 import org.apache.http.client.HttpClient;
@@ -81,7 +83,7 @@ public class Parser {
 		return parts;
 	}
 	
-	public static ArrayList<String> ParserVideopath(String type,String id) throws IOException{
+	public static ArrayList<String> ParserVideopath(String type,String id) throws Exception{
 		if(type.equals("video")){
 			//新浪
 			return getSinaflv(id);
@@ -138,20 +140,73 @@ public class Parser {
 	}
 	
 	
-	public static ArrayList<String> ParserYoukuFlv(String id) throws IOException{
-		ArrayList<String> paths = new ArrayList<String>();
-		String url = "http://www.flvcd.com/parse.php?kw=http://v.youku.com/v_show/id_"+id+"==.html";
-		Connection c = Jsoup.connect(url);
-		Document doc = c.get();
-		Elements ems = doc.getElementsByAttributeValue("class", "mn STYLE4").get(3).getElementsByTag("a");
-		for(Element em:ems){
-			paths.add(em.attr("href"));
+	public static ArrayList<String> ParserYoukuFlv(String id) throws Exception{
+		double seed = 0;
+		String key1;
+		String key2;
+		String fileids = null;
+		String fileid = null;
+		ArrayList<String> K = new ArrayList<String>();
+		URL url = new URL(
+				"http://v.youku.com/player/getPlayList/VideoIDS/"+id+"/timezone/+08/version/5/source/video?n=3&ran=4656");
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setConnectTimeout(6 * 1000);
+		if (conn.getResponseCode() != 200)
+			throw new RuntimeException("请求url失败");
+		InputStream is = conn.getInputStream();
+		String jsonstring = readData(is, "UTF8");
+		conn.disconnect();
+		
+		
+		String regexstring = "\"seed\":(\\d+),.+\"key1\":\"(\\w+)\",\"key2\":\"(\\w+)\"";
+		Pattern pattern = Pattern.compile(regexstring);
+		 Matcher matcher = pattern.matcher(jsonstring);
+		 while(matcher.find()){
+			 seed = Double.parseDouble(matcher.group(1));
+			 key1 = matcher.group(2);
+			 key2 = matcher.group(3);
+		 }
+		 	
+		 	Pattern patternf = Pattern.compile("\"streamfileids\":\\{(.+?)\\}");
+
+			 Matcher matcherf = patternf.matcher(jsonstring);
+			 while(matcherf.find()){
+				 fileids = matcherf.group(1);
+			 }
+			 
+			 	Pattern patternfid = Pattern.compile("\"flv\":\"(.+?)\"");
+			 	Matcher matcherfid = patternfid.matcher(fileids);
+				 while(matcherfid.find()){
+					 fileid = matcherfid.group(1);
+				 }
+				 	
+				 String no =null;
+				 	Pattern patternc = Pattern.compile("\"flv\":\\[(.+?)\\]");
+				 	Matcher matcherc = patternc.matcher(jsonstring);
+					 while(matcherc.find()){
+						 no = matcherc.group(0);
+					 }		 
+					 
+					 JSONArray array = new JSONArray(no.substring(6));
+					 
+					 for(int i=0;i<array.length();i++){
+						 JSONObject job = (JSONObject) array.get(i);
+						 K.add("?K=" + job.getString("k")+ ",k2:" + job.getString("k2"));
+					 }
+					 
+					 String sid = genSid();
+						//生成fileid
+					 String rfileid = getFileID(fileid, seed);
+					 ArrayList<String> paths = new ArrayList<String>();			 
+		for (int i = 0; i < K.size(); i++)
+		{
+			//得到地址
+			String u = "http://f.youku.com/player/getFlvPath/sid/" + "00" + "_" + String.format("%02d", i) +
+				"/st/" + "flv" + "/fileid/" + rfileid.substring(0, 8) + String.format("%02d", i)
+				+ rfileid.substring(10) + K.get(i);
+			paths.add(u);
 		}
-		for(String path: paths){
-			URL urlp = new URL(path);
-			URLConnection conn = urlp.openConnection();
-		    String patht = conn.getHeaderField("Location");	
-		}
+		
 		ArrayList<String> rpaths = new ArrayList<String>();
 		for(String path:paths){
 			rpaths.add(getLocationJump(path, false, false));
@@ -289,7 +344,7 @@ public class Parser {
 	}
 	
 	public static String getFileID(String fileid,double seed) {
-		String mixed = getFileIDMixString(284.54);
+		String mixed = getFileIDMixString(seed);
 		String[] ids = fileid.split("\\*");
 		StringBuilder realId = new StringBuilder();
 		int idx;

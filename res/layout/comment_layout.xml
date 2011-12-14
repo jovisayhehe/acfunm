@@ -1,9 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:orientation="vertical" >
-
+    <FrameLayout
+ android:layout_width="fill_parent" 
+ android:layout_height="wrap_content"
+ android:orientation="horizontal" 
+ android:background="@drawable/titlebar_bg"
+ android:id="@+id/detail_top"
+  >
+     <Button 
+     android:background="@drawable/button_return_bg"
+     android:id="@+id/about_return_btn"
+     android:text="返回"
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content"
+     android:textColor="#FFFFFF" 
+     android:layout_gravity="left" 
+     android:layout_marginLeft="10dip"
+      />
+     
+    <TextView 
+    android:textSize="18.0sp" 
+    android:textColor="#FFFFFF"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:text="评论"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    />
+</FrameLayout>
     
 
 </LinearLayout>
