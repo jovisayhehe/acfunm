@@ -1,10 +1,11 @@
-package tv.acfun;
+package tv.avfun;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import tv.acfun.ListViewAdaper.ListViewHolder;
+import tv.avfun.R;
+import tv.avfun.ListViewAdaper.ListViewHolder;
 
 import acfun.domain.SearchResults;
 import android.content.Context;

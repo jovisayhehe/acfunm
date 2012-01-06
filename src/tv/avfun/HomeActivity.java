@@ -1,4 +1,4 @@
-package tv.acfun;
+package tv.avfun;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.stagex.danmaku.activity.PlayerActivity;
 
+import tv.avfun.R;
 import tv.acfun.util.GetLinkandTitle;
 import tv.acfun.util.Util;
 

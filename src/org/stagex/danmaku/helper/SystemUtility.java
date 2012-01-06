@@ -17,7 +17,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import tv.acfun.R;
+import tv.avfun.R;
 import android.os.Build;
 import android.os.Environment;
 

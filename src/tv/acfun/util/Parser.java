@@ -49,9 +49,27 @@ public class Parser {
 			for(Element em:ems){
 				String fvars = em.attr("flashvars");
 				if(fvars!=null&&!fvars.equals("")&&fvars!=""){
-					String[] attrs = fvars.split("\\&");
-					String type=attrs[0].split("\\=")[1];
-					String id1 = attrs[1].split("\\=")[1];
+//					String[] attrs = fvars.split("\\&");
+//					String type=attrs[0].split("\\=")[1];
+//					String id1 = attrs[1].split("\\=")[1];
+					String type = null;
+					String id1 = null;
+					String regex = "id=(\\w+)";
+					Pattern pattern = Pattern.compile(regex);
+					 Matcher matcher = pattern.matcher(fvars);
+					 while(matcher.find()){
+						 id1 = matcher.group(1);
+						 break;
+					 }
+					
+						String regext = "type(|\\w)=(\\w*)";
+						Pattern patternt = Pattern.compile(regext);
+						 Matcher matchert = patternt.matcher(fvars);
+						 while(matchert.find()){
+							 type = matchert.group(2);
+						 }
+					
+					
 					HashMap<String, String> map = new HashMap<String, String>();
 					map.put("type", type);
 					map.put("id", id1);
@@ -373,5 +391,99 @@ public class Parser {
 	    outStream.close();
 	    inSream.close();
 	    return new String(data, charsetName);
+	}
+	public static ArrayList<ArrayList<HashMap<String, String>>> getHotdata(String address) throws IOException{
+		Connection c = Jsoup.connect(address);
+		Document doc = c.get();
+		Elements ems = doc.getElementsByAttributeValue("class", "cate_section");
+		ArrayList<ArrayList<HashMap<String, String>>> hots = new ArrayList<ArrayList<HashMap<String, String>>>();
+
+		for (Element em : ems) {
+			ArrayList<HashMap<String, String>> chots = new ArrayList<HashMap<String, String>>();
+			Elements trs = em.getElementsByTag("tr");
+			trs.remove(0);
+			for (Element tem : trs) {
+				HashMap<String, String> map = new HashMap<String, String>();
+				Elements tds = tem.getElementsByTag("td");
+				String link =  tds.first().getElementsByTag("a").attr("href");
+				String strs[] = link.split("/");
+				link = strs[4].substring(2);
+				map.put("link", link);
+				map.put("title", tds.first().text());
+				map.put("hit", tds.last().text());
+				chots.add(map);
+			}
+			hots.add(chots);
+		}
+		return hots;
+	}
+	
+	public static ArrayList<HashMap<String ,String>> getComment(String id) throws IOException{
+		Connection c = Jsoup.connect("http://www.acfun.tv/m/art.php?aid="+id);
+		Document doc = c.get();
+		Elements ems = doc.getElementsByAttributeValue("class", "i");
+		ArrayList<HashMap<String, String>> comments = new ArrayList<HashMap<String,String>>();
+		if(!ems.isEmpty()){
+			ems.remove(0);
+			
+			for(Element em:ems){
+				HashMap<String, String> map = new HashMap<String, String>();
+				String user = em.getElementsByAttributeValue("class", "g").first().text();
+				map.put("user",user);
+				String time = em.getElementsByAttributeValue("class", "b").first().text();
+				map.put("time", time);
+				String comment = em.text();
+				map.put("comment", comment);
+				comments.add(map);
+			}
+			
+			//accesskey="4"
+			Elements nems = doc.getElementsByAttributeValue("accesskey", "4");
+			if(nems.size()!=0){
+				String nextpage = nems.first().attr("href");
+				HashMap<String, String> nextmap = new HashMap<String, String>();
+				nextmap.put("nextpage", nextpage);
+				comments.add(nextmap);
+				return comments;	
+			}else{
+				HashMap<String, String> nextmap = new HashMap<String, String>();
+				nextmap.put("nextpage", "");
+				comments.add(nextmap);
+				return comments;	
+			}
+		
+		}
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("user","");
+		map.put("time", "");
+		map.put("comment", "暂时没有评论...");
+		comments.add(map);
+		return comments;
+	}
+	public static ArrayList<HashMap<String ,String>> getCommentwithpage(String url) throws IOException{
+		Connection c = Jsoup.connect(url);
+		Document doc = c.get();
+		Elements ems = doc.getElementsByAttributeValue("class", "i");
+		ArrayList<HashMap<String, String>> comments = new ArrayList<HashMap<String,String>>();
+		if(!ems.isEmpty()){
+			ems.remove(0);
+			for(Element em:ems){
+				HashMap<String, String> map = new HashMap<String, String>();
+				String user = em.getElementsByAttributeValue("class", "g").first().text();
+				map.put("user",user);
+				String time = em.getElementsByAttributeValue("class", "b").first().text();
+				map.put("time", time);
+				String comment = em.text();
+				map.put("comment", comment);
+				comments.add(map);
+			}
+			return comments;
+		}
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("user","");
+		map.put("time", "");
+		map.put("comment", "...");
+		comments.add(map);
+		return comments;
 	}
 }

@@ -1,9 +1,13 @@
-package tv.acfun;
+package tv.avfun;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
+import tv.avfun.R;
+import tv.acfun.util.Parser;
 import tv.acfun.util.Util;
 import android.app.Activity;
 import android.app.ActivityGroup;
@@ -36,7 +40,7 @@ public class MainActivity extends ActivityGroup {
 	private TextView more_txt;
 	private LinearLayout view = null;
 	public static int playcode;
-	
+	public static ArrayList<ArrayList<HashMap<String, String>>> hotdata;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -259,6 +263,11 @@ public class MainActivity extends ActivityGroup {
 		}
 	}
 	
+	
+	public static void getHotdata(String address) throws IOException{
+		
+		hotdata = Parser.getHotdata(address);
+	}
 	
     
 }

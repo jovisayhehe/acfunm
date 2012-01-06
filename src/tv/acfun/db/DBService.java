@@ -31,6 +31,11 @@ public class DBService {
 		db.close();
 	}
 	
+	public void delFov(String id){
+		db.execSQL("DELETE FROM FAVORITES WHERE VIDEOID = ?",new String[]{id});
+		db.close();
+	}
+	
 	public boolean isFoved(String id){
 		Cursor cursor = db.rawQuery("SELECT VIDEOID FROM FAVORITES WHERE VIDEOID = ?",new String[]{id});
 		boolean isexist = cursor.moveToFirst();

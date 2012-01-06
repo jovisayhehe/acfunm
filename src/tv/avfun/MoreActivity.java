@@ -1,5 +1,6 @@
-package tv.acfun;
+package tv.avfun;
 
+import tv.avfun.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ public class MoreActivity extends Activity {
 		Button his_btn = (Button) findViewById(R.id.more_his_btn);
 		Button set_btn = (Button) findViewById(R.id.more_set_btn);
 		Button abt_btn = (Button) findViewById(R.id.more_about_btn);
+		Button talk_btn = (Button) findViewById(R.id.more_talk_btn);
 		
 		
 		his_btn.setOnClickListener(new OnClickListener() {
@@ -49,6 +51,16 @@ public class MoreActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				Intent intent = new Intent(MoreActivity.this, AboutActivity.class);
+				startActivity(intent);
+			}
+		});
+		
+		talk_btn.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(MoreActivity.this, MessageActivity.class);
 				startActivity(intent);
 			}
 		});

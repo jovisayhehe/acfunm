@@ -1,8 +1,9 @@
-package tv.acfun;
+package tv.avfun;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import tv.avfun.R;
 import tv.acfun.db.DBService;
 import tv.acfun.util.Util;
 

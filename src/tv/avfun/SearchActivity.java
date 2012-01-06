@@ -1,8 +1,9 @@
-package tv.acfun;
+package tv.avfun;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+import tv.avfun.R;
 import tv.acfun.util.GetLinkandTitle;
 
 import acfun.domain.SearchResults;

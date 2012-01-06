@@ -1,5 +1,6 @@
-package tv.acfun;
+package tv.avfun;
 
+import tv.avfun.R;
 import tv.acfun.util.Util;
 import android.app.Activity;
 import android.content.SharedPreferences;

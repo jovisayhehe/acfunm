@@ -1,4 +1,4 @@
-package tv.acfun;
+package tv.avfun;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -15,6 +15,7 @@ import java.util.Locale;
 import org.json.JSONObject;
 import org.stagex.danmaku.activity.PlayerActivity;
 
+import tv.avfun.R;
 import tv.acfun.db.DBService;
 import tv.acfun.util.Parser;
 import tv.acfun.util.Util;
@@ -128,7 +129,16 @@ public class DetailActivity extends Activity {
 						public void run() {
 							loadlay.setVisibility(View.GONE);
 							typeid =Integer.parseInt(content.getTypeid());
-							notfound = partlist.get(0).get("type").equals("")||partlist.get(0).get("id")=="";
+							if(partlist!=null&&!partlist.isEmpty()){
+								HashMap<String, String> map = partlist.get(0);
+								if(map!=null){
+									notfound = map.get("type")==null||map.get("id")==null||map.get("type").equals("")||map.get("id")=="";
+								}else{
+									notfound=true;
+								}
+							}else{
+								notfound=false;
+							}
 							if(notfound&&typeid==0){
 								detail_item_line.setVisibility(View.INVISIBLE);
 								part_row.setVisibility(View.INVISIBLE);
@@ -151,10 +161,14 @@ public class DetailActivity extends Activity {
 									fov_btn.setEnabled(true);
 								}
 								
-								isgame = partlist.get(0).get("type").equals("game")||partlist.get(0).get("type")=="game";
+								if(partlist.get(0).get("type")!=null){
+									isgame = partlist.get(0).get("type").equals("game")||partlist.get(0).get("type")=="game";
+								}else{
+									typeid=13;
+								}
 								title.setText(content.getArctitle());
 								up_txt.setText("投稿:"+content.getUsername());
-								Date date = new Date(Long.parseLong(content.getPubdate()));
+								Date date = new Date(System.currentTimeMillis());
 								 SimpleDateFormat dateformat1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 								  String a1=dateformat1.format(date);
 								time_txt.setText("时间:"+a1);
@@ -229,7 +243,7 @@ public class DetailActivity extends Activity {
 					runOnUiThread(new Runnable() {
 						public void run() {
 							loadlay.setVisibility(View.GONE);
-							Toast.makeText(DetailActivity.this, "网络连接超时..", 1).show();
+							Toast.makeText(DetailActivity.this, "网络连接超时..请重试...", 1).show();
 						} 
 					});	
 					e.printStackTrace();
@@ -296,7 +310,9 @@ public class DetailActivity extends Activity {
 				
 				break;
 			case R.id.detail_reply_btn:
-				
+				Intent cintent =new Intent(DetailActivity.this, CommentActivity.class);
+				cintent.putExtra("id", vid);
+				startActivity(cintent);
 				break;
 			case R.id.detail_share_btn:
 				String shareurl =title.getText().toString()+"http://www.acfun.tv/v/ac"+vid+"/"+"[acfun android]";
@@ -389,7 +405,7 @@ public class DetailActivity extends Activity {
 													tv.setBackgroundResource(R.drawable.detail_part_item_bg);
 											}
 											
-											Toast.makeText(DetailActivity.this, "网络连接超时..", 1).show();
+											Toast.makeText(DetailActivity.this, "网络连接超时...请重试...", 1).show();
 											
 										} 
 									});	

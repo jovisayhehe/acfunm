@@ -8,7 +8,7 @@ import org.stagex.danmaku.player.DefMediaPlayer;
 import org.stagex.danmaku.player.MsgMediaPlayer;
 import org.stagex.danmaku.player.VlcMediaPlayer;
 
-import tv.acfun.R;
+import tv.avfun.R;
 
 import android.app.Activity;
 import android.content.Intent;

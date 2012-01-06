@@ -1,4 +1,4 @@
-package tv.acfun;
+package tv.avfun;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,8 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 
-import tv.acfun.ListViewAdaper.ListViewHolder;
+import tv.avfun.R;
 import tv.acfun.util.GetLinkandTitle;
+import tv.avfun.ListViewAdaper.ListViewHolder;
 
 import acfun.domain.Article;
 import android.app.Activity;
@@ -204,7 +205,37 @@ public class ChannelActivity extends Activity {
 					state=position;
 					refreshList("番剧", position, "http://www.acfun.tv/m/list.php?cid=7");
 					break;
-
+				case 7:
+					
+					new Thread(){
+						public void run(){
+							try {
+								MainActivity.getHotdata("http://124.238.214.35/acfun/hot.html?type=week");
+								runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
+										// TODO Auto-generated method stub
+										titleview.clearAnimation();
+										Intent intent = new Intent(ChannelActivity.this, HotActivity.class);
+										startActivity(intent);
+									}
+								});
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								titleview.clearAnimation();
+								runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
+										// TODO Auto-generated method stub
+										Toast.makeText(ChannelActivity.this, "网络连接超时..", 1).show();
+									}
+								});
+								e.printStackTrace();
+							}
+						}
+					}.start();
+					
+					break;
 				default:
 					break;
 				}
@@ -258,6 +289,7 @@ public class ChannelActivity extends Activity {
 		private ArrayList<HashMap<String, Object>> titledata = new ArrayList<HashMap<String,Object>>();
 		public ChannelListViewAdaper(Context context) {
 			this.mInflater =LayoutInflater.from(context);
+			
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("txt", "文  章");
 			titledata.add(map);
@@ -285,6 +317,10 @@ public class ChannelActivity extends Activity {
 			HashMap<String, Object> map6 = new HashMap<String, Object>();
 			map6.put("txt", "番  剧");
 			titledata.add(map6);
+			
+			HashMap<String, Object> map7 = new HashMap<String, Object>();
+			map7.put("txt", "热  门");
+			titledata.add(map7);
 		}
 		@Override
 		public int getCount() {

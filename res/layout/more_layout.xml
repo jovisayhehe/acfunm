@@ -32,6 +32,16 @@
   android:textSize="35px"
   android:paddingLeft="20px"
   android:background="@drawable/more_item_bg"
+  android:text="与AC娘谈心"
+  android:id="@+id/more_talk_btn"
+  />
+  <Button
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:textColor="#FFFFFF"
+  android:textSize="35px"
+  android:paddingLeft="20px"
+  android:background="@drawable/more_item_bg"
   android:text="播放历史"
   android:id="@+id/more_his_btn"
   />
