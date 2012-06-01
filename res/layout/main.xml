@@ -35,6 +35,7 @@
 	android:background="@drawable/bottom_bar_txt_bg"
 	android:gravity="center"
 	android:layout_weight="1.0"
+	android:visibility="gone"
 	android:id="@+id/main_home_txt"
 />
 

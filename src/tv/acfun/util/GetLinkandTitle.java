@@ -1,7 +1,11 @@
 package tv.acfun.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,12 +13,16 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
+import org.json.external.JSONArray;
+import org.json.external.JSONObject;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import acfun.domain.AcContent;
 import acfun.domain.Acfun;
 import acfun.domain.AcfunContent;
 import acfun.domain.Article;
@@ -340,24 +348,62 @@ public class GetLinkandTitle {
 		return feeds;
 	}
 	//我来!!
-	public List<Article> getTitleandLink(String address) throws IOException{
+	public List<AcContent> getTitleandLink(String address) throws IOException{
 
-		List<Article> arts = new ArrayList<Article>();
-		Connection c = Jsoup.connect(address);
-	
-			Document doc = c.get();
-			Elements ems =doc.getElementsByAttributeValue("class", "i");
-			for(Element em:ems){
-				Article article = new Article();
-				Elements link = em.select("a[href]");
-				String id = link.attr("href").split("&")[0].substring(12);
-				article.setArtlink(id);
-				article.setArttitle(link.text());
-				article.setArt(em.getElementsByAttributeValue("class", "g").text());
-				article.setUptime(em.getElementsByAttributeValue("class", "b").text());
-				arts.add(article);
+//		Connection c = Jsoup.connect(address);
+//	
+//			Document doc = c.get();
+//			Elements ems =doc.getElementsByAttributeValue("class", "i");
+//			for(Element em:ems){
+//				Article article = new Article();
+//				Elements link = em.select("a[href]");
+//				String id = link.attr("href").split("&")[0].substring(12);
+//				article.setArtlink(id);
+//				article.setArttitle(link.text());
+//				article.setArt(em.getElementsByAttributeValue("class", "g").text());
+//				article.setUptime(em.getElementsByAttributeValue("class", "b").text());
+//				arts.add(article);
+//			}
+		List<AcContent> contents = new ArrayList<AcContent>();
+		URL lurl;
+		try {
+			lurl = new URL(address);
+			
+			HttpURLConnection conn = (HttpURLConnection) lurl.openConnection();
+			conn.setConnectTimeout(6 * 1000);
+			if (conn.getResponseCode() != 200)
+				throw new RuntimeException("time out...");
+			InputStream is = conn.getInputStream();
+			String jsonstring = readData(is, "UTF8");
+			conn.disconnect();
+			
+			JSONObject jsonObject = new JSONObject(jsonstring);
+			JSONArray jsarray = jsonObject.getJSONArray("contents");
+			
+			for(int i =0;i<20;i++){
+				AcContent content = new AcContent();
+				JSONObject jobj = (JSONObject) jsarray.get(i);
+				//System.out.println(jobj.toString());
+				content.setTags(jobj.get("tags").toString());
+				content.setTitle(jobj.get("title").toString());
+				content.setUsername(jobj.get("username").toString());
+				content.setReleaseDate(jobj.get("releaseDate").toString());
+				content.setDescription(jobj.get("description").toString());
+				content.setViews(jobj.get("views").toString());
+				content.setUserId(jobj.get("userId").toString());
+				content.setTitleImg(jobj.get("titleImg").toString());
+				content.setStows(jobj.get("stows").toString());
+				content.setUrl(jobj.get("url").toString());
+				content.setComments(jobj.get("comments").toString());
+				contents.add(content);
 			}
-		return arts;
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return contents;
 	}
 	
 public Map<String,Object> getPage(String address) throws IOException{
@@ -480,5 +526,16 @@ public Map<String,Object> getPage(String address) throws IOException{
 			
 			return rsandtotalpage;
 	}
-	
+	public static String readData(InputStream inSream, String charsetName) throws Exception{
+	    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+	    byte[] buffer = new byte[1024];
+	    int len = -1;
+	    while( (len = inSream.read(buffer)) != -1 ){
+	        outStream.write(buffer, 0, len);
+	    }
+	    byte[] data = outStream.toByteArray();
+	    outStream.close();
+	    inSream.close();
+	    return new String(data, charsetName);
+	}
 }

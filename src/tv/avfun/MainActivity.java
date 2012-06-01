@@ -1,6 +1,7 @@
 package tv.avfun;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -41,9 +43,17 @@ public class MainActivity extends ActivityGroup {
 	private LinearLayout view = null;
 	public static int playcode;
 	public static ArrayList<ArrayList<HashMap<String, String>>> hotdata;
+	private int staus = 0; 
+	   
+	private static final int STOPSPLASH = 0; 
+	private static final long SPLASHTIME = 2000; 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+		File f = new File(Environment.getExternalStorageDirectory()+"/acfunimg/");
+		if(!f.exists()){
+			f.mkdir();
+		}
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         Util.fullScreen(this);
         setContentView(R.layout.main);
@@ -51,11 +61,29 @@ public class MainActivity extends ActivityGroup {
         	showDialog(998);
         }else{
         	 InitView();
-             addActivity("home", HomeActivity.class,null);
-             setEnaled(home_txt);
+        	 Message msg = new Message(); 
+        	 msg.what = STOPSPLASH; 
+        	 splashHandler.sendMessageDelayed(msg, SPLASHTIME); 
+        	  setEnaled(channel_txt);
+				addActivity("channel", ChannelActivity.class,null); 
+
         }
     }
 
+    private Handler splashHandler = new Handler() { 
+        public void handleMessage(Message msg) { 
+             switch (msg.what) { 
+             case STOPSPLASH: 
+            	 MainActivity.this.findViewById(R.id.bottom_bar).setVisibility(View.VISIBLE);
+            	 MainActivity.this.findViewById(R.id.contentbody).setVisibility(View.VISIBLE);
+            	 MainActivity.this.findViewById(R.id.start_an).setVisibility(View.GONE);
+						Util.backScreen(MainActivity.this);
+                  sendEmptyMessageDelayed(STOPSPLASH, SPLASHTIME); 
+             } 
+             super.handleMessage(msg); 
+        } 
+    };
+    
 	public void InitView(){
     	view = (LinearLayout) findViewById(R.id.contentbody);
     	home_txt = (TextView) findViewById(R.id.main_home_txt);

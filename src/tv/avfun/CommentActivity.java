@@ -31,8 +31,8 @@ public class CommentActivity extends Activity {
 	private ArrayList<HashMap<String, String>> data;
 	private ImageView imgprogress;
 	private int page = 1;
-	private String commenturl;
 	private Animation imgAnimation;
+	private String commenturl;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -46,40 +46,39 @@ public class CommentActivity extends Activity {
 		imgprogress = new ImageView(this);
 		imgAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh_drawable_default);
 		Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.manman);
+		String id = getIntent().getStringExtra("id");
+		commenturl  = "http://www.acfun.tv/comment_list_json.aspx?contentId="+id+"&tPage="+page;
 		imgprogress.setImageBitmap(bitmap);
 		imgprogress.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				if(!commenturl.equals("")&&commenturl!=""){
 					imgprogress.setEnabled(false);
 					imgprogress.startAnimation(imgAnimation);
 					page+=1;
-					addtolist(page);
-				}
+					addtolist(commenturl);
 				
 			}
 		});
 		listview.addFooterView(imgprogress);
-		String id = getIntent().getStringExtra("id");
-		getComments(id);
+		getComments(commenturl);
 	}
 	
 	
 	
-	private void getComments(final String id){
+	private void getComments(final String url){
 		new Thread(){
 			public void run(){
 				try {
-					data = Parser.getComment(id);
+					data = Parser.getComment(url);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
 							// TODO Auto-generated method stub
-							Toast.makeText(CommentActivity.this, "网络连接超时..", 1).show();
+							Toast.makeText(CommentActivity.this, "网络连接超时...", 1).show();
 						}
 					});
 					e.printStackTrace();
@@ -89,30 +88,31 @@ public class CommentActivity extends Activity {
 					@Override
 					public void run() {
 						// TODO Auto-generated method stub
-							commenturl = data.get(data.size()-1).get("nextpage");
-							data.remove(data.size()-1);
-							if(!commenturl.equals("")&&commenturl!=""){
-								commenturl = commenturl.substring(17);
-							}else{
+						if(data!=null){
 								imgprogress.setVisibility(View.GONE);
-							}
-						   adapter = new SimpleAdapter(CommentActivity.this, data,R.layout.commentlist_item, new String[] {"comment"},   
-					                
+						}else{
+							data =  new ArrayList<HashMap<String,String>>();
+							HashMap<String, String> map = new HashMap<String, String>();
+							map.put("user","");
+							map.put("time", "");
+							map.put("comment", "暂时没有评论...");
+							data.add(map);
+							imgprogress.setVisibility(View.GONE);
+						}
+						 adapter = new SimpleAdapter(CommentActivity.this, data,R.layout.commentlist_item, new String[] {"comment"},   
 					                new int[] {R.id.comment_listview_item_comment});
-						    listview.setAdapter(adapter);
+						 listview.setAdapter(adapter);
 					}
 				});
 			}
 		}.start();
 	}
 	
-	 private void addtolist(final int page){
+	 private void addtolist(final String url){
 		 new Thread(){
 			 public void run(){
 				 try {
-					 String url = "http://www.acfun.tv/m/art.php?nowpage="+page +commenturl;
-					 Parser.getCommentwithpage(url);
-					data.addAll(Parser.getCommentwithpage(url));
+					data.addAll(Parser.getComment(url));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					runOnUiThread(new Runnable() {

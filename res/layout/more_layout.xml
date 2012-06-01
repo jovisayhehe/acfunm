@@ -33,6 +33,7 @@
   android:paddingLeft="20px"
   android:background="@drawable/more_item_bg"
   android:text="与AC娘谈心"
+  android:visibility="gone"
   android:id="@+id/more_talk_btn"
   />
   <Button
@@ -54,6 +55,7 @@
   android:paddingLeft="20px"
   android:background="@drawable/more_item_bg"
   android:id="@+id/more_set_btn"
+  android:visibility="gone"
   />
   <Button
   android:layout_width="fill_parent"

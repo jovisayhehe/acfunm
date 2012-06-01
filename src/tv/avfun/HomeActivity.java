@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.stagex.danmaku.activity.PlayerActivity;
 
 import tv.avfun.R;
 import tv.acfun.util.GetLinkandTitle;
@@ -82,12 +81,12 @@ public class HomeActivity extends Activity {
 					runOnUiThread(new Runnable() {
 						public void run() {
 						if(first){
-							getParent().findViewById(R.id.bottom_bar).setVisibility(View.VISIBLE);
-							getParent().findViewById(R.id.contentbody).setVisibility(View.VISIBLE);
-							getParent().findViewById(R.id.start_an).setVisibility(View.GONE);
-							Util.backScreen(getParent());
-							adaper = new ListViewAdaper(HomeActivity.this,data);
-							homelistview.setAdapter(adaper);
+//							getParent().findViewById(R.id.bottom_bar).setVisibility(View.VISIBLE);
+//							getParent().findViewById(R.id.contentbody).setVisibility(View.VISIBLE);
+//							getParent().findViewById(R.id.start_an).setVisibility(View.GONE);
+//							Util.backScreen(getParent());
+//							adaper = new ListViewAdaper(HomeActivity.this,data);
+//							homelistview.setAdapter(adaper);
 						}else{
 							adaper.setData(data);
 							adaper.notifyDataSetInvalidated();
@@ -101,7 +100,13 @@ public class HomeActivity extends Activity {
 					// TODO Auto-generated catch block
 					runOnUiThread(new Runnable() {
 						public void run() {
-							showDialog(998);
+						//	showDialog(998);
+//							getParent().findViewById(R.id.bottom_bar).setVisibility(View.VISIBLE);
+//							getParent().findViewById(R.id.contentbody).setVisibility(View.VISIBLE);
+//							getParent().findViewById(R.id.start_an).setVisibility(View.GONE);
+//							Util.backScreen(getParent());
+//							adaper = new ListViewAdaper(HomeActivity.this,data);
+//							homelistview.setAdapter(adaper);
 						} 
 					});	
 					e.printStackTrace();

@@ -1,39 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
-  android:orientation="vertical"
-  android:background="@drawable/channel_content_item_bg_ck"
+  android:background="@drawable/channel_content_item_bg_m_ck"
   >
-  <TextView
+  
+  <ImageView 
+  android:layout_width="100dip"
+  android:layout_height="95dip"
+  android:paddingTop="10dip"
+  android:paddingBottom="10dip"
+  android:id="@+id/channellist_item_img"
+  android:src="@drawable/no_picture"
+  android:scaleType="fitXY"
+  />
+  
+   <TextView
   android:layout_width="fill_parent"
   android:layout_height="wrap_content"
   android:textColor="#FFFFFF"
-  android:textSize="18dip"
-  android:singleLine="true"
-   android:paddingBottom="15dip"
+  android:textSize="15dip"
+  android:paddingRight="15dip"
+  android:paddingTop="10dip"
+  android:layout_toRightOf="@id/channellist_item_img"
   android:id="@+id/channellist_content_item_title"
   />
-  <LinearLayout
+  <TextView
   android:layout_width="fill_parent"
   android:layout_height="wrap_content"
-  android:orientation="horizontal"
-  >
-  <TextView
-  android:layout_width="wrap_content"
-  android:layout_height="wrap_content"
-  android:layout_weight="1.0"
   android:textSize="12dip"
-  android:id="@+id/channelist_content_item_date"
+  android:singleLine="true"
+  android:gravity="right"
+  android:paddingRight="10dip"
+  android:paddingTop="70dip"
+  android:layout_toRightOf="@id/channellist_item_img"
+  android:id="@+id/channelist_content_item_views"
   />
   
   <TextView
-  android:layout_width="wrap_content"
+  android:layout_width="fill_parent"
   android:layout_height="wrap_content"
-  android:layout_weight="0.0"
-  android:textSize="15dip"
-  android:id="@+id/channelist_content_item_upman"
+  android:textSize="12dip"
+  android:paddingLeft="10dip"
+  android:paddingTop="70dip"
+  android:singleLine="true"
+  android:gravity="left"
+  android:layout_toRightOf="@id/channellist_item_img"
+  android:id="@+id/channelist_content_item_art"
   />
-  </LinearLayout>
-</LinearLayout>
+ 
+</RelativeLayout>

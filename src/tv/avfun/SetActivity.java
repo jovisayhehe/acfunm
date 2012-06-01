@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 public class SetActivity extends Activity {
 	private RadioGroup radiog;
-	private RadioButton radiod;
 	private RadioButton radioe;
 	private RadioButton radiof;
 	private SharedPreferences settings;
@@ -29,7 +28,6 @@ public class SetActivity extends Activity {
 		Util.fullScreennt(this);
 		setContentView(R.layout.set_layout);
 		radiog = (RadioGroup) this.findViewById(R.id.set_radio_g);
-		radiod = (RadioButton) this.findViewById(R.id.set_radio_dif);
 		radioe = (RadioButton) this.findViewById(R.id.set_radio_ex);
 		radiof = (RadioButton) this.findViewById(R.id.set_radio_flash);
 		
@@ -37,9 +35,6 @@ public class SetActivity extends Activity {
 			radiof.setVisibility(View.GONE);
 		}
 		switch (MainActivity.playcode) {
-		case 0:
-			radiod.setChecked(true);
-			break;
 		case 1:
 			radioe.setChecked(true);
 			break;
@@ -69,10 +64,6 @@ public class SetActivity extends Activity {
 			public void onCheckedChanged(RadioGroup group, int checkedId) {
 				// TODO Auto-generated method stub
 				switch (checkedId) {
-				case R.id.set_radio_dif:
-					settings.edit().putInt("playcode", 0).commit();
-					MainActivity.playcode=0;
-					break;
 				case R.id.set_radio_ex:
 					settings.edit().putInt("playcode", 1).commit();
 					MainActivity.playcode=1;

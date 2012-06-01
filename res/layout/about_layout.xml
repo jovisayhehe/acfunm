@@ -94,4 +94,19 @@
      android:id="@+id/about_mail"
      android:text="jovisayhehe@gmail.com(点击发送邮件)"
       />
+     
+          <TextView
+     android:layout_marginTop="15dip"
+     android:layout_width="fill_parent"
+     android:layout_height="wrap_content"
+     android:layout_marginLeft="5dip"
+     android:text="一些废话"
+     />
+     <TextView 
+     android:layout_width="fill_parent"
+     android:layout_height="wrap_content"
+     android:background="@drawable/about_content"
+     android:layout_marginLeft="5dip"
+     android:text="之前一直在穷忙..大家久等了..额..好多功能要恢复的说.."
+      />
 </LinearLayout>

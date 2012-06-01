@@ -37,18 +37,12 @@
  android:layout_height="wrap_content"
  android:id="@+id/set_radio_g"
 >
-        <RadioButton
-      android:id="@+id/set_radio_dif"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:checked="true"
-      android:text="默认播放器"
-    	/>
+
       <RadioButton
       android:id="@+id/set_radio_flash"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="flash播放器"
+      android:text="跳到网页播放"
     	/>
       <RadioButton
       android:id="@+id/set_radio_ex"

@@ -1,5 +1,6 @@
 package tv.avfun;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,9 +9,11 @@ import java.util.Map;
 
 
 import tv.avfun.R;
-import tv.acfun.util.GetLinkandTitle;
 import tv.avfun.ListViewAdaper.ListViewHolder;
+import tv.acfun.util.GetLinkandTitle;
+import tv.acfun.util.Util;
 
+import acfun.domain.AcContent;
 import acfun.domain.Article;
 import android.app.Activity;
 import android.content.Context;
@@ -18,7 +21,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -57,7 +63,7 @@ public class ChannelActivity extends Activity {
 	private Animation localAnimation;
 	private Animation titleAnimation;
 	private int state;
-	private int[] pid ={1,1,1,1,1,1,1};
+	private int[] pid ={1,1,1,1,1,1};
 	private TextView titleview;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -99,39 +105,39 @@ public class ChannelActivity extends Activity {
 				imgprogress.setEnabled(false);
 				imgprogress.startAnimation(localAnimation);
 				switch (state) {
+//				case 0:
+//				pid[state]++;
+//				String path = "http://www.acfun.tv/api/channel.aspx?query=63&currentPage="+String.valueOf(pid[state]);
+//				addtolist(path, state);
+//					break;
 				case 0:
-				pid[state]++;
-				String path = "http://www.acfun.tv/m/list.php?pid="+String.valueOf(pid[state])+"&tid=7424&order=no&cid=13";
-				addtolist(path, state);
+					pid[state]++;
+					String path1 = "http://www.acfun.tv/api/channel.aspx?query=60&currentPage="+String.valueOf(pid[state]);
+					addtolist(path1, state);
 					break;
 				case 1:
 					pid[state]++;
-					String path1 = "http://www.acfun.tv/m/list.php?pid="+String.valueOf(pid[state])+"&tid=16087&order=no&cid=10";
-					addtolist(path1, state);
+					String path2 = "http://www.acfun.tv/api/channel.aspx?query=68&currentPage="+String.valueOf(pid[state]);
+					addtolist(path2, state);
 					break;
 				case 2:
 					pid[state]++;
-					String path2 = "http://www.acfun.tv/m/list.php?pid="+String.valueOf(pid[state])+"&tid=3461&order=no&cid=14";
-					addtolist(path2, state);
+					String path3 = "http://www.acfun.tv/api/channel.aspx?query=1&currentPage="+String.valueOf(pid[state]);
+					addtolist(path3, state);
 					break;
 				case 3:
 					pid[state]++;
-					String path3 = "http://www.acfun.tv/m/list.php?pid="+String.valueOf(pid[state])+"&tid=17818&order=no&cid=1";
-					addtolist(path3, state);
+					String path4 = "http://www.acfun.tv/api/channel.aspx?query=58&currentPage="+String.valueOf(pid[state]);
+					addtolist(path4, state);
 					break;
 				case 4:
 					pid[state]++;
-					String path4 = "http://www.acfun.tv/m/list.php?pid="+String.valueOf(pid[state])+"&tid=16171&order=no&cid=8";
-					addtolist(path4, state);
+					String path5 = "http://www.acfun.tv/api/channel.aspx?query=59&currentPage="+String.valueOf(pid[state]);
+					addtolist(path5, state);
 					break;
 				case 5:
 					pid[state]++;
-					String path5 = "http://www.acfun.tv/m/list.php?pid="+String.valueOf(pid[state])+"&tid=16676&order=no&cid=9";
-					addtolist(path5, state);
-					break;
-				case 6:
-					pid[state]++;
-					String path6 = "http://www.acfun.tv/m/list.php?pid="+String.valueOf(pid[state])+"&tid=6151&order=no&cid=7";
+					String path6 = "http://www.acfun.tv/api/channel.aspx?query=67&currentPage="+String.valueOf(pid[state]);
 					addtolist(path6, state);
 					break;
 
@@ -142,7 +148,7 @@ public class ChannelActivity extends Activity {
 		});
 		
 		
-		adaper = new Channell_ContentListViewAdaper(ChannelActivity.this, lists.get(0));
+		adaper = new Channell_ContentListViewAdaper(ChannelActivity.this, lists.get(0),channellist_content);
 		channellist_content.setAdapter(adaper);
 		
 		
@@ -169,43 +175,43 @@ public class ChannelActivity extends Activity {
 				titleview = (TextView) view.findViewById(R.id.channelist_item_txt);
 				titleview.startAnimation(localAnimation);
 				switch (position) {
+//				case 0:
+//					//文章
+//					state=position;
+//					refreshList("文章", position, "http://www.acfun.tv/api/channel.aspx?query=63&currentPage=1");
+//					
+//					break;
 				case 0:
-					//文章
-					state=position;
-					refreshList("文章", position, "http://www.acfun.tv/m/list.php?cid=13");
-					
-					break;
-				case 1:
 					//娱乐
 					state=position;
-					refreshList("娱乐", position, "http://www.acfun.tv/m/list.php?cid=10");
+					refreshList("娱乐", position, "http://www.acfun.tv/api/channel.aspx?query=60&currentPage=1");
 					break;
-				case 2:
+				case 1:
 					//短影
 					state=position;
-					refreshList("短影", position, "http://www.acfun.tv/m/list.php?cid=14");
+					refreshList("短影", position, "http://www.acfun.tv/api/channel.aspx?query=68&currentPage=1");
 					break;
-				case 3:
+				case 2:
 					//动画
 					state=position;
-					refreshList("动画", position, "http://www.acfun.tv/m/list.php?cid=1");
+					refreshList("动画", position, "http://www.acfun.tv/api/channel.aspx?query=1&currentPage=1");
 					break;
-				case 4:
+				case 3:
 					//音乐
 					state=position;
-					refreshList("音乐", position, "http://www.acfun.tv/m/list.php?cid=8");
+					refreshList("音乐", position, "http://www.acfun.tv/api/channel.aspx?query=58&currentPage=1");
 					break;
-				case 5:
+				case 4:
 					//游戏
 					state=position;
-					refreshList("游戏", position, "http://www.acfun.tv/m/list.php?cid=9");
+					refreshList("游戏", position, "http://www.acfun.tv/api/channel.aspx?query=59&currentPage=1");
 					break;
-				case 6:
+				case 5:
 					//番剧
 					state=position;
-					refreshList("番剧", position, "http://www.acfun.tv/m/list.php?cid=7");
+					refreshList("番剧", position, "http://www.acfun.tv/api/channel.aspx?query=67&currentPage=1");
 					break;
-				case 7:
+				case 6:
 					
 					new Thread(){
 						public void run(){
@@ -250,15 +256,29 @@ public class ChannelActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
+				
 				String id1 = (String) view.getTag(view.getId());
 				ArrayList<String> infos = new ArrayList<String>();
 				infos.add(id1);
 				infos.add("channel");
+				infos.add((String) lists.get(state).get(position).get("title"));
+				infos.add((String) lists.get(state).get(position).get("art"));
+				infos.add((String) lists.get(state).get(position).get("uptime"));
+				infos.add((String) lists.get(state).get(position).get("views"));
+				infos.add((String) lists.get(state).get(position).get("dsescription"));
+				infos.add((String) lists.get(state).get(position).get("stows"));
 				TextView tv = (TextView) view.findViewById(R.id.channellist_content_item_title);
 				String ti  = tv.getText().toString();
 				infos.add(ti);
 				Intent intent = new Intent(ChannelActivity.this, DetailActivity.class);
 				intent.putStringArrayListExtra("info", infos);
+				ImageView img = (ImageView) view.findViewById(R.id.channellist_item_img);
+				Drawable da = img.getDrawable();
+				BitmapDrawable bd = (BitmapDrawable) da;
+				Bitmap bm = bd.getBitmap();
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+				intent.putExtra("bitmap", baos.toByteArray());
 				ChannelActivity.this.startActivity(intent);
 			}
 			
@@ -283,16 +303,15 @@ public class ChannelActivity extends Activity {
 		
 	}
 	
-	
 	public final class ChannelListViewAdaper extends BaseAdapter{
 		private LayoutInflater mInflater;
 		private ArrayList<HashMap<String, Object>> titledata = new ArrayList<HashMap<String,Object>>();
 		public ChannelListViewAdaper(Context context) {
 			this.mInflater =LayoutInflater.from(context);
 			
-			HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("txt", "文  章");
-			titledata.add(map);
+//			HashMap<String, Object> map = new HashMap<String, Object>();
+//			map.put("txt", "文  章");
+//			titledata.add(map);
 			
 			HashMap<String, Object> map1 = new HashMap<String, Object>();
 			map1.put("txt", "娱  乐");
@@ -318,9 +337,9 @@ public class ChannelActivity extends Activity {
 			map6.put("txt", "番  剧");
 			titledata.add(map6);
 			
-			HashMap<String, Object> map7 = new HashMap<String, Object>();
-			map7.put("txt", "热  门");
-			titledata.add(map7);
+//			HashMap<String, Object> map7 = new HashMap<String, Object>();
+//			map7.put("txt", "热  门");
+//			titledata.add(map7);
 		}
 		@Override
 		public int getCount() {
@@ -354,15 +373,20 @@ public class ChannelActivity extends Activity {
 	 private void getListData(String address,int pos) throws IOException {
 		 	
 	        GetLinkandTitle linkandTitle = new GetLinkandTitle();
-	        List<Article> arts;
-				arts = linkandTitle.getTitleandLink(address);
-		        if(!arts.isEmpty()){
-			        for(Article art:arts){
+	        List<AcContent> contents;
+	        contents = linkandTitle.getTitleandLink(address);
+		        if(!contents.isEmpty()){
+			        for(AcContent content:contents){
 			        	Map<String, Object> map = new HashMap<String, Object>();
-			        	map.put("title", art.getArttitle());
-			        	map.put("link", art.getArtlink());
-			        	map.put("art", art.getArt());
-			        	map.put("uptime", art.getUptime());
+			        	map.put("title", content.getTitle());
+			        	map.put("link", content.getUrl());
+			        	map.put("art", content.getUsername());
+			        	map.put("views", content.getViews());
+			        	map.put("uptime", content.getReleaseDate());
+			        	map.put("titleimg", content.getTitleImg());
+			        	map.put("stows", content.getStows());
+			        	map.put("dsescription", content.getDescription());
+			        	map.put("id", content.getUrl().substring(3));
 			        	lists.get(pos).add(map);
 			        }
 			        }

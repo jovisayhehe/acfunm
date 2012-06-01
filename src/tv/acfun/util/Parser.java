@@ -17,8 +17,8 @@ import java.util.regex.Pattern;
 import org.apache.http.HttpRequest;
 import org.apache.http.client.HttpClient;
 import org.apache.http.protocol.HttpRequestExecutor;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.json.external.JSONArray;
+import org.json.external.JSONObject;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -35,74 +35,129 @@ public class Parser {
 	
 	public static ArrayList<HashMap<String, String>> ParserAcId(String id) throws IOException{
 		
-		Connection c = Jsoup.connect("http://www.acfun.tv/m/art.php?aid="+id);
-		Document doc = c.get();
-		Elements ems = doc.getElementsByTag("embed");
+		
+		
 		ArrayList<HashMap<String, String>> parts = new ArrayList<HashMap<String, String>>();
-		if(ems.size()==0){
-			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("type", "");
-			map.put("id", "");
-			
-			parts.add(map);
-		}else{
-			for(Element em:ems){
-				String fvars = em.attr("flashvars");
-				if(fvars!=null&&!fvars.equals("")&&fvars!=""){
-//					String[] attrs = fvars.split("\\&");
-//					String type=attrs[0].split("\\=")[1];
-//					String id1 = attrs[1].split("\\=")[1];
-					String type = null;
+		
+		if(Integer.parseInt(id)>327496){
+			URL lurl;
+			try {
+				lurl = new URL("http://www.acfun.tv/api/content.aspx?query="+id);
+				
+				HttpURLConnection conn = (HttpURLConnection) lurl.openConnection();
+				conn.setConnectTimeout(6 * 1000);
+				if (conn.getResponseCode() != 200)
+					throw new RuntimeException("请求url失败");
+				InputStream is = conn.getInputStream();
+				String jsonstring = readData(is, "UTF8");
+				conn.disconnect();
+				
+				JSONObject jsonObject = new JSONObject(jsonstring);
+				JSONArray jsonArray = jsonObject.getJSONArray("content");
+				
+				for(int i = 0;i<jsonArray.length();i++){
+					
+					JSONObject job = (JSONObject) jsonArray.get(i);
 					String id1 = null;
-					String regex = "id=(\\w+)";
+					String regex = "\'id\':\'(.\\d+)";
 					Pattern pattern = Pattern.compile(regex);
-					 Matcher matcher = pattern.matcher(fvars);
+					 Matcher matcher = pattern.matcher(job.toString());
 					 while(matcher.find()){
 						 id1 = matcher.group(1);
 						 break;
 					 }
-					
-						String regext = "type(|\\w)=(\\w*)";
-						Pattern patternt = Pattern.compile(regext);
-						 Matcher matchert = patternt.matcher(fvars);
-						 while(matchert.find()){
-							 type = matchert.group(2);
-						 }
-					
-					
-					HashMap<String, String> map = new HashMap<String, String>();
-					map.put("type", type);
-					map.put("id", id1);
-					map.put("vars", fvars);
-					parts.add(map);
-					
-				}else{
-					if(em.attr("src").split("\\?").length>1){
-						String attr = em.attr("src").split("\\?")[1];
-						String type=attr.split("\\&")[1].split("\\=")[1];
-						String id1 = attr.split("\\&")[0].split("\\=")[1];
+					 System.out.println(job.toString());
+					 System.out.println(id1);
+					 URL getvidurl = new URL("http://www.acfun.tv/api/getVideoByID.aspx?vid="+id1);
+					 
+					 HttpURLConnection vidcon = (HttpURLConnection) getvidurl.openConnection();
+						conn.setConnectTimeout(6 * 1000);
+						if (conn.getResponseCode() != 200)
+							throw new RuntimeException("请求url失败");
+						InputStream getvidis = vidcon.getInputStream();
+						String vidjsonstring = readData(getvidis, "UTF8");
+						vidcon.disconnect();
+						JSONObject vidjsonObject = new JSONObject(vidjsonstring);
 						HashMap<String, String> map = new HashMap<String, String>();
-						map.put("type", type);
-						map.put("id", id1);
-						map.put("vars", attr);
+						map.put("type", vidjsonObject.get("vtype").toString());
+						map.put("id", vidjsonObject.get("vid").toString());
 						parts.add(map);
-					}else{
-						String attr = em.attr("src");
-						HashMap<String, String> map = new HashMap<String, String>();
-						map.put("type", "game");
-						map.put("id", attr);
-						
-						parts.add(map);
-					}
 				}
 				
-				}
+
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
+		
+//		Connection c = Jsoup.connect("http://www.acfun.tv/m/art.php?aid="+id);
+//		Document doc = c.get();
+//		Elements ems = doc.getElementsByTag("embed");
+//		
+//		if(ems.size()==0){
+//			HashMap<String, String> map = new HashMap<String, String>();
+//			map.put("type", "");
+//			map.put("id", "");
+//			//327496
+//			parts.add(map);
+//		}else{
+//			for(Element em:ems){
+//				String fvars = em.attr("flashvars");
+//				if(fvars!=null&&!fvars.equals("")&&fvars!=""){
+//					String type = null;
+//					String id1 = null;
+//					String regex = "id=(\\w+)";
+//					Pattern pattern = Pattern.compile(regex);
+//					 Matcher matcher = pattern.matcher(fvars);
+//					 while(matcher.find()){
+//						 id1 = matcher.group(1);
+//						 break;
+//					 }
+//					
+//						String regext = "type(|\\w)=(\\w*)";
+//						Pattern patternt = Pattern.compile(regext);
+//						 Matcher matchert = patternt.matcher(fvars);
+//						 while(matchert.find()){
+//							 type = matchert.group(2);
+//						 }
+//					
+//					
+//					HashMap<String, String> map = new HashMap<String, String>();
+//					map.put("type", type);
+//					map.put("id", id1);
+//					map.put("vars", fvars);
+//					parts.add(map);
+//					
+//				}else{
+//					if(em.attr("src").split("\\?").length>1){
+//						String attr = em.attr("src").split("\\?")[1];
+//						String type=attr.split("\\&")[1].split("\\=")[1];
+//						String id1 = attr.split("\\&")[0].split("\\=")[1];
+//						HashMap<String, String> map = new HashMap<String, String>();
+//						map.put("type", type);
+//						map.put("id", id1);
+//						map.put("vars", attr);
+//						parts.add(map);
+//					}else{
+//						String attr = em.attr("src");
+//						HashMap<String, String> map = new HashMap<String, String>();
+//						map.put("type", "game");
+//						map.put("id", attr);
+//						
+//						parts.add(map);
+//					}
+//				}
+//				
+//				}
+//		}
 		return parts;
 	}
 	
 	public static ArrayList<String> ParserVideopath(String type,String id) throws Exception{
-		if(type.equals("video")){
+		if(type.equals("sina")){
 			//新浪
 			return getSinaflv(id);
 		}else if(type.equals("youku")){
@@ -418,47 +473,41 @@ public class Parser {
 		return hots;
 	}
 	
-	public static ArrayList<HashMap<String ,String>> getComment(String id) throws IOException{
-		Connection c = Jsoup.connect("http://www.acfun.tv/m/art.php?aid="+id);
-		Document doc = c.get();
-		Elements ems = doc.getElementsByAttributeValue("class", "i");
-		ArrayList<HashMap<String, String>> comments = new ArrayList<HashMap<String,String>>();
-		if(!ems.isEmpty()){
-			ems.remove(0);
-			
-			for(Element em:ems){
-				HashMap<String, String> map = new HashMap<String, String>();
-				String user = em.getElementsByAttributeValue("class", "g").first().text();
-				map.put("user",user);
-				String time = em.getElementsByAttributeValue("class", "b").first().text();
-				map.put("time", time);
-				String comment = em.text();
-				map.put("comment", comment);
-				comments.add(map);
-			}
-			
-			//accesskey="4"
-			Elements nems = doc.getElementsByAttributeValue("accesskey", "4");
-			if(nems.size()!=0){
-				String nextpage = nems.first().attr("href");
-				HashMap<String, String> nextmap = new HashMap<String, String>();
-				nextmap.put("nextpage", nextpage);
-				comments.add(nextmap);
-				return comments;	
+	public static ArrayList<HashMap<String ,String>> getComment(String url) throws IOException{
+		URL lurl;
+		try {
+			lurl = new URL(url);
+			ArrayList<HashMap<String, String>> comments = new ArrayList<HashMap<String,String>>();
+			HttpURLConnection conn = (HttpURLConnection) lurl.openConnection();
+			conn.setConnectTimeout(6 * 1000);
+			if (conn.getResponseCode() != 200)
+				throw new RuntimeException("请求url失败");
+			InputStream is = conn.getInputStream();
+			String jsonstring = readData(is, "UTF8");
+			conn.disconnect();
+
+			JSONObject jsonObject = new JSONObject(jsonstring);
+			JSONArray jsonArray = jsonObject.getJSONArray("commentList");
+			if(jsonArray.length()>0){
+				JSONObject comjsonobj = (JSONObject) jsonObject.get("commentContentArr");
+				for(int i = 0 ;i<jsonArray.length();i++){
+					HashMap<String, String> map = new HashMap<String, String>();
+					JSONObject contentobj = comjsonobj.getJSONObject("c"+jsonArray.get(i).toString());
+					map.put("user",(String) contentobj.get("userName"));
+					map.put("time", (String) contentobj.get("postDate"));
+					map.put("comment", (String) contentobj.get("content"));
+					comments.add(map);
+				}
+				return comments;
 			}else{
-				HashMap<String, String> nextmap = new HashMap<String, String>();
-				nextmap.put("nextpage", "");
-				comments.add(nextmap);
-				return comments;	
+				return null;
 			}
-		
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		HashMap<String, String> map = new HashMap<String, String>();
-		map.put("user","");
-		map.put("time", "");
-		map.put("comment", "暂时没有评论...");
-		comments.add(map);
-		return comments;
+		return null;
 	}
 	public static ArrayList<HashMap<String ,String>> getCommentwithpage(String url) throws IOException{
 		Connection c = Jsoup.connect(url);
@@ -486,4 +535,6 @@ public class Parser {
 		comments.add(map);
 		return comments;
 	}
+	
+	
 }
