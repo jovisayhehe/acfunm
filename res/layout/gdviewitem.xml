@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tv.avfun.view.MLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:yoooo="http://yoooo.org"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:background="@drawable/selectable_background"
+	 >
+	
+    <FrameLayout
+   	android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="1dip"
+    android:layout_gravity="center"
+    >
+	<tv.avfun.view.BorderImageView
+	 android:layout_width="@dimen/img_w"
+	 android:layout_height="@dimen/img_h"
+	 android:scaleType="fitXY"
+	 yoooo:BorderColor="#FFFFFF"
+	 android:id="@+id/gdviewitemimgs"
+	 />
+	
+    <tv.avfun.view.BorderImageView
+	 android:layout_width="@dimen/img_w"
+	 android:layout_height="@dimen/img_h"
+	 android:scaleType="fitXY"
+	 yoooo:BorderColor="#FFFFFF"
+	 android:id="@+id/gdviewitemimgf"
+	 />        
+    </FrameLayout>
+
+	<TextView
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:background="#FFFFFF"
+	android:gravity="center"
+	android:textColor="#FF9A03"
+	android:textSize="@dimen/gdviewitemtext_size"
+	android:textStyle="bold"
+	android:layout_marginBottom="1dip"
+	android:layout_gravity="center"
+	android:layout_marginLeft="1dip"
+	android:layout_marginRight="1dip"
+	android:id="@+id/gdviewitemtext"
+	/>
+
+</tv.avfun.view.MLinearLayout>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <color name="android_white">#FFFFFF</color>
+    <color name="android_tab_unpressed">#CDCDCD</color>
+    <color name="listselectable_focused">#88f47b26</color>
+    <color name="listselectable_pressed">#ccf47b26</color>
+    <color name="listfooter">#E9E9E9</color>
+    <color name="main_color">#FF9A03</color>
+    <color name="main_win_bg">#E9E9E9</color>
+    <color name="detail_play_bg">#FF9901</color>
+    <color name="detail_play_p_bg">#FFCE9F</color>
+    <color name="web_color">#f6f6f6</color>
+    <color name="web_btn_color">#CEBEAE</color>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="mem_btn_width">100dip</dimen>
+    <dimen name="mem_btn_height">30dip</dimen>
+   <dimen name="mem_marginLeft">226dip</dimen>
+   <dimen name="img_w">115dip</dimen>
+   <dimen name="img_h">100dip</dimen>
+   <dimen name="gdviewitemtext_size">20sp</dimen>
+</resources>

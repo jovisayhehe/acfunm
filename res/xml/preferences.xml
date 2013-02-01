@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen android:title="设置"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="操作">
+        <Preference 
+            android:title="清空图片缓存" 
+            android:key="clear_imgcache"
+            />
+        <CheckBoxPreference 
+            android:title="外部播放器" 
+            android:key="ex_palyer" 
+            />
+        <ListPreference 
+            android:title="视频源选择"
+            android:key="video_source"             
+            android:entries="@array/listArray"
+            android:entryValues="@array/listValues"
+            />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="关于">
+        <Preference 
+            android:title="版本" 
+            android:key="version_name" 
+            />
+        <Preference 
+            android:title="发送建议想法吐槽" 
+            android:key="sendmail" />
+    </PreferenceCategory>
+    
+</PreferenceScreen>

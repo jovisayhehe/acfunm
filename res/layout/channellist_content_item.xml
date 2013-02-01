@@ -1,28 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:yoooo="http://yoooo.org"
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
-  android:background="@drawable/channel_content_item_bg_m_ck"
+  android:focusable="false"
+  android:background="@drawable/selectable_background"
   >
   
-  <ImageView 
-  android:layout_width="100dip"
-  android:layout_height="95dip"
-  android:paddingTop="10dip"
-  android:paddingBottom="10dip"
+  <tv.avfun.view.BorderImageViewL
+  android:layout_width="97dip"
+  android:layout_height="77dip"
   android:id="@+id/channellist_item_img"
   android:src="@drawable/no_picture"
+  yoooo:BorderColor="#FFFFFF"
+  android:layout_marginTop="8dip"
+  android:layout_marginLeft="8dip"
   android:scaleType="fitXY"
-  />
+/> 
   
    <TextView
   android:layout_width="fill_parent"
   android:layout_height="wrap_content"
-  android:textColor="#FFFFFF"
-  android:textSize="15dip"
-  android:paddingRight="15dip"
-  android:paddingTop="10dip"
+  android:textColor="#000000"
+  android:textSize="15sp"
+  android:paddingLeft="15dip"
+  android:paddingRight="8dip"
+  android:paddingTop="8dip"
   android:layout_toRightOf="@id/channellist_item_img"
   android:id="@+id/channellist_content_item_title"
   />
@@ -32,8 +36,10 @@
   android:textSize="12dip"
   android:singleLine="true"
   android:gravity="right"
-  android:paddingRight="10dip"
+  android:paddingRight="8dip"
   android:paddingTop="70dip"
+  android:paddingBottom="10dip"
+  android:textColor="#C5C5C5"
   android:layout_toRightOf="@id/channellist_item_img"
   android:id="@+id/channelist_content_item_views"
   />
@@ -42,12 +48,40 @@
   android:layout_width="fill_parent"
   android:layout_height="wrap_content"
   android:textSize="12dip"
-  android:paddingLeft="10dip"
+  android:paddingLeft="15dip"
   android:paddingTop="70dip"
   android:singleLine="true"
   android:gravity="left"
+  android:textColor="#C5C5C5"
+  android:paddingBottom="10dip"
   android:layout_toRightOf="@id/channellist_item_img"
   android:id="@+id/channelist_content_item_art"
   />
- 
+ <LinearLayout
+   	android:layout_below="@id/channellist_item_img"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:visibility="gone"
+    android:id="@+id/channelist_content_dr"
+    >
+	
+    
+    <TextView 
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:textColor="@color/main_color"
+    android:layout_marginTop="3dip"
+    android:layout_marginLeft="12dip"
+    android:text="最近更新"
+    android:id="@+id/listheader_text"
+    />
+    
+    <View 
+     android:background="@color/main_color"
+     android:layout_width="match_parent"
+     android:layout_height="1dip"
+     />
+
+</LinearLayout>
 </RelativeLayout>
