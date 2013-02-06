@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import tv.avfun.Channel_Activity;
-import tv.avfun.MainActivity;
 import tv.avfun.R;
 import tv.avfun.animation.Rotate3dAnimation;
 
@@ -24,7 +23,6 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;

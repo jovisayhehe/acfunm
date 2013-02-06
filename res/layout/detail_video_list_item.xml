@@ -34,6 +34,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:padding="12dip"
+    android:visibility="invisible"
     android:src="@drawable/av_download"
     android:background="@drawable/selectable_background"
     />

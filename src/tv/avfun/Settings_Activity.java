@@ -26,7 +26,7 @@ import android.util.Log;
 public class Settings_Activity  extends SherlockPreferenceActivity{
 	private SharedPreferences sharedata;
 	private CheckBoxPreference cbpf;
-	private ListPreference video_source_list;
+//	private ListPreference video_source_list;
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -87,29 +87,29 @@ public class Settings_Activity  extends SherlockPreferenceActivity{
 		});
 		
 		
-		video_source_list = (ListPreference) findPreference("video_source");
-		video_source_list.setDefaultValue(1);
-		video_source_list.setSummary(video_source_list.getEntry());
-		video_source_list.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-			
-			@Override
-			public boolean onPreferenceChange(Preference preference, Object newValue) {
-				// TODO Auto-generated method stub
-				String value = newValue.toString();
-				sharedata = getSharedPreferences("video_source", 0);
-				if(value.equals("1")){
-					video_source_list.setValue("1");
-					video_source_list.setSummary("FLV");
-					sharedata.edit().putInt("source", 1).commit();
-
-				}else if(value.equals("2")){
-					video_source_list.setValue("2");
-					video_source_list.setSummary("MP4");
-					sharedata.edit().putInt("source", 2).commit();
-				}
-				return false;
-			}
-		});
+//		video_source_list = (ListPreference) findPreference("video_source");
+//		video_source_list.setDefaultValue(1);
+//		video_source_list.setSummary(video_source_list.getEntry());
+//		video_source_list.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+//			
+//			@Override
+//			public boolean onPreferenceChange(Preference preference, Object newValue) {
+//				// TODO Auto-generated method stub
+//				String value = newValue.toString();
+//				sharedata = getSharedPreferences("video_source", 1);
+//				if(value.equals("1")){
+//					video_source_list.setValue("1");
+//					video_source_list.setSummary("FLV");
+//					sharedata.edit().putInt("source", 1).commit();
+//
+//				}else if(value.equals("2")){
+//					video_source_list.setValue("2");
+//					video_source_list.setSummary("MP4");
+//					sharedata.edit().putInt("source", 2).commit();
+//				}
+//				return false;
+//			}
+//		});
 		
 		
 	}

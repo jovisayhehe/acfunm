@@ -315,7 +315,6 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 					convertView = layout;
 				}else{
 					if(iserror){
-						
 						LayoutInflater mInflater = LayoutInflater.from(Detail_Activity.this);
 						convertView = mInflater.inflate(R.layout.list_footerview, null);
 						convertView.findViewById(R.id.list_footview_progress).setVisibility(View.GONE);

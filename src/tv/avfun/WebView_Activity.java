@@ -3,6 +3,7 @@ package tv.avfun;
 
 
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -61,7 +62,8 @@ public class WebView_Activity extends SherlockActivity implements OnClickListene
             switch (msg.what) {
 			case 1:
 				tprobar.setVisibility(View.GONE);
-				mWebView.loadData(doc.html(), "text/html; charset=UTF-8", null);
+				mWebView.loadData( URLEncoder.encode(doc.html()).replaceAll("\\+"," "), "text/html; charset=UTF-8", null );
+//				mWebView.loadData(doc.html(), "text/html; charset=UTF-8", null);
 				break;
 			case 2:
 				tprobar.setVisibility(View.GONE);

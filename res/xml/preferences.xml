@@ -10,12 +10,6 @@
             android:title="外部播放器" 
             android:key="ex_palyer" 
             />
-        <ListPreference 
-            android:title="视频源选择"
-            android:key="video_source"             
-            android:entries="@array/listArray"
-            android:entryValues="@array/listValues"
-            />
     </PreferenceCategory>
     <PreferenceCategory android:title="关于">
         <Preference 
