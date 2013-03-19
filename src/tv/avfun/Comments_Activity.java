@@ -83,7 +83,6 @@ public class Comments_Activity extends SherlockActivity  implements OnClickListe
         progressBar = (ProgressBar)findViewById(R.id.time_progress);
 		 time_outtext = (TextView)findViewById(R.id.time_out_text);
 		 time_outtext.setOnClickListener(this);
-		list = (ListView)findViewById(R.id.list);
 		list.setVisibility(View.INVISIBLE);
 		list.setDivider(getResources().getDrawable(R.drawable.listview_divider));
 		list.setDividerHeight(2);
@@ -134,14 +133,17 @@ public class Comments_Activity extends SherlockActivity  implements OnClickListe
 		new Thread() {
 			public void run() {
 				try {
+					final List<Map<String, Object>> tempdata = ApiParser.getComment(aid, page);
 
-					if (isadd) {
-						data.addAll(ApiParser.getComment(aid, page));
-					} else {
-						data = ApiParser.getComment(aid, page);
-					}
 					runOnUiThread(new Runnable() {
 						public void run() {
+							
+							if (isadd) {
+								data.addAll(tempdata);
+							} else {
+								data = tempdata;
+							}
+							
 							if (!isadd) {
 								progressBar.setVisibility(View.GONE);
 								list.setVisibility(View.VISIBLE);

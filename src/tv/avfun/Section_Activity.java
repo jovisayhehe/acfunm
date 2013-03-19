@@ -31,7 +31,7 @@ public class Section_Activity extends SherlockActivity implements OnClickListene
 	private TextView time_outtext;
 	private ListView list;
 	private SectionAdapter adapter;
-	private List<String> data = new ArrayList<String>();
+	private ArrayList<String> data = new ArrayList<String>();
 	private int playmode = 0;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +56,6 @@ public class Section_Activity extends SherlockActivity implements OnClickListene
 				getdatas();
 			}
 		});
-		list = (ListView)findViewById(R.id.list);
 		list.setVisibility(View.INVISIBLE);
 		list.setDivider(getResources().getDrawable(R.drawable.listview_divider));
 		list.setDividerHeight(2);
@@ -89,13 +88,19 @@ public class Section_Activity extends SherlockActivity implements OnClickListene
 								
 							if(data!=null&&!data.isEmpty()&&data.size()>0){
 								if(data.size()>1){
-									adapter.setData(data);
-									adapter.notifyDataSetChanged();
+//									adapter.setData(data);
+//									adapter.notifyDataSetChanged();
+									
+									Intent intent = new Intent(Section_Activity.this, Play_Activity.class);
+//									intent.putExtra("path", data.get(0));
+									intent.putStringArrayListExtra("paths", data);
+							        startActivity(intent);
+							        Section_Activity.this.finish();
 								}else{
 
 									if(playmode==0){
 										Intent intent = new Intent(Section_Activity.this, Play_Activity.class);
-										intent.putExtra("path", data.get(0));
+										intent.putExtra("paths", data);
 								        startActivity(intent);
 								        Section_Activity.this.finish();
 									}else{

@@ -98,10 +98,8 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 			@SuppressWarnings("unchecked")
 			public void run() {
 				try {
-
-					if (isadd) {
-						data.addAll((List<Map<String, Object>>)ApiParser.getSearchResults(word, page).get(0));
-					} else {
+					final List<Map<String, Object>> tempdata = (List<Map<String, Object>>)ApiParser.getSearchResults(word, page).get(0);
+					if (!isadd) {
 						objs = ApiParser.getSearchResults(word, page);
 					}
 					runOnUiThread(new Runnable() {
@@ -110,7 +108,7 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 								progressBar.setVisibility(View.GONE);
 								list.setVisibility(View.VISIBLE);
 							} else{
-
+								data.addAll(tempdata);
 							}
 							if(objs!=null){
 								totalpage = (Integer) objs.get(1);

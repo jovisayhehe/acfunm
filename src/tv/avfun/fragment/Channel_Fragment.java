@@ -2,6 +2,7 @@ package tv.avfun.fragment;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -120,16 +121,18 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 		new Thread() {
 			public void run() {
 				try {
-
-					if (isadd) {
-						data.addAll(ApiParser.getChannelList(url+page));
-					} else {
+					final List<Map<String, Object>> templist = ApiParser.getChannelList(url+page);
+					if (!isadd) {
 						data = ApiParser.getChannelList("http://www.acfun.tv/api/getlistbyorder.aspx?orderby=7&channelIds="+channelid+"&count=10");
 						data.addAll(ApiParser.getChannelList(url+page));
-						
-					}
+					} 
 					activity.runOnUiThread(new Runnable() {
 						public void run() {
+							
+							if (isadd) {
+								data.addAll(templist);
+							}
+							
 							if (!isadd) {
 								progressBar.setVisibility(View.GONE);
 								list.setVisibility(View.VISIBLE);
