@@ -73,7 +73,7 @@ public class User_HomeFragment extends SherlockFragment implements OnClickListen
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+		
 		super.onActivityCreated(savedInstanceState);
 		this.activity = getActivity();
 		imageLoader=new ImageLoader(activity);	
@@ -115,7 +115,7 @@ public class User_HomeFragment extends SherlockFragment implements OnClickListen
 
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
+		
 		switch (v.getId()) {
 		case R.id.mem_login_vbtn:
 			if(islogin){
@@ -228,14 +228,14 @@ public class User_HomeFragment extends SherlockFragment implements OnClickListen
 					});
 					
 				} catch (HttpException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 					
 					activity.runOnUiThread( new Runnable() {
 						
 						@Override
 						public void run() {
-							// TODO Auto-generated method stub
+							
 							Toast.makeText(activity, "(=ﾟωﾟ)= 服务器想应异常...", Toast.LENGTH_SHORT).show();
 							login_ui_visible();
 							vlogin_btn.setEnabled(true);
@@ -244,11 +244,11 @@ public class User_HomeFragment extends SherlockFragment implements OnClickListen
 					});
 					
 				} catch (UnknownHostException e) {
-					// TODO Auto-generated catch block
+					
 					activity.runOnUiThread( new Runnable() {
 						@Override
 						public void run() {
-							// TODO Auto-generated method stub
+							
 							Toast.makeText(activity, "(=ﾟωﾟ)= 网络异常,请检查网络...", Toast.LENGTH_SHORT).show();
 							login_ui_visible();
 							vlogin_btn.setEnabled(true);
@@ -257,10 +257,10 @@ public class User_HomeFragment extends SherlockFragment implements OnClickListen
 					});
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 				

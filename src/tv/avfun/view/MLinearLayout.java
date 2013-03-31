@@ -13,13 +13,13 @@ public class MLinearLayout extends LinearLayout{
 
 	public MLinearLayout(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	
 	@Override
     protected void onDraw(Canvas canvas) {
-        // TODO Auto-generated method stub    
+            
         
         super.onDraw(canvas);
         Rect rec=canvas.getClipBounds();

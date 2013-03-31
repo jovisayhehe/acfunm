@@ -93,37 +93,37 @@ public class MainActivity extends SherlockFragmentActivity implements OnPageChan
     
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
-		// TODO Auto-generated method stub
+		
 		mPager.setCurrentItem(tab.getPosition());
 	}
 
 	@Override
 	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void onTabReselected(Tab tab, FragmentTransaction ft) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void onPageScrollStateChanged(int arg0) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void onPageScrolled(int arg0, float arg1, int arg2) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void onPageSelected(int arg0) {
-		// TODO Auto-generated method stub
+		
 		getSupportActionBar().setSelectedNavigationItem(arg0);
 	}
 	

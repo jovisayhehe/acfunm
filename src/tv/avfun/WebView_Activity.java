@@ -57,7 +57,7 @@ public class WebView_Activity extends SherlockActivity implements OnClickListene
 	     
         @Override     
         public void handleMessage(Message msg) {     
-            // TODO Auto-generated method stub     
+                 
             super.handleMessage(msg);     
             switch (msg.what) {
 			case 1:
@@ -131,7 +131,7 @@ public class WebView_Activity extends SherlockActivity implements OnClickListene
 
 			@Override
 			public void onSChanged(int l, int t, int oldl, int oldt) {
-				// TODO Auto-generated method stub
+				
 				
 				if(!isbottom){
 					if (mWebView.getContentHeight() * mWebView.getScale()
@@ -149,7 +149,7 @@ public class WebView_Activity extends SherlockActivity implements OnClickListene
 			
 			@Override
 			public void onDrawOver(int h) {
-				// TODO Auto-generated method stub
+				
 	       		 if(h<=MainActivity.height){
 	    			 btn.setVisibility(View.VISIBLE);
 	    		 }
@@ -160,42 +160,42 @@ public class WebView_Activity extends SherlockActivity implements OnClickListene
 	
 //	@Override
 //	protected void onPause() {
-//		// TODO Auto-generated method stub
+//		
 //		super.onPause();
 //		Log.i("st", "onPause");
 //	}
 //
 //	@Override
 //	protected void onStop() {
-//		// TODO Auto-generated method stub
+//		
 //		super.onStop();
 //		Log.i("st", "onStop");
 //	}
 //
 //	@Override
 //	protected void onDestroy() {
-//		// TODO Auto-generated method stub
+//		
 //		super.onDestroy();
 //		Log.i("st", "onDestroy");
 //	}
 //
 //	@Override
 //	protected void onStart() {
-//		// TODO Auto-generated method stub
+//		
 //		super.onStart();
 //		Log.i("st", "onStart");
 //	}
 //
 //	@Override
 //	protected void onRestart() {
-//		// TODO Auto-generated method stub
+//		
 //		super.onRestart();
 //		Log.i("st", "onRestart");
 //	}
 //
 //	@Override
 //	protected void onResume() {
-//		// TODO Auto-generated method stub
+//		
 //		super.onResume();
 //		Log.i("st", "onResume");
 //	}
@@ -203,7 +203,7 @@ public class WebView_Activity extends SherlockActivity implements OnClickListene
 	@Override
 	public boolean onOptionsItemSelected(
 			com.actionbarsherlock.view.MenuItem item) {
-		// TODO Auto-generated method stub
+		
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			this.finish();
@@ -252,7 +252,7 @@ public class WebView_Activity extends SherlockActivity implements OnClickListene
     
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
+		
 		switch (v.getId()) {
 		case R.id.web_comment_btn:
 			Intent intent = new Intent(WebView_Activity.this, Comments_Activity.class);
@@ -272,7 +272,7 @@ public class WebView_Activity extends SherlockActivity implements OnClickListene
 		reloadtext.setVisibility(View.GONE);
 		 new Thread(){     
 	            public void run() {     
-	                // TODO Auto-generated method stub   
+	                   
 	            	try {
 	        			InputStream in = getAssets().open("usite.html");
 	        			doc = Jsoup.parse(in, "utf-8","");
@@ -330,7 +330,7 @@ public class WebView_Activity extends SherlockActivity implements OnClickListene
 		                handler.sendMessage(msg);
 						
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
+						
 						e.printStackTrace();
 		                Message msg = new Message();     
 		                msg.what = 2;     

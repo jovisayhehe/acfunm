@@ -48,7 +48,7 @@ public class ImagePagerActivity extends SherlockActivity{
 	@SuppressLint("SimpleDateFormat")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.ac_image_pager);
 		
@@ -142,7 +142,7 @@ public class ImagePagerActivity extends SherlockActivity{
 	@Override
 	public boolean onOptionsItemSelected(
 			com.actionbarsherlock.view.MenuItem item) {
-		// TODO Auto-generated method stub
+		
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			this.finish();
