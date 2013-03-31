@@ -158,7 +158,7 @@ public class DBService {
             	job.put("path", ck.getPath());
 				job.put("domain", ck.getDomain());
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 				
 			}

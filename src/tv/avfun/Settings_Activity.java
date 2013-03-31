@@ -30,7 +30,7 @@ public class Settings_Activity  extends SherlockPreferenceActivity{
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+		
 		super.onCreate(savedInstanceState);
 		
 	    ActionBar ab = getSupportActionBar();
@@ -44,14 +44,14 @@ public class Settings_Activity  extends SherlockPreferenceActivity{
 			info = manager.getPackageInfo(this.getPackageName(), 0);
 			findPreference("version_name").setSummary(info.versionName);
 		} catch (NameNotFoundException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		findPreference("clear_imgcache").setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
-				// TODO Auto-generated method stub
+				
 				preference.setEnabled(false);
 				FileCache fileCache = new FileCache(Settings_Activity.this);
 				fileCache.clear();
@@ -63,7 +63,7 @@ public class Settings_Activity  extends SherlockPreferenceActivity{
 			
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
-				// TODO Auto-generated method stub
+				
 				UMFeedbackService.openUmengFeedbackSDK(Settings_Activity.this);
 				return false;
 			}
@@ -74,7 +74,7 @@ public class Settings_Activity  extends SherlockPreferenceActivity{
 			
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
-				// TODO Auto-generated method stub
+				
 				sharedata = getSharedPreferences("playmode", 0);
 				if(cbpf.isChecked()){
 					sharedata.edit().putInt("mode", 1).commit();
@@ -94,7 +94,7 @@ public class Settings_Activity  extends SherlockPreferenceActivity{
 //			
 //			@Override
 //			public boolean onPreferenceChange(Preference preference, Object newValue) {
-//				// TODO Auto-generated method stub
+//				
 //				String value = newValue.toString();
 //				sharedata = getSharedPreferences("video_source", 1);
 //				if(value.equals("1")){
@@ -125,7 +125,7 @@ public class Settings_Activity  extends SherlockPreferenceActivity{
 	
 	public boolean onOptionsItemSelected(
 			com.actionbarsherlock.view.MenuItem item) {
-		// TODO Auto-generated method stub
+		
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			this.finish();

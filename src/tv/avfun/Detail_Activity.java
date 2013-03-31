@@ -55,7 +55,7 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 	public ImageLoader imageLoader;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.detail_layout);
 		from = getIntent().getIntExtra("from", 0);
@@ -80,7 +80,7 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 	@Override
 	public boolean onOptionsItemSelected(
 			com.actionbarsherlock.view.MenuItem item) {
-		// TODO Auto-generated method stub
+		
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			this.finish();
@@ -211,7 +211,7 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 					});
 
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					
 					runOnUiThread(new Runnable() {
 						public void run() {
 							adaper.setIserror(true);
@@ -231,7 +231,7 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 		private ArrayList<HashMap<String, Object>> data;
 		private boolean iserror;
 		public DetailAdaper(ArrayList<HashMap<String, Object>> data) {
-			// TODO Auto-generated constructor stub
+			
 			this.data = data;
 		}
 		
@@ -244,25 +244,25 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 		}
 		@Override
 		public int getCount() {
-			// TODO Auto-generated method stub
+			
 			return 3;
 		}
 
 		@Override
 		public Object getItem(int position) {
-			// TODO Auto-generated method stub
+			
 			return null;
 		}
 
 		@Override
 		public long getItemId(int position) {
-			// TODO Auto-generated method stub
+			
 			return position;
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			// TODO Auto-generated method stub
+			
 			LinearLayout layout = new LinearLayout(Detail_Activity.this);
 			layout.setOrientation(LinearLayout.VERTICAL);
 			
@@ -359,7 +359,7 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 
 		@Override
 		public void onClick(View v) {
-			// TODO Auto-generated method stub
+			
 			HashMap<String, Object> map = (HashMap<String, Object>) v.getTag();
 			startToPlay(map);
 		}
@@ -368,7 +368,7 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
+		
 		switch ((Integer)v.getTag()) {
 		case 100:
 			v.setEnabled(false);

@@ -45,7 +45,7 @@ public class HomeFragment extends SherlockFragment{
   	  
         @Override  
         public void run() {  
-            // TODO Auto-generated method stub  
+              
                 handler.postDelayed(this, 3500);
                 
                 while(oldrandomnum ==randomnum){
@@ -81,7 +81,7 @@ public class HomeFragment extends SherlockFragment{
 
     @Override
 	public void onPause() {
-		// TODO Auto-generated method stub
+		
 		super.onPause();
 		
 	}
@@ -90,7 +90,7 @@ public class HomeFragment extends SherlockFragment{
 
 	@Override
 	public void onResume() {
-		// TODO Auto-generated method stub
+		
 		super.onResume();
 		
 	}
@@ -103,10 +103,12 @@ public class HomeFragment extends SherlockFragment{
 
       return v;
     }
+
+	
 	
    @Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+		
 		super.onActivityCreated(savedInstanceState);
 		this.activity = getActivity();
 		data = new ArrayList<HashMap<String,Object>>();
@@ -209,7 +211,7 @@ public class HomeFragment extends SherlockFragment{
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
-			// TODO Auto-generated method stub
+			
 			
 			Intent intent = new Intent(activity, Channel_Activity.class);
 			intent.putExtra("position", position);
@@ -237,25 +239,25 @@ public class HomeFragment extends SherlockFragment{
 		
 		@Override
 		public int getCount() {
-			// TODO Auto-generated method stub
+			
 			return data.size();
 		}
 
 		@Override
 		public Object getItem(int position) {
-			// TODO Auto-generated method stub
+			
 			return data.get(position);
 		}
 
 		@Override
 		public long getItemId(int position) {
-			// TODO Auto-generated method stub
+			
 			return position;
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			// TODO Auto-generated method stub
+			
 
 				convertView = mInflater.inflate(R.layout.gdviewitem, null);
 				ImageView img2 = (ImageView) convertView.findViewById(R.id.gdviewitemimgs);

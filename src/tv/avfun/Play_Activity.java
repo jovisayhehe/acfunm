@@ -45,7 +45,7 @@ public class Play_Activity extends Activity{
 			
 			@Override
 			public void onBufferingUpdate(MediaPlayer arg0, int arg1) {
-				// TODO Auto-generated method stub
+				
 				textView.setText(arg1+"");
 				if(arg0.isBuffering()){
 					textView.setVisibility(View.GONE);
@@ -64,7 +64,7 @@ public class Play_Activity extends Activity{
 
 		@Override
 		public void onCompletion(MediaPlayer mPlayer) {
-			// TODO Auto-generated method stub
+			
 			Toast.makeText(Play_Activity.this, "开始缓冲下一段...稍后", 1).show();
 			mPlayer.getDuration();
 			index++;
@@ -76,7 +76,7 @@ public class Play_Activity extends Activity{
 				
 				@Override
 				public void onPrepared(MediaPlayer arg0) {
-					// TODO Auto-generated method stub
+					
 					
 				}
 			});

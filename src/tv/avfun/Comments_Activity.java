@@ -60,7 +60,7 @@ public class Comments_Activity extends SherlockActivity  implements OnClickListe
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.list_layout);
 		
@@ -167,7 +167,7 @@ public class Comments_Activity extends SherlockActivity  implements OnClickListe
 					});
 
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					
 					runOnUiThread(new Runnable() {
 						public void run() {
 
@@ -192,7 +192,7 @@ public class Comments_Activity extends SherlockActivity  implements OnClickListe
 	
 	public boolean onOptionsItemSelected(
 			com.actionbarsherlock.view.MenuItem item) {
-		// TODO Auto-generated method stub
+		
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			this.finish();
@@ -209,7 +209,7 @@ public class Comments_Activity extends SherlockActivity  implements OnClickListe
 
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -217,7 +217,7 @@ public class Comments_Activity extends SherlockActivity  implements OnClickListe
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem,
 			int visibleItemCount, int totalItemCount) {
-		// TODO Auto-generated method stub
+		
 		 if (view.getLastVisiblePosition() == (view.getCount() - 1)&&!isload){
 			 indexpage+=1;
 			 if(indexpage>totalpage){
@@ -234,7 +234,7 @@ public class Comments_Activity extends SherlockActivity  implements OnClickListe
 
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
+		
 		switch (v.getId()) {
 		case R.id.time_out_text:
 			getdatas(1, false);
@@ -260,7 +260,7 @@ public class Comments_Activity extends SherlockActivity  implements OnClickListe
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		// TODO Auto-generated method stub
+		
 		if(position == parent.getCount()-1){
 			if(isreload){
 				footview.findViewById(R.id.list_footview_progress).setVisibility(View.VISIBLE);
@@ -319,29 +319,29 @@ public class Comments_Activity extends SherlockActivity  implements OnClickListe
 					});
 					
 				} catch (HttpException e) {
-					// TODO Auto-generated catch block
+					
 					runOnUiThread( new Runnable() {
 						@Override
 						public void run() {
-							// TODO Auto-generated method stub
+							
 							send_btn.setEnabled(true);
 							Toast.makeText(Comments_Activity.this, "(=ﾟωﾟ)= 服务器想应异常...", Toast.LENGTH_SHORT).show();
 						}
 					});
 					e.printStackTrace();
 				} catch (UnknownHostException e) {
-					// TODO Auto-generated catch block
+					
 					runOnUiThread( new Runnable() {
 						@Override
 						public void run() {
-							// TODO Auto-generated method stub
+							
 							send_btn.setEnabled(true);
 							Toast.makeText(Comments_Activity.this, "(=ﾟωﾟ)= 网络异常,请检查网络...", Toast.LENGTH_SHORT).show();
 						}
 					});
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 				

@@ -55,25 +55,25 @@ public class TimeListAdaper extends BaseAdapter{
 	}
 	
 	public int getCount() {
-		// TODO Auto-generated method stub
+		
 		return data.size();
 	}
 
 	@Override
 	public Object getItem(int position) {
-		// TODO Auto-generated method stub
+		
 		return data.get(position);
 	}
 
 	@Override
 	public long getItemId(int position) {
-		// TODO Auto-generated method stub
+		
 		return position;
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		// TODO Auto-generated method stub
+		
 		convertView = mInflater.inflate(R.layout.expandable_list_item,
 				null);
 		TextView txt = (TextView) convertView.findViewById(R.id.text);
@@ -138,7 +138,7 @@ public class TimeListAdaper extends BaseAdapter{
 			
 			@Override
 			public void onClick(View view) {
-				// TODO Auto-generated method stub
+				
 				view.setAnimation(null);
 				int type = expandable.getVisibility() == View.VISIBLE ? ExpandCollapseAnimation.COLLAPSE : ExpandCollapseAnimation.EXPAND;
 				Animation anim = new ExpandCollapseAnimation(expandable, 500, type);
@@ -177,14 +177,14 @@ public class TimeListAdaper extends BaseAdapter{
 		private int position;
 		private int i;
 		public ButtonListener(int position, int i) {
-			// TODO Auto-generated constructor stub
+			
 			this.position = position;
 			this.i = i;
 		}
 
 		@Override
 		public void onClick(View v) {
-			// TODO Auto-generated method stub
+			
 			Intent intent = new Intent(context, Detail_Activity.class);
 			intent.putExtra("title", data.get(position).get(i).get("title"));
 			intent.putExtra("aid", v.getTag().toString());

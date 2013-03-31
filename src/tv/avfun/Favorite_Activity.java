@@ -27,7 +27,7 @@ public class Favorite_Activity extends SherlockActivity implements OnItemClickLi
 	private AssistAdaper adaper;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.list_layout);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -66,7 +66,7 @@ public class Favorite_Activity extends SherlockActivity implements OnItemClickLi
 	@Override
 	public boolean onOptionsItemSelected(
 			com.actionbarsherlock.view.MenuItem item) {
-		// TODO Auto-generated method stub
+		
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			this.finish();
@@ -81,7 +81,7 @@ public class Favorite_Activity extends SherlockActivity implements OnItemClickLi
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		// TODO Auto-generated method stub
+		
 		if(data.get(position).getTpye()==0){
 			Intent intent = new Intent(Favorite_Activity.this, Detail_Activity.class);
 			intent.putExtra("aid", data.get(position).getAid());
@@ -117,25 +117,25 @@ public class Favorite_Activity extends SherlockActivity implements OnItemClickLi
 		
 		@Override
 		public int getCount() {
-			// TODO Auto-generated method stub
+			
 			return this.data.size();
 		}
 
 		@Override
 		public Object getItem(int position) {
-			// TODO Auto-generated method stub
+			
 			return data.get(position);
 		}
 
 		@Override
 		public long getItemId(int position) {
-			// TODO Auto-generated method stub
+			
 			return position;
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			// TODO Auto-generated method stub
+			
 			final ListViewHolder holder;
 			if(convertView==null){
 				convertView = mInflater.inflate(R.layout.favorites_list_item, null);

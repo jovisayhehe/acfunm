@@ -31,25 +31,25 @@ public class Channell_ContentListViewAdaper extends BaseAdapter{
 	}
 	@Override
 	public int getCount() {
-		// TODO Auto-generated method stub
+		
 		return data.size();
 	}
 
 	@Override
 	public Object getItem(int arg0) {
-		// TODO Auto-generated method stub
+		
 		return data.get(arg0);
 	}
 
 	@Override
 	public long getItemId(int arg0) {
-		// TODO Auto-generated method stub
+		
 		return arg0;
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		// TODO Auto-generated method stub
+		
 		
 		final ListViewHolder holder;
 		if(convertView==null){

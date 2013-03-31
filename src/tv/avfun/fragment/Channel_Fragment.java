@@ -80,7 +80,7 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+		
 		super.onActivityCreated(savedInstanceState);
 		url = getArguments().getString("url");
 		channelid = url.substring(43, url.length()-13);
@@ -149,7 +149,7 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 					});
 
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					
 					activity.runOnUiThread(new Runnable() {
 						public void run() {
 
@@ -174,14 +174,14 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem,
 			int visibleItemCount, int totalItemCount) {
-		// TODO Auto-generated method stub
+		
 		 if (view.getLastVisiblePosition() == (view.getCount() - 1)&&!isload){
 			 indexpage+=1;
 			 getdatas(indexpage, true);
@@ -192,7 +192,7 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int pos,
 			long id) {
-		// TODO Auto-generated method stub
+		
 			int position = pos-1;
 			if(position == parent.getCount()-2){
 				if(isreload){
@@ -240,7 +240,7 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
+		
 		switch (v.getId()) {
 		case R.id.time_out_text:
 			getdatas(1, false);
