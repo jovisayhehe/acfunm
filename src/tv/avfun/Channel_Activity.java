@@ -43,7 +43,7 @@ public class Channel_Activity extends SherlockFragmentActivity implements OnPage
 	private SubMenu subMenu1;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		   gdposition = getIntent().getIntExtra("position", -1);
@@ -92,7 +92,7 @@ public class Channel_Activity extends SherlockFragmentActivity implements OnPage
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// TODO Auto-generated method stub
+		
 
 	if(isarticle){
         subMenu1 = menu.addSubMenu("阅读模式");
@@ -128,14 +128,14 @@ public class Channel_Activity extends SherlockFragmentActivity implements OnPage
 
 	@Override
 	protected void onNewIntent(Intent intent) {
-		// TODO Auto-generated method stub
+		
 		super.onNewIntent(intent);
 	}
 	
 	@Override
 	public boolean onOptionsItemSelected(
 			com.actionbarsherlock.view.MenuItem item) {
-		// TODO Auto-generated method stub
+		
 		sharedata = getSharedPreferences("viewmode", 0);
 		switch (item.getItemId()) {
 		case android.R.id.home:
@@ -167,37 +167,37 @@ public class Channel_Activity extends SherlockFragmentActivity implements OnPage
 
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
-		// TODO Auto-generated method stub
+		
 		mPager.setCurrentItem(tab.getPosition());
 	}
 
 	@Override
 	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void onTabReselected(Tab tab, FragmentTransaction ft) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void onPageScrollStateChanged(int arg0) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void onPageScrolled(int arg0, float arg1, int arg2) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void onPageSelected(int arg0) {
-		// TODO Auto-generated method stub
+		
 		getSupportActionBar().setSelectedNavigationItem(arg0);
 	}
 	

@@ -16,13 +16,13 @@ public class BorderImageViewL extends ImageView {
 	
     public BorderImageViewL(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		// TODO Auto-generated constructor stub
+		
 		color=Color.parseColor(attrs.getAttributeValue(namespace, "BorderColor"));
 	}
 
 	@Override
     protected void onDraw(Canvas canvas) {
-        // TODO Auto-generated method stub    
+            
         
         super.onDraw(canvas);
         Rect rec=canvas.getClipBounds();

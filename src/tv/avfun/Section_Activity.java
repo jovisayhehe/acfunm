@@ -35,7 +35,7 @@ public class Section_Activity extends SherlockActivity implements OnClickListene
 	private int playmode = 0;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.list_layout);
 		
@@ -52,7 +52,7 @@ public class Section_Activity extends SherlockActivity implements OnClickListene
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
+				
 				getdatas();
 			}
 		});
@@ -124,7 +124,7 @@ public class Section_Activity extends SherlockActivity implements OnClickListene
 					});
 
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					
 					runOnUiThread(new Runnable() {
 						public void run() {
 								progressBar.setVisibility(View.GONE);
@@ -142,7 +142,7 @@ public class Section_Activity extends SherlockActivity implements OnClickListene
 	
 	public boolean onOptionsItemSelected(
 			com.actionbarsherlock.view.MenuItem item) {
-		// TODO Auto-generated method stub
+		
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			this.finish();
@@ -166,25 +166,25 @@ public class Section_Activity extends SherlockActivity implements OnClickListene
 		
 		@Override
 		public int getCount() {
-			// TODO Auto-generated method stub
+			
 			return this.data.size();
 		}
 
 		@Override
 		public Object getItem(int position) {
-			// TODO Auto-generated method stub
+			
 			return this.data.get(position);
 		}
 
 		@Override
 		public long getItemId(int position) {
-			// TODO Auto-generated method stub
+			
 			return position;
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			// TODO Auto-generated method stub
+			
 			
 			TextView textView = new TextView(Section_Activity.this);
 			
@@ -204,7 +204,7 @@ public class Section_Activity extends SherlockActivity implements OnClickListene
 
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
+		
 		String flvpath = (String) v.getTag();
 
         if(playmode==0){

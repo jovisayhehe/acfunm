@@ -24,19 +24,19 @@ public class SWebView extends WebView{
 
     public SWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        // TODO Auto-generated constructor stub
+        
     }
 
     public SWebView(Context context) {
         super(context);
-        // TODO Auto-generated constructor stub
+        
     }
     
     
     
 	@Override
 	protected void onDraw(Canvas canvas) {
-		// TODO Auto-generated method stub
+		
 		super.onDraw(canvas);
 		if(isfrist){
 			int currwebheight = getContentHeight();

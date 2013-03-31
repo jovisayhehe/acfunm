@@ -20,7 +20,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int old, int n) {
-		// TODO Auto-generated method stub
+		
 		if(old<4){
 			db.execSQL("CREATE TABLE USER (_ID INTEGER PRIMARY KEY AUTOINCREMENT,USERID VARCHAR(20), USERNAME VARCHAR(25),AVATAR TEXT,SIGNATURE TEXT,COOKIES TEXT)");
 		}

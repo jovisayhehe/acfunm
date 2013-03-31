@@ -54,7 +54,7 @@ public class PlayTime extends SherlockFragment{
     
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+		
 		super.onActivityCreated(savedInstanceState);
 		
 		this.activity = getActivity();
@@ -65,7 +65,7 @@ public class PlayTime extends SherlockFragment{
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
+				
 				time_outtext.setVisibility(View.GONE);
 				initList();
 			}
@@ -89,7 +89,7 @@ public class PlayTime extends SherlockFragment{
 					});
 
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					
 					activity.runOnUiThread(new Runnable() {
 						public void run() {
 

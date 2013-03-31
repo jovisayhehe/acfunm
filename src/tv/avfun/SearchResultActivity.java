@@ -47,7 +47,7 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 	private ArrayList<Object> objs;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.list_layout);
 		   Intent intent = getIntent();
@@ -127,7 +127,7 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 					});
 
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					
 					runOnUiThread(new Runnable() {
 						public void run() {
 
@@ -152,20 +152,20 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// TODO Auto-generated method stub
+		
 		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
 	protected void onNewIntent(Intent intent) {
-		// TODO Auto-generated method stub
+		
 		super.onNewIntent(intent);
 	}
 	
 	@Override
 	public boolean onOptionsItemSelected(
 			com.actionbarsherlock.view.MenuItem item) {
-		// TODO Auto-generated method stub
+		
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			this.finish();
@@ -178,14 +178,14 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem,
 			int visibleItemCount, int totalItemCount) {
-		// TODO Auto-generated method stub
+		
 		 if (view.getLastVisiblePosition() == (view.getCount() - 1)&&!isload){
 			 indexpage+=1;
 			 if(indexpage>totalpage){
@@ -202,7 +202,7 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		// TODO Auto-generated method stub
+		
 		if(position == parent.getCount()-1){
 			if(isreload){
 				footview.findViewById(R.id.list_footview_progress).setVisibility(View.VISIBLE);
@@ -245,7 +245,7 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
+		
 		switch (v.getId()) {
 		case R.id.time_out_text:
 			getdatas(1, false);
