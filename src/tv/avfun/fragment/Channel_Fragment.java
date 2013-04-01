@@ -13,6 +13,7 @@ import tv.avfun.Detail_Activity;
 import tv.avfun.R;
 import tv.avfun.WebView_Activity;
 import tv.avfun.api.ApiParser;
+import tv.avfun.api.Channel;
 
 
 
@@ -22,6 +23,8 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +41,8 @@ import android.widget.TextView;
 
 
 public class Channel_Fragment extends BaseListFragment implements OnClickListener,OnItemClickListener,OnScrollListener{
-	private String url;
+	private static final String TAG = "Channel_Fragment";
+    private String url;
 	private ProgressBar progressBar;
 	private TextView time_outtext;
 	private ListView list;
@@ -50,7 +54,7 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 	private View footview;
 	private boolean isreload = false;
 	private LayoutInflater inflater;
-	private String channelid;
+	private int channelid;
 	private View main_v;
 	public static Channel_Fragment newInstance(String url) {
 		Channel_Fragment f = new Channel_Fragment();
@@ -83,7 +87,14 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 		
 		super.onActivityCreated(savedInstanceState);
 		url = getArguments().getString("url");
-		channelid = url.substring(43, url.length()-13);
+		Channel channel = (Channel) getArguments().getSerializable("channel");
+		if(url == null && channel != null){
+		    url = channel.getUrl();
+		    channelid = channel.getChannelId();
+		}else{
+		    channelid = Integer.valueOf(url.substring(43, url.length()-13));
+		}
+		// Log.d(TAG, "url: " + url + "\nchannelid:"+ channelid);
 		this.activity = getActivity();
 		 progressBar = (ProgressBar) this.main_v.findViewById(R.id.time_progress);
 		 time_outtext = (TextView) this.main_v.findViewById(R.id.time_out_text);
@@ -249,5 +260,15 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 			break;
 		}
 	}
+
+
+
+    public static Fragment newInstance(Channel channel) {
+        Channel_Fragment f = new Channel_Fragment();
+        Bundle args = new Bundle();
+        args.putSerializable("channel", channel);
+        f.setArguments(args);
+        return f;
+    }
 	
 }
