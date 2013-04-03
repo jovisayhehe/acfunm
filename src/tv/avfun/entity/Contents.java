@@ -8,8 +8,8 @@ public class Contents implements Serializable{
     private String username;
     private String description;
     private String titleImg; 
-    private long views; //TODO 或用int?
-    private int aid;
+    private long views; 
+    private String aid;
     private int comments;
     private int channelId;
     
@@ -53,11 +53,11 @@ public class Contents implements Serializable{
         this.titleImg = titleImg;
     }
     
-    public int getAid() {
+    public String getAid() {
         return aid;
     }
     
-    public void setAid(int aid) {
+    public void setAid(String aid) {
         this.aid = aid;
     }
     

@@ -228,7 +228,7 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 				intent.putExtra("thumb", baos.toByteArray());
-				intent.putExtra("aid", c.getAid()+"");
+				intent.putExtra("aid", c.getAid());
 				intent.putExtra("title", c.getTitle());
 				intent.putExtra("username", c.getUsername());
 				intent.putExtra("views", c.getViews()+"");
@@ -240,7 +240,7 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 				
 				Intent intent = new Intent(SearchResultActivity.this, WebView_Activity.class);
 				intent.putExtra("modecode", Channel_Activity.modecode);
-				intent.putExtra("aid", c.getAid()+"");
+				intent.putExtra("aid", c.getAid());
 				intent.putExtra("title", c.getTitle());
 				intent.putExtra("channelId", String.valueOf(channelId));
 				startActivity(intent);

@@ -216,7 +216,7 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 					 
 					Intent intent = new Intent(activity, WebView_Activity.class);
 					intent.putExtra("modecode", Channel_Activity.modecode);
-					intent.putExtra("aid", c.getAid()+""); // TODO change to int?
+					intent.putExtra("aid", c.getAid()); 
 					intent.putExtra("title", c.getTitle());
 					intent.putExtra("channelId", c.getChannelId()+""); // int?
 					startActivity(intent);
@@ -231,7 +231,7 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 					bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 					intent.putExtra("thumb", baos.toByteArray());
 					
-					intent.putExtra("aid", c.getAid()+""); 
+					intent.putExtra("aid", c.getAid()); 
 					intent.putExtra("title", c.getTitle());
 					intent.putExtra("username", c.getUsername());
 					intent.putExtra("views", c.getViews()+""); 

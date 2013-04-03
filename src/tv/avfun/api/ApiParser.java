@@ -44,7 +44,7 @@ public class ApiParser {
                     .replace("&amp;","&").replaceAll("\\<.*?>",""));
             c.setViews(jobj.getLong("views"));
             c.setTitleImg(jobj.getString("titleImg"));
-            c.setAid(jobj.getInt("aid"));
+            c.setAid(jobj.getString("aid"));
             c.setChannelId(jobj.getInt("channelId"));
             c.setComments(jobj.getInt("comments"));
             
@@ -282,7 +282,7 @@ public class ApiParser {
             
             JSONObject job = (JSONObject) jsonArray.get(i);
             Contents c = new Contents();
-            c.setAid(job.getInt("aid"));
+            c.setAid(job.getString("aid"));
             c.setTitle(job.getString("title"));
             c.setUsername(job.getString("author"));
             c.setViews(job.getLong("views"));
