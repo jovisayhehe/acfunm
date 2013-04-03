@@ -17,7 +17,6 @@ public class Channel implements Serializable {
     public static final class id {
 
         public static final int ANIMATION = 1;
-
         public static final int MUSIC     = 58;
         public static final int GAME      = 59;
         public static final int FUN       = 60;
@@ -28,7 +27,6 @@ public class Channel implements Serializable {
         public static final int MUGEN     = 72;
 
         public static final class ARTICLE {
-
             public static final int COLLECTION        = 63;
             public static final int WORK_EMOTION      = 73;
             public static final int AN_CULTURE        = 74;

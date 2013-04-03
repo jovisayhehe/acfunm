@@ -9,7 +9,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,40 +27,35 @@ import org.jsoup.select.Elements;
 import android.accounts.NetworkErrorException;
 
 import tv.avfun.entity.Article;
+import tv.avfun.entity.Contents;
 
 public class ApiParser {
 	
-	public static List<Map<String, Object>> getChannelList(String address) throws Exception {
+    public static List<Contents> getChannelContents(String address) throws Exception {
+        List<Contents> contents = new ArrayList<Contents>();
+        JSONObject jsonObject = getJsonObj(address);
+        JSONArray jsarray = jsonObject.getJSONArray("contents");
+        for(int i =0;i<jsarray.length();i++){
+            JSONObject jobj = (JSONObject) jsarray.get(i);
+            Contents c = new Contents();
+            c.setTitle(jobj.getString("title"));
+            c.setUsername(jobj.getString("username"));
+            c.setDescription(jobj.getString("description").replace("&nbsp;"," ")
+                    .replace("&amp;","&").replaceAll("\\<.*?>",""));
+            c.setViews(jobj.getLong("views"));
+            c.setTitleImg(jobj.getString("titleImg"));
+            c.setAid(jobj.getInt("aid"));
+            c.setChannelId(jobj.getInt("channelId"));
+            c.setComments(jobj.getInt("comments"));
+            
+            
+            contents.add(c);
+        }
+        return contents;
+        
+    }
+    
 
-		List<Map<String, Object>> contents = new ArrayList<Map<String, Object>>();
-			JSONObject jsonObject = getJsonObj(address);
-			
-			JSONArray jsarray = jsonObject.getJSONArray("contents");
-			for(int i =0;i<jsarray.length();i++){
-				Map<String, Object> map = new HashMap<String, Object>();
-				JSONObject jobj = (JSONObject) jsarray.get(i);
-				//System.out.println(jobj.toString());
-//				map.put("tag", jobj.get("tags").toString());
-				map.put("title", jobj.get("title").toString());
-				map.put("username", jobj.get("username").toString());
-//				map.put("releaseDate", jobj.get("releaseDate").toString());
-				map.put("description", jobj.get("description").toString().replace("&nbsp;"," ").replace("&amp;","&")
-						.replaceAll("\\<.*?>",""));
-				map.put("views", jobj.get("views").toString());
-//				map.put("userId", jobj.get("userId").toString());
-				map.put("titleImg", jobj.get("titleImg").toString());
-//				map.put("stows", jobj.get("stows").toString());
-//				map.put("url", jobj.get("url").toString());
-				map.put("aid", jobj.get("aid").toString());
-//				map.put("cid", jobj.get("cid").toString());
-				map.put("channelId", jobj.get("channelId").toString());
-				map.put("comments", jobj.get("comments").toString());
-				contents.add(map);
-			}
-			
-		return contents;
-	}
-	
 	public static List<Map<String ,Object>> getComment(String aid,int page) throws Exception{
 			String url ="http://www.acfun.tv/comment_list_json.aspx?contentId="+aid+"&currentPage="+page;
 			ArrayList<Map<String, Object>> comments = new ArrayList<Map<String,Object>>();
@@ -268,7 +262,58 @@ public class ApiParser {
 		article.setContents(contents);
 		return article;
 	}
-	
+	/**
+	 * 获取搜索结果集
+	 * @param word
+	 * @param page
+	 * @return 搜索不到或者结果无，返回null
+	 * @throws Exception
+	 */
+	public static List<Contents> getSearchContents(String word, int page) throws Exception{
+	    String url = "http://www.acfun.tv/api/search.aspx?query="+URLEncoder.encode(word, "utf-8")+"&orderId=0&channelId=0&pageNo="+page+"&pageSize=20";
+	    JSONObject jsonObject = getJsonObj(url);
+	    succeeded = jsonObject.getBoolean("success");
+        if(!succeeded || (totalcount = jsonObject.getInt("totalcount"))==0){
+            return null;
+        }
+        List<Contents> cs = new ArrayList<Contents>();
+        JSONArray jsonArray = jsonObject.getJSONArray("contents");
+        for(int i = 0;i<jsonArray.length();i++){
+            
+            JSONObject job = (JSONObject) jsonArray.get(i);
+            Contents c = new Contents();
+            c.setAid(job.getInt("aid"));
+            c.setTitle(job.getString("title"));
+            c.setUsername(job.getString("author"));
+            c.setViews(job.getLong("views"));
+            c.setTitleImg(job.getString("titleImg"));
+            c.setDescription(job.getString("description").replace("&nbsp;"," ")
+                    .replace("&amp;","&").replaceAll("\\<.*?>",""));
+            c.setChannelId(job.getInt("channelId"));
+            c.setComments(job.getInt("comments"));
+            cs.add(c);
+        }
+        
+	    return cs;
+	}
+	private static boolean succeeded = false;
+	private static int totalcount = 0;
+	/**
+	 * 获取搜索结果页数，之前需调用{@link #getSearchContents(String,int)}，否则返回值为-1
+	 * @return
+	 */
+	public static int getCountPage(){
+	    if(!succeeded){
+	        return -1; // TODO 1?
+	    }
+	    int countpage;
+        if (totalcount % 20 == 0) {
+            countpage = totalcount/20;
+           } else {
+            countpage = totalcount/20 + 1;
+           }
+	    return countpage;
+	}
 	public static ArrayList<Object> getSearchResults(String word,int page) throws Exception{
 		ArrayList<Object> rsandtotalpage = new ArrayList<Object>();
 		String url = "http://www.acfun.tv/api/search.aspx?query="+URLEncoder.encode(word, "utf-8")+"&orderId=0&channelId=0&pageNo="+String.valueOf(page)+"&pageSize=20";
