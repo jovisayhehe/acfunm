@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import tv.avfun.api.ApiParser;
+import tv.avfun.api.Channel;
+import tv.avfun.entity.Contents;
 
 import android.app.SearchManager;
 import android.content.Intent;
@@ -36,8 +38,8 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 	private ProgressBar progressBar;
 	private TextView time_outtext;
 	private ListView list;
-	private List<Map<String, Object>> data = new ArrayList<Map<String,Object>>();
-	private Channell_ContentListViewAdaper adaper;
+	private List<Contents> data = new ArrayList<Contents>();
+	private ChannelContentListViewAdaper adaper;
 	private int indexpage = 1;
 	private boolean isload = false;
 	private View footview;
@@ -71,7 +73,7 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 			list.addFooterView(footview);
 			footview.setClickable(false);
 			list.setFooterDividersEnabled(false);
-			adaper = new Channell_ContentListViewAdaper(this, data);
+			adaper = new ChannelContentListViewAdaper(this, data);
 			list.setAdapter(adaper);
 			list.setOnItemClickListener(this);
 			list.setOnScrollListener(this);
@@ -98,21 +100,23 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 			@SuppressWarnings("unchecked")
 			public void run() {
 				try {
-					final List<Map<String, Object>> tempdata = (List<Map<String, Object>>)ApiParser.getSearchResults(word, page).get(0);
-					if (!isadd) {
-						objs = ApiParser.getSearchResults(word, page);
-					}
+				    final List<Contents> tempdata = ApiParser.getSearchContents(word, page);
+				    if(tempdata != null){
+				        // isadd标记为false，将data数据清空，这可能是个dead code
+				        if(!isadd && !data.isEmpty()){
+				            data.clear();
+				        }
+				        // 无论data是否为空，标记是否为true，都将数据加到data中
+				        data.addAll(tempdata);
+				    }
 					runOnUiThread(new Runnable() {
 						public void run() {
 							if (!isadd) {
 								progressBar.setVisibility(View.GONE);
 								list.setVisibility(View.VISIBLE);
-							} else{
-								data.addAll(tempdata);
 							}
-							if(objs!=null){
-								totalpage = (Integer) objs.get(1);
-								data = (List<Map<String, Object>>) objs.get(0);
+							if(tempdata!=null){
+								totalpage = ApiParser.getCountPage();
 								adaper.setData(data);
 								adaper.notifyDataSetChanged();
 								isload = false;
@@ -211,8 +215,10 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 				getdatas(indexpage, true);
 			}
 		}else{
-			channelId = (Integer) data.get(position).get("channelId");
-			if(channelId!=63&&channelId!=73&&channelId!=74&&channelId!=75){
+		    Contents c = data.get(position);
+			channelId = c.getChannelId();
+			if(channelId!= Channel.id.ARTICLE.AN_CULTURE && channelId!=Channel.id.ARTICLE.COLLECTION 
+			        &&channelId!=Channel.id.ARTICLE.COMIC_LIGHT_NOVEL &&channelId!=Channel.id.ARTICLE.WORK_EMOTION){
 				
 				Intent intent = new Intent(this, Detail_Activity.class);
 				ImageView img = (ImageView) view.findViewById(R.id.channellist_item_img);
@@ -222,20 +228,20 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 				intent.putExtra("thumb", baos.toByteArray());
-				intent.putExtra("aid", data.get(position).get("aid").toString());
-				intent.putExtra("title", data.get(position).get("title").toString());
-				intent.putExtra("username", data.get(position).get("username").toString());
-				intent.putExtra("views", data.get(position).get("views").toString());
-				intent.putExtra("comments", data.get(position).get("comments").toString());
-				intent.putExtra("description", data.get(position).get("description").toString());
+				intent.putExtra("aid", c.getAid()+"");
+				intent.putExtra("title", c.getTitle());
+				intent.putExtra("username", c.getUsername());
+				intent.putExtra("views", c.getViews()+"");
+				intent.putExtra("comments", c.getComments()+"");
+				intent.putExtra("description", c.getDescription());
 				intent.putExtra("channelId", String.valueOf(channelId));
 				startActivity(intent);
 			}else{
 				
 				Intent intent = new Intent(SearchResultActivity.this, WebView_Activity.class);
 				intent.putExtra("modecode", Channel_Activity.modecode);
-				intent.putExtra("aid", data.get(position).get("aid").toString());
-				intent.putExtra("title", data.get(position).get("title").toString());
+				intent.putExtra("aid", c.getAid()+"");
+				intent.putExtra("title", c.getTitle());
 				intent.putExtra("channelId", String.valueOf(channelId));
 				startActivity(intent);
 			}

@@ -8,12 +8,13 @@ import java.util.Map;
 
 
 import tv.avfun.Channel_Activity;
-import tv.avfun.Channell_ContentListViewAdaper;
+import tv.avfun.ChannelContentListViewAdaper;
 import tv.avfun.Detail_Activity;
 import tv.avfun.R;
 import tv.avfun.WebView_Activity;
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.Channel;
+import tv.avfun.entity.Contents;
 
 
 
@@ -46,9 +47,10 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 	private ProgressBar progressBar;
 	private TextView time_outtext;
 	private ListView list;
-	private List<Map<String, Object>> data = new ArrayList<Map<String,Object>>();
+	private List<Contents> data = new ArrayList<Contents>();
+	//private List<Map<String, Object>> data = new ArrayList<Map<String,Object>>();
 	private Activity activity;
-	private Channell_ContentListViewAdaper adaper;
+	private ChannelContentListViewAdaper adaper;
 	private int indexpage = 1;
 	private boolean isload = false;
 	private View footview;
@@ -114,8 +116,8 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 		headertitle.setText("今日最热");
 		list.addHeaderView(listheader);
 		list.setHeaderDividersEnabled(false);
-		
-		adaper = new Channell_ContentListViewAdaper(this.activity, data);
+		//TODO 逻辑好乱=.=
+		adaper = new ChannelContentListViewAdaper(this.activity, data);
 		list.setAdapter(adaper);
 		list.setOnItemClickListener(this);
 		list.setOnScrollListener(this);
@@ -132,23 +134,19 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 		new Thread() {
 			public void run() {
 				try {
-					final List<Map<String, Object>> templist = ApiParser.getChannelList(url+page);
+				    final List<Contents> templist = ApiParser.getChannelContents(url+page);
 					if (!isadd) {
-						data = ApiParser.getChannelList("http://www.acfun.tv/api/getlistbyorder.aspx?orderby=7&channelIds="+channelid+"&count=10");
-						data.addAll(ApiParser.getChannelList(url+page));
+					    data = ApiParser.getChannelContents("http://www.acfun.tv/api/getlistbyorder.aspx?orderby=7&channelIds="+channelid+"&count=10");
+					    data.addAll(ApiParser.getChannelContents(url+page));
 					} 
 					activity.runOnUiThread(new Runnable() {
 						public void run() {
 							
-							if (isadd) {
+							if (isadd)
 								data.addAll(templist);
-							}
-							
-							if (!isadd) {
+							else{
 								progressBar.setVisibility(View.GONE);
 								list.setVisibility(View.VISIBLE);
-							} else{
-
 							}
 							adaper.setData(data);
 							list.setVisibility(View.GONE);
@@ -213,14 +211,14 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 					getdatas(indexpage, true);
 				}
 			}else{
-				Map<String, Object> map = data.get(position);
+			    Contents c = data.get(position);
 				if(Channel_Activity.isarticle){
 					 
 					Intent intent = new Intent(activity, WebView_Activity.class);
 					intent.putExtra("modecode", Channel_Activity.modecode);
-					intent.putExtra("aid", map.get("aid").toString());
-					intent.putExtra("title", map.get("title").toString());
-					intent.putExtra("channelId", map.get("channelId").toString());
+					intent.putExtra("aid", c.getAid()+""); // TODO change to int?
+					intent.putExtra("title", c.getTitle());
+					intent.putExtra("channelId", c.getChannelId()+""); // int?
 					startActivity(intent);
 					
 				}else{
@@ -233,13 +231,13 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 					bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 					intent.putExtra("thumb", baos.toByteArray());
 					
-					intent.putExtra("aid", map.get("aid").toString());
-					intent.putExtra("title", map.get("title").toString());
-					intent.putExtra("username", map.get("username").toString());
-					intent.putExtra("views", map.get("views").toString());
-					intent.putExtra("comments", map.get("comments").toString());
-					intent.putExtra("channelId", map.get("channelId").toString());
-					intent.putExtra("description", map.get("description").toString());
+					intent.putExtra("aid", c.getAid()+""); 
+					intent.putExtra("title", c.getTitle());
+					intent.putExtra("username", c.getUsername());
+					intent.putExtra("views", c.getViews()+""); 
+					intent.putExtra("comments", c.getComments()+""); 
+					intent.putExtra("channelId", c.getChannelId()+"");
+					intent.putExtra("description", c.getDescription());
 					
 					startActivity(intent);
 				}

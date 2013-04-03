@@ -213,7 +213,6 @@ public class Channel_Activity extends SherlockFragmentActivity implements OnPage
 
         @Override
         public Fragment getItem(int position) {
-            //TODO 改成直接传递Channel 或者id
             return Channel_Fragment.newInstance(apis.get(position));
 
         }
