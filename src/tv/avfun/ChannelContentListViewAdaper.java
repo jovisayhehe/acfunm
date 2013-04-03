@@ -57,8 +57,8 @@ public class ChannelContentListViewAdaper extends BaseAdapter {
             holder = new ListViewHolder();
             holder.img = (ImageView) convertView.findViewById(R.id.channellist_item_img);
             holder.title = (TextView) convertView.findViewById(R.id.channellist_content_item_title);
-            holder.date = (TextView) convertView.findViewById(R.id.channelist_content_item_views);
-            holder.upman = (TextView) convertView.findViewById(R.id.channelist_content_item_art);
+            holder.views = (TextView) convertView.findViewById(R.id.channelist_content_item_views);
+            holder.upman = (TextView) convertView.findViewById(R.id.channelist_content_item_upman);
             holder.dr = (LinearLayout) convertView.findViewById(R.id.channelist_content_dr);
             convertView.setTag(holder);
         } else {
@@ -72,7 +72,7 @@ public class ChannelContentListViewAdaper extends BaseAdapter {
 
         final Contents art = data.get(position);
         holder.title.setText(art.getTitle());
-        holder.date.setText("点击:" + String.valueOf(art.getViews()));
+        holder.views.setText(String.valueOf(art.getViews()));
         holder.upman.setText(art.getUsername());
         final String imageUrl = art.getTitleImg();
         if (imageUrl != "null" && !"".equals(imageUrl)) {
@@ -87,7 +87,7 @@ public class ChannelContentListViewAdaper extends BaseAdapter {
 
         ImageView    img;
         TextView     title;
-        TextView     date;
+        TextView     views;
         TextView     upman;
         LinearLayout dr;
     }
