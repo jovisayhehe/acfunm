@@ -2,14 +2,17 @@
 	
     
       <style name="AcTheme" parent="@style/Theme.Sherlock.Light">
-        <item name="actionBarStyle">@style/ACActionBar</item>
-         <item name="android:actionBarStyle">@style/ACActionBar</item>
+        <item name="homeAsUpIndicator">@drawable/new_indicator</item>
+        <item name="android:homeAsUpIndicator">@drawable/new_indicator</item>
+          
+         <item name="actionBarStyle">@style/ACActionBar</item>
+        <item name="android:actionBarStyle">@style/ACActionBar</item>
          
-        <item name="android:actionBarTabStyle">@style/ACTabStyle</item>
+        <!--<item name="android:actionBarTabStyle">@style/ACTabStyle</item>
         <item name="actionBarTabStyle">@style/ACTabStyle</item>
         
         <item name="android:actionBarTabBarStyle">@style/AcTabBarStyle</item>
-        <item name="actionBarTabBarStyle">@style/AcTabBarStyle</item>	
+        <item name="actionBarTabBarStyle">@style/AcTabBarStyle</item>	-->
          
         <item name="android:actionBarItemBackground">@drawable/selectable_background</item>
         <item name="actionBarItemBackground">@drawable/selectable_background</item>
@@ -22,7 +25,7 @@
         
         <item name="android:checkboxStyle">@style/ACCheckBox</item>
         
-        <item name="android:radioButtonStyle">@style/ACRadioButton</item>
+        <item name="android:radioButtonStyle">@style/ACRadioButton</item> 
         
     </style>
     

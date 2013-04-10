@@ -1,245 +1,224 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-     >
-    <ScrollView 
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    >
-    <LinearLayout 
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_margin="12dip"
-    >
-    <LinearLayout 
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:id="@+id/member_line"
-    android:visibility="gone"
-    >
+    android:background="@drawable/layout_bg" >
+
     <LinearLayout
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent"
-    android:orientation="horizontal"
-    android:background="@android:color/white"    
-     >
-     <TextView 
-     android:layout_height="wrap_content"
-     android:layout_width="wrap_content"
-     android:text="账号:"
-     android:textColor="#000000"
-     android:textStyle="bold"
-     android:textSize="15sp"
-     android:layout_marginRight="12dip"
-     android:layout_marginTop="8dip"
-     android:layout_marginLeft="12dip"
-     android:layout_marginBottom="12dip"
-     />   
-     
-     <EditText
-     android:layout_height="wrap_content"
-     android:layout_width="match_parent"
-     android:layout_marginRight="12dip"
-     android:layout_marginTop="8dip"
-     android:imeOptions="flagNoExtractUi"
-     android:id="@+id/mem_edit_username"
-     android:singleLine="true"
-     android:background="@android:color/transparent"
-     />
-    </LinearLayout> 
-    <View 
-    android:layout_width="match_parent"
-    android:layout_height="1dip"
-    android:background="@android:color/transparent"
-    />
-    <LinearLayout
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent"
-    android:orientation="horizontal"
-    android:background="@android:color/white"    
-     >
-     <TextView 
-     android:layout_height="wrap_content"
-     android:layout_width="wrap_content"
-     android:text="密码:"
-     android:textStyle="bold"
-     android:textSize="15sp"
-     android:textColor="#000000"
-     android:layout_marginRight="12dip"
-     android:layout_marginTop="8dip"
-     android:layout_marginLeft="12dip"
-     android:layout_marginBottom="12dip"
-     />   
-     
-     <EditText
-     android:layout_height="wrap_content"
-     android:layout_width="match_parent"
-     android:layout_marginRight="12dip"
-     android:layout_marginTop="8dip"
-     android:imeOptions="flagNoExtractUi"
-     android:password="true"
-     android:singleLine="true"
-     android:id="@+id/mem_edit_password"
-     android:background="@android:color/transparent"
-     />
-    </LinearLayout> 
-    
-    <TextView 
-     android:layout_height="wrap_content"
-     android:layout_width="match_parent"
-     android:textSize="15sp"
-     android:text="登陆"
-     android:textStyle="bold"
-     android:layout_marginTop="12dip"
-     android:padding="12dip"
-     android:gravity="center"
-     android:layout_gravity="center"
-     android:id="@+id/mem_login_btn"
-     android:background="@drawable/detail_play_btn_background"
-    />
-    
-         <View 
-         android:layout_width="match_parent"
-         android:layout_height="1dip"
-         android:background="@drawable/listview_divider"
-         android:layout_marginTop="12dip"
-         android:layout_marginBottom="12dip"
-         />
-    </LinearLayout>
-    
-
-        
-    <FrameLayout 
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:background="#FFFFFF"
-      android:id="@+id/member_frame"
-       >
-    <ImageView 
-    android:layout_width="90dip"
-    android:layout_height="90dip"
-    android:scaleType="fitXY"
-    android:src="@drawable/face"
-    android:layout_margin="12dip"
-    android:id="@+id/mem_img_face"
-    />
-    
-    <TextView 
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent"
-    android:text="@string/boy"
-    android:layout_marginTop="12dip"
-    android:layout_marginLeft="114dip"
-    android:id="@+id/mem_text_username"
-    android:textStyle="bold"
-    />
-    
-    <TextView 
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent"
-    android:text="@string/isboy"
-    android:layout_marginTop="36dip"
-    android:textColor="#777A80"
-    android:textSize="12sp"
-    android:lines="2"
-    android:id="@+id/mem_text_signature"
-    android:layout_marginLeft="114dip"
-    />
-
-    <TextView
-        android:layout_width="@dimen/mem_btn_width"
-        android:layout_height="@dimen/mem_btn_height"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="12dip"
-        android:layout_marginLeft="114dip"
-        android:gravity="center"
-        android:text="设置"
-        android:textStyle="bold"
-        android:id="@+id/mem_set_btn"
-        android:background="@drawable/mem_btn_background" />
-    
-        <TextView
-        android:layout_width="@dimen/mem_btn_width"
-        android:layout_height="@dimen/mem_btn_height"
-        android:id="@+id/mem_login_vbtn"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="12dip"
-        android:layout_marginLeft="@dimen/mem_marginLeft"
-        android:gravity="center"
-        android:layout_marginRight="12dip"
-        android:text="登陆"
-        android:textStyle="bold"
-        android:background="@drawable/mem_btn_background" />
-
-	</FrameLayout>
-	
-    <LinearLayout 
-    android:background="@color/main_win_bg"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    >
-         <View 
-         android:layout_width="match_parent"
-         android:layout_height="1dip"
-         android:background="@drawable/listview_divider"
-         android:layout_marginTop="12dip"
-         />
-    </LinearLayout>
-    
-
-         
-         
-    
-       <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginBottom="12dip"
-        android:background="@color/main_win_bg"
-    >
+        android:layout_margin="12dip"
+        android:orientation="vertical" >
 
-         
-         <TextView 
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:text="我的收藏"
-          android:textSize="15sp"
-          android:textStyle="bold"
-          android:layout_marginTop="12dip"
-          android:background="@drawable/mem_item_background"
-          android:padding="12dip"
-          android:id="@+id/mem_btn_fov"
-          />
-         <TextView 
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:text="播放历史"
-          android:textSize="15sp"
-          android:textStyle="bold"
-          android:layout_marginTop="1dip"
-          android:background="@drawable/mem_item_background"
-          android:padding="12dip"
-          android:id="@+id/mem_btn_his"
-          />
-         
-          <TextView 
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:text="我的订阅"
-          android:textSize="15sp"
-          android:textStyle="bold"
-          android:layout_marginTop="1dip"
-          android:background="@drawable/mem_item_background"
-          android:padding="12dip"
-          android:id="@+id/mem_btn_subs"
-          />
+        <LinearLayout
+            android:id="@+id/member_line"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dip"
+                    android:layout_marginLeft="12dip"
+                    android:layout_marginRight="12dip"
+                    android:layout_marginTop="8dip"
+                    android:text="账号:"
+                    android:textColor="#000000"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/mem_edit_username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="12dip"
+                    android:layout_marginTop="8dip"
+                    android:background="@android:color/transparent"
+                    android:imeOptions="flagNoExtractUi"
+                    android:singleLine="true" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dip"
+                android:background="@android:color/transparent" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dip"
+                    android:layout_marginLeft="12dip"
+                    android:layout_marginRight="12dip"
+                    android:layout_marginTop="8dip"
+                    android:text="密码:"
+                    android:textColor="#000000"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/mem_edit_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="12dip"
+                    android:layout_marginTop="8dip"
+                    android:background="@android:color/transparent"
+                    android:imeOptions="flagNoExtractUi"
+                    android:password="true"
+                    android:singleLine="true" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/mem_login_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="12dip"
+                android:background="@drawable/detail_play_btn_background"
+                android:gravity="center"
+                android:padding="12dip"
+                android:text="登陆"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dip"
+                android:layout_marginBottom="12dip"
+                android:layout_marginTop="12dip"
+                android:background="@drawable/listview_divider" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/member_frame"
+            android:background="@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="64dip"
+                android:padding="4dip" >
+
+                <ImageView
+                    android:id="@+id/mem_account_avatar"
+                    android:layout_width="60dip"
+                    android:layout_height="60dip"
+                    android:padding="2dip"
+                    android:background="@android:color/white"
+                    android:src="@drawable/mem_account_avatar" />
+
+                <TextView
+                    android:id="@+id/mem_text_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/mem_account_avatar"
+                    android:text="@string/boy"
+                    android:layout_marginLeft="10dip"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_below="@id/mem_text_username"
+                    android:layout_alignLeft="@id/mem_text_username"
+                    android:id="@+id/mem_text_signature"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="2"
+                    android:text="@string/isboy"
+                    android:textColor="#777A80"
+                    android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/mem_login_vbtn"
+            android:layout_width="@dimen/mem_btn_width"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/mem_account_avatar"
+            android:layout_alignLeft="@+id/mem_text_signature"
+            android:background="@drawable/mem_btn_background"
+            android:gravity="center"
+            android:text="登陆"
+            android:textStyle="bold" />
+                
+            </RelativeLayout>
+        </FrameLayout>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_marginTop="4dip"
+            android:background="@drawable/listview_divider" />
         
+        <!-- TODO 改成listview或许好一些 -->
+        
+        <LinearLayout
+            android:id="@+id/list_myzone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="12dip"
+            android:layout_marginTop="12dip"
+            android:background="@color/main_win_bg"
+            android:orientation="vertical" >
+
+            
+
+            <TextView
+                android:id="@+id/mem_btn_fov"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dip"
+                android:background="@drawable/mem_item_background"
+                android:padding="12dip"
+                android:text="我的收藏"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/mem_btn_his"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dip"
+                android:background="@drawable/mem_item_background"
+                android:padding="12dip"
+                android:text="播放历史"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/mem_btn_subs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dip"
+                android:background="@drawable/mem_item_background"
+                android:padding="12dip"
+                android:text="我的订阅"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+        <TextView
+                android:id="@+id/mem_set_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/mem_item_background"
+                android:padding="12dip"
+                android:text="设置"
+                android:textSize="15sp"
+                android:textStyle="bold" />
     </LinearLayout>
-    </LinearLayout>	
-             
-    </ScrollView>
-</LinearLayout>
+
+</ScrollView>
