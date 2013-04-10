@@ -16,24 +16,28 @@
     <application
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:logo="@drawable/ic_launcher"
         android:allowBackup='true'
         android:theme="@style/AcTheme"
         >
-            
         <activity
-            android:name=".MainActivity"
-            android:configChanges="orientation|screenSize|screenLayout"
-            android:icon="@drawable/ic_launcher"
+            android:name="tv.avfun.SplashActivity"
+            android:screenOrientation="portrait" 
+            android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"
+            android:theme="@style/Theme.Sherlock.NoActionBar"
+            android:noHistory="true"
              >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            
+        </activity>
+        <activity android:name=".MainActivity">
             <meta-data android:name="android.app.default_searchable"
                        android:value=".SearchResultActivity" />
         </activity>
-        
         <activity
             android:name=".SearchResultActivity"
             android:launchMode="singleTop"

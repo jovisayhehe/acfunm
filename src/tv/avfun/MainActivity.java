@@ -5,12 +5,9 @@ import tv.avfun.fragment.UserHomeFragment;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
-import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
@@ -26,12 +23,6 @@ public class MainActivity extends SlidingFragmentActivity {
     private SlidingMenu menu;
     private SearchView  mSearchView;
     private ActionBar   bar;
-
-    public boolean isNetworkAvailable() {
-        NetworkInfo info = ((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE))
-                .getActiveNetworkInfo();
-        return (info != null) && (info.isConnected());
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
