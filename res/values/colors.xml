@@ -12,4 +12,8 @@
     <color name="detail_play_p_bg">#FFCE9F</color>
     <color name="web_color">#f6f6f6</color>
     <color name="web_btn_color">#CEBEAE</color>
+    <color name="slide_nav_black">#ff191b1b</color>
+    <color name="transparent">#00000000</color>
+    <color name="white">#FFFFFF</color> 
+    <color name="dark_gray">#ff333333</color> 
 </resources>
