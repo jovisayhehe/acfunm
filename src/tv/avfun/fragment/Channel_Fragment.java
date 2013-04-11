@@ -8,10 +8,10 @@ import java.util.Map;
 
 
 import tv.avfun.Channel_Activity;
-import tv.avfun.ChannelContentListViewAdaper;
 import tv.avfun.Detail_Activity;
 import tv.avfun.R;
 import tv.avfun.WebView_Activity;
+import tv.avfun.adapter.ChannelContentListViewAdaper;
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.Channel;
 import tv.avfun.entity.Contents;

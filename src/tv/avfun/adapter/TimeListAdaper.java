@@ -1,10 +1,16 @@
-package tv.avfun;
+package tv.avfun.adapter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
+import tv.avfun.Detail_Activity;
+import tv.avfun.R;
+import tv.avfun.R.drawable;
+import tv.avfun.R.id;
+import tv.avfun.R.layout;
+import tv.avfun.animation.ExpandAnimation;
 import tv.avfun.animation.ExpandCollapseAnimation;
 
 
@@ -35,10 +41,10 @@ public class TimeListAdaper extends BaseAdapter{
 		this.mInflater =LayoutInflater.from(context);
 		this.data = data;
 		this.context = context;
-		 Calendar calendar = Calendar.getInstance(); 
-	       Date date = new Date(); 
-	       calendar.setTime(date); 
-	       dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK); 
+		Calendar calendar = Calendar.getInstance(); 
+		Date date = new Date();
+		calendar.setTime(date);
+		dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK); 
 	}
 	public void setSelectItem(int selectItem) {
 		this.selectItem = selectItem;
@@ -84,8 +90,8 @@ public class TimeListAdaper extends BaseAdapter{
 		
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
 				android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
-		
-		for (int i = 1; i < data.get(position).size(); i++) {
+		int i = 1;
+		for (; i < data.get(position).size(); i++) {
 			HashMap<String, String> map = data.get(position).get(i);
 			TextView title = new TextView(context);
 			title.setPadding(15, 8, 5, 8);
@@ -138,9 +144,10 @@ public class TimeListAdaper extends BaseAdapter{
 			
 			@Override
 			public void onClick(View view) {
-				
-				view.setAnimation(null);
-				int type = expandable.getVisibility() == View.VISIBLE ? ExpandCollapseAnimation.COLLAPSE : ExpandCollapseAnimation.EXPAND;
+		        expandable.clearAnimation();
+		        Animation anim = new ExpandAnimation(expandable, 400);
+		        expandable.startAnimation(anim);
+				/*int type = expandable.getVisibility() == View.VISIBLE ? ExpandCollapseAnimation.COLLAPSE : ExpandCollapseAnimation.EXPAND;
 				Animation anim = new ExpandCollapseAnimation(expandable, 500, type);
 				if(type == ExpandCollapseAnimation.EXPAND) {
 					if(lastOpen != null && lastOpen != expandable && lastOpen.getVisibility() == View.VISIBLE) {
@@ -150,7 +157,7 @@ public class TimeListAdaper extends BaseAdapter{
 				} else if(lastOpen == view) {
 					lastOpen = null;
 				}
-				view.startAnimation(anim);
+				view.startAnimation(anim);*/
 			}
 		});
 		
@@ -159,15 +166,17 @@ public class TimeListAdaper extends BaseAdapter{
 			this.setSelectItem(position);
 			lastOpen = expandable;
 			Animation anim = new ExpandCollapseAnimation(expandable, 400, ExpandCollapseAnimation.EXPAND);
-			expandable.setAnimation(anim);
-			expandable.setVisibility(View.VISIBLE);
+			anim.setStartOffset(200);
+			expandable.startAnimation(anim);
 			fs = false;	
-		}else if(position == dayOfWeek-1){
+		/*}else if(position == dayOfWeek-1){
 			day_btn.setBackgroundResource(R.drawable.listitembtnselectable_background_r);
 			expandable.setVisibility(View.GONE);
+			((LinearLayout.LayoutParams) expandable.getLayoutParams()).bottomMargin = - i* 30;*/
 		}else{
 			expandable.setVisibility(View.GONE);
 			day_btn.setBackgroundResource(R.drawable.listitembtnselectable_background);
+			((LinearLayout.LayoutParams) expandable.getLayoutParams()).bottomMargin = - i* 30;
 		}
 		
 		return convertView;

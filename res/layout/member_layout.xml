@@ -111,15 +111,13 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="64dip"
                 android:padding="4dip" >
 
                 <ImageView
                     android:id="@+id/mem_account_avatar"
-                    android:layout_width="60dip"
-                    android:layout_height="60dip"
+                    android:layout_width="70dip"
+                    android:layout_height="70dip"
                     android:padding="2dip"
-                    android:background="@android:color/white"
                     android:src="@drawable/mem_account_avatar" />
 
                 <TextView
@@ -147,6 +145,8 @@
             android:id="@+id/mem_login_vbtn"
             android:layout_width="@dimen/mem_btn_width"
             android:layout_height="wrap_content"
+            android:paddingTop="4dip"
+            android:paddingBottom="4dip"
             android:layout_alignBottom="@+id/mem_account_avatar"
             android:layout_alignLeft="@+id/mem_text_signature"
             android:background="@drawable/mem_btn_background"
@@ -161,7 +161,7 @@
             android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="1dip"
-            android:layout_marginTop="4dip"
+            android:layout_marginTop="8dip"
             android:background="@drawable/listview_divider" />
         
         <!-- TODO 改成listview或许好一些 -->

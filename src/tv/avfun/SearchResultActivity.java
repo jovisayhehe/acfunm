@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import tv.avfun.adapter.ChannelContentListViewAdaper;
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.Channel;
 import tv.avfun.entity.Contents;

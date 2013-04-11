@@ -1,8 +1,11 @@
 
-package tv.avfun;
+package tv.avfun.adapter;
 
 import java.util.List;
 
+import tv.avfun.R;
+import tv.avfun.R.id;
+import tv.avfun.R.layout;
 import tv.avfun.entity.Contents;
 import tv.avfun.util.lzlist.ImageLoader;
 import android.content.Context;

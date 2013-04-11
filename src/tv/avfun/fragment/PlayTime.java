@@ -1,14 +1,27 @@
 package tv.avfun.fragment;
 
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OptionalDataException;
+import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import tv.avfun.R;
-import tv.avfun.TimeListAdaper;
+import tv.avfun.adapter.TimeListAdaper;
 import tv.avfun.api.ApiParser;
+import tv.avfun.util.Logger;
+import tv.avfun.util.MyAsyncTask;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,13 +33,16 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 
 public class PlayTime extends SherlockFragment{
-
-	private View main_v;
+    // 缓存文件持久时间。这里设为3天
+	private static final long CONSTANT_TIME = 3*24*60*60*1000;
+    private static final String TAG = PlayTime.class.getSimpleName();
+    private View main_v;
 	private ArrayList<ArrayList<HashMap<String, String>>> data;
 	private ListView list;
 	private ProgressBar progressBar;
 	private Activity activity;
 	private TextView time_outtext;
+    private File cache;
 	public static PlayTime newInstance() {
 		PlayTime f = new PlayTime();
 		Bundle args = new Bundle();
@@ -47,10 +63,7 @@ public class PlayTime extends SherlockFragment{
 		this.main_v = inflater.inflate(R.layout.list_layout, container, false);
 
 		return this.main_v;
-    	
     }
-    
-    
     
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -70,37 +83,55 @@ public class PlayTime extends SherlockFragment{
 				initList();
 			}
 		});
+	    // 缓存文件
+	    cache = new File(activity.getCacheDir(),"timedate.dat");
 	    initList();
 	}
-
+	private boolean isCached(){
+	    long lastModified = cache.lastModified();
+        return lastModified + CONSTANT_TIME > System.currentTimeMillis();
+	}
 	public void initList() {
-		progressBar.setVisibility(View.VISIBLE);	
-		new Thread() {
-			public void run() {
-				try {
-					
-					data = ApiParser.getTimedate();
-					activity.runOnUiThread(new Runnable() {
-						public void run() {
-							
-						progressBar.setVisibility(View.GONE);		
-						list.setAdapter(new TimeListAdaper(activity, data));
-						}
-					});
-
-				} catch (Exception e) {
-					
-					activity.runOnUiThread(new Runnable() {
-						public void run() {
-
-							progressBar.setVisibility(View.GONE);
-							time_outtext.setVisibility(View.VISIBLE);
-						}
-					});
-					e.printStackTrace();
-				}
-			}
-		}.start();
-
+		
+		new MyAsyncTask() {
+            
+            @Override
+            public void postExecute() {
+                progressBar.setVisibility(View.GONE);       
+                list.setAdapter(new TimeListAdaper(activity, data));
+            }
+            @Override
+            public void doInBackground() {
+                try {
+                    if(!isCached()){
+                        progressBar.setVisibility(View.VISIBLE);
+                        // 连服务器读新的数据
+                        if(Logger.DEBUG) Log.i(TAG,"read new");
+                        data = ApiParser.getTimedate();
+                        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(cache));
+                        out.writeObject(data);
+                        out.close();
+                    }else{
+                        // 缓存数据
+                        ObjectInputStream in = new ObjectInputStream(new FileInputStream(cache));
+                        if(Logger.DEBUG) Log.i(TAG,"read cache");
+                        data = (ArrayList<ArrayList<HashMap<String, String>>>) in.readObject();
+                        //Thread.sleep(500); // 读取太快了，反倒感觉不流畅
+                        in.close();
+                    }
+                    publishResult(true);
+                } catch (Exception e) {
+                    if(Logger.DEBUG)
+                        e.printStackTrace();
+                    publishResult(false);
+                    progressBar.setVisibility(View.GONE);
+                }
+            }
+            public void onPublishResult(boolean succeeded) {
+                if(!succeeded){
+                    time_outtext.setVisibility(View.VISIBLE);
+                }
+            }
+        }.execute();
 	}
 }

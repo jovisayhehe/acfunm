@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 import tv.avfun.api.ApiParser;
 import tv.avfun.db.DBService;
+import tv.avfun.util.DensityUtil;
 import tv.avfun.util.lzlist.ImageLoader;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -270,7 +271,7 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 			case 0:
 				TextView descriptiontext = new TextView(Detail_Activity.this);
 				descriptiontext.setText(description);
-				int dpx = Util.dip2px(Detail_Activity.this, 8);
+				int dpx = DensityUtil.dip2px(Detail_Activity.this, 8);
 				descriptiontext.setPadding(dpx, dpx, dpx, dpx);
 				
 				TextView pttext = new TextView(Detail_Activity.this);
@@ -308,7 +309,7 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 						if(i!=data.size()-1){
 							View lineView = new View(Detail_Activity.this);
 							lineView.setBackgroundResource(R.drawable.listview_divider);
-							lineView.setLayoutParams(new LinearLayout.LayoutParams(-1, Util.dip2px(Detail_Activity.this, 1)));
+							lineView.setLayoutParams(new LinearLayout.LayoutParams(-1, DensityUtil.dip2px(Detail_Activity.this, 1)));
 							layout.addView(lineView);
 						}
 					}
@@ -334,7 +335,7 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 				break;
 			case 2:
 				TextView comments = new TextView(Detail_Activity.this);
-				int cpx = Util.dip2px(Detail_Activity.this, 8);
+				int cpx = DensityUtil.dip2px(Detail_Activity.this, 8);
 				comments.setPadding(cpx, cpx, cpx, cpx);
 				comments.setText("查看评论");
 				comments.setTextColor(Color.parseColor("#FF9A03"));

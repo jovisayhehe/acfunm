@@ -21,7 +21,7 @@ public class SplashActivity extends Activity{
             if(msg.what==0){
                 Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                 startActivity(intent);
-                overridePendingTransition(R.anim.fade_in, R.anim.splash_slide_out);
+                overridePendingTransition(R.anim.fade_in, R.anim.slide_out);
                 finish();
             }
             super.handleMessage(msg);

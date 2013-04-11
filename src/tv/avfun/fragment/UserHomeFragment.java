@@ -11,6 +11,7 @@ import tv.avfun.Favorite_Activity;
 import tv.avfun.History_Activity;
 import tv.avfun.R;
 import tv.avfun.Settings_Activity;
+import tv.avfun.animation.ExpandAnimation;
 import tv.avfun.animation.ExpandCollapseAnimation;
 import tv.avfun.api.Login_And_Comments;
 import tv.avfun.db.DBService;
@@ -79,6 +80,7 @@ public class UserHomeFragment extends SherlockFragment implements OnClickListene
         this.activity = getActivity();
         imageLoader = new ImageLoader(activity);
         login_ui = (LinearLayout) mContent.findViewById(R.id.member_line);
+        ((LinearLayout.LayoutParams)login_ui.getLayoutParams()).bottomMargin = - 100;
         vlogin_btn = (TextView) mContent.findViewById(R.id.mem_login_vbtn);
         
         TextView set_btn = (TextView) mContent.findViewById(R.id.mem_set_btn);
@@ -126,7 +128,7 @@ public class UserHomeFragment extends SherlockFragment implements OnClickListene
                 unbuidview();
                 new DBService(activity).user_cancel();
             } else {
-                login_ui_visible();
+                animateLoginUI();
             }
             break;
         case R.id.mem_set_btn:
@@ -155,18 +157,9 @@ public class UserHomeFragment extends SherlockFragment implements OnClickListene
         }
     }
 
-    public void login_ui_visible() {
-        if (login_ui.getVisibility() == View.GONE) {
-            Animation anim = new ExpandCollapseAnimation(login_ui, 600,
-                    ExpandCollapseAnimation.EXPAND);
-            login_ui.startAnimation(anim);
-            login_ui.setVisibility(View.VISIBLE);
-        } else if (login_ui.getVisibility() == View.VISIBLE) {
-            Animation anim = new ExpandCollapseAnimation(login_ui, 600,
-                    ExpandCollapseAnimation.COLLAPSE);
-            login_ui.startAnimation(anim);
-            login_ui.setVisibility(View.GONE);
-        }
+    public void animateLoginUI() {
+        Animation anim = new ExpandAnimation(login_ui, 600);
+        login_ui.startAnimation(anim);
     }
 
     public void buidview(HashMap<String, Object> vmap) {
@@ -198,7 +191,7 @@ public class UserHomeFragment extends SherlockFragment implements OnClickListene
 
         vlogin_btn.setEnabled(false);
         vlogin_btn.setText("登陆中");
-        login_ui_visible();
+        animateLoginUI();
         InputMethodManager imm = (InputMethodManager) activity
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm.isActive()) {
@@ -223,7 +216,7 @@ public class UserHomeFragment extends SherlockFragment implements OnClickListene
                                 vlogin_btn.setText("注销");
                                 new DBService(activity).saveUser(map);
                             } else {
-                                login_ui_visible();
+                                animateLoginUI();
                                 vlogin_btn.setEnabled(true);
                                 vlogin_btn.setText("登陆");
                                 String result = (String) map.get("result");
@@ -244,7 +237,7 @@ public class UserHomeFragment extends SherlockFragment implements OnClickListene
 
                             Toast.makeText(activity, "(=ﾟωﾟ)= 服务器想应异常...", Toast.LENGTH_SHORT)
                                     .show();
-                            login_ui_visible();
+                            animateLoginUI();
                             vlogin_btn.setEnabled(true);
                             vlogin_btn.setText("登陆");
                         }
@@ -259,7 +252,7 @@ public class UserHomeFragment extends SherlockFragment implements OnClickListene
 
                             Toast.makeText(activity, "(=ﾟωﾟ)= 网络异常,请检查网络...", Toast.LENGTH_SHORT)
                                     .show();
-                            login_ui_visible();
+                            animateLoginUI();
                             vlogin_btn.setEnabled(true);
                             vlogin_btn.setText("登陆");
                         }
