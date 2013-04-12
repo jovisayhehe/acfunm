@@ -71,7 +71,7 @@ public class PlayTime extends SherlockFragment{
 		super.onActivityCreated(savedInstanceState);
 		
 		this.activity = getActivity();
-	    list = (ListView)this.main_v.findViewById(R.id.list);
+	    list = (ListView)this.main_v.findViewById(android.R.id.list);
 	    progressBar = (ProgressBar) this.main_v.findViewById(R.id.time_progress);
 	    time_outtext = (TextView) this.main_v.findViewById(R.id.time_out_text);
 	    time_outtext.setOnClickListener(new OnClickListener() {

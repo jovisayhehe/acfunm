@@ -65,7 +65,7 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 			 progressBar = (ProgressBar)findViewById(R.id.time_progress);
 			 time_outtext = (TextView)findViewById(R.id.time_out_text);
 			 time_outtext.setOnClickListener(this);
-			list = (ListView)findViewById(R.id.list);
+			list = (ListView)findViewById(android.R.id.list);
 			list.setVisibility(View.INVISIBLE);
 			list.setDivider(getResources().getDrawable(R.drawable.listview_divider));
 			list.setDividerHeight(2);

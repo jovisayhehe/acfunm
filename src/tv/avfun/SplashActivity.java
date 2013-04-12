@@ -38,9 +38,5 @@ public class SplashActivity extends Activity{
         mHandler.sendMessageDelayed(msg, 2000L);
     }
     
-    public boolean isNetworkAvailable() {
-        NetworkInfo info = ((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE))
-                .getActiveNetworkInfo();
-        return (info != null) && (info.isConnected());
-    }
+    
 }
