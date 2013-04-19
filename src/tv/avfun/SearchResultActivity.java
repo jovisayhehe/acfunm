@@ -5,13 +5,11 @@ package tv.avfun;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import tv.avfun.adapter.ChannelContentListViewAdaper;
 import tv.avfun.api.ApiParser;
-import tv.avfun.api.Channel;
+import tv.avfun.api.ChannelApi;
 import tv.avfun.entity.Contents;
-
 import android.app.SearchManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -22,13 +20,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
@@ -218,8 +216,8 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 		}else{
 		    Contents c = data.get(position);
 			channelId = c.getChannelId();
-			if(channelId!= Channel.id.ARTICLE.AN_CULTURE && channelId!=Channel.id.ARTICLE.COLLECTION 
-			        &&channelId!=Channel.id.ARTICLE.COMIC_LIGHT_NOVEL &&channelId!=Channel.id.ARTICLE.WORK_EMOTION){
+			if(channelId!= ChannelApi.id.ARTICLE.AN_CULTURE && channelId!=ChannelApi.id.ARTICLE.COLLECTION 
+			        &&channelId!=ChannelApi.id.ARTICLE.COMIC_LIGHT_NOVEL &&channelId!=ChannelApi.id.ARTICLE.WORK_EMOTION){
 				
 				Intent intent = new Intent(this, Detail_Activity.class);
 				ImageView img = (ImageView) view.findViewById(R.id.channellist_item_img);

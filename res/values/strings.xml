@@ -7,6 +7,7 @@
 	<string name="nav">频道</string>
 	<string name="play_btn">播放</string>
 	<string name="time_out">|д` ) 连接超时,点击屏幕重新加载</string>
+	<string name="net_work_error">(つд⊂) 暂无网络连接！ </string>
 	<string name="loading">(`・ω・´) 努力地加载中...</string>
 	<string name="reloading">(つд⊂)  oops！点我重新加载...</string>
 	<string name="nocomments">(=ﾟωﾟ)= 暂时没有发现评论...</string>

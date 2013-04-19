@@ -2,6 +2,9 @@
 package tv.avfun.api;
 
 import java.io.Serializable;
+import java.util.List;
+
+import tv.avfun.entity.Contents;
 
 /**
  * 频道。
@@ -11,28 +14,12 @@ import java.io.Serializable;
 public class Channel implements Serializable {
     private static final long serialVersionUID = 11L;
     /**
-     * 频道的id
-     *
+     * 推荐视频
      */
-    public static final class id {
-
-        public static final int ANIMATION = 1;
-        public static final int MUSIC     = 58;
-        public static final int GAME      = 59;
-        public static final int FUN       = 60;
-        public static final int BANGUMI   = 67;
-        public static final int MOVIE     = 68;
-        public static final int SPORT     = 69;
-        public static final int SCIENCE   = 70;
-        public static final int MUGEN     = 72;
-
-        public static final class ARTICLE {
-            public static final int COLLECTION        = 63;
-            public static final int WORK_EMOTION      = 73;
-            public static final int AN_CULTURE        = 74;
-            public static final int COMIC_LIGHT_NOVEL = 75;
-        }
-    }
+    public List<Contents> recommends;
+    
+    
+    
     
     private String title;
     private String url;
@@ -67,6 +54,7 @@ public class Channel implements Serializable {
             return this.channelId == ((Channel)o).getChannelId();
         return super.equals(o);
     }
+    
     
     
 }
