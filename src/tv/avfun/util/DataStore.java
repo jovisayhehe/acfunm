@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.Calendar;
 import java.util.List;
@@ -109,7 +108,7 @@ public class DataStore {
         if (list != null) {
             this.bangumiList.bangumiTimeList = list;
             this.bangumiList.cacheTime = System.currentTimeMillis();
-            return writeObject(TIME_LIST_CACHE, this.bangumiList);
+            return writeObject(timeListCachedFile.getAbsolutePath(), this.bangumiList);
         }
         return false;
     }
@@ -163,7 +162,7 @@ public class DataStore {
         if (list != null) {
             this.channelList.channels = list;
             this.channelList.cacheTime = System.currentTimeMillis();
-            return writeObject(CHANNEL_LIST_CACHE, this.channelList);
+            return writeObject(channelListCachedFile.getAbsolutePath(), this.channelList);
         }
         return false;
     }

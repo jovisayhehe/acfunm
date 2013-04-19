@@ -95,9 +95,9 @@ public class ApiParser {
             Bangumi[] bangumis = new Bangumi[videoems.size()];
             
             for(int i=0 ; i< videoems.size(); i++) {
-                Bangumi bangumi = bangumis[i];
-                bangumi.title = videoems.get(i).text();
-                bangumi.aid = videoems.get(i).attr("data-aid");
+                bangumis[i] = new Bangumi();
+                bangumis[i].title = videoems.get(i).text();
+                bangumis[i].aid = videoems.get(i).attr("data-aid");
             }
             timelist.add(bangumis);
             

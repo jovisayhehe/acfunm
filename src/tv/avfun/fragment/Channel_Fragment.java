@@ -71,7 +71,9 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+        // TODO  
+        //setHasOptionsMenu(true);
+        //setRetainInstance(true);
     }
     
     @Override
@@ -101,7 +103,7 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 		 progressBar = (ProgressBar) this.main_v.findViewById(R.id.time_progress);
 		 time_outtext = (TextView) this.main_v.findViewById(R.id.time_out_text);
 		 time_outtext.setOnClickListener(this);
-		list = (ListView) this.main_v.findViewById(R.id.list);
+		list = (ListView) this.main_v.findViewById(android.R.id.list);
 		list.setVisibility(View.INVISIBLE);
 		list.setDivider(getResources().getDrawable(R.drawable.listview_divider));
 		list.setDividerHeight(2);
@@ -269,4 +271,9 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
         return f;
     }
 	
+    
+    @Override
+    protected void onRefresh(boolean b) {
+        
+    }
 }

@@ -58,6 +58,15 @@ public class Channel implements Serializable {
     public int getChannelId() {
         return channelId;
     }
+    /**
+     * compare with channel id 
+     */
+    @Override
+    public boolean equals(Object o) {
+        if(o != null && o instanceof Channel)
+            return this.channelId == ((Channel)o).getChannelId();
+        return super.equals(o);
+    }
     
     
 }
