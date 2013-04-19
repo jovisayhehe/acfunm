@@ -15,5 +15,14 @@
     <dimen name="img_h">80dip</dimen>
     <dimen name="gdviewitemtext_size">20sp</dimen>
     <dimen name="list_padding">10dip</dimen>
+    <dimen name="video_item_width">95dip</dimen>
+    <dimen name="video_item_height">110dip</dimen>
+    <dimen name="page_margin">8dip</dimen>
+    <dimen name="banner_height">135dip</dimen>
+    <dimen name="banner_indicator_view_width">5dip</dimen> 
+    <dimen name="banner_indicator_view_height">5dip</dimen>
+    <dimen name="banner_indicator_view_margin_horizontal">3dip</dimen>
+    
+    <dimen name="banner_indicator_margin_bottom">8dip</dimen>
 
 </resources>
