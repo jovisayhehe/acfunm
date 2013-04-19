@@ -1,6 +1,5 @@
 package tv.avfun.api;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,10 +23,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import android.accounts.NetworkErrorException;
-
 import tv.avfun.entity.Article;
 import tv.avfun.entity.Contents;
+import tv.avfun.util.DataStore;
+import android.accounts.NetworkErrorException;
 
 public class ApiParser {
 	
@@ -82,30 +81,30 @@ public class ApiParser {
 			}
 	}
 	
-	public static ArrayList<ArrayList<HashMap<String, String>>> getTimedate() throws Exception {
-		
-		Connection c = Jsoup.connect("http://www.acfun.tv/v/list67/index.htm").timeout(6000);
-		Document doc;
-			doc = c.get();
-			Elements ems = doc.getElementsByAttributeValue("id", "bangumi").get(0).getElementsByTag("li");
-			ems.remove(ems.size()-1);
-			ArrayList<ArrayList<HashMap<String, String>>> timelist = new ArrayList<ArrayList<HashMap<String,String>>>();
-			
-			for (Element element : ems) {
-				Elements videoems  = element.getElementsByClass("title");
-				ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String,String>>();
-				for (Element element2 : videoems) {
-					HashMap<String, String> map = new HashMap<String, String>();
-					map.put("title", element2.text());
-					map.put("id", element2.attr("data-aid"));
-					list.add(map);
-				}
-				timelist.add(list);
-			}
-			return timelist;
-		
-	}
 	
+	public static List<Bangumi[]> getBangumiTimeList() throws Exception{
+	    
+	    Connection c = Jsoup.connect("http://www.acfun.tv/v/list67/index.htm").timeout(6000);
+	    Document doc = c.get();
+	    Elements ems = doc.getElementsByAttributeValue("id", "bangumi").get(0).getElementsByTag("li");
+        ems.remove(ems.size()-1);
+        List<Bangumi[]> timelist = new ArrayList<Bangumi[]>();
+	    
+	    for(Element element : ems) {
+            Elements videoems  = element.getElementsByClass("title");
+            Bangumi[] bangumis = new Bangumi[videoems.size()];
+            
+            for(int i=0 ; i< videoems.size(); i++) {
+                Bangumi bangumi = bangumis[i];
+                bangumi.title = videoems.get(i).text();
+                bangumi.aid = videoems.get(i).attr("data-aid");
+            }
+            timelist.add(bangumis);
+            
+	    }
+	    return timelist;
+	    
+	}
 	
 	public static HashMap<String, Object> ParserAcId(String id,boolean isfromtime) throws Exception{
 		
@@ -379,7 +378,7 @@ public class ApiParser {
 			throw new NetworkErrorException("连接错误:"+conn.getResponseCode());
 		}
 		InputStream is = conn.getInputStream();
-		String jsonstring = readData(is, "UTF8");
+		String jsonstring = DataStore.readData(is, "UTF8");
 		conn.disconnect();
 		
 		JSONObject jsonObject = new JSONObject(jsonstring);
@@ -454,7 +453,7 @@ public class ApiParser {
 		if (conn.getResponseCode() != 200)
 			throw new RuntimeException("请求url失败");
 		InputStream is = conn.getInputStream();
-		String jsonstring = readData(is, "UTF8");
+		String jsonstring = DataStore.readData(is, "UTF8");
 		conn.disconnect();
 		
 		
@@ -592,16 +591,4 @@ public class ApiParser {
 			return System.currentTimeMillis() + "" + i1 + "" + i2;
 		}
 	
-	public static String readData(InputStream inSream, String charsetName) throws Exception{
-	    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-	    byte[] buffer = new byte[1024];
-	    int len = -1;
-	    while( (len = inSream.read(buffer)) != -1 ){
-	        outStream.write(buffer, 0, len);
-	    }
-	    byte[] data = outStream.toByteArray();
-	    outStream.close();
-	    inSream.close();
-	    return new String(data, charsetName);
-	}
 }

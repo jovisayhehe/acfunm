@@ -1,24 +1,15 @@
 package tv.avfun.fragment;
 
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OptionalDataException;
-import java.io.StreamCorruptedException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 
 import tv.avfun.R;
 import tv.avfun.adapter.TimeListAdaper;
 import tv.avfun.api.ApiParser;
+import tv.avfun.api.Bangumi;
+import tv.avfun.util.DataStore;
 import tv.avfun.util.Logger;
 import tv.avfun.util.MyAsyncTask;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,16 +24,13 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 
 public class PlayTime extends SherlockFragment{
-    // 缓存文件持久时间。这里设为3天
-	private static final long CONSTANT_TIME = 3*24*60*60*1000;
     private static final String TAG = PlayTime.class.getSimpleName();
     private View main_v;
-	private ArrayList<ArrayList<HashMap<String, String>>> data;
+	private List<Bangumi[]> data;
 	private ListView list;
 	private ProgressBar progressBar;
 	private Activity activity;
 	private TextView time_outtext;
-    private File cache;
 	public static PlayTime newInstance() {
 		PlayTime f = new PlayTime();
 		Bundle args = new Bundle();
@@ -83,54 +71,50 @@ public class PlayTime extends SherlockFragment{
 				initList();
 			}
 		});
-	    // 缓存文件
-	    cache = new File(activity.getCacheDir(),"timedate.dat");
 	    initList();
 	}
 	private boolean isCached(){
-	    long lastModified = cache.lastModified();
-        return lastModified + CONSTANT_TIME > System.currentTimeMillis();
+        return DataStore.getInstance().isBangumiListCached();
 	}
 	public void initList() {
 		
 		new MyAsyncTask() {
-            
+            public void preExecute() {
+                if(!isCached())
+                    progressBar.setVisibility(View.VISIBLE);
+            }
             @Override
             public void postExecute() {
-                progressBar.setVisibility(View.GONE);       
+                progressBar.setVisibility(View.GONE);
                 list.setAdapter(new TimeListAdaper(activity, data));
             }
             @Override
             public void doInBackground() {
                 try {
                     if(!isCached()){
-                        progressBar.setVisibility(View.VISIBLE);
                         // 连服务器读新的数据
                         if(Logger.DEBUG) Log.i(TAG,"read new");
-                        data = ApiParser.getTimedate();
-                        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(cache));
-                        out.writeObject(data);
-                        out.close();
+                        data = ApiParser.getBangumiTimeList();
+                        // 保存
+                        DataStore.getInstance().saveTimeList(data);
+                        
                     }else{
-                        // 缓存数据
-                        ObjectInputStream in = new ObjectInputStream(new FileInputStream(cache));
-                        if(Logger.DEBUG) Log.i(TAG,"read cache");
-                        data = (ArrayList<ArrayList<HashMap<String, String>>>) in.readObject();
-                        //Thread.sleep(500); // 读取太快了，反倒感觉不流畅
-                        in.close();
+                        // 读缓存
+                        data = DataStore.getInstance().loadTimeList();
                     }
                     publishResult(true);
                 } catch (Exception e) {
                     if(Logger.DEBUG)
                         e.printStackTrace();
                     publishResult(false);
-                    progressBar.setVisibility(View.GONE);
+                    
                 }
             }
             public void onPublishResult(boolean succeeded) {
                 if(!succeeded){
                     time_outtext.setVisibility(View.VISIBLE);
                 }
+                progressBar.setVisibility(View.GONE);
             }
         }.execute();
 	}

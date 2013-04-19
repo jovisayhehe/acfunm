@@ -1,19 +1,14 @@
 package tv.avfun.adapter;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.List;
 
 import tv.avfun.Detail_Activity;
 import tv.avfun.R;
-import tv.avfun.R.drawable;
-import tv.avfun.R.id;
-import tv.avfun.R.layout;
 import tv.avfun.animation.ExpandAnimation;
 import tv.avfun.animation.ExpandCollapseAnimation;
-
-
+import tv.avfun.api.Bangumi;
 
 import android.content.Context;
 import android.content.Intent;
@@ -29,7 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class TimeListAdaper extends BaseAdapter{
-	private ArrayList<ArrayList<HashMap<String, String>>> data;
+	private List<Bangumi[]> data;
 	private LayoutInflater mInflater;
 	private Context context;
 	private int selectItem = -1;
@@ -37,7 +32,7 @@ public class TimeListAdaper extends BaseAdapter{
 	private static View lastOpen = null;
 	private int dayOfWeek;
 	private boolean fs = true;
-	public TimeListAdaper(Context context,ArrayList<ArrayList<HashMap<String, String>>> data) {
+	public TimeListAdaper(Context context,List<Bangumi[]> data) {
 		this.mInflater =LayoutInflater.from(context);
 		this.data = data;
 		this.context = context;
@@ -55,9 +50,10 @@ public class TimeListAdaper extends BaseAdapter{
 		this.stac = stac;
 	}
 	
-	public void setData(ArrayList<ArrayList<HashMap<String, String>>> data){
+	public void setData(List<Bangumi[]> data){
 		this.data.clear();
 		this.data = data;
+		this.notifyDataSetChanged();
 	}
 	
 	public int getCount() {
@@ -83,25 +79,25 @@ public class TimeListAdaper extends BaseAdapter{
 		convertView = mInflater.inflate(R.layout.expandable_list_item,
 				null);
 		TextView txt = (TextView) convertView.findViewById(R.id.text);
-		txt.setText((CharSequence) data.get(position).get(0).get("title"));
-		txt.setTag(data.get(position).get(0).get("id"));
+		txt.setText((CharSequence) data.get(position)[0].title);
+		txt.setTag(data.get(position)[0].aid);
 		txt.setOnClickListener(new ButtonListener(position,0));
 		final LinearLayout expandable = (LinearLayout) convertView.findViewById(R.id.expandable);
 		
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
 				android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
 		int i = 1;
-		for (; i < data.get(position).size(); i++) {
-			HashMap<String, String> map = data.get(position).get(i);
+		for (; i < data.get(position).length; i++) {
+			Bangumi bangumi = data.get(position)[i];
 			TextView title = new TextView(context);
 			title.setPadding(15, 8, 5, 8);
 			title.setTextColor(Color.BLACK);
 			title.setLayoutParams(params);
-			title.setText(map.get("title"));
+			title.setText(bangumi.title);
 			title.setTextSize(15);
 			title.setTextColor(Color.parseColor("#3C6D9D"));
 			title.setBackgroundResource(R.drawable.selectable_background);
-			title.setTag(map.get("id"));
+			title.setTag(bangumi.aid);
 			title.setOnClickListener(new ButtonListener(position,i));
 			expandable.addView(title);
 			
@@ -169,10 +165,10 @@ public class TimeListAdaper extends BaseAdapter{
 			anim.setStartOffset(200);
 			expandable.startAnimation(anim);
 			fs = false;	
-		/*}else if(position == dayOfWeek-1){
+		}else if(position == dayOfWeek-1){
 			day_btn.setBackgroundResource(R.drawable.listitembtnselectable_background_r);
 			expandable.setVisibility(View.GONE);
-			((LinearLayout.LayoutParams) expandable.getLayoutParams()).bottomMargin = - i* 30;*/
+			((LinearLayout.LayoutParams) expandable.getLayoutParams()).bottomMargin = - i* 30;
 		}else{
 			expandable.setVisibility(View.GONE);
 			day_btn.setBackgroundResource(R.drawable.listitembtnselectable_background);
@@ -195,7 +191,7 @@ public class TimeListAdaper extends BaseAdapter{
 		public void onClick(View v) {
 			
 			Intent intent = new Intent(context, Detail_Activity.class);
-			intent.putExtra("title", data.get(position).get(i).get("title"));
+			intent.putExtra("title", data.get(position)[i].title);
 			intent.putExtra("aid", v.getTag().toString());
 			intent.putExtra("from", 1);
 			intent.putExtra("channelId", "67");
