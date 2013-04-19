@@ -60,7 +60,7 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.detail_layout);
 		from = getIntent().getIntExtra("from", 0);
-		imageLoader=new ImageLoader(this);	
+		imageLoader=ImageLoader.getInstance();
 		initview();
 	}
 		
@@ -193,7 +193,7 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 									 description = info.get("description");
 									 String imgurl = info.get("titleimage");
 									 if(imgurl!=""&&!imgurl.equals("")){
-										 imageLoader.DisplayImage(imgurl, imageView);
+										 imageLoader.displayImage(imgurl, imageView);
 									 }else{
 										 imageView.setBackgroundResource(R.drawable.face);
 									 }

@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -36,7 +37,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
-public class UserHomeFragment extends SherlockFragment implements OnClickListener {
+public class UserHomeFragment extends Fragment implements OnClickListener {
 
     private LinearLayout            login_ui;
     private View                    mContent;
@@ -78,7 +79,7 @@ public class UserHomeFragment extends SherlockFragment implements OnClickListene
 
         super.onActivityCreated(savedInstanceState);
         this.activity = getActivity();
-        imageLoader = new ImageLoader(activity);
+        imageLoader = ImageLoader.getInstance();
         login_ui = (LinearLayout) mContent.findViewById(R.id.member_line);
         ((LinearLayout.LayoutParams)login_ui.getLayoutParams()).bottomMargin = - 100;
         vlogin_btn = (TextView) mContent.findViewById(R.id.mem_login_vbtn);
@@ -165,13 +166,13 @@ public class UserHomeFragment extends SherlockFragment implements OnClickListene
     public void buidview(HashMap<String, Object> vmap) {
         textusername.setText((String) vmap.get("uname"));
         textsignature.setText((String) vmap.get("signature"));
-        imageLoader.DisplayImage((String) vmap.get("avatar"), avatar);
+        imageLoader.displayImage((String) vmap.get("avatar"), avatar);
     }
 
     public void unbuidview() {
         textusername.setText(R.string.boy);
         textsignature.setText(R.string.isboy);
-        BitmapDrawable bd = (BitmapDrawable) getResources().getDrawable(R.drawable.face);
+        BitmapDrawable bd = (BitmapDrawable) getResources().getDrawable(R.drawable.mem_account_avatar);
         Bitmap bm = bd.getBitmap();
         avatar.setImageBitmap(bm);
     }

@@ -26,7 +26,7 @@ public class ChannelContentListViewAdaper extends BaseAdapter {
     public ChannelContentListViewAdaper(Context context, List<Contents> data) {
         this.mInflater = LayoutInflater.from(context);
         this.data = data;
-        imageLoader = new ImageLoader(context);
+        imageLoader = ImageLoader.getInstance();
     }
 
     public void setData(List<Contents> data) {
@@ -80,7 +80,7 @@ public class ChannelContentListViewAdaper extends BaseAdapter {
         final String imageUrl = art.getTitleImg();
         if (imageUrl != "null" && !"".equals(imageUrl)) {
             holder.img.setTag(imageUrl);
-            imageLoader.DisplayImage(imageUrl, holder.img);
+            imageLoader.displayImage(imageUrl, holder.img);
         }
         return convertView;
 

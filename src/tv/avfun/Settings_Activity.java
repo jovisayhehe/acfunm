@@ -22,6 +22,7 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.SwitchPreference;
 import android.util.Log;
+import android.widget.Toast;
 
 public class Settings_Activity  extends SherlockPreferenceActivity{
 	private SharedPreferences sharedata;
@@ -53,10 +54,9 @@ public class Settings_Activity  extends SherlockPreferenceActivity{
 			public boolean onPreferenceClick(Preference preference) {
 				
 				preference.setEnabled(false);
-				FileCache fileCache = new FileCache(Settings_Activity.this);
-				fileCache.clear();
+				if(FileCache.clear()) Toast.makeText(getApplicationContext(), "清除完毕", 0).show();
 				
-				return false;
+				return true;
 			}
 		});
 		findPreference("sendmail").setOnPreferenceClickListener(new OnPreferenceClickListener() {
