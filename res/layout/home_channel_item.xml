@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dip"
+    android:orientation="vertical" >
+
+    <FrameLayout
+        android:id="@+id/more"
+        android:clickable="true"
+        android:background="@drawable/clickable_item_bg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dip"
+        android:layout_marginTop="4dip" >
+
+        <TextView
+            android:id="@+id/channel_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/title_bg_fun"
+            android:paddingLeft="40dip"
+            android:text="娱乐"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center"
+            android:layout_marginRight="8dip"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/more_h" />
+    </FrameLayout>
+    <include layout="@layout/row_of_video_item" />
+
+</LinearLayout>
