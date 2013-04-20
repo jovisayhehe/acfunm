@@ -2,7 +2,6 @@ package tv.avfun.util.lzlist;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +29,7 @@ public class ImageLoader {
     private ImageLoader(){
         executorService=Executors.newFixedThreadPool(5);
     }
-    // XXX: 这应该是个单例吧？
+    
     public static ImageLoader getInstance(){
         return instance;
     }
@@ -80,7 +79,6 @@ public class ImageLoader {
             bitmap = decodeFile(f);
             return bitmap;
         } catch (Throwable ex){
-           ex.printStackTrace();
            if(ex instanceof OutOfMemoryError)
                memoryCache.clear();
            return null;
@@ -116,10 +114,8 @@ public class ImageLoader {
             Bitmap bitmap=BitmapFactory.decodeStream(stream2, null, o2);
             stream2.close();
             return bitmap;
-        } catch (FileNotFoundException e) {
         } 
         catch (IOException e) {
-            e.printStackTrace();
         }
         return null;
     }
@@ -154,7 +150,6 @@ public class ImageLoader {
                 Activity a=(Activity)photoToLoad.imageView.getContext();
                 a.runOnUiThread(bd);
             }catch(Throwable th){
-                th.printStackTrace();
             }
         }
     }
