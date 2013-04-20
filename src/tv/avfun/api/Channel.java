@@ -4,6 +4,7 @@ package tv.avfun.api;
 import java.io.Serializable;
 import java.util.List;
 
+import tv.avfun.R;
 import tv.avfun.entity.Contents;
 
 /**
@@ -17,22 +18,25 @@ public class Channel implements Serializable {
      * 推荐视频
      */
     public List<Contents> recommends;
-    
-    
-    
-    
-    private String title;
+    public int titleBgResId;
+    public int channelId;
+    public String title;
     private String url;
-    private int channelId;
     /**
      * 构造频道
      * @param title 名
      * @param channelId id
-     * @see Channel.id
+     * @param titleBgResId 标题背景图id
      */
-    public Channel(String title, int channelId){
+    public Channel(String title, int channelId, int titleBgResId){
         this.title = title;
         this.channelId = channelId;
+        this.titleBgResId = titleBgResId;
+    }
+    public Channel(String title, int channelId) {
+        this.title = title;
+        this.channelId = channelId;
+        this.titleBgResId = R.drawable.title_bg_fun;
     }
     public String getTitle(){
         return this.title;

@@ -1,11 +1,7 @@
 package tv.avfun.fragment;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 
 import tv.avfun.Channel_Activity;
 import tv.avfun.Detail_Activity;
@@ -15,26 +11,18 @@ import tv.avfun.adapter.ChannelContentListViewAdaper;
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.Channel;
 import tv.avfun.entity.Contents;
-
-
-
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView.OnItemClickListener;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.ImageView;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -48,7 +36,6 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 	private TextView time_outtext;
 	private ListView list;
 	private List<Contents> data = new ArrayList<Contents>();
-	//private List<Map<String, Object>> data = new ArrayList<Map<String,Object>>();
 	private Activity activity;
 	private ChannelContentListViewAdaper adaper;
 	private int indexpage = 1;
@@ -98,7 +85,6 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 		}else{
 		    channelid = Integer.valueOf(url.substring(43, url.length()-13));
 		}
-		// Log.d(TAG, "url: " + url + "\nchannelid:"+ channelid);
 		this.activity = getActivity();
 		 progressBar = (ProgressBar) this.main_v.findViewById(R.id.time_progress);
 		 time_outtext = (TextView) this.main_v.findViewById(R.id.time_out_text);
@@ -225,21 +211,7 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 					
 				}else{
 					Intent intent = new Intent(activity, Detail_Activity.class);
-					ImageView img = (ImageView) view.findViewById(R.id.channellist_item_img);
-					Drawable da = img.getDrawable();
-					BitmapDrawable bd = (BitmapDrawable) da;
-					Bitmap bm = bd.getBitmap();
-					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-					intent.putExtra("thumb", baos.toByteArray());
-					
-					intent.putExtra("aid", c.getAid()); 
-					intent.putExtra("title", c.getTitle());
-					intent.putExtra("username", c.getUsername());
-					intent.putExtra("views", c.getViews()+""); 
-					intent.putExtra("comments", c.getComments()+""); 
-					intent.putExtra("channelId", c.getChannelId()+"");
-					intent.putExtra("description", c.getDescription());
+					intent.putExtra("contents", c);
 					
 					startActivity(intent);
 				}

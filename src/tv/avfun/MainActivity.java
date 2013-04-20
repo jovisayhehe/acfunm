@@ -3,7 +3,7 @@ package tv.avfun;
 import java.util.HashMap;
 import java.util.Map;
 
-import tv.avfun.fragment.HomeFragment;
+import tv.avfun.fragment.HomeChannelListFragment;
 import tv.avfun.fragment.PlayTime;
 import tv.avfun.fragment.UserHomeFragment;
 import tv.avfun.view.SlideNavItemView;
@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseArray;
@@ -52,7 +53,7 @@ public class MainActivity extends SlidingFragmentActivity {
         
         instances = new HashMap<String, Fragment>();
         // 初始Fragment
-        mContent = HomeFragment.newInstance();
+        mContent = new HomeChannelListFragment();
         instances.put("home", mContent);
         mFragmentMan = getSupportFragmentManager();
         //初始化导航
@@ -106,13 +107,14 @@ public class MainActivity extends SlidingFragmentActivity {
 
         View v = mSearchView.findViewById(R.id.abs__search_plate);
         v.setBackgroundResource(R.drawable.edit_text_holo_light);
-
+        
         return true;
 
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.i(TAG, "item id:"+item.getItemId());
         switch (item.getItemId()) {
         case android.R.id.home:
             toggle();
@@ -131,6 +133,17 @@ public class MainActivity extends SlidingFragmentActivity {
             setSlideNavHint(navId);
         }
         menu.showContent();
+    }
+    public void switchContent(Fragment fragment){
+        if(mContent != fragment) {
+            mContent = fragment;
+            mFragmentMan.beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, R.anim.slide_out)
+                .replace(R.id.content_frame, fragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .addToBackStack("mContent")
+                .commit();
+        }
     }
     /*
      * 数组记录nav id
@@ -155,9 +168,6 @@ public class MainActivity extends SlidingFragmentActivity {
         mNavItem.setHintEnabled(true);
         
     }
-    
-    
-    
     public void slideNavItemClicked(View view){
         SlideNavItemView navItem= (SlideNavItemView)view;
         int id = navItem.getId();
@@ -188,6 +198,14 @@ public class MainActivity extends SlidingFragmentActivity {
         }
         switchContent(nextContent,id);
         
+    }
+    @Override
+    public void onBackPressed() {
+        if(this.navId != R.id.slide_nav_home){
+            nextContent = instances.get("home");
+            switchContent(nextContent,R.id.slide_nav_home);
+        } else
+            super.onBackPressed();
     }
     
 }

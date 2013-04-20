@@ -23,6 +23,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import tv.avfun.R;
 import tv.avfun.api.ChannelApi.id;
 import tv.avfun.entity.Article;
 import tv.avfun.entity.Contents;
@@ -59,12 +60,12 @@ public class ApiParser {
      * 首页主频道列表
      */
     private static Channel[] channels = new Channel[]{
-          new Channel("动画", id.ANIMATION),
-          new Channel("音乐", id.MUSIC),
-          new Channel("娱乐", id.FUN),
-          new Channel("短影", id.MOVIE),
-          new Channel("游戏", id.GAME),
-          new Channel("番剧", id.BANGUMI)
+          new Channel("动画", id.ANIMATION, R.drawable.title_bg_anim),
+          new Channel("音乐", id.MUSIC, R.drawable.title_bg_music),
+          new Channel("娱乐", id.FUN, R.drawable.title_bg_fun),
+          new Channel("短影", id.MOVIE, R.drawable.title_bg_movie),
+          new Channel("游戏", id.GAME , R.drawable.title_bg_game),
+          new Channel("番剧", id.BANGUMI, R.drawable.title_bg_anim)
         };
     /**
      * 获取首页频道列表 推荐内容

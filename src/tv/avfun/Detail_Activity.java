@@ -5,10 +5,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-
-
 import tv.avfun.api.ApiParser;
 import tv.avfun.db.DBService;
+import tv.avfun.entity.Contents;
 import tv.avfun.util.DensityUtil;
 import tv.avfun.util.lzlist.ImageLoader;
 import android.content.Intent;
@@ -16,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.LoginFilter.UsernameFilterGeneric;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -127,12 +127,18 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 		 imageView = (ImageView) findViewById(R.id.detail_img);
 		 paly_btn = (TextView) findViewById(R.id.detail_play_btn);
 		 paly_btn.setTag(123);
-		 
+		 Contents c = (Contents) getIntent().getExtras().get("contents");
+		 boolean flag = false;
+		 if(flag = c == null) {
 		 title = getIntent().getStringExtra("title");
-		 getSupportActionBar().setTitle(title);
 		 aid = getIntent().getStringExtra("aid");
 		 channelid = getIntent().getStringExtra("channelId");
-		 
+		 }else{
+		 title = c.getTitle();
+		 aid = c.getAid();
+		 channelid = c.getChannelId()+"";
+		 }
+		 getSupportActionBar().setTitle(title);
 		 SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 hh:mm");
 		 new DBService(this).addtoHis(aid, title, sdf.format(new Date()),0,channelid);
 		 isfavorite = new DBService(this).isFoved(aid);
@@ -145,12 +151,23 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 			 paly_btn.setText("正在加载...");
 			 
 		 }else{
+		     user_name.setText(Html.fromHtml("<font color=\"#ABABAB\">up主: </font>"));
+		     views.setText(Html.fromHtml("<font color=\"#ABABAB\">点击: </font>"));
+		     comments.setText(Html.fromHtml("<font color=\"#ABABAB\">评论: </font>"));
+		     if(flag){
 			 byte[] b = getIntent().getByteArrayExtra("thumb");
 			 imageView.setImageBitmap(BitmapFactory.decodeByteArray(b, 0, b.length));
-			 user_name.setText(Html.fromHtml("<font color=\"#ABABAB\">up主: </font>"+getIntent().getStringExtra("username")));
-			 views.setText(Html.fromHtml("<font color=\"#ABABAB\">点击: </font>"+getIntent().getStringExtra("views")));
-			 comments.setText(Html.fromHtml("<font color=\"#ABABAB\">评论: </font>"+getIntent().getStringExtra("comments")));
-			 description = getIntent().getStringExtra("description"); 
+			 user_name.setText(user_name.getText()+getIntent().getStringExtra("username"));
+			 views.setText(views.getText()+getIntent().getStringExtra("views"));
+			 comments.setText(comments.getText()+getIntent().getStringExtra("comments"));
+			 description = getIntent().getStringExtra("description");
+		     }else{
+		     imageLoader.displayImage(c.getTitleImg(), imageView);
+		     user_name.setText(user_name.getText()+c.getUsername());
+		     views.setText(views.getText()+""+c.getViews());
+		     comments.setText(comments.getText()+""+c.getComments());
+		     description = c.getDescription();
+		     }
 			 paly_btn.setText("正在加载...");
 		 }
 		 listview = (ListView) findViewById(R.id.detail_listview);
