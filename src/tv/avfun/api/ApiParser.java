@@ -23,12 +23,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import tv.avfun.BuildConfig;
 import tv.avfun.R;
 import tv.avfun.api.ChannelApi.id;
 import tv.avfun.entity.Article;
 import tv.avfun.entity.Contents;
 import tv.avfun.util.DataStore;
-import tv.avfun.util.Logger;
 import android.accounts.NetworkErrorException;
 import android.util.Log;
 
@@ -81,7 +81,7 @@ public class ApiParser {
             }
             return channels;
         } catch (Exception e) {
-            if (Logger.DEBUG) {
+            if (BuildConfig.DEBUG) {
                 Log.e(ApiParser.class.getSimpleName(), "获取失败", e);
             }
             return null;

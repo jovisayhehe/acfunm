@@ -15,6 +15,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import tv.avfun.AcApp;
+import tv.avfun.BuildConfig;
 import tv.avfun.api.Bangumi;
 import tv.avfun.api.BangumiList;
 import tv.avfun.api.Channel;
@@ -187,7 +188,7 @@ public class DataStore {
             in.close();
             return obj;
         } catch (Exception e) {
-            if (Logger.DEBUG)
+            if (BuildConfig.DEBUG)
                 Log.e(TAG, "failed to read object from " + path, e);
             return null;
         }
@@ -211,7 +212,7 @@ public class DataStore {
             out.close();
             return true;
         } catch (Exception e) {
-            if (Logger.DEBUG)
+            if (BuildConfig.DEBUG)
                 Log.e(TAG, "can not write obj to " + path, e);
         }
         return false;
@@ -231,7 +232,7 @@ public class DataStore {
                 return str;
             }
         } catch (Exception e) {
-            if (Logger.DEBUG)
+            if (BuildConfig.DEBUG)
                 Log.e(TAG, "can not read from file " + path, e);
         }
         return null;
@@ -256,7 +257,7 @@ public class DataStore {
             writer.close();
             return true;
         } catch (IOException e) {
-            if (Logger.DEBUG)
+            if (BuildConfig.DEBUG)
                 Log.e(TAG, "can not write to file " + path, e);
         }
         return false;

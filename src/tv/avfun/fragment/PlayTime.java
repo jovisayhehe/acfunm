@@ -3,12 +3,12 @@ package tv.avfun.fragment;
 
 import java.util.List;
 
+import tv.avfun.BuildConfig;
 import tv.avfun.R;
 import tv.avfun.adapter.TimeListAdaper;
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.Bangumi;
 import tv.avfun.util.DataStore;
-import tv.avfun.util.Logger;
 import tv.avfun.util.MyAsyncTask;
 import android.app.Activity;
 import android.os.Bundle;
@@ -93,7 +93,7 @@ public class PlayTime extends SherlockFragment{
                 try {
                     if(!isCached()){
                         // 连服务器读新的数据
-                        if(Logger.DEBUG) Log.i(TAG,"read new");
+                        if(BuildConfig.DEBUG) Log.i(TAG,"read new");
                         data = ApiParser.getBangumiTimeList();
                         // 保存
                         DataStore.getInstance().saveTimeList(data);
@@ -104,7 +104,7 @@ public class PlayTime extends SherlockFragment{
                     }
                     publishResult(true);
                 } catch (Exception e) {
-                    if(Logger.DEBUG)
+                    if(BuildConfig.DEBUG)
                         e.printStackTrace();
                     publishResult(false);
                     
