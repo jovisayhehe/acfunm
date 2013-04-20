@@ -170,8 +170,8 @@ public class Channel_Activity extends SherlockFragmentActivity implements OnPage
 
     @Override
     public void onTabSelected(Tab tab, FragmentTransaction ft) {
-
-        mPager.setCurrentItem(tab.getPosition());
+        this.ab.setSelectedNavigationItem(tab.getPosition());
+        mPager.setCurrentItem(tab.getPosition(),true);
     }
 
     @Override
