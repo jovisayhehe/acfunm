@@ -18,39 +18,35 @@ import android.widget.TextView;
  * 
  */
 public class SlideNavItemView extends RelativeLayout {
-    private int mFragmentId;
     private String mText;
     private int mIconId;
     private View view,mHint;
     
     public SlideNavItemView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setClickable(true);
-        setGravity(Gravity.CENTER_VERTICAL);
-        view = LayoutInflater.from(context).inflate(R.layout.slide_nav_list_item, this);
+        
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SlideNavItemView);
-        mFragmentId = ta.getResourceId(R.styleable.SlideNavItemView_item_fragment_id, 0);
         mText = ta.getString(R.styleable.SlideNavItemView_item_text);
         mIconId = ta.getResourceId(R.styleable.SlideNavItemView_item_icon, 0);
         
-        initView();
+        initView(context);
         ta.recycle();
 
     }
 
-    public SlideNavItemView(Context context, int fragmentId, String text, int iconResId) {
+    public SlideNavItemView(Context context,  String text, int iconResId) {
         super(context);
-        this.mFragmentId = fragmentId;
         this.mText = text;
         this.mIconId = iconResId;
-        initView();
+        initView(context);
     }
     
-    private void initView() {
+    private void initView(Context context) {
+        setClickable(true);
+        setGravity(Gravity.CENTER_VERTICAL);
+        view = LayoutInflater.from(context).inflate(R.layout.slide_nav_list_item, this);
         if (mText == null)
             throw new IllegalArgumentException("item_text没有设置");
-        if (mFragmentId == 0)
-            throw new IllegalArgumentException("item_fragment_id是必须的");
         if (mIconId == 0)
             throw new IllegalArgumentException("item_icon没有设置！");
 
