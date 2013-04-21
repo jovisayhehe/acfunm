@@ -161,6 +161,7 @@ public class UserHomeFragment extends Fragment implements OnClickListener {
     public void animateLoginUI() {
         Animation anim = new ExpandAnimation(login_ui, 600);
         login_ui.startAnimation(anim);
+        
     }
 
     public void buidview(HashMap<String, Object> vmap) {
@@ -192,7 +193,6 @@ public class UserHomeFragment extends Fragment implements OnClickListener {
 
         vlogin_btn.setEnabled(false);
         vlogin_btn.setText("登陆中");
-        animateLoginUI();
         InputMethodManager imm = (InputMethodManager) activity
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm.isActive()) {
@@ -209,6 +209,7 @@ public class UserHomeFragment extends Fragment implements OnClickListener {
 
                         public void run() {
                             boolean success = (Boolean) map.get("success");
+                            animateLoginUI();
                             if (success) {
                                 Toast.makeText(activity, "登陆成功", Toast.LENGTH_SHORT).show();
                                 islogin = true;
@@ -217,7 +218,6 @@ public class UserHomeFragment extends Fragment implements OnClickListener {
                                 vlogin_btn.setText("注销");
                                 new DBService(activity).saveUser(map);
                             } else {
-                                animateLoginUI();
                                 vlogin_btn.setEnabled(true);
                                 vlogin_btn.setText("登陆");
                                 String result = (String) map.get("result");
@@ -236,24 +236,24 @@ public class UserHomeFragment extends Fragment implements OnClickListener {
                         @Override
                         public void run() {
 
-                            Toast.makeText(activity, "(=ﾟωﾟ)= 服务器想应异常...", Toast.LENGTH_SHORT)
-                                    .show();
                             animateLoginUI();
+                            Toast.makeText(activity, "(=ﾟωﾟ)= AC娘不想理你...", Toast.LENGTH_SHORT)
+                                    .show();
                             vlogin_btn.setEnabled(true);
                             vlogin_btn.setText("登陆");
                         }
                     });
-
                 } catch (UnknownHostException e) {
+                 
 
                     activity.runOnUiThread(new Runnable() {
 
                         @Override
                         public void run() {
 
-                            Toast.makeText(activity, "(=ﾟωﾟ)= 网络异常,请检查网络...", Toast.LENGTH_SHORT)
-                                    .show();
                             animateLoginUI();
+                            Toast.makeText(activity, "(=ﾟωﾟ)= 啊！连不上网...", Toast.LENGTH_SHORT)
+                                    .show();
                             vlogin_btn.setEnabled(true);
                             vlogin_btn.setText("登陆");
                         }
