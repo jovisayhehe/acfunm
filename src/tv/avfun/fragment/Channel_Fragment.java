@@ -124,7 +124,7 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 				try {
 				    final List<Contents> templist = ApiParser.getChannelContents(url+page);
 					if (!isadd) {
-					    data = ApiParser.getChannelContents("http://www.acfun.tv/api/getlistbyorder.aspx?orderby=7&channelIds="+channelid+"&count=10");
+					    data = ApiParser.getChannelHotList(channelid, 10);
 					    data.addAll(ApiParser.getChannelContents(url+page));
 					} 
 					activity.runOnUiThread(new Runnable() {

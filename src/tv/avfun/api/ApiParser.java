@@ -80,7 +80,7 @@ public class ApiParser {
         try {
             for (int i = 0; i < channels.length; i++) {
                 Channel c = channels[i];
-                c.recommends = getChannelRecommends(c.getChannelId(), count);
+                c.recommends = getChannelDefault(c.getChannelId(), count);
             }
             return channels;
         } catch (Exception e) {
@@ -90,8 +90,16 @@ public class ApiParser {
             return null;
         }
     }
-    public static List<Contents> getChannelRecommends(int channelId, int count) throws Exception{
-        String url = "http://www.acfun.tv/api/getlistbyorder.aspx?orderby=6&channelIds="+channelId + "&count=" + count;
+    public static List<Contents> getChannelDefault(int channelId, int count) throws Exception{
+        String url = ChannelApi.getDefaultUrl(channelId, count);
+        return getChannelContents(url);
+    }
+    public static List<Contents> getChannelHotList(int channelId, int count) throws Exception {
+        String url = ChannelApi.getHotListUrl(channelId, count);
+        return getChannelContents(url);
+    }
+    public static List<Contents> getChannelLatestReplied(int channelId, int count) throws Exception {
+        String url = ChannelApi.getLatestRepliedUrl(channelId, count);
         return getChannelContents(url);
     }
     public static List<Map<String, Object>> getComment(String aid, int page) throws Exception {

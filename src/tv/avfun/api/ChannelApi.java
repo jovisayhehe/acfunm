@@ -63,5 +63,29 @@ public class ChannelApi {
         }
         return apis;
     }
-    
+    private static final int TYPE_DEFAULT = 0;
+    private static final int TYPE_HOT_LIST = 7;
+    private static final int TYPE_LATEST_REPLY = 22;
+    private static String baseUrl = "http://www.acfun.tv/api/getlistbyorder.aspx?orderby=";
+    /**
+     * 获得默认形式(最新发布)列表的url
+     */
+    public static String getDefaultUrl(int channelId, int count){
+        return getUrl(TYPE_DEFAULT, channelId, count);
+    }
+    /**
+     * 获得周热门列表url
+     */
+    public static String getHotListUrl(int channelId, int count){
+        return getUrl(TYPE_HOT_LIST, channelId, count);
+    }
+    /**
+     * 获得最新回复列表url
+     */
+    public static String getLatestRepliedUrl(int channelId, int count){
+        return getUrl(TYPE_LATEST_REPLY, channelId, count);
+    }
+    private static String getUrl(int type, int channelId, int count){
+        return baseUrl + type + "&channelIds="+channelId+"&count=" + count;
+    }
 }
