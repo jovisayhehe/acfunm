@@ -23,18 +23,21 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import tv.avfun.AcApp;
 import tv.avfun.BuildConfig;
 import tv.avfun.R;
 import tv.avfun.api.ChannelApi.id;
 import tv.avfun.entity.Article;
 import tv.avfun.entity.Contents;
 import tv.avfun.util.DataStore;
+import tv.avfun.util.NetWorkUtil;
 import android.accounts.NetworkErrorException;
 import android.util.Log;
 
 public class ApiParser {
 
     public static List<Contents> getChannelContents(String address) throws Exception {
+
         List<Contents> contents = new ArrayList<Contents>();
         JSONObject jsonObject = getJsonObj(address);
         JSONArray jsarray = jsonObject.getJSONArray("contents");
@@ -73,7 +76,7 @@ public class ApiParser {
      * @return 获取失败，返回null
      */
     public static Channel[] getRecommendChannels(int count) {
-
+        if(!NetWorkUtil.isNetworkAvailable(AcApp.context())) return null;
         try {
             for (int i = 0; i < channels.length; i++) {
                 Channel c = channels[i];

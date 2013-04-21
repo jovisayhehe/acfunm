@@ -19,5 +19,6 @@
     <color name="video_item_pressed">#b2ff7e00</color>
     <color name="banner_indicator_highlight">#ffffffff</color>
     <color name="banner_indicator_normal">#66ffffff</color>
+    <color name="update_info_bg">#CC2278FF</color>
 
 </resources>

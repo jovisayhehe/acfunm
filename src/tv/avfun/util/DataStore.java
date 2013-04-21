@@ -162,7 +162,19 @@ public class DataStore {
         return false;
 
     }
-
+    /**
+     * 获取上次更新时间
+     * @return 没有缓存则返回 -1
+     */
+    public long getChannelListLastUpdateTime(){
+        synchronized (this.channelList) {
+            if (this.channelList.channels == null) {
+                if(!readChannelListCache())
+                    return -1;
+            }
+            return this.channelList.cacheTime;
+        }
+    }
     /**
      * 保存频道列表到缓存文件
      * 

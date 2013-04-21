@@ -5,27 +5,30 @@ import android.os.Message;
 
 
 /**
- * 简单的异步任务
+ * 简单的异步任务<br>
  * @author Yrom
  *
  */
 public abstract class MyAsyncTask {
     // 默认为执行成功
-    private static int OK = 0;
-    private static int SIGH =1;
+    private static final int OK = 0;
+    private static final int SIGH =1;
     private Handler mHandler = new Handler(){
         public void handleMessage(Message msg) {
-            boolean result = msg.what==OK;
-            onPublishResult(result);
-            if(result) postExecute();
+            onPublishResult(msg.what==OK);
+            onPostExecute();
         }
     };
     
     /**
      * 执行！
+     * <p>1. {@link #onPreExecute()}<br>
+     * 2. {@link #doInBackground()}<br>
+     * 3. {@link #onPublishResult(boolean)}<br>
+     * 4. {@link #onPostExecute()}</p>
      */
-    public void execute(){
-        preExecute();
+    public final void execute(){
+        onPreExecute();
         new Thread(){
             public void run() {
                 doInBackground();
@@ -37,29 +40,29 @@ public abstract class MyAsyncTask {
      * 发布执行结果。重写{@link #onPublishResult(boolean)}来接收结果。
      * @param succeeded 成功与否
      */
-    public void publishResult(boolean succeeded){
+    public final void publishResult(boolean succeeded){
         mHandler.sendEmptyMessage(succeeded?OK:SIGH);
     }
     /**
      * 发布出去。运行在主线程
      * @param succeeded
      */
-    public void onPublishResult(boolean succeeded) {
+    protected void onPublishResult(boolean succeeded) {
     }
     /**
-     * 执行完毕。只有当{@link #publishResult(boolean)}说执行结果成功才会调用此方法。
+     * 执行完毕调用此方法。
      */
-    public void postExecute() {
+    protected void onPostExecute() {
         
     }
     /**
      * 执行之前。
      */
-    public void preExecute() {
+    protected void onPreExecute() {
         
     }
     /**
      * 任务在子线程中执行。别忘了调用{@link #execute()}
      */
-    public abstract void doInBackground();
+    protected abstract void doInBackground();
 }

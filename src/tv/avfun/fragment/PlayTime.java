@@ -59,12 +59,12 @@ public class PlayTime extends SherlockFragment{
 	private boolean isCached = DataStore.getInstance().isBangumiListCached();
 	public void initList() {
 		new MyAsyncTask() {
-            public void preExecute() {
+            public void onPreExecute() {
                 if(!isCached)
                     progressBar.setVisibility(View.VISIBLE);
             }
             @Override
-            public void postExecute() {
+            public void onPostExecute() {
                 progressBar.setVisibility(View.GONE);
                 list.setAdapter(new TimeListAdaper(getActivity(), data));
             }
