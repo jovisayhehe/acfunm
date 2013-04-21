@@ -10,7 +10,6 @@ import tv.avfun.api.ApiParser;
 import tv.avfun.api.Bangumi;
 import tv.avfun.util.DataStore;
 import tv.avfun.util.MyAsyncTask;
-import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,7 +28,6 @@ public class PlayTime extends SherlockFragment{
 	private List<Bangumi[]> data;
 	private ListView list;
 	private ProgressBar progressBar;
-	private Activity activity;
 	private TextView time_outtext;
 	public static PlayTime newInstance() {
 		PlayTime f = new PlayTime();
@@ -39,59 +37,41 @@ public class PlayTime extends SherlockFragment{
     }
 	
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
-    }
-    
-    
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 		this.main_v = inflater.inflate(R.layout.list_layout, container, false);
-
+        list = (ListView)this.main_v.findViewById(android.R.id.list);
+        progressBar = (ProgressBar) this.main_v.findViewById(R.id.time_progress);
+        time_outtext = (TextView) this.main_v.findViewById(R.id.time_out_text);
+        time_outtext.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                
+                time_outtext.setVisibility(View.GONE);
+                initList();
+            }
+        });
+        initList();
 		return this.main_v;
     }
     
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		
-		super.onActivityCreated(savedInstanceState);
-		
-		this.activity = getActivity();
-	    list = (ListView)this.main_v.findViewById(android.R.id.list);
-	    progressBar = (ProgressBar) this.main_v.findViewById(R.id.time_progress);
-	    time_outtext = (TextView) this.main_v.findViewById(R.id.time_out_text);
-	    time_outtext.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				
-				time_outtext.setVisibility(View.GONE);
-				initList();
-			}
-		});
-	    initList();
-	}
-	private boolean isCached(){
-        return DataStore.getInstance().isBangumiListCached();
-	}
+	private boolean isCached = DataStore.getInstance().isBangumiListCached();
 	public void initList() {
-		
 		new MyAsyncTask() {
             public void preExecute() {
-                if(!isCached())
+                if(!isCached)
                     progressBar.setVisibility(View.VISIBLE);
             }
             @Override
             public void postExecute() {
                 progressBar.setVisibility(View.GONE);
-                list.setAdapter(new TimeListAdaper(activity, data));
+                list.setAdapter(new TimeListAdaper(getActivity(), data));
             }
             @Override
             public void doInBackground() {
                 try {
-                    if(!isCached()){
+                    if(!isCached){
                         // 连服务器读新的数据
                         if(BuildConfig.DEBUG) Log.i(TAG,"read new");
                         data = ApiParser.getBangumiTimeList();
@@ -99,6 +79,7 @@ public class PlayTime extends SherlockFragment{
                         DataStore.getInstance().saveTimeList(data);
                         
                     }else{
+                        if(BuildConfig.DEBUG) Log.i(TAG,"read cache list");
                         // 读缓存
                         data = DataStore.getInstance().loadTimeList();
                     }

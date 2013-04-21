@@ -2,7 +2,6 @@ package tv.avfun.fragment;
 
 import tv.avfun.Channel_Activity;
 import tv.avfun.Detail_Activity;
-import tv.avfun.MainActivity;
 import tv.avfun.R;
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.Banner;
@@ -19,7 +18,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,7 +64,6 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
 
     private void loadData() {
         new MyAsyncTask() {
-
             @Override
             public void doInBackground() {
                 if (dataStore.isChannelListCached()) 
@@ -86,7 +83,6 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
                         msg.what =ADD;
                         msg.arg1 = i;
                         msg.sendToTarget();
-                        
                     }
                     
                 publishResult(b);
@@ -204,5 +200,4 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
         intent.putExtra("position", position);
         startActivity(intent);
     }
-
 }

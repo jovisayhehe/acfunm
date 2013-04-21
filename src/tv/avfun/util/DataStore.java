@@ -38,9 +38,10 @@ public class DataStore {
     private ChannelList            channelList          = new ChannelList();
     private BangumiList            bangumiList          = new BangumiList();
     /** 24 hours */
-    public static final long       CHANNEL_LIST_EXPIRED = 24 * 60 * 60 * 1000;
+    private static final long      _24_H = 24 * 60 * 60 * 1000;
+    public static final long       CHANNEL_LIST_EXPIRED = _24_H;
     /** 3 days (XXX: 待定) */
-    public static final long       TIME_LIST_EXPIRED    = 3 * CHANNEL_LIST_EXPIRED;
+    public static final long       TIME_LIST_EXPIRED    = 3 * _24_H;
     /** 首页频道列表缓存文件 */
     public static final String     CHANNEL_LIST_CACHE   = "channel_list.dat";
     /** 番组列表缓存文件 */
@@ -63,7 +64,7 @@ public class DataStore {
     // 番组列表
     // =======================================================
     /**
-     * @return 没有缓存文件，或当前为星期天 <br>
+     * @return 没有缓存文件，或当前为星期天且缓存不是今天缓存的<br>
      *         或者缓存时间超过 {@link #TIME_LIST_EXPIRED}，返回false
      */
     public boolean isBangumiListCached() {
@@ -72,9 +73,19 @@ public class DataStore {
                 if (!readTimeListCache())
                     return false; // no cache
             }
-            int dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
-            return this.bangumiList.cacheTime + TIME_LIST_EXPIRED >= System.currentTimeMillis()
-                    && dayOfWeek != 1;
+            Calendar calendar = Calendar.getInstance();
+            int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+            long cache = calendar.getTimeInMillis() - bangumiList.cacheTime;
+            if( cache >= TIME_LIST_EXPIRED )
+                // 缓存超过TIME_LIST_EXPIRED
+                return false;
+            else if(dayOfWeek == 1){
+                int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+                calendar.setTimeInMillis(bangumiList.cacheTime);
+                int cacheDay = calendar.get(Calendar.DAY_OF_MONTH);
+                return currentDay >= cacheDay;
+            }
+            else return true;
         }
     }
 

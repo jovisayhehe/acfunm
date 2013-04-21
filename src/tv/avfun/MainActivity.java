@@ -114,7 +114,6 @@ public class MainActivity extends SlidingFragmentActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.i(TAG, "item id:"+item.getItemId());
         switch (item.getItemId()) {
         case android.R.id.home:
             toggle();
