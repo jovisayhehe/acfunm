@@ -40,7 +40,7 @@ public class Channel_Activity extends SherlockFragmentActivity implements OnPage
     private static final int  PIC      = 502;
     private static final int  NOPIC    = 503;
     public static int         modecode = 0;
-    private SharedPreferences sharedata;
+    private AcApp             acApp;
     private SubMenu           subMenu1;
 
     @Override
@@ -50,9 +50,9 @@ public class Channel_Activity extends SherlockFragmentActivity implements OnPage
         setContentView(R.layout.activity_main);
         gdposition = getIntent().getIntExtra("position", -1);
         isarticle = getIntent().getBooleanExtra("isarticle", false);
+        acApp = (AcApp) getApplicationContext();
         if (isarticle) {
-            sharedata = getSharedPreferences("viewmode", 0);
-            modecode = sharedata.getInt("mode", 0);
+            modecode = acApp.getConfig().getInt("view_mode", 0);
         }
         ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
@@ -136,8 +136,6 @@ public class Channel_Activity extends SherlockFragmentActivity implements OnPage
 
     @Override
     public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
-
-        sharedata = getSharedPreferences("viewmode", 0);
         switch (item.getItemId()) {
         case android.R.id.home:
             this.finish();
@@ -146,21 +144,19 @@ public class Channel_Activity extends SherlockFragmentActivity implements OnPage
             modecode = 0;
             subMenu1.setIcon(R.drawable.mode_mix);
             Toast.makeText(this, "图文模式", Toast.LENGTH_SHORT).show();
-            sharedata.edit().putInt("mode", 0).commit();
+            acApp.putInt("view_mode", 0);
             break;
         case Channel_Activity.NOPIC:
             modecode = 1;
             subMenu1.setIcon(R.drawable.mode_article);
             Toast.makeText(this, "文本模式", Toast.LENGTH_SHORT).show();
-            sharedata.edit().putInt("mode", 1).commit();
-            ;
+            acApp.putInt("view_mode", 1);
             break;
         case Channel_Activity.PIC:
             modecode = 2;
             subMenu1.setIcon(R.drawable.mode_picture);
             Toast.makeText(this, "漫画模式", Toast.LENGTH_SHORT).show();
-            sharedata.edit().putInt("mode", 2).commit();
-            ;
+            acApp.putInt("view_mode", 2);
             break;
         default:
             break;
