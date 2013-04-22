@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import tv.avfun.db.DBService;
+import tv.avfun.util.ExtendedImageDownloader;
 import uk.co.senab.photoview.PhotoViewAttacher;
 import android.annotation.SuppressLint;
 import android.content.Intent;

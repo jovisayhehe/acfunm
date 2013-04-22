@@ -64,10 +64,13 @@ public class Play_Activity extends Activity{
 
 		@Override
 		public void onCompletion(MediaPlayer mPlayer) {
-			
+	        if(++index >= paths.size()) {
+	            finish();
+	            return;
+	        }
 			Toast.makeText(Play_Activity.this, "开始缓冲下一段...稍后", 1).show();
 			mPlayer.getDuration();
-			index++;
+
 			mVideoView.setVideoPath(paths.get(index));
 			mVideoView.setOnCompletionListener(new MOnCompletionListener());
 			mVideoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_MEDIUM);

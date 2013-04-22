@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ac="http://schemas.android.com/apk/res/tv.avfun"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/slide_nav_black" >
+
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dip"
+    android:layout_weight="2"
+    android:background="@color/slide_nav_black"
+        android:orientation="vertical" >
+
+        <tv.avfun.view.SlideNavItemView
+            android:id="@+id/slide_nav_home"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            ac:item_fragment_id="@+id/fragment_home_id"
+            ac:item_icon="@drawable/ic_nav_home"
+            ac:item_text="主页"
+            android:onClick="slideNavItemClicked" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:background="@drawable/nav_list_divider"
+            />
+
+        <tv.avfun.view.SlideNavItemView
+            android:id="@+id/slide_nav_bangumi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            ac:item_fragment_id="@+id/fragment_bangumi_id"
+            ac:item_icon="@drawable/ic_nav_bangumi"
+            ac:item_text="番组"
+            android:onClick="slideNavItemClicked" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:background="@drawable/nav_list_divider"
+            />
+        <tv.avfun.view.SlideNavItemView
+            android:id="@+id/slide_nav_article"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            ac:item_fragment_id="@+id/fragment_article_id"
+            ac:item_icon="@drawable/ic_nav_article"
+            ac:item_text="文章"
+            android:onClick="slideNavItemClicked" />
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:scaleType="fitXY"
+            android:background="@drawable/nav_list_divider"
+            />
+       
+    </LinearLayout>
+	 <ImageView
+	     android:layout_gravity="center"
+	     android:clickable="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/acgrils"
+            />
+</LinearLayout>

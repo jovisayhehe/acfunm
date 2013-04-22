@@ -270,6 +270,7 @@ public class WebView_Activity extends SherlockActivity implements OnClickListene
 	public void loaddata(){
 		tprobar.setVisibility(View.VISIBLE);
 		reloadtext.setVisibility(View.GONE);
+
 		 new Thread(){     
 	            public void run() {     
 	                   
@@ -288,7 +289,17 @@ public class WebView_Activity extends SherlockActivity implements OnClickListene
         				Date date = new Date(article.getPosttime());
         				SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 hh:mm");
         				idiv.append("<p align=\"center\">"+sdf.format(date)+"</p>");
-	        			
+        				if(modecode == 2){
+                            Intent intent = new Intent(WebView_Activity.this, ImagePagerActivity.class);
+                            intent.putStringArrayListExtra("imgs", article.getImgUrls());
+                            intent.putExtra("title", article.getTitle());
+                            intent.putExtra("aid", article.getId());
+                            intent.putExtra("channelId", channelid);
+                            startActivity(intent);
+                            WebView_Activity.this.finish();
+                            return;
+                        }
+        				
 	        			List<HashMap<String, String>> contents = article.getContents();
 	        			for (int i = 0; i < contents.size(); i++) {
 	        				String subtitle = contents.get(i).get("subtitle");
@@ -309,16 +320,7 @@ public class WebView_Activity extends SherlockActivity implements OnClickListene
 //		        				cdiv.append(Jsoup.clean(content, wl));
 		        				cdiv.append(content).select("img").remove();
 								break;
-							case 2:
-								
-								Intent intent = new Intent(WebView_Activity.this, ImagePagerActivity.class);
-								intent.putStringArrayListExtra("imgs", article.getImgUrls());
-								intent.putExtra("title", article.getTitle());
-								intent.putExtra("aid", article.getId());
-								intent.putExtra("channelId", channelid);
-								startActivity(intent);
-								WebView_Activity.this.finish();
-								break;
+							
 							default:
 								break;
 							}

@@ -1,38 +1,44 @@
 package tv.avfun.util.lzlist;
 
 import java.io.File;
-import android.content.Context;
 
-public class FileCache {
-    
-    private File cacheDir;
-    
-    public FileCache(Context context){
-        //Find the dir to save cached images
-        if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED))
-            cacheDir=new File(android.os.Environment.getExternalStorageDirectory(),"Android/data/tv.avfun/cache/imgcache");
-        else
-            cacheDir=context.getCacheDir();
+import tv.avfun.AcApp;
+import tv.avfun.util.FileUtil;
+/*import android.content.Context;*/
+
+public final class FileCache {
+    private static File cacheDir;
+    static {
+        AcApp app = AcApp.instance();
+        if(AcApp.isExternalStorageAvailable())
+            cacheDir = app.getExternalCacheDir();
+        else cacheDir = app.getCacheDir();
         if(!cacheDir.exists())
             cacheDir.mkdirs();
     }
+
     
-    public File getFile(String url){
+    public static File getFile(String url){
         //I identify images by hashcode. Not a perfect solution, good for the demo.
         String filename=String.valueOf(url.hashCode());
-        //Another possible solution (thanks to grantland)
-        //String filename = URLEncoder.encode(url);
         File f = new File(cacheDir, filename);
         return f;
         
     }
-    
-    public void clear(){
+    /*** 获取缓存文件夹大小 */
+    public static String getCacheSize(){
+        long size = FileUtil.getFolderSize(cacheDir);
+        if(size == 0) return null;
+        return FileUtil.formetFileSize(size);
+    }
+    public static boolean clear(){
         File[] files=cacheDir.listFiles();
         if(files==null)
-            return;
+            return false;
+        boolean b = false;
         for(File f:files)
-            f.delete();
+            b |= f.delete();
+        return b;
     }
 
 }

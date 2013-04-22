@@ -1,51 +1,91 @@
+
 package tv.avfun.api;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ChannelApi {
-	
-	public  static ArrayList<String[]> getApi(int pos){
-		ArrayList<String[]> apis = new ArrayList<String[]>();
-		switch (pos) {
-		case 0:
-			apis.add(new String[]{"动画"});
-			apis.add(new String[]{"http://www.acfun.tv/api/channel.aspx?query=1&currentPage="});
-			return apis;
-		case 1:
-			apis.add(new String[]{"音乐"});
-			apis.add(new String[]{"http://www.acfun.tv/api/channel.aspx?query=58&currentPage="});
-			return apis;
-		case 2:
-			
-			apis.add(new String[]{"娱乐","科技","体育"});
-			apis.add(new String[]{"http://www.acfun.tv/api/channel.aspx?query=60&currentPage=",
-					"http://www.acfun.tv/api/channel.aspx?query=70&currentPage=",
-					"http://www.acfun.tv/api/channel.aspx?query=69&currentPage="});
-			return apis;
-			
-		case 3:
-			apis.add(new String[]{"短影"});
-			apis.add(new String[]{"http://www.acfun.tv/api/channel.aspx?query=68&currentPage="});
-			return apis;
-		case 4:
-			apis.add(new String[]{"游戏","Mugen"});
-			apis.add(new String[]{"http://www.acfun.tv/api/channel.aspx?query=59&currentPage=",
-					"http://www.acfun.tv/api/channel.aspx?query=72&currentPage="});
-			return apis;
-		case 5:
-			apis.add(new String[]{"番剧"});
-			apis.add(new String[]{"http://www.acfun.tv/api/channel.aspx?query=67&currentPage="});
-			return apis;
-		case 6:
-			apis.add(new String[]{"综合","工作·情感","动漫文化","漫画·轻小说"});
-			apis.add(new String[]{"http://www.acfun.tv/api/channel.aspx?query=63&currentPage=",
-					"http://www.acfun.tv/api/channel.aspx?query=73&currentPage=",
-					"http://www.acfun.tv/api/channel.aspx?query=74&currentPage=",
-					"http://www.acfun.tv/api/channel.aspx?query=75&currentPage="});
-			return apis;
-		default:
-			return apis;
-		}
-		
-	}
+    /**
+     * 频道的id
+     *
+     */
+    public static final class id {
+        public static final int ANIMATION = 1;
+        public static final int MUSIC     = 58;
+        public static final int GAME      = 59;
+        public static final int FUN       = 60;
+        public static final int BANGUMI   = 67;
+        public static final int MOVIE     = 68;
+        public static final int SPORT     = 69;
+        public static final int SCIENCE   = 70;
+        public static final int MUGEN     = 72;
+
+        public static final class ARTICLE {
+            public static final int COLLECTION        = 63;
+            public static final int WORK_EMOTION      = 73;
+            public static final int AN_CULTURE        = 74;
+            public static final int COMIC_LIGHT_NOVEL = 75;
+        }
+        public static final int[] CHANNEL_IDS = {ANIMATION,MUSIC,GAME,FUN,BANGUMI,MOVIE,SPORT,SCIENCE,MUGEN};
+    }
+    
+    public static List<Channel> getApi(int pos) {
+
+        List<Channel> apis = new ArrayList<Channel>();
+        switch (pos) {
+        case 0:
+            apis.add(new Channel("动画", id.ANIMATION));
+            break;
+        case 1:
+            apis.add(new Channel("音乐", id.MUSIC));
+            break;
+        case 2:
+            apis.add(new Channel("娱乐", id.FUN));
+            apis.add(new Channel("科技", id.SCIENCE));
+            apis.add(new Channel("体育", id.SPORT));
+            break;
+        case 3:
+            apis.add(new Channel("短影", id.MOVIE));
+            break;
+        case 4:
+            apis.add(new Channel("游戏", id.GAME));
+            apis.add(new Channel("Mugen", id.MUGEN));
+            break;
+        case 5:
+            apis.add(new Channel("番剧", id.BANGUMI));
+            break;
+        case 6:
+            apis.add(new Channel("综合", id.ARTICLE.COLLECTION));
+            apis.add(new Channel("工作·情感", id.ARTICLE.WORK_EMOTION));
+            apis.add(new Channel("动漫文化", id.ARTICLE.AN_CULTURE));
+            apis.add(new Channel("漫画·轻小说", id.ARTICLE.COMIC_LIGHT_NOVEL));
+            break;
+        }
+        return apis;
+    }
+    private static final int TYPE_DEFAULT = 0;
+    private static final int TYPE_HOT_LIST = 7;
+    private static final int TYPE_LATEST_REPLY = 22;
+    private static String baseUrl = "http://www.acfun.tv/api/getlistbyorder.aspx?orderby=";
+    /**
+     * 获得默认形式(最新发布)列表的url
+     */
+    public static String getDefaultUrl(int channelId, int count){
+        return getUrl(TYPE_DEFAULT, channelId, count);
+    }
+    /**
+     * 获得周热门列表url
+     */
+    public static String getHotListUrl(int channelId, int count){
+        return getUrl(TYPE_HOT_LIST, channelId, count);
+    }
+    /**
+     * 获得最新回复列表url
+     */
+    public static String getLatestRepliedUrl(int channelId, int count){
+        return getUrl(TYPE_LATEST_REPLY, channelId, count);
+    }
+    private static String getUrl(int type, int channelId, int count){
+        return baseUrl + type + "&channelIds="+channelId+"&count=" + count;
+    }
 }
