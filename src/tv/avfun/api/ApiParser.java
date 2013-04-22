@@ -2,9 +2,7 @@ package tv.avfun.api;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -15,10 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.json.external.JSONArray;
-import org.json.external.JSONException;
 import org.json.external.JSONObject;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -27,11 +22,11 @@ import tv.avfun.AcApp;
 import tv.avfun.BuildConfig;
 import tv.avfun.R;
 import tv.avfun.api.ChannelApi.id;
+import tv.avfun.api.net.Connectivity;
+import tv.avfun.api.net.UserAgent;
 import tv.avfun.entity.Article;
 import tv.avfun.entity.Contents;
-import tv.avfun.util.DataStore;
 import tv.avfun.util.NetWorkUtil;
-import android.accounts.NetworkErrorException;
 import android.util.Log;
 
 public class ApiParser {
@@ -39,7 +34,7 @@ public class ApiParser {
     public static List<Contents> getChannelContents(String address) throws Exception {
 
         List<Contents> contents = new ArrayList<Contents>();
-        JSONObject jsonObject = getJsonObj(address);
+        JSONObject jsonObject = Connectivity.getJSONObject(address);
         JSONArray jsarray = jsonObject.getJSONArray("contents");
         for (int i = 0; i < jsarray.length(); i++) {
             JSONObject jobj = (JSONObject) jsarray.get(i);
@@ -112,7 +107,7 @@ public class ApiParser {
         String url = "http://www.acfun.tv/comment_list_json.aspx?contentId=" + aid
                 + "&currentPage=" + page;
         ArrayList<Map<String, Object>> comments = new ArrayList<Map<String, Object>>();
-        JSONObject jsonObject = getJsonObj(url);
+        JSONObject jsonObject = Connectivity.getJSONObject(url);
         JSONArray jsonArray = jsonObject.getJSONArray("commentList");
         int totalPage = jsonObject.getInt("totalPage");
         if (jsonArray.length() > 0) {
@@ -137,9 +132,7 @@ public class ApiParser {
     }
 
     public static List<Bangumi[]> getBangumiTimeList() throws Exception {
-
-        Connection c = Jsoup.connect("http://www.acfun.tv/v/list67/index.htm").timeout(6000);
-        Document doc = c.get();
+        Document doc = Connectivity.getDoc("http://www.acfun.tv/v/list67/index.htm", UserAgent.CHROME_25);
         Elements ems = doc.getElementsByAttributeValue("id", "bangumi").get(0)
                 .getElementsByTag("li");
         ems.remove(ems.size() - 1);
@@ -168,7 +161,7 @@ public class ApiParser {
         HashMap<String, Object> video = new HashMap<String, Object>();
 
         String url = "http://www.acfun.tv/api/content.aspx?query=" + id;
-        JSONObject jsonObject = getJsonObj(url);
+        JSONObject jsonObject = Connectivity.getJSONObject(url);
 
         JSONArray jsonArray = jsonObject.getJSONArray("content");
         if (Integer.parseInt(id) > 327496) {
@@ -188,7 +181,7 @@ public class ApiParser {
                 String title = (String) job.get("subtitle");
                 map.put("title", title.replace("&amp;", "&"));
                 String urlp = "http://www.acfun.tv/api/player/vids/" + id1 + ".aspx";
-                JSONObject vidjsonObject = getJsonObj(urlp);
+                JSONObject vidjsonObject = Connectivity.getJSONObject(urlp);
 
                 map.put("vtype", vidjsonObject.get("vtype").toString());
                 map.put("vid", vidjsonObject.get("vid").toString());
@@ -271,7 +264,7 @@ public class ApiParser {
         Article article = new Article();
 
         String url = "http://www.acfun.tv/api/content.aspx?query=" + aid;
-        JSONObject jsonObject = getJsonObj(url);
+        JSONObject jsonObject = Connectivity.getJSONObject(url);
 
         JSONObject infoobj = jsonObject.getJSONObject("info");
         article.setTitle(infoobj.getString("title"));
@@ -322,7 +315,7 @@ public class ApiParser {
         String url = "http://www.acfun.tv/api/search.aspx?query="
                 + URLEncoder.encode(word, "utf-8") + "&orderId=0&channelId=0&pageNo=" + page
                 + "&pageSize=20";
-        JSONObject jsonObject = getJsonObj(url);
+        JSONObject jsonObject = Connectivity.getJSONObject(url);
         succeeded = jsonObject.getBoolean("success");
         if (!succeeded || (totalcount = jsonObject.getInt("totalcount")) == 0) {
             return null;
@@ -377,7 +370,7 @@ public class ApiParser {
 
         List<Map<String, Object>> contents = new ArrayList<Map<String, Object>>();
 
-        JSONObject jsonObject = getJsonObj(url);
+        JSONObject jsonObject = Connectivity.getJSONObject(url);
         Boolean success = jsonObject.getBoolean("success");
         if (success) {
             int totalcount = jsonObject.getInt("totalcount");
@@ -425,28 +418,10 @@ public class ApiParser {
 
     }
 
-    public static JSONObject getJsonObj(String url) throws MalformedURLException, IOException,
-            JSONException, Exception, NetworkErrorException {
-        URL lurl = new URL(url);
-        HttpURLConnection conn = (HttpURLConnection) lurl.openConnection();
-        conn.setConnectTimeout(6 * 1000);
-
-        if (conn.getResponseCode() != 200) {
-            throw new NetworkErrorException("连接错误:" + conn.getResponseCode());
-        }
-        InputStream is = conn.getInputStream();
-        String jsonstring = DataStore.readData(is, "UTF8");
-        conn.disconnect();
-
-        JSONObject jsonObject = new JSONObject(jsonstring);
-
-        return jsonObject;
-    }
-
-    public static ArrayList<String> ParserVideopath(String type, String id) throws Exception {
+    public static List<String> ParserVideopath(String type, String id) throws Exception {
         if (type.equals("sina")) {
             // 新浪
-            return getSinaflv(id);
+            return getSinaMp4(id);
         } else if (type.equals("youku")) {
             return ParserYoukuFlv(id);
         } else if (type.equals("qq")) {
@@ -457,16 +432,29 @@ public class ApiParser {
 
         return null;
     }
-
+    public static List<String> getSinaMp4(String vid) throws Exception{
+        List<String> paths = new ArrayList<String>();
+        String checkIdUrl = "http://video.sina.com.cn/interface/video_ids/video_ids.php?v="+vid;
+        JSONObject jsonObj = Connectivity.getJSONObject(checkIdUrl);
+        int ipadVid = jsonObj.getInt("ipad_vid");
+        if(ipadVid != 0 && ipadVid != Integer.valueOf(vid)) vid = ipadVid+""; // 赋予新Id
+        URL url =  new URL("http://v.iask.com/v_play_ipad.php?vid="+vid);
+        HttpURLConnection conn = Connectivity.openConnection(url, UserAgent.IPAD);
+        conn.setInstanceFollowRedirects(false);// 不跟随跳转
+        int code = conn.getResponseCode();
+        if(code == 302){
+            String mp4url = conn.getHeaderField("Location");
+            if (BuildConfig.DEBUG)
+                Log.i("", "location:"+mp4url);
+            paths.add(mp4url);
+        }
+        return paths;
+        
+    }
     public static ArrayList<String> getSinaflv(String id) throws IOException {
         ArrayList<String> paths = new ArrayList<String>();
         String url = "http://v.iask.com/v_play.php?vid=" + id;
-        Connection c = Jsoup
-                .connect(url)
-                .userAgent(
-                        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-        Document doc = c.get();
-        Elements ems = doc.getElementsByTag("url");
+        Elements ems = Connectivity.getElements(url, "url");
         for (Element em : ems) {
             paths.add(em.text());
         }
@@ -484,12 +472,7 @@ public class ApiParser {
     public static ArrayList<String> ParserTudouvideo(String iid) throws IOException {
         ArrayList<String> urls = new ArrayList<String>();
         String url = "http://v2.tudou.com/v?it=" + iid + "&hd=2&st=1%2C2%2C3%2C99";
-        Connection c = Jsoup
-                .connect(url)
-                .userAgent(
-                        "Mozilla/5.0（iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us） AppleWebKit/531.21.10 （KHTML， like Gecko） Version/4.0.4 Mobile/7B314 Safari/531.21.10");
-        Document doc = c.get();
-        Elements ems = doc.getElementsByTag("f");
+        Elements ems = Connectivity.getElements(url, "f");
 
         for (Element em : ems) {
             String vurl = em.text();
@@ -505,22 +488,10 @@ public class ApiParser {
         String fileids = null;
         String fileid = null;
         ArrayList<String> K = new ArrayList<String>();
-        URL url = new URL("http://v.youku.com/player/getPlayList/VideoIDS/" + id
-                + "/timezone/+08/version/5/source/video?n=3&ran=4656");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.addRequestProperty(
-                "User-Agent",
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-        conn.setRequestProperty(
-                "User-Agent",
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-        conn.setConnectTimeout(6 * 1000);
-        if (conn.getResponseCode() != 200)
-            throw new RuntimeException("请求url失败");
-        InputStream is = conn.getInputStream();
-        String jsonstring = DataStore.readData(is, "UTF8");
-        conn.disconnect();
-
+        String url = "http://v.youku.com/player/getPlayList/VideoIDS/" + id
+                + "/timezone/+08/version/5/source/video?n=3&ran=4656";
+        String jsonstring = Connectivity.getJson(url);
+        if(jsonstring == null) return null;
         String regexstring = "\"seed\":(\\d+),.+\"key1\":\"(\\w+)\",\"key2\":\"(\\w+)\"";
         Pattern pattern = Pattern.compile(regexstring);
         Matcher matcher = pattern.matcher(jsonstring);

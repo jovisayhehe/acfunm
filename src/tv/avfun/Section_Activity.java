@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tv.avfun.api.ApiParser;
-
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -79,7 +77,7 @@ public class Section_Activity extends SherlockActivity implements OnClickListene
 			public void run() {
 				try {
 
-					data = ApiParser.ParserVideopath(vtype, aid);
+					data = (ArrayList<String>) ApiParser.ParserVideopath(vtype, aid);
 						
 					runOnUiThread(new Runnable() {
 						public void run() {
