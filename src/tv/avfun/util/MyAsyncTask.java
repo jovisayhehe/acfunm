@@ -13,6 +13,7 @@ public abstract class MyAsyncTask {
     // 默认为执行成功
     private static final int OK = 0;
     private static final int SIGH =1;
+    private boolean shouldBeCancel = false;
     private Handler mHandler = new Handler(){
         public void handleMessage(Message msg) {
             onPublishResult(msg.what==OK);
@@ -31,7 +32,8 @@ public abstract class MyAsyncTask {
         onPreExecute();
         new Thread(){
             public void run() {
-                doInBackground();
+                if(!shouldBeCancel)
+                    doInBackground();
             }
         }.start();
         
@@ -56,7 +58,7 @@ public abstract class MyAsyncTask {
         
     }
     /**
-     * 执行之前。
+     * 执行之前。可以取消任务{@link #cancel()}
      */
     protected void onPreExecute() {
         
@@ -65,4 +67,12 @@ public abstract class MyAsyncTask {
      * 任务在子线程中执行。别忘了调用{@link #execute()}
      */
     protected abstract void doInBackground();
+    /**
+     * 取消任务。取消后，{@link #doInBackground()}
+     *  {@link #onPublishResult(boolean)}
+     *   {@link #onPostExecute()}都会不会被执行
+     */
+    public final void cancel(){
+        this.shouldBeCancel = true;
+    }
 }

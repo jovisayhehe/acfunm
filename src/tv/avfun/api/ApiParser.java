@@ -73,14 +73,20 @@ public class ApiParser {
     /**
      * 获取首页频道列表 推荐内容
      * @param count 每个频道推荐个数
+     * @param mode 显示模式 1 default, 2 hot list, 3 latest replied
      * @return 获取失败，返回null
      */
-    public static Channel[] getRecommendChannels(int count) {
+    public static Channel[] getRecommendChannels(int count, String mode) {
         if(!NetWorkUtil.isNetworkAvailable(AcApp.context())) return null;
         try {
             for (int i = 0; i < channels.length; i++) {
                 Channel c = channels[i];
-                c.recommends = getChannelDefault(c.getChannelId(), count);
+                if("3".equals(mode))
+                    c.recommends = getChannelLatestReplied(c.getChannelId(), count);
+                else if("2".equals(mode))
+                    c.recommends  = getChannelHotList(c.getChannelId(), count);
+                else
+                    c.recommends  = getChannelDefault(c.getChannelId(), count);
             }
             return channels;
         } catch (Exception e) {

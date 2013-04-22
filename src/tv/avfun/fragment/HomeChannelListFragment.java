@@ -2,6 +2,7 @@ package tv.avfun.fragment;
 
 import java.text.DateFormat;
 
+import tv.avfun.AcApp;
 import tv.avfun.Channel_Activity;
 import tv.avfun.Detail_Activity;
 import tv.avfun.R;
@@ -49,6 +50,9 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
     private static final int        ADD       = 1;
     private static final int        REFRESH   = 2;
     private static final int        HIDE_INFO = 4;
+    private static final long       LOCK_TIME = 5*60000; // 5 min
+    private String                  mode;
+    private long                    updatedTime;
     private View                    mView;
     private DataStore               dataStore;
     private LinearLayout            channelList;
@@ -64,12 +68,12 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
     private ILoadingLayout          mLoadingLayout;
     private TextView                updateInfo;
     private PullToRefreshScrollView mPtr;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dataStore = DataStore.getInstance();
         setHasOptionsMenu(false);
+        mode = AcApp.instance().getConfig().getString("home_display_mode", "1");
     }
 
     private Handler handler = new Handler() {
@@ -86,13 +90,20 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
 
     private void loadData() {
         new MyAsyncTask() {
-
+            boolean isCached = dataStore.isChannelListCached();
+            protected void onPreExecute() {
+                if(!isCached)
+                    showLoadingView();
+            }
+            protected void onPostExecute() {
+                hideLoadingView();
+            }
             @Override
             public void doInBackground() {
-                if (dataStore.isChannelListCached())
+                if (isCached)
                     channels = dataStore.loadChannelList();
                 else {
-                    channels = ApiParser.getRecommendChannels(3);
+                    channels = ApiParser.getRecommendChannels(3, mode);
                     if (channels != null)
                         DataStore.getInstance().saveChannelList(channels);
                     else
@@ -129,6 +140,7 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
             updatedTime = System.currentTimeMillis();
         else if (updatedTime < 0)
             return;
+        this.updatedTime = updatedTime;
         String update = DateFormat.getDateTimeInstance().format(updatedTime);
         mLoadingLayout.setLastUpdatedLabel("上次更新:" + update);
     }
@@ -181,11 +193,19 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
     }
 
     private class RefreshData extends MyAsyncTask {
-
+        @Override
+        protected void onPreExecute() {
+            if(System.currentTimeMillis() - updatedTime < LOCK_TIME){
+                this.cancel();
+                updateInfo.setText(getString(R.string.update_lock));
+                showUpdateInfo();
+                mPtr.onRefreshComplete();
+            }
+                
+        }
         @Override
         public void doInBackground() {
-
-            Channel[] cs = ApiParser.getRecommendChannels(3);
+            Channel[] cs = ApiParser.getRecommendChannels(3, mode);
             if (cs != null) {
                 channels = cs;
                 publishResult(DataStore.getInstance().saveChannelList(channels));

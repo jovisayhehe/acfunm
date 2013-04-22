@@ -37,11 +37,10 @@ public class DataStore {
 
     private ChannelList            channelList          = new ChannelList();
     private BangumiList            bangumiList          = new BangumiList();
-    /** 24 hours */
-    private static final long      _24_H = 24 * 60 * 60 * 1000;
-    public static final long       CHANNEL_LIST_EXPIRED = _24_H;
+    /** 1 hour */
+    public static final long       CHANNEL_LIST_EXPIRED = 60 * 60 * 1000;
     /** 3 days (XXX: 待定) */
-    public static final long       TIME_LIST_EXPIRED    = 3 * _24_H;
+    public static final long       TIME_LIST_EXPIRED    = 3 * 24 * 60 * 60 * 1000;
     /** 首页频道列表缓存文件 */
     public static final String     CHANNEL_LIST_CACHE   = "channel_list.dat";
     /** 番组列表缓存文件 */

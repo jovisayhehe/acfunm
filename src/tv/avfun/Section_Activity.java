@@ -44,7 +44,7 @@ public class Section_Activity extends SherlockActivity implements OnClickListene
         ab.setTitle(getIntent().getStringExtra("title"));
         aid = getIntent().getStringExtra("vid");
         vtype = getIntent().getStringExtra("vtype");
-        playmode = getSharedPreferences("playmode", 0).getInt("mode", 0);
+        playmode = ((AcApp)getApplication()).getConfig().getInt("playmode", 0);
         list = (ListView) findViewById(android.R.id.list);
         progressBar = (ProgressBar)findViewById(R.id.time_progress);
 		 time_outtext = (TextView)findViewById(R.id.time_out_text);

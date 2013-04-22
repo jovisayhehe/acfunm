@@ -21,7 +21,10 @@
 	<string name="refresh">刷新</string>
 	<string name="update_success">\\(^o^)/ 更新列表成功</string>
 	<string name="update_fail">(︶︿︶) 更新失败，请检查网络！</string>
+	<string name="update_lock">(-д-) 不要太在意更新...</string>
 	<string name="refreshing">(^ω^) 嘿咻嘿咻嘿...~</string>
 	<string name="pull_refresh">(╯▽╰) 下拉刷新~</string>
 	<string name="release_refresh">(つд⊂) 放手吧~</string>
+	<string name="about">TODO</string>
+	<string name="share_content">(=ﾟωﾟ)= A站Android客户端，推荐给你！记得好评！\n https://play.google.com/store/apps/details?id=tv.avfun</string>
 </resources>

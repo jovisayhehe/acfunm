@@ -4,8 +4,10 @@ package tv.avfun;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.res.Resources;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 
 /**
  * 自定义Application
@@ -30,7 +32,7 @@ public class AcApp extends Application {
         super.onCreate();
         mContext = instance = this;
         mResources = getResources();
-        sp = getSharedPreferences("config", MODE_PRIVATE);
+        sp = PreferenceManager.getDefaultSharedPreferences(mContext);
     }
     
     public SharedPreferences getConfig(){
@@ -93,7 +95,14 @@ public class AcApp extends Application {
         super.onLowMemory();
     }
     
-    
+    public String getVersionName(){
+        PackageInfo info = null;
+        try {
+            info = getPackageManager().getPackageInfo(getPackageName(), 0);
+            return info.versionName;
+        }catch (Exception e) {}
+        return "";
+    }
     
 
 }
