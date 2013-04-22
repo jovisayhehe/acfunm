@@ -2,9 +2,9 @@
 <resources>
 
     <!-- sliding menu -->
-    <dimen name="slidingmenu_offset">160dp</dimen>
+    <dimen name="slidingmenu_offset">170dp</dimen>
     <dimen name="slidingmenu_offset_2">65dp</dimen>
-    <dimen name="shadow_width">25dp</dimen>
+    <dimen name="shadow_width">20dp</dimen>
     <dimen name="slide_nav_item_height">48dip</dimen>
     <dimen name="slide_nav_item_text_size">20sp</dimen>
     
