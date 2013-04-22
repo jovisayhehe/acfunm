@@ -35,7 +35,7 @@ public class Favorite_Activity extends SherlockActivity implements OnItemClickLi
 			getSupportActionBar().setTitle("我的收藏");
 		
 		progressBar = (ProgressBar)findViewById(R.id.time_progress);
-		list = (ListView)findViewById(R.id.list);
+		list = (ListView)findViewById(android.R.id.list);
 		list.setVisibility(View.INVISIBLE);
 		list.setDivider(getResources().getDrawable(R.drawable.listview_divider));
 		list.setDividerHeight(2);

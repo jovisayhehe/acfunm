@@ -3,22 +3,50 @@
   xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="操作">
         <Preference 
+            android:icon="@drawable/ic_discard"
             android:title="清空图片缓存" 
             android:key="clear_imgcache"
             />
         <CheckBoxPreference 
-            android:title="外部播放器" 
+            android:icon="@drawable/ic_player"
+            android:title="播放器"
+            android:summaryOn="调用外部播放器"
+            android:summaryOff="不使用外部播放器"
             android:key="ex_palyer" 
             />
+        <ListPreference
+            android:icon="@drawable/ic_grid"
+            android:title="主页显示模式"
+            android:key="home_display_mode"
+            android:entries="@array/pref_entries_home_display_mode"
+            android:entryValues="@array/pref_values_home_display_mode"
+            android:defaultValue="1"
+            android:dialogTitle="设置主页显示内容"
+            android:summary="下次开启生效"
+            />
     </PreferenceCategory>
-    <PreferenceCategory android:title="关于">
-        <Preference 
-            android:title="版本" 
-            android:key="version_name" 
+    <PreferenceCategory android:title="其他">
+        <Preference
+            android:icon="@drawable/ic_about"
+            android:title="关于"
+            android:key="about"
+            />
+        <Preference
+            android:icon="@drawable/social_share"
+            android:title="分享"
+            android:key="share"
+            android:summary="不把好东西分享给好♂友？"
+            />
+        <Preference
+            android:icon="@drawable/ic_rating_good"
+            android:title="点评"
+            android:key="comment"
+            android:summary="不值得5星好评吗？"
             />
         <Preference 
-            android:title="发送建议想法吐槽" 
-            android:key="sendmail" />
+            android:icon="@drawable/ic_email"
+            android:title="反(tu)馈(cao)"
+            android:key="feedback" />
     </PreferenceCategory>
     
 </PreferenceScreen>

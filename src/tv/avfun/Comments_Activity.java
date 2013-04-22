@@ -79,7 +79,7 @@ public class Comments_Activity extends SherlockActivity  implements OnClickListe
         comment_edit = (EditText) findViewById(R.id.comments_edit);
         send_btn.setOnClickListener(this);
         
-        list = (ListView) findViewById(R.id.list);
+        list = (ListView) findViewById(android.R.id.list);
         progressBar = (ProgressBar)findViewById(R.id.time_progress);
 		 time_outtext = (TextView)findViewById(R.id.time_out_text);
 		 time_outtext.setOnClickListener(this);

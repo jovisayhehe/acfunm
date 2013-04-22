@@ -19,7 +19,7 @@ public class CommentsAdaper  extends BaseAdapter{
 	public CommentsAdaper(Context context,List<Map<String, Object>> data) {
 		this.mInflater =LayoutInflater.from(context);
 		this.data = data;
-		imageLoader=new ImageLoader(context);
+		imageLoader=ImageLoader.getInstance();
 	}
 	
 	public void setData(List<Map<String, Object>> data){
@@ -65,7 +65,7 @@ public class CommentsAdaper  extends BaseAdapter{
 		final String imageUrl =String.valueOf(art.get("userImg"));
 		if(imageUrl!= "null"&&!imageUrl.equals("null")){
 			holder.img.setTag(imageUrl);
-			imageLoader.DisplayImage(imageUrl, holder.img);
+			imageLoader.displayImage(imageUrl, holder.img);
 		}
 		return convertView;
 		

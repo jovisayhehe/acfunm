@@ -150,7 +150,7 @@ public class HomeFragment extends SherlockFragment {
         GridItem musicItem = new GridItem("音乐", R.drawable.musicf, R.drawable.musics);
         GridItem movieItem = new GridItem("短影", R.drawable.duanyinf, R.drawable.duanyins);
         GridItem bangumiItem = new GridItem("番剧", R.drawable.fanjuf, R.drawable.fanjus);
-        GridItem articleItem = new GridItem("文章", R.drawable.ganqf, R.drawable.ganqs);
+        //GridItem articleItem = new GridItem("文章", R.drawable.ganqf, R.drawable.ganqs);
 
         data.add(anItem);
         data.add(musicItem);
@@ -158,7 +158,7 @@ public class HomeFragment extends SherlockFragment {
         data.add(movieItem);
         data.add(gameItem);
         data.add(bangumiItem);
-        data.add(articleItem);
+        //data.add(articleItem);
     }
 
     
@@ -170,12 +170,12 @@ public class HomeFragment extends SherlockFragment {
 
             Intent intent = new Intent(activity, Channel_Activity.class);
             intent.putExtra("position", position);
-            if (position == 6) {
+            /*if (position == 6) {
                 intent.putExtra("isarticle", true);
             } else {
 
                 intent.putExtra("isarticle", false);
-            }
+            }*/
 
             activity.startActivity(intent);
         }

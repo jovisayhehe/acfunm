@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ptr="http://schemas.android.com/apk/res/tv.avfun"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <com.handmark.pulltorefresh.library.PullToRefreshScrollView
+        android:id="@+id/pull_refresh_scrollview"
+        ptr:ptrAnimationStyle="flip"
+        ptr:ptrHeaderBackground="@drawable/acgirl"
+	    ptr:ptrRefreshableViewBackground="@color/main_win_bg"
+        ptr:ptrMode="pullFromStart"
+        android:layout_marginLeft="@dimen/page_margin"
+        android:layout_marginRight="@dimen/page_margin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <LinearLayout
+            android:id="@+id/channel_list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </com.handmark.pulltorefresh.library.PullToRefreshScrollView>
+
+    <include
+        layout="@layout/load_view" />
+    <include
+        layout="@layout/update_layout" />
+</FrameLayout>

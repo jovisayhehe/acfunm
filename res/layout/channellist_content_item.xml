@@ -1,87 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:yoooo="http://yoooo.org"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent"
-  android:focusable="false"
-  android:background="@drawable/selectable_background"
-  >
-  
-  <tv.avfun.view.BorderImageViewL
-  android:layout_width="97dip"
-  android:layout_height="77dip"
-  android:id="@+id/channellist_item_img"
-  android:src="@drawable/no_picture"
-  yoooo:BorderColor="#FFFFFF"
-  android:layout_marginTop="8dip"
-  android:layout_marginLeft="8dip"
-  android:scaleType="fitXY"
-/> 
-  
-   <TextView
-  android:layout_width="fill_parent"
-  android:layout_height="wrap_content"
-  android:textColor="#000000"
-  android:textSize="15sp"
-  android:paddingLeft="15dip"
-  android:paddingRight="8dip"
-  android:paddingTop="8dip"
-  android:layout_toRightOf="@id/channellist_item_img"
-  android:id="@+id/channellist_content_item_title"
-  />
-  <TextView
-  android:layout_width="fill_parent"
-  android:layout_height="wrap_content"
-  android:textSize="12dip"
-  android:singleLine="true"
-  android:gravity="right"
-  android:paddingRight="8dip"
-  android:paddingTop="70dip"
-  android:paddingBottom="10dip"
-  android:textColor="#C5C5C5"
-  android:layout_toRightOf="@id/channellist_item_img"
-  android:id="@+id/channelist_content_item_views"
-  />
-  
-  <TextView
-  android:layout_width="fill_parent"
-  android:layout_height="wrap_content"
-  android:textSize="12dip"
-  android:paddingLeft="15dip"
-  android:paddingTop="70dip"
-  android:singleLine="true"
-  android:gravity="left"
-  android:textColor="#C5C5C5"
-  android:paddingBottom="10dip"
-  android:layout_toRightOf="@id/channellist_item_img"
-  android:id="@+id/channelist_content_item_art"
-  />
- <LinearLayout
-   	android:layout_below="@id/channellist_item_img"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:visibility="gone"
-    android:id="@+id/channelist_content_dr"
-    >
-	
-    
-    <TextView 
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:yoooo="http://yoooo.org"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_width="match_parent"
-    android:textColor="@color/main_color"
-    android:layout_marginTop="3dip"
-    android:layout_marginLeft="12dip"
-    android:text="最近更新"
-    android:id="@+id/listheader_text"
-    />
-    
-    <View 
-     android:background="@color/main_color"
-     android:layout_width="match_parent"
-     android:layout_height="1dip"
-     />
+    android:background="@drawable/selectable_background"
+    android:focusable="false" >
 
-</LinearLayout>
+    <tv.avfun.view.BorderImageViewL
+        android:id="@+id/channellist_item_img"
+        android:layout_width="97dip"
+        android:layout_height="77dip"
+        android:layout_marginLeft="8dip"
+        android:layout_marginTop="8dip"
+        android:layout_marginBottom="10dip"
+        android:scaleType="fitXY"
+        android:src="@drawable/no_picture"
+        yoooo:BorderColor="#FFFFFF" />
+
+    <TextView
+        android:id="@+id/channellist_content_item_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dip"
+        android:layout_toRightOf="@id/channellist_item_img"
+        android:paddingLeft="10dip"
+        android:paddingRight="8dip"
+        android:textColor="#333"
+        android:textSize="14sp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:layout_marginTop="70dip"
+        android:layout_toRightOf="@id/channellist_item_img"
+        android:paddingBottom="10dip"
+         >
+    
+    <TextView
+        android:id="@+id/channelist_content_item_upman"
+        android:layout_weight="3"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/upman"
+        android:ellipsize="end"
+        
+        android:singleLine="true"
+        android:textColor="#EB7A02"
+        android:textSize="12sp" />
+    <TextView
+        android:id="@+id/channelist_content_item_views"
+        android:layout_weight="2"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/views"
+        android:paddingRight="8dip"
+        android:singleLine="true"
+        android:textColor="#C5C5C5"
+        android:textSize="12sp" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/channelist_content_dr"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/channellist_item_img"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/listheader_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dip"
+            android:layout_marginTop="3dip"
+            android:text="最近更新"
+            android:textColor="@color/main_color" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:background="@color/main_color" />
+    </LinearLayout>
+
 </RelativeLayout>

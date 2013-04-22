@@ -1,156 +1,210 @@
 package tv.avfun;
 
-import static com.actionbarsherlock.app.ActionBar.NAVIGATION_MODE_TABS;
-import tv.avfun.fragment.HomeFragment;
+import java.util.HashMap;
+import java.util.Map;
+
+import tv.avfun.fragment.HomeChannelListFragment;
 import tv.avfun.fragment.PlayTime;
-import tv.avfun.fragment.User_HomeFragment;
-
-
-
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
-import com.actionbarsherlock.app.ActionBar.TabListener;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.widget.SearchView;
-import com.umeng.analytics.MobclickAgent;
-import com.umeng.update.UmengUpdateAgent;
-
+import tv.avfun.fragment.UserHomeFragment;
+import tv.avfun.view.SlideNavItemView;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.DisplayMetrics;
+import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
-import android.view.WindowManager;
 
-public class MainActivity extends SherlockFragmentActivity implements OnPageChangeListener,  TabListener{
-	ViewPager mPager;
-	private SearchView mSearchView;
-	public static int width;
-	public static int height;
-	
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.SearchView;
+import com.slidingmenu.lib.SlidingMenu;
+import com.slidingmenu.lib.app.SlidingFragmentActivity;
+
+public class MainActivity extends SlidingFragmentActivity {
+
+    private static final String TAG = MainActivity.class.getSimpleName();
+    public static int   width;
+    public static int   height;
+    private SlidingMenu menu;
+    private SearchView  mSearchView;
+    private Fragment    mContent;
+    private ActionBar   bar;
+    private FragmentManager mFragmentMan;
+    private int navId = R.id.slide_nav_home;
+    private Fragment nextContent;
+    private SlideNavItemView mNavItem;
+    // 用于存放Fragment实例
+    private Map<String,Fragment> instances;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        MobclickAgent.onError(this);
-        UmengUpdateAgent.update(this);
-        getWindow().setSoftInputMode(
-        		WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        // 得到界面宽高
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         width = dm.widthPixels;
         height = dm.heightPixels;
-        mPager = (ViewPager)findViewById(R.id.pager);
-        mPager.setOffscreenPageLimit(5);
-        mPager.setOnPageChangeListener(this);
-        mPager.setAdapter(new MyAdapter(getSupportFragmentManager()));
-        ActionBar ab = getSupportActionBar();
-        ab.setNavigationMode(NAVIGATION_MODE_TABS);
-        ab.addTab(ab.newTab().setText(R.string.nav).setTabListener(this));
-        ab.addTab(ab.newTab().setText(R.string.time).setTabListener(this));
-        ab.addTab(ab.newTab().setText(R.string.userhome).setTabListener(this));
-       
+        
+        instances = new HashMap<String, Fragment>();
+        // 初始Fragment
+        mContent = new HomeChannelListFragment();
+        instances.put("home", mContent);
+        mFragmentMan = getSupportFragmentManager();
+        //初始化导航
+        initNav();
+        
+        // above view
+        setContentView(R.layout.content_frame);
+        mFragmentMan.beginTransaction()
+            .replace(R.id.content_frame, mContent).commit();
+        
+        // 启用home
+        bar = getSupportActionBar();
+        bar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void initNav() {
+        // 设置左边的menu
+        // TODO 左边为大的分类：如视频、文章、专题、图区、、、
+        setBehindContentView(R.layout.slide_nav_list);
+        initNavItems();
+        setSlideNavHint(this.navId);
+        
+        // 设置左右的Sliding Menu属性
+        menu = getSlidingMenu();
+        menu.setMode(SlidingMenu.LEFT_RIGHT);
+        menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+        menu.setShadowDrawable(R.drawable.slidingmenu_shadow);
+        menu.setShadowWidthRes(R.dimen.shadow_width);
+        menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+        menu.setSecondaryMenuOffsetRes(R.dimen.slidingmenu_offset_2);
+        menu.setFadeDegree(0.35f);
+        menu.setSecondaryMenu(R.layout.menu_frame_right);
+        menu.setSecondaryShadowDrawable(R.drawable.slidingmenu_shadow_right);
+        
+        mFragmentMan.beginTransaction()
+                .replace(R.id.menu_frame_right, UserHomeFragment.newInstance()).commit();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-    	
-        
-    	mSearchView = new SearchView(this);
+        mSearchView = new SearchView(this);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchableInfo localSearchableInfo = searchManager.getSearchableInfo(getComponentName());
-        mSearchView.setSearchableInfo(localSearchableInfo);
-        
+        SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
+        mSearchView.setSearchableInfo(info);
+
         menu.add("Search")
-            .setIcon(R.drawable.action_search)
-            .setActionView(mSearchView)
-            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+                .setIcon(R.drawable.action_search)
+                .setActionView(mSearchView)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM
+                                    | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+
+        View v = mSearchView.findViewById(R.id.abs__search_plate);
+        v.setBackgroundResource(R.drawable.edit_text_holo_light);
         
-//        int searchPlateId = mSearchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
-        View v = (View)mSearchView.findViewById(R.id.abs__search_plate);
-        v.setBackgroundResource(R.drawable.edit_text_holo_light);          
+        return true;
 
-        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case android.R.id.home:
+            toggle();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
     
-    public void onResume() {
-        super.onResume();
-        MobclickAgent.onResume(this);
+    public void switchContent(Fragment fragment, int navId) {
+        if(mContent != fragment) {
+            mContent = fragment;
+            mFragmentMan.beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, R.anim.slide_out)
+                .replace(R.id.content_frame, fragment)
+                .commit();
+            setSlideNavHint(navId);
+        }
+        menu.showContent();
     }
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
+    public void switchContent(Fragment fragment){
+        if(mContent != fragment) {
+            mContent = fragment;
+            mFragmentMan.beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, R.anim.slide_out)
+                .replace(R.id.content_frame, fragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .addToBackStack("mContent")
+                .commit();
+        }
+    }
+    /*
+     * 数组记录nav id
+     */
+    private int[] navIds = {R.id.slide_nav_home,R.id.slide_nav_bangumi};
+    private SparseArray<SlideNavItemView> mNavItems;
+    private void initNavItems(){
+        
+        mNavItems = new SparseArray<SlideNavItemView>();
+        for(int navId : navIds){
+            SlideNavItemView item = ((SlideNavItemView)findViewById(navId));
+            mNavItems.put(navId,item);
+        }
+    }
+    public void setSlideNavHint(int navId){
+        if(navId != this.navId ){
+            // 将原item 的hint 设为隐藏
+            mNavItem.setHintEnabled(false);
+            this.navId = navId;
+        }
+        mNavItem = mNavItems.get(this.navId);
+        mNavItem.setHintEnabled(true);
+        
+    }
+    public void slideNavItemClicked(View view){
+        SlideNavItemView navItem= (SlideNavItemView)view;
+        int id = navItem.getId();
+        switch (id) {
+        case R.id.slide_nav_home:
+            nextContent = instances.get("home");
+            break;
+        case R.id.slide_nav_bangumi:
+            nextContent = instances.get("play_time");
+            if(nextContent==null){
+                nextContent = PlayTime.newInstance();
+                instances.put("play_time",nextContent);
+            }
+            break;
+        case R.id.slide_nav_article:
+            // TODO 做成Fragment
+            /*nextContent = instances.get("article");
+            if(nextContent==null){
+                nextContent = PlayTime.newInstance();
+                instances.put("play_time",nextContent);
+            }*/
+            Intent intent = new Intent(getApplicationContext(), Channel_Activity.class);
+            intent.putExtra("position", 6);
+            intent.putExtra("isarticle", true);
+            startActivity(intent);
+            toggle();
+            return;
+        }
+        switchContent(nextContent,id);
+        
+    }
+    @Override
+    public void onBackPressed() {
+        if(this.navId != R.id.slide_nav_home){
+            nextContent = instances.get("home");
+            switchContent(nextContent,R.id.slide_nav_home);
+        } else
+            super.onBackPressed();
     }
     
-	@Override
-	public void onTabSelected(Tab tab, FragmentTransaction ft) {
-		
-		mPager.setCurrentItem(tab.getPosition());
-	}
-
-	@Override
-	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-		
-		
-	}
-
-	@Override
-	public void onTabReselected(Tab tab, FragmentTransaction ft) {
-		
-		
-	}
-
-	@Override
-	public void onPageScrollStateChanged(int arg0) {
-		
-		
-	}
-
-	@Override
-	public void onPageScrolled(int arg0, float arg1, int arg2) {
-		
-		
-	}
-
-	@Override
-	public void onPageSelected(int arg0) {
-		
-		getSupportActionBar().setSelectedNavigationItem(arg0);
-	}
-	
-    public static class MyAdapter extends FragmentStatePagerAdapter {
-        public MyAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public int getCount() {
-            return 3;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-        	switch (position) {
-			case 0:
-				return HomeFragment.newInstance();
-			case 1:
-				return PlayTime.newInstance();
-			case 2:
-				return User_HomeFragment.newInstance();
-			default:
-				break;
-			}
-			return null;
-            
-        }
-    }
 }
