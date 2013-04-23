@@ -15,9 +15,9 @@ import tv.avfun.entity.Contents;
 public class Channel implements Serializable {
     private static final long serialVersionUID = 11L;
     /**
-     * 推荐视频
+     * 频道内容。用于缓存
      */
-    public List<Contents> recommends;
+    public List<Contents> contents;
     public int titleBgResId;
     public int channelId;
     public String title;

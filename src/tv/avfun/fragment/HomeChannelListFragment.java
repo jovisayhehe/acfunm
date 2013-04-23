@@ -287,9 +287,9 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
 
         this.channelList.addView(channelItem);
         Channel channel = this.channels[position];
-        left.setContents(channel.recommends.get(0));
-        mid.setContents(channel.recommends.get(1));
-        right.setContents(channel.recommends.get(2));
+        left.setContents(channel.contents.get(0));
+        mid.setContents(channel.contents.get(1));
+        right.setContents(channel.contents.get(2));
         title.setText(channel.getTitle());
 
         // 不应该出现！

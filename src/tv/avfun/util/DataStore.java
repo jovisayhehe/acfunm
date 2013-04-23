@@ -37,6 +37,8 @@ public class DataStore {
 
     private ChannelList            channelList          = new ChannelList();
     private BangumiList            bangumiList          = new BangumiList();
+    /** 30 min */
+    public static final long       CHANNEL_EXPIRED      = 30 * 60000;
     /** 1 hour */
     public static final long       CHANNEL_LIST_EXPIRED = 60 * 60 * 1000;
     /** 3 days (XXX: 待定) */
@@ -45,7 +47,7 @@ public class DataStore {
     public static final String     CHANNEL_LIST_CACHE   = "channel_list.dat";
     /** 番组列表缓存文件 */
     public static final String     TIME_LIST_CACHE      = "time_date.dat";
-
+    
     private DataStore() {
         initCache();
     }
@@ -305,5 +307,21 @@ public class DataStore {
     public static String readData(InputStream in, String charset) throws IOException{
         return new String(readData(in),charset);
     }
-    
+    public static String getChannelCacheFile(int channelId){
+        return AcApp.context().getCacheDir()+"/"+channelId+".dat";
+    }
+    public static boolean saveChannel(Channel channel) {
+        return writeObject(getChannelCacheFile(channel.channelId), channel);
+    }
+    public static boolean isChannelCached(int channelId){
+        long lastModified = new File(getChannelCacheFile(channelId)).lastModified();
+        return System.currentTimeMillis() - lastModified < CHANNEL_EXPIRED;
+            
+    }
+    public static Channel getCachedChannel(int channelId){
+        Object obj = readObject(getChannelCacheFile(channelId));
+        if(obj!=null && obj instanceof Channel)
+            return (Channel)obj;
+        else return null;
+    }
 }

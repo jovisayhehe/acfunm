@@ -77,11 +77,11 @@ public class ApiParser {
             for (int i = 0; i < channels.length; i++) {
                 Channel c = channels[i];
                 if("3".equals(mode))
-                    c.recommends = getChannelLatestReplied(c.getChannelId(), count);
+                    c.contents = getChannelLatestReplied(c.getChannelId(), count);
                 else if("2".equals(mode))
-                    c.recommends  = getChannelHotList(c.getChannelId(), count);
+                    c.contents  = getChannelHotList(c.getChannelId(), count);
                 else
-                    c.recommends  = getChannelDefault(c.getChannelId(), count);
+                    c.contents  = getChannelDefault(c.getChannelId(), count);
             }
             return channels;
         } catch (Exception e) {

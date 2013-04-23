@@ -10,11 +10,14 @@ import tv.avfun.WebView_Activity;
 import tv.avfun.adapter.ChannelContentListViewAdaper;
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.Channel;
+import tv.avfun.api.ChannelApi;
 import tv.avfun.entity.Contents;
+import tv.avfun.util.DataStore;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,6 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class Channel_Fragment extends BaseListFragment implements OnClickListener,OnItemClickListener,OnScrollListener{
@@ -45,6 +49,7 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 	private LayoutInflater inflater;
 	private int channelid;
 	private View main_v;
+    private Channel channel;
 	public static Channel_Fragment newInstance(String url) {
 		Channel_Fragment f = new Channel_Fragment();
 		Bundle args = new Bundle();
@@ -62,7 +67,7 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
         //setHasOptionsMenu(true);
         //setRetainInstance(true);
     }
-    
+    // TODO 抽到父类中
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
@@ -78,13 +83,15 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 		
 		super.onActivityCreated(savedInstanceState);
 		url = getArguments().getString("url");
-		Channel channel = (Channel) getArguments().getSerializable("channel");
+		channel = (Channel) getArguments().getSerializable("channel");
 		if(url == null && channel != null){
 		    url = channel.getUrl();
 		    channelid = channel.getChannelId();
 		}else{
 		    channelid = Integer.valueOf(url.substring(43, url.length()-13));
+		    channel = ChannelApi.channels.get(channelid);
 		}
+		channel.contents = this.data;
 		this.activity = getActivity();
 		 progressBar = (ProgressBar) this.main_v.findViewById(R.id.time_progress);
 		 time_outtext = (TextView) this.main_v.findViewById(R.id.time_out_text);
@@ -120,12 +127,19 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 		}
 		isload = true;
 		new Thread() {
+		    Channel c = DataStore.getCachedChannel(channelid);
 			public void run() {
 				try {
+				    if(DataStore.isChannelCached(channelid)){
+    				    if(c!= null){
+    				        data = c.contents;
+    				        return;
+    				    }
+				    }
 				    final List<Contents> templist = ApiParser.getChannelContents(url+page);
 					if (!isadd) {
 					    data = ApiParser.getChannelHotList(channelid, 10);
-					    data.addAll(ApiParser.getChannelContents(url+page));
+					    data.addAll(templist);
 					} 
 					activity.runOnUiThread(new Runnable() {
 						public void run() {
@@ -152,8 +166,15 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 
 							if (!isadd) {
 								progressBar.setVisibility(View.GONE);
-								time_outtext.setVisibility(View.VISIBLE);
-								list.setVisibility(View.INVISIBLE);
+								if(c!=null){
+								    data = c.contents;
+								    adaper.setData(data);
+								    adaper.notifyDataSetChanged();
+								    list.setVisibility(View.VISIBLE);
+								}else{
+    								time_outtext.setVisibility(View.VISIBLE);
+    								list.setVisibility(View.INVISIBLE);
+								}
 							} else {
 								isreload = true;
 								footview.findViewById(R.id.list_footview_progress).setVisibility(View.GONE);
@@ -245,7 +266,17 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 	
     
     @Override
-    protected void onRefresh(boolean b) {
-        
+    protected void onRefresh() {
+        //TODO 刷新列表
+        Toast.makeText(activity, "洗刷刷", 0).show();
+        Log.i(TAG, "list== getListView?"+(list == getListView()));
+        onRefreshCompleted();
+    }
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if(channel.contents != null && !channel.contents.isEmpty()){
+            DataStore.saveChannel(channel);
+        }
     }
 }
