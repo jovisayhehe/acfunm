@@ -1,11 +1,11 @@
 package tv.avfun;
 
+import tv.avfun.app.AcApp;
 import tv.avfun.util.lzlist.FileCache;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
-import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.widget.Toast;
@@ -20,7 +20,6 @@ public class Settings_Activity  extends SherlockPreferenceActivity{
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		
 		super.onCreate(savedInstanceState);
 		app = (AcApp) getApplicationContext();
 	    getSupportActionBar().setDisplayHomeAsUpEnabled(true);

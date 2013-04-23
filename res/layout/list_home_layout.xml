@@ -25,6 +25,7 @@
 
     <include
         layout="@layout/load_view" />
+    <include layout="@layout/time_out_view" />
     <include
         layout="@layout/update_layout" />
 </FrameLayout>

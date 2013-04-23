@@ -14,12 +14,12 @@ import java.io.Writer;
 import java.util.Calendar;
 import java.util.List;
 
-import tv.avfun.AcApp;
 import tv.avfun.BuildConfig;
 import tv.avfun.api.Bangumi;
 import tv.avfun.api.BangumiList;
 import tv.avfun.api.Channel;
 import tv.avfun.api.ChannelList;
+import tv.avfun.app.AcApp;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -211,7 +211,7 @@ public class DataStore {
             return obj;
         } catch (Exception e) {
             if (BuildConfig.DEBUG)
-                Log.e(TAG, "failed to read object from " + path, e);
+                Log.e(TAG, "failed to read object from " + path +"\n"+ e.getMessage());
             return null;
         }
     }
@@ -255,7 +255,7 @@ public class DataStore {
             }
         } catch (Exception e) {
             if (BuildConfig.DEBUG)
-                Log.e(TAG, "can not read from file " + path, e);
+                Log.e(TAG, "can not read from file " + path+"\n"+ e.getMessage());
         }
         return null;
     }
@@ -274,6 +274,8 @@ public class DataStore {
             throw new IllegalArgumentException("path 或 str 不能为null、空白或空字符串！");
         File file = new File(path);
         try {
+            if (!file.createNewFile())
+                throw new IllegalArgumentException("it is not file" + path);
             Writer writer = new FileWriter(file);
             writer.write(str);
             writer.close();

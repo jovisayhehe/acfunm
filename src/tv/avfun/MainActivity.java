@@ -26,6 +26,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 import com.slidingmenu.lib.SlidingMenu;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
+import com.umeng.update.UmengUpdateAgent;
 
 public class MainActivity extends SlidingFragmentActivity {
 
@@ -45,6 +46,7 @@ public class MainActivity extends SlidingFragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        UmengUpdateAgent.update(this);
         // 得到界面宽高
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -54,16 +56,17 @@ public class MainActivity extends SlidingFragmentActivity {
         instances = new HashMap<String, Fragment>();
         // 初始Fragment
         mContent = new HomeChannelListFragment();
+        
         instances.put("home", mContent);
         mFragmentMan = getSupportFragmentManager();
+        
         //初始化导航
         initNav();
         
         // above view
         setContentView(R.layout.content_frame);
         mFragmentMan.beginTransaction()
-            .replace(R.id.content_frame, mContent).commit();
-        
+        .replace(R.id.content_frame, mContent).commit();
         // 启用home
         bar = getSupportActionBar();
         bar.setDisplayHomeAsUpEnabled(true);

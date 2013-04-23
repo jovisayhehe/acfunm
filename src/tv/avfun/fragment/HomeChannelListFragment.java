@@ -2,18 +2,16 @@ package tv.avfun.fragment;
 
 import java.text.DateFormat;
 
-import tv.avfun.AcApp;
 import tv.avfun.Channel_Activity;
 import tv.avfun.Detail_Activity;
 import tv.avfun.R;
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.Banner;
 import tv.avfun.api.Channel;
+import tv.avfun.app.AcApp;
 import tv.avfun.entity.Contents;
 import tv.avfun.util.DataStore;
-import tv.avfun.util.DensityUtil;
 import tv.avfun.util.MyAsyncTask;
-import tv.avfun.util.NetWorkUtil;
 import tv.avfun.view.BannerIndicator;
 import tv.avfun.view.VideoItemView;
 import android.content.Intent;
@@ -66,7 +64,7 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
     private Channel[]               channels;
     private View                    loadView;
     private ILoadingLayout          mLoadingLayout;
-    private TextView                updateInfo;
+    private TextView                updateInfo, timeOutView;
     private PullToRefreshScrollView mPtr;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -119,14 +117,10 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
             @Override
             public void onPublishResult(boolean succeeded) {
                 if (!succeeded) {
-                    NetWorkUtil.showNetWorkError(getActivity());
                     if (channels == null) {
-                        TextView tips = new TextView(getActivity());
-                        tips.setText(R.string.net_work_error);
-                        tips.setTextColor(0x88000000);
-                        tips.setTextSize(DensityUtil.dip2px(getActivity(), 13));
-                        channelList.removeAllViews();
-                        channelList.addView(tips);
+                        updateInfo.setText(getString(R.string.net_work_error));
+                        showUpdateInfo();
+                        showTimeOutView();
                     }
                 }
                 setLastUpdatedLabel(dataStore.getChannelListLastUpdateTime());
@@ -162,7 +156,7 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
 
     private Animation fadeIn;
     private Animation fadeOut;
-
+    private long showDuration = 2000;
     private void initFadeAnim() {
 
         fadeIn = AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_in);
@@ -174,7 +168,7 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                handler.sendMessageDelayed(Message.obtain(handler, HIDE_INFO), 1500);
+                handler.sendMessageDelayed(Message.obtain(handler, HIDE_INFO), showDuration);
             }
         });
 
@@ -201,6 +195,7 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
                 showUpdateInfo();
                 mPtr.onRefreshComplete();
             }
+            timeOutView.setVisibility(View.GONE);
                 
         }
         @Override
@@ -240,6 +235,7 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
         channelList = (LinearLayout) findViewById(R.id.channel_list);
         loadView = findViewById(R.id.load_view);
         updateInfo = (TextView) findViewById(R.id.update_info);
+        timeOutView = (TextView) findViewById(R.id.time_out_text);
         initView();
         initFadeAnim();
         mPtr = (PullToRefreshScrollView) findViewById(R.id.pull_refresh_scrollview);
@@ -314,6 +310,7 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
         }
     };
 
+
     @Override
     public void onClick(View v) {
         int position = (Integer) v.getTag();
@@ -338,5 +335,9 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
 
     private void hideUpdateInfo() {
         updateInfo.startAnimation(fadeOut);
+    }
+    private void showTimeOutView() {
+        timeOutView.setText(getString(R.string.update_fail));
+        timeOutView.setVisibility(View.VISIBLE);
     }
 }

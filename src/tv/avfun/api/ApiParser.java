@@ -18,12 +18,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import tv.avfun.AcApp;
 import tv.avfun.BuildConfig;
 import tv.avfun.R;
 import tv.avfun.api.ChannelApi.id;
 import tv.avfun.api.net.Connectivity;
 import tv.avfun.api.net.UserAgent;
+import tv.avfun.app.AcApp;
 import tv.avfun.entity.Article;
 import tv.avfun.entity.Contents;
 import tv.avfun.util.NetWorkUtil;

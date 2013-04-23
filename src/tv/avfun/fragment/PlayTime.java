@@ -64,26 +64,23 @@ public class PlayTime extends SherlockFragment{
                     progressBar.setVisibility(View.VISIBLE);
             }
             @Override
-            public void onPostExecute() {
-                progressBar.setVisibility(View.GONE);
-                list.setAdapter(new TimeListAdaper(getActivity(), data));
-            }
-            @Override
             public void doInBackground() {
                 try {
+                    boolean gotIt = false;
                     if(!isCached){
                         // 连服务器读新的数据
                         if(BuildConfig.DEBUG) Log.i(TAG,"read new");
                         data = ApiParser.getBangumiTimeList();
                         // 保存
-                        DataStore.getInstance().saveTimeList(data);
+                        if(gotIt = (data != null || !data.isEmpty()))
+                            DataStore.getInstance().saveTimeList(data);
                         
                     }else{
                         if(BuildConfig.DEBUG) Log.i(TAG,"read cache list");
                         // 读缓存
                         data = DataStore.getInstance().loadTimeList();
                     }
-                    publishResult(true);
+                    publishResult(gotIt);
                 } catch (Exception e) {
                     if(BuildConfig.DEBUG)
                         e.printStackTrace();
@@ -94,7 +91,7 @@ public class PlayTime extends SherlockFragment{
             public void onPublishResult(boolean succeeded) {
                 if(!succeeded){
                     time_outtext.setVisibility(View.VISIBLE);
-                }
+                }else list.setAdapter(new TimeListAdaper(getActivity(), data));
                 progressBar.setVisibility(View.GONE);
             }
         }.execute();
