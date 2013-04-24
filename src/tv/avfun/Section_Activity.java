@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tv.avfun.api.ApiParser;
+import tv.avfun.app.AcApp;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;

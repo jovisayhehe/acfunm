@@ -7,6 +7,7 @@ import java.util.List;
 
 import tv.avfun.api.Channel;
 import tv.avfun.api.ChannelApi;
+import tv.avfun.app.AcApp;
 import tv.avfun.fragment.Channel_Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
