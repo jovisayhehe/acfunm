@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
@@ -106,7 +107,7 @@ public class Settings_Activity  extends SherlockPreferenceActivity{
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 try{
-                    ComponentName cmp = new ComponentName("acfunh.yoooo.org", ".MainActivity");
+                    ComponentName cmp = new ComponentName("acfunh.yoooo.org", "acfunh.yoooo.org.MainActivity");
                     if(getPackageManager().getActivityInfo(cmp, 0)!= null){
                         Intent intent = new Intent("android.intent.action.MAIN");
                         intent.addCategory("android.intent.category.LAUNCHER");
@@ -115,6 +116,7 @@ public class Settings_Activity  extends SherlockPreferenceActivity{
                     }
                     
                 } catch (Exception e) {
+                    if(BuildConfig.DEBUG) Log.e("Setting", "打开不能",e);
                     try{
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         intent.setData(Uri.parse("market://details?id=acfunh.yoooo.org"));

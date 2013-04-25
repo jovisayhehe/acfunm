@@ -24,10 +24,9 @@ public class AcApp extends Application {
     private static String    mSDcardDir, mExternalFilesDir;
     private static AcApp     instance;
     private static SharedPreferences sp;
-    public static final String LOG = "/logs"; 
-    public static final String IMAGE = "/imgs";
-    public static final String VIDEO = "/videos";
-    public static final String DOWN = "/download";
+    public static final String LOG = "/Logs"; 
+    public static final String IMAGE = "/Imgs";
+    public static final String VIDEO = "/Videos";
     /**
      * <b>NOTE:</b>在 <code>getApplicationContext()</code> 调用一次之后才能用这个方便的方法
      */
@@ -76,6 +75,15 @@ public class AcApp extends Application {
     }
     public static void putFloat(String key, float value){
         sp.edit().putFloat(key, value).commit();
+    }
+    /**
+     * 获得视频文件下载路径，默认为/sdcard/Download/AcFun/videos/{aid}
+     * @return
+     */
+    public static File getDownloadPath(String aid){
+        File path = new File(sp.getString("download_path", getSDcardDir()+"/Download/AcFun"+VIDEO+"/ac"+aid));
+        path.mkdirs();
+        return path;
     }
     /**
      * 获得首页展示模式

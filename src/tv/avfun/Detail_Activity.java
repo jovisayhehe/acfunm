@@ -4,18 +4,26 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import tv.avfun.api.ApiParser;
+import tv.avfun.api.net.UserAgent;
 import tv.avfun.db.DBService;
 import tv.avfun.entity.Contents;
 import tv.avfun.util.DensityUtil;
+import tv.avfun.util.FileUtil;
 import tv.avfun.util.lzlist.ImageLoader;
+import android.annotation.TargetApi;
+import android.app.DownloadManager;
+import android.app.DownloadManager.Request;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.text.Html;
-import android.view.Gravity;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -43,6 +51,7 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 	private DetailAdaper adaper;
 	private TextView user_name;
 	private ImageView imageView;
+	private TextView titleView;
 	private TextView views;
 	private TextView comments;
 	private TextView paly_btn;
@@ -52,6 +61,7 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 	private HashMap<String, String> info ;
 	public static final int FAVORITE = 210;
 	public static final int SHARE = 211;
+    private static final String TAG = "Detail";
 	public ImageLoader imageLoader;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -118,61 +128,47 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 
 	
 	public void initview(){
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		 
-		 user_name = (TextView) findViewById(R.id.detail_usename);
-		 views = (TextView) findViewById(R.id.detail_views);
-		 comments = (TextView) findViewById(R.id.detail_comment);
-		 imageView = (ImageView) findViewById(R.id.detail_img);
-		 paly_btn = (TextView) findViewById(R.id.detail_play_btn);
-		 paly_btn.setTag(123);
-		 Contents c = (Contents) getIntent().getExtras().get("contents");
-		 boolean flag = false;
-		 if(flag = c == null) {
-		 title = getIntent().getStringExtra("title");
-		 aid = getIntent().getStringExtra("aid");
-		 channelid = getIntent().getStringExtra("channelId");
-		 }else{
-		 title = c.getTitle();
-		 aid = c.getAid();
-		 channelid = c.getChannelId()+"";
-		 }
-		 getSupportActionBar().setTitle(title);
-		 SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 hh:mm");
-		 new DBService(this).addtoHis(aid, title, sdf.format(new Date()),0,channelid);
-		 isfavorite = new DBService(this).isFoved(aid);
-		 
-		 if(from==1){
-			 imageView.setBackgroundResource(R.drawable.face);
-			 user_name.setText("正在加载...");
-			 views.setText("正在加载...");
-			 comments.setText("正在加载...");
-			 paly_btn.setText("正在加载...");
-			 
-		 }else{
-		     user_name.setText(Html.fromHtml("<font color=\"#ABABAB\">up主: </font>"));
-		     views.setText(Html.fromHtml("<font color=\"#ABABAB\">点击: </font>"));
-		     comments.setText(Html.fromHtml("<font color=\"#ABABAB\">评论: </font>"));
-		     if(flag){
-			 byte[] b = getIntent().getByteArrayExtra("thumb");
-			 imageView.setImageBitmap(BitmapFactory.decodeByteArray(b, 0, b.length));
-			 user_name.setText(user_name.getText()+getIntent().getStringExtra("username"));
-			 views.setText(views.getText()+getIntent().getStringExtra("views"));
-			 comments.setText(comments.getText()+getIntent().getStringExtra("comments"));
-			 description = getIntent().getStringExtra("description");
-		     }else{
-		     imageLoader.displayImage(c.getTitleImg(), imageView);
-		     user_name.setText(user_name.getText()+c.getUsername());
-		     views.setText(views.getText()+""+c.getViews());
-		     comments.setText(comments.getText()+""+c.getComments());
-		     description = c.getDescription();
-		     }
-			 paly_btn.setText("正在加载...");
-		 }
-		 listview = (ListView) findViewById(R.id.detail_listview);
-		 adaper = new DetailAdaper(data);
-		 listview.setAdapter(adaper);
-		 getdatas(aid);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        titleView = (TextView) findViewById(R.id.detail_title);
+        user_name = (TextView) findViewById(R.id.detail_usename);
+        views = (TextView) findViewById(R.id.detail_views);
+        comments = (TextView) findViewById(R.id.detail_comment);
+        imageView = (ImageView) findViewById(R.id.detail_img);
+        paly_btn = (TextView) findViewById(R.id.detail_play_btn);
+        paly_btn.setTag(123);
+        Contents c = (Contents) getIntent().getExtras().get("contents");
+        if (c == null) {
+            throw new IllegalArgumentException("你从异次元来的吗？");
+        } else {
+            title = c.getTitle();
+            aid = c.getAid();
+            channelid = c.getChannelId() + "";
+        }
+        getSupportActionBar().setTitle("详情");
+        titleView.setText(title);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 hh:mm");
+        new DBService(this).addtoHis(aid, title, sdf.format(new Date()), 0, channelid);
+        isfavorite = new DBService(this).isFoved(aid);
+        if (from == 1) {
+            imageView.setBackgroundResource(R.drawable.face);
+            user_name.setText("正在加载...");
+            views.setText("正在加载...");
+            comments.setText("正在加载...");
+            paly_btn.setText("正在加载...");
+        } else {
+            imageLoader.displayImage(c.getTitleImg(), imageView);
+            user_name.setText(c.getUsername());
+            views.setText("点击" + "" + c.getViews());
+            comments.setText("评论" + "" + c.getComments());
+            description = c.getDescription();
+            paly_btn.setText("正在加载...");
+        }
+        listview = (ListView) findViewById(R.id.detail_listview);
+        adaper = new DetailAdaper(data);
+        // TODO 似乎根本就不需要listview嘛
+        listview.setAdapter(adaper);
+        listview.setDuplicateParentStateEnabled(true);
+        getdatas(aid);
 	}
 	
 	public void onResume() {
@@ -183,7 +179,6 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 	    super.onPause();
 	    MobclickAgent.onPause(this);
 	}
-	
 	
 	public void getdatas(final String aid){
 		new Thread() {
@@ -198,14 +193,13 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 					}
 					
 					data = (ArrayList<HashMap<String, Object>>) video.get("pts");
-					
 					runOnUiThread(new Runnable() {
 						public void run() {
 							if(data!=null){
 								if(from==1){
-									 user_name.setText(Html.fromHtml("<font color=\"#ABABAB\">up主: </font>"+info.get("username")));
-									 views.setText(Html.fromHtml("<font color=\"#ABABAB\">点击: </font>"+info.get("views")));
-									 comments.setText(Html.fromHtml("<font color=\"#ABABAB\">评论: </font>"+info.get("comments")));
+									 user_name.setText(info.get("username"));
+									 views.setText(info.get("views"));
+									 comments.setText(info.get("comments"));
 									 description = info.get("description");
 									 String imgurl = info.get("titleimage");
 									 if(imgurl!=""&&!imgurl.equals("")){
@@ -288,17 +282,17 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 				TextView descriptiontext = new TextView(Detail_Activity.this);
 				descriptiontext.setText(description);
 				int dpx = DensityUtil.dip2px(Detail_Activity.this, 8);
-				descriptiontext.setPadding(dpx, dpx, dpx, dpx);
+				descriptiontext.setPadding(0, dpx, 0, dpx);
 				
 				TextView pttext = new TextView(Detail_Activity.this);
 				pttext.setText("视频段落");
 				pttext.setTextSize(15);
-				pttext.setTextColor(Color.parseColor("#FF9A03"));
-				pttext.setPadding(dpx, dpx, dpx, 3);
+				pttext.setTextColor(0xFFFF9A03);
+				pttext.setPadding(0, dpx, dpx, 3);
 				
 				View ylline = new View(Detail_Activity.this);
 				ylline.setLayoutParams(new LinearLayout.LayoutParams(-1, 2));
-				ylline.setBackgroundColor(Color.parseColor("#FF9A03"));
+				ylline.setBackgroundColor(0xFFFF9A03);
 				
 				layout.addView(descriptiontext);
 				layout.addView(pttext);
@@ -308,11 +302,12 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 			case 1:
 				if(data!=null&&!data.isEmpty()){
 					for (int i = 0; i < data.size(); i++) {
-						HashMap<String, Object> map = data.get(i);
+						final HashMap<String, Object> map = data.get(i);
 						
 						LinearLayout itemlayout = (LinearLayout) LayoutInflater.from(Detail_Activity.this).inflate(R.layout.detail_video_list_item, null);
 						
 						TextView title = (TextView) itemlayout.findViewById(R.id.detail_video_list_item_title);
+						title.setLines(1);
 						title.setText(map.get("title").toString());
 						
 						TextView vtype = (TextView) itemlayout.findViewById(R.id.detail_video_list_item_vtype);
@@ -321,6 +316,18 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 						itemlayout.setTag(map);
 						itemlayout.setOnClickListener(new PrtckListener());
 						layout.addView(itemlayout);
+						View btnDown = itemlayout.findViewById(R.id.detail_btn_downlaod);
+						if(Build.VERSION.SDK_INT>=9){
+						    btnDown.setVisibility(View.VISIBLE);
+						    btnDown.setOnClickListener(new OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    v.setEnabled(false);
+                                    startDownload(map.get("vtype").toString(), map.get("vid").toString());
+                                }
+                            });
+						}
+						
 						//添加分割线
 						if(i!=data.size()-1){
 							View lineView = new View(Detail_Activity.this);
@@ -350,14 +357,8 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 				}
 				break;
 			case 2:
-				TextView comments = new TextView(Detail_Activity.this);
-				int cpx = DensityUtil.dip2px(Detail_Activity.this, 8);
-				comments.setPadding(cpx, cpx, cpx, cpx);
-				comments.setText("查看评论");
-				comments.setTextColor(Color.parseColor("#FF9A03"));
-				comments.setTextSize(17);
-				comments.setGravity(Gravity.CENTER);
-				layout.addView(comments);
+				View.inflate(Detail_Activity.this, R.layout.detail_comments_btn_layout, layout);
+				//layout.addView(comments);
 				layout.setBackgroundResource(R.drawable.selectable_background);
 				convertView = layout;
 				convertView.setTag(101);
@@ -368,10 +369,51 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 			}
 			return convertView;
 		}
+
 		
 	}
-
-	
+	// TODO 下载
+	private void startDownload(final String type, final String vid) {
+	    new Thread(){
+            public void run() {
+	            Environment.getExternalStoragePublicDirectory("AcFun/Download/"+aid).mkdirs();
+	            try {
+	                List<String> urls = ApiParser.ParserVideopath(type, vid);
+	                if(urls!=null)
+	                    handler.obtainMessage(1, urls).sendToTarget();
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }
+	        }
+	    }.start();
+    }
+	private Handler handler = new Handler(){
+	    @TargetApi(9)
+	    public void handleMessage(Message msg) {
+	        if(msg.what == 1){
+	            Toast.makeText(getApplicationContext(), title+"已开始下载", 0).show();
+	            // urls 不应为null
+	            List<String> urls = (List<String>)msg.obj;
+	            for(int i = 0 ; i< urls.size(); i++){
+                    String url = urls.get(i);
+                    String filename = i+FileUtil.getUrlExt(url);
+                    if(BuildConfig.DEBUG) Log.i(TAG, url);
+                    DownloadManager downloadMan = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                    Request request = new Request(Uri.parse(url))
+                    .addRequestHeader("User-Agent", UserAgent.IPAD)
+                    .setAllowedNetworkTypes(Request.NETWORK_WIFI)
+                    .setAllowedOverRoaming(false)
+                    .setTitle(title+"_"+filename)
+                    .setDestinationInExternalPublicDir("AcFun/Download/"+aid, filename);
+                    // TODO 将id存起来监听下载进度
+                    downloadMan.enqueue(request);
+                }
+	            //TODO 改变界面btn状态为 下载中
+	            
+	        }
+	    }
+	    
+	};
 	private final class PrtckListener implements OnClickListener{
 
 		@Override
@@ -406,7 +448,8 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 		}
 	}
 	
-	public void startToPlay(HashMap<String, Object> map){
+
+    public void startToPlay(HashMap<String, Object> map){
 		String vtype = (String) map.get("vtype");
 		String vid = (String) map.get("vid");
 		String title = (String) map.get("title"); 
