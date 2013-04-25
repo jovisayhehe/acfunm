@@ -131,6 +131,7 @@ public class DataStore {
     // =======================================================
     /**
      * @return 没有缓存文件，或缓存时间超过 {@link #CHANNEL_LIST_EXPIRED}<br>
+     *         或者主页显示模式被更改了
      *         则返回false
      */
     public boolean isChannelListCached() {
@@ -139,6 +140,8 @@ public class DataStore {
                 if (!readChannelListCache())
                     return false;
             }
+            if(!AcApp.getHomeDisplayMode().equals(this.channelList.displayMode))
+                return false;
             return this.channelList.cacheTime + CHANNEL_LIST_EXPIRED >= System.currentTimeMillis();
         }
     }
@@ -185,6 +188,7 @@ public class DataStore {
      */
     public boolean saveChannelList(Channel[] list) {
         if (list != null) {
+            this.channelList.displayMode = AcApp.getHomeDisplayMode();
             this.channelList.channels = list;
             this.channelList.cacheTime = System.currentTimeMillis();
             return writeObject(channelListCachedFile.getAbsolutePath(), this.channelList);

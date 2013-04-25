@@ -16,7 +16,6 @@ import android.widget.Toast;
 /**
  * 自定义Application
  * @author Yrom
- * 
  */
 public class AcApp extends Application {
 
@@ -63,22 +62,28 @@ public class AcApp extends Application {
     // config SharedPreferences
     // ====================================
     
-    public SharedPreferences getConfig(){
+    public static SharedPreferences getConfig(){
         return sp;
     }
-    public void putString(String key, String value){
+    public static void putString(String key, String value){
         sp.edit().putString(key, value).commit();
     }
-    public void putBoolean(String key, boolean value){
+    public static void putBoolean(String key, boolean value){
         sp.edit().putBoolean(key, value).commit();
     }
-    public void putInt(String key, int value){
+    public static void putInt(String key, int value){
         sp.edit().putInt(key, value).commit();
     }
-    public void putFloat(String key, float value){
+    public static void putFloat(String key, float value){
         sp.edit().putFloat(key, value).commit();
     }
-    
+    /**
+     * 获得首页展示模式
+     * @return 1.最新发布 2.热门 3.最新回复
+     */
+    public static String getHomeDisplayMode(){
+        return sp.getString("home_display_mode", "1");
+    }
     
     // ====================================
     // statics
