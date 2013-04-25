@@ -2,6 +2,7 @@ package tv.avfun.fragment;
 
 import java.text.DateFormat;
 
+import tv.avfun.BuildConfig;
 import tv.avfun.Channel_Activity;
 import tv.avfun.Detail_Activity;
 import tv.avfun.R;
@@ -11,15 +12,16 @@ import tv.avfun.api.Channel;
 import tv.avfun.app.AcApp;
 import tv.avfun.entity.Contents;
 import tv.avfun.util.DataStore;
-import tv.avfun.util.MyAsyncTask;
 import tv.avfun.view.BannerIndicator;
 import tv.avfun.view.VideoItemView;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,13 +43,13 @@ import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
  * @author Yrom
  * 
  */
-public class HomeChannelListFragment extends Fragment implements View.OnClickListener {
+public class HomeChannelListFragment extends Fragment implements VideoItemView.OnClickListener {
 
     private static final String     TAG       = HomeChannelListFragment.class.getSimpleName();
     private static final int        ADD       = 1;
     private static final int        REFRESH   = 2;
     private static final int        HIDE_INFO = 4;
-    private static final long       LOCK_TIME = 5*60000; // 5 min
+    private static final long       LOCK_TIME = 5 * 60000; 
     private String                  mode;
     private long                    updatedTime;
     private View                    mView;
@@ -65,12 +67,13 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
     private ILoadingLayout          mLoadingLayout;
     private TextView                updateInfo, timeOutView;
     private PullToRefreshScrollView mPtr;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dataStore = DataStore.getInstance();
         setHasOptionsMenu(false);
-        mode = AcApp.instance().getConfig().getString("home_display_mode", "1");
+        mode = AcApp.getConfig().getString("home_display_mode", "1");
     }
 
     private Handler handler = new Handler() {
@@ -84,53 +87,6 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
                 hideUpdateInfo();
         }
     };
-
-    private void loadData() {
-        new MyAsyncTask() {
-            boolean isCached = dataStore.isChannelListCached();
-            protected void onPreExecute() {
-                if(!isCached)
-                    showLoadingView();
-            }
-            protected void onPostExecute() {
-                hideLoadingView();
-            }
-            @Override
-            public void doInBackground() {
-                if (isCached){
-                    channels = dataStore.loadChannelList();
-                    updateInfo.setText(getString(R.string.read_cache));
-                }
-                else {
-                    channels = ApiParser.getRecommendChannels(3, mode);
-                    if (channels != null){
-                        updateInfo.setText(getString(R.string.update_success));
-                        DataStore.getInstance().saveChannelList(channels);
-                    }
-                    else{
-                        channels = dataStore.loadChannelList();
-                        updateInfo.setText(getString(R.string.update_error));
-                    }
-                }
-                boolean b = false;
-                if (b = channels != null)
-                    updateList();
-                publishResult(b);
-            }
-
-            @Override
-            public void onPublishResult(boolean succeeded) {
-                if (!succeeded) {
-                    if (channels == null) {
-                        updateInfo.setText(getString(R.string.net_work_error));
-                        showTimeOutView();
-                    }
-                }
-                showUpdateInfo();
-                setLastUpdatedLabel(dataStore.getChannelListLastUpdateTime());
-            }
-        }.execute();
-    }
 
     /** 0为当前时间 */
     private void setLastUpdatedLabel(long updatedTime) {
@@ -161,6 +117,7 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
     private Animation fadeIn;
     private Animation fadeOut;
     private long showDuration = 2000;
+
     private void initFadeAnim() {
 
         fadeIn = AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_in);
@@ -190,42 +147,99 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
         });
     }
 
-    private class RefreshData extends MyAsyncTask {
+    private class RefreshData extends AsyncTask<Void, Void, Boolean> {
+
         @Override
-        protected void onPreExecute() {
-            if(System.currentTimeMillis() - updatedTime < LOCK_TIME){
-                this.cancel();
+        public void onPreExecute() {
+            if (System.currentTimeMillis() - updatedTime < LOCK_TIME) {
+                this.cancel(false);
                 updateInfo.setText(getString(R.string.update_lock));
                 showUpdateInfo();
                 mPtr.onRefreshComplete();
             }
             timeOutView.setVisibility(View.GONE);
-                
+
         }
-        @Override
-        public void doInBackground() {
+
+        protected Boolean doInBackground(Void... params) {
             Channel[] cs = ApiParser.getRecommendChannels(3, mode);
             if (cs != null) {
                 channels = cs;
-                publishResult(DataStore.getInstance().saveChannelList(channels));
                 handler.sendEmptyMessage(REFRESH);
                 updateList();
+                return DataStore.getInstance().saveChannelList(channels);
             } else
-                publishResult(false);
-
+                return false;
         }
-
-        public void onPublishResult(boolean succeeded) {
-            if (succeeded) {
-                setLastUpdatedLabel(0);
-                updateInfo.setText(getString(R.string.update_success));
-            } else
-                updateInfo.setText(getString(R.string.update_fail));
+        @Override
+        protected void onPostExecute(Boolean result) {
             showUpdateInfo();
             mPtr.onRefreshComplete();
         }
-    }
 
+    }
+    private void loadData() {
+        new LoadData().execute();
+    }
+    
+    private class LoadData extends AsyncTask<Void,Long,Boolean>{
+        boolean isCached;
+        @Override
+        protected void onPreExecute() {
+            
+            if(!(isCached = dataStore.isChannelListCached())){
+                if(BuildConfig.DEBUG) Log.i(TAG, "loading new data");
+                showLoadingView();
+            }
+        }
+        @Override
+        protected void onPostExecute(Boolean result) {
+            showUpdateInfo();
+            hideLoadingView();
+            if(!result) showTimeOutView();
+            else setLastUpdatedLabel(0);
+        }
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            if(isCached){
+                if(BuildConfig.DEBUG) Log.i(TAG, "read channel list cache");
+                updateInfo.setText(getString(R.string.read_cache));
+                if(!readCache()) return false;
+            }else{
+                Channel[] recommendChannels = ApiParser.getRecommendChannels(3, mode);
+                if(recommendChannels == null){
+                    updateInfo.setText(getString(R.string.update_fail));
+                    // 获取不到在线数据，尝试读缓存
+                    if(!readCache()) {
+                        updateInfo.setText(R.string.update_error);
+                        return false;
+                    }
+                }else{
+                    updateInfo.setText(getString(R.string.update_success));
+                    channels = recommendChannels;
+                    dataStore.saveChannelList(channels);
+                    publishProgress(System.currentTimeMillis());
+                }
+            }
+            updateList();
+            return true;
+        }
+        @Override
+        protected void onProgressUpdate(Long... values) {
+            setLastUpdatedLabel(values[0]);
+        }
+        boolean readCache(){
+            Channel[] cachedList = dataStore.loadChannelList();
+            if(cachedList != null){
+                
+                channels = cachedList;
+                publishProgress(dataStore.getChannelListLastUpdateTime());
+                return true;
+            }
+            else 
+                return false;
+        }
+    }
     public View findViewById(int id) {
         if (mView != null)
             return mView.findViewById(id);
@@ -243,6 +257,7 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
         initView();
         initFadeAnim();
         mPtr = (PullToRefreshScrollView) findViewById(R.id.pull_refresh_scrollview);
+        
         mPtr.setOnRefreshListener(new OnRefreshListener<ScrollView>() {
 
             @Override
@@ -257,11 +272,13 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
         mLoadingLayout.setReleaseLabel(getString(R.string.release_refresh));
         return mView;
     }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         loadData();
     }
+    
     private void showLoadingView() {
         if (loadView != null) {
             loadView.setVisibility(View.VISIBLE);
@@ -283,12 +300,21 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
         VideoItemView mid = (VideoItemView) channelItem.findViewById(R.id.row_middle);
         VideoItemView right = (VideoItemView) channelItem.findViewById(R.id.row_right);
         TextView title = (TextView) channelItem.findViewById(R.id.channel_title);
-        left.setOnClickListener(this.listener);
-        mid.setOnClickListener(this.listener);
-        right.setOnClickListener(this.listener);
+        left.setOnClickListener(this);
+        mid.setOnClickListener(this);
+        right.setOnClickListener(this);
 
         View more = channelItem.findViewById(R.id.more);
-        more.setOnClickListener(this);
+        more.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                int position = (Integer) v.getTag();
+                Intent intent = new Intent(getActivity(), Channel_Activity.class);
+                intent.putExtra("position", position);
+                startActivity(intent);
+            }
+        });
         more.setTag(position);
 
         this.channelList.addView(channelItem);
@@ -305,23 +331,11 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
         title.setBackgroundDrawable(getResources().getDrawable(channel.titleBgResId));
     }
 
-    private VideoItemView.OnClickListener listener = new VideoItemView.OnClickListener() {
-
-        @Override
-        public void onClick(View view, Contents c) {
-            
-            Intent intent = new Intent(getActivity(), Detail_Activity.class);
-            intent.putExtra("contents", c);
-            startActivity(intent);
-        }
-    };
-
-
     @Override
-    public void onClick(View v) {
-        int position = (Integer) v.getTag();
-        Intent intent = new Intent(getActivity(), Channel_Activity.class);
-        intent.putExtra("position", position);
+    public void onClick(View view, Contents c) {
+
+        Intent intent = new Intent(getActivity(), Detail_Activity.class);
+        intent.putExtra("contents", c);
         startActivity(intent);
     }
 
@@ -342,6 +356,7 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
     private void hideUpdateInfo() {
         updateInfo.startAnimation(fadeOut);
     }
+
     private void showTimeOutView() {
         timeOutView.setText(getString(R.string.update_fail));
         timeOutView.setVisibility(View.VISIBLE);

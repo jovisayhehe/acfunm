@@ -1,5 +1,6 @@
 package tv.avfun.api;
 
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -13,6 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.json.external.JSONArray;
+import org.json.external.JSONException;
 import org.json.external.JSONObject;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -26,7 +28,10 @@ import tv.avfun.api.net.UserAgent;
 import tv.avfun.app.AcApp;
 import tv.avfun.entity.Article;
 import tv.avfun.entity.Contents;
+import tv.avfun.entity.VideoInfo;
 import tv.avfun.util.NetWorkUtil;
+import tv.avfun.util.StringUtil;
+import android.text.Html;
 import android.util.Log;
 
 public class ApiParser {
@@ -132,8 +137,15 @@ public class ApiParser {
         }
     }
 
-    public static List<Bangumi[]> getBangumiTimeList() throws Exception {
-        Document doc = Connectivity.getDoc("http://www.acfun.tv/v/list67/index.htm", UserAgent.CHROME_25);
+    public static List<Bangumi[]> getBangumiTimeList(){
+        Document doc;
+        try {
+            doc = Connectivity.getDoc("http://www.acfun.tv/v/list67/index.htm", UserAgent.CHROME_25);
+        } catch (IOException e) {
+            if(BuildConfig.DEBUG)
+                Log.e("Parser", "get time list failed", e);
+            return null;
+        }
         Elements ems = doc.getElementsByAttributeValue("id", "bangumi").get(0)
                 .getElementsByTag("li");
         ems.remove(ems.size() - 1);
@@ -154,7 +166,7 @@ public class ApiParser {
         return timelist;
 
     }
-
+    
     public static HashMap<String, Object> ParserAcId(String id, boolean isfromtime)
             throws Exception {
 
@@ -422,7 +434,7 @@ public class ApiParser {
     public static List<String> ParserVideopath(String type, String id) throws Exception {
         if (type.equals("sina")) {
             // 新浪
-            return getSinaMp4(id);
+            return getSinaflv(id);
         } else if (type.equals("youku")) {
             return ParserYoukuFlv(id);
         } else if (type.equals("qq")) {
@@ -437,6 +449,7 @@ public class ApiParser {
         List<String> paths = new ArrayList<String>();
         String checkIdUrl = "http://video.sina.com.cn/interface/video_ids/video_ids.php?v="+vid;
         JSONObject jsonObj = Connectivity.getJSONObject(checkIdUrl);
+        if(jsonObj == null) return null;
         int ipadVid = jsonObj.getInt("ipad_vid");
         if(ipadVid != 0 && ipadVid != Integer.valueOf(vid)) vid = ipadVid+""; // 赋予新Id
         URL url =  new URL("http://v.iask.com/v_play_ipad.php?vid="+vid);

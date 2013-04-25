@@ -16,7 +16,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 
@@ -26,6 +25,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 import com.slidingmenu.lib.SlidingMenu;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
+import com.umeng.analytics.MobclickAgent;
 import com.umeng.update.UmengUpdateAgent;
 
 public class MainActivity extends SlidingFragmentActivity {
@@ -46,6 +46,7 @@ public class MainActivity extends SlidingFragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MobclickAgent.onError(this);
         UmengUpdateAgent.update(this);
         // 得到界面宽高
         DisplayMetrics dm = new DisplayMetrics();
@@ -58,6 +59,10 @@ public class MainActivity extends SlidingFragmentActivity {
         mContent = new HomeChannelListFragment();
         
         instances.put("home", mContent);
+        
+        Fragment time = PlayTime.newInstance();
+        instances.put("play_time",time);
+        
         mFragmentMan = getSupportFragmentManager();
         
         //初始化导航
@@ -65,8 +70,7 @@ public class MainActivity extends SlidingFragmentActivity {
         
         // above view
         setContentView(R.layout.content_frame);
-        mFragmentMan.beginTransaction()
-        .replace(R.id.content_frame, mContent).commit();
+        mFragmentMan.beginTransaction().replace(R.id.content_frame, mContent).commit();
         // 启用home
         bar = getSupportActionBar();
         bar.setDisplayHomeAsUpEnabled(true);
@@ -136,6 +140,22 @@ public class MainActivity extends SlidingFragmentActivity {
         }
         menu.showContent();
     }
+
+    public void switchContent(Fragment from, Fragment to, int navId) {
+        if (mContent != to) {
+            mContent = to;
+            FragmentTransaction transaction = mFragmentMan.beginTransaction().setCustomAnimations(
+                    android.R.anim.fade_in, R.anim.slide_out);
+            if (!to.isAdded()) {
+                transaction.hide(from).add(R.id.content_frame, to).commit();
+            } else {
+                transaction.hide(from).show(to).commit();
+            }
+            setSlideNavHint(navId);
+        }
+        menu.showContent();
+    }
+    
     public void switchContent(Fragment fragment){
         if(mContent != fragment) {
             mContent = fragment;
@@ -200,7 +220,7 @@ public class MainActivity extends SlidingFragmentActivity {
             toggle();
             return;
         }
-        switchContent(nextContent,id);
+        switchContent(mContent, nextContent,id);
         
     }
     @Override

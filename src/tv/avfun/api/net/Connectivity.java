@@ -38,6 +38,11 @@ public class Connectivity {
         }
         return null;
     }
+    /**
+     * 获得Jsondu对象
+     * @param url
+     * @return 获取失败返回null
+     */
     public static JSONObject getJSONObject(String url) throws JSONException {
         String json = getJson(url);
         if(json != null)

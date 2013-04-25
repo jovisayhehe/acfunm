@@ -94,7 +94,7 @@ public class DataStore {
     public List<Bangumi[]> loadTimeList() {
         synchronized (this.bangumiList) {
             if (this.bangumiList.bangumiTimeList == null) {
-                readTimeListCache();
+                if(!readTimeListCache()) return null;
             }
             return this.bangumiList.bangumiTimeList;
         }
@@ -150,7 +150,7 @@ public class DataStore {
     public Channel[] loadChannelList() {
         synchronized (this.channelList) {
             if (this.channelList.channels == null) {
-                readChannelListCache();
+                if(!readChannelListCache()) return null;
             }
             return this.channelList.channels;
         }
