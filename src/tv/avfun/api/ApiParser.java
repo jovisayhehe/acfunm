@@ -35,6 +35,7 @@ public class ApiParser {
 
         List<Contents> contents = new ArrayList<Contents>();
         JSONObject jsonObject = Connectivity.getJSONObject(address);
+        if(jsonObject == null) return null;
         JSONArray jsarray = jsonObject.getJSONArray("contents");
         for (int i = 0; i < jsarray.length(); i++) {
             JSONObject jobj = (JSONObject) jsarray.get(i);

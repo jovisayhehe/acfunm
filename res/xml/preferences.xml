@@ -47,6 +47,11 @@
             android:icon="@drawable/ic_email"
             android:title="反(tu)馈(cao)"
             android:key="feedback" />
+         <Preference 
+            android:icon="@drawable/ic_a"
+            android:title="A岛"
+            android:summary="一个充满A级爱情的地方"
+            android:key="hfun" />
     </PreferenceCategory>
     
 </PreferenceScreen>

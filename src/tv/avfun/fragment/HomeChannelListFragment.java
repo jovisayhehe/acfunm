@@ -29,7 +29,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.handmark.pulltorefresh.library.ILoadingLayout;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
@@ -98,15 +97,20 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
             }
             @Override
             public void doInBackground() {
-                if (isCached)
+                if (isCached){
                     channels = dataStore.loadChannelList();
+                    updateInfo.setText(getString(R.string.read_cache));
+                }
                 else {
                     channels = ApiParser.getRecommendChannels(3, mode);
-                    if (channels != null)
+                    if (channels != null){
+                        updateInfo.setText(getString(R.string.update_success));
                         DataStore.getInstance().saveChannelList(channels);
-                    else
-                        // 读取数据不成功，再次尝试读取缓存
+                    }
+                    else{
                         channels = dataStore.loadChannelList();
+                        updateInfo.setText(getString(R.string.update_error));
+                    }
                 }
                 boolean b = false;
                 if (b = channels != null)
@@ -119,10 +123,10 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
                 if (!succeeded) {
                     if (channels == null) {
                         updateInfo.setText(getString(R.string.net_work_error));
-                        showUpdateInfo();
                         showTimeOutView();
                     }
                 }
+                showUpdateInfo();
                 setLastUpdatedLabel(dataStore.getChannelListLastUpdateTime());
             }
         }.execute();
@@ -251,11 +255,13 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
         mLoadingLayout.setRefreshingLabel(getString(R.string.refreshing));
         mLoadingLayout.setPullLabel(getString(R.string.pull_refresh));
         mLoadingLayout.setReleaseLabel(getString(R.string.release_refresh));
-        loadData();
-
         return mView;
     }
-
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        loadData();
+    }
     private void showLoadingView() {
         if (loadView != null) {
             loadView.setVisibility(View.VISIBLE);
@@ -303,7 +309,7 @@ public class HomeChannelListFragment extends Fragment implements View.OnClickLis
 
         @Override
         public void onClick(View view, Contents c) {
-            Toast.makeText(getActivity(), c.getTitle(), 0).show();
+            
             Intent intent = new Intent(getActivity(), Detail_Activity.class);
             intent.putExtra("contents", c);
             startActivity(intent);

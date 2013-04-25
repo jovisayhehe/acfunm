@@ -39,7 +39,10 @@ public class Connectivity {
         return null;
     }
     public static JSONObject getJSONObject(String url) throws JSONException {
-        return new JSONObject(getJson(url));
+        String json = getJson(url);
+        if(json != null)
+        return new JSONObject(json);
+        else return null;
     }
 
     public static Elements getElements(String url, String tag) throws IOException {
@@ -69,11 +72,15 @@ public class Connectivity {
             throws IOException {
         HttpURLConnection conn = (HttpURLConnection) httpUrl.openConnection();
         conn.addRequestProperty("User-Agent", userAgent);
+        conn.setConnectTimeout(6000);
         conn.setReadTimeout(6000);
         return conn;
     }
-
+    /**
+     * 用默认的UserAgent打开连接
+     * @see #openConnection(URL, String)
+     */
     public static HttpURLConnection openConnection(String url) throws IOException {
-        return openConnection(new URL(url), UserAgent.Android_4);
+        return openConnection(new URL(url), UserAgent.DEFAULT);
     }
 }

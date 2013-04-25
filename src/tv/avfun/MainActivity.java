@@ -175,10 +175,12 @@ public class MainActivity extends SlidingFragmentActivity {
         int id = navItem.getId();
         switch (id) {
         case R.id.slide_nav_home:
+            bar.setTitle("主页");
             nextContent = instances.get("home");
             break;
         case R.id.slide_nav_bangumi:
             nextContent = instances.get("play_time");
+            bar.setTitle("番组列表");
             if(nextContent==null){
                 nextContent = PlayTime.newInstance();
                 instances.put("play_time",nextContent);

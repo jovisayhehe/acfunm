@@ -6,4 +6,5 @@ public final class UserAgent {
     public static final String Android_4 = "Mozilla/5.0 (Linux; U; Android 4.0.1; zh-cn) AppleWebkit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30";
     public static final String CHROME_25 = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.152 Safari/537.22";
     public static final String IE_9      = "Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)";
+    public static final String DEFAULT   = CHROME_25;
 }

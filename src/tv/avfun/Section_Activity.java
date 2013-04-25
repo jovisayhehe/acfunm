@@ -18,6 +18,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
@@ -206,15 +207,19 @@ public class Section_Activity extends SherlockActivity implements OnClickListene
 		
 		String flvpath = (String) v.getTag();
 
-        if(playmode==0){
-    		Intent intent = new Intent(Section_Activity.this, Play_Activity.class);
-    		intent.putExtra("path", flvpath);
-            startActivity(intent);
-        }else{
-    		Intent it = new Intent(Intent.ACTION_VIEW);  
-          Uri uri = Uri.parse(flvpath);  
-          it.setDataAndType(uri , "video/flv");  
-          startActivity(it);
+        if(playmode!=0){
+            try {
+                Intent it = new Intent(Intent.ACTION_VIEW);
+                Uri uri = Uri.parse(flvpath);
+                it.setDataAndType(uri, "video/flv");
+                startActivity(it);
+                return;
+            } catch (Exception e) {
+                Toast.makeText(getApplicationContext(), "没有可用的外部播放器！", 0).show();
+            }
         }
+        Intent intent = new Intent(Section_Activity.this, Play_Activity.class);
+        intent.putExtra("path", flvpath);
+        startActivity(intent);
 	}
 }

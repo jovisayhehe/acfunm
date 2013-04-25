@@ -2,6 +2,7 @@ package tv.avfun;
 
 import tv.avfun.app.AcApp;
 import tv.avfun.util.lzlist.FileCache;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -43,10 +44,15 @@ public class Settings_Activity  extends SherlockPreferenceActivity{
             
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("market://details?id="+getPackageName()));
-                startActivity(intent);
+                try{
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse("market://details?id="+getPackageName()));
+                    startActivity(intent);
+                }catch (android.content.ActivityNotFoundException e) {
+                    Toast.makeText(getApplicationContext(), "你的好意我已心领=。=", Toast.LENGTH_SHORT).show();
+                    feedBack();
+                }
                 return true;
             }
         });
@@ -74,7 +80,7 @@ public class Settings_Activity  extends SherlockPreferenceActivity{
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
 				
-				UMFeedbackService.openUmengFeedbackSDK(Settings_Activity.this);
+				feedBack();
 				return false;
 			}
 		});
@@ -86,14 +92,45 @@ public class Settings_Activity  extends SherlockPreferenceActivity{
 			public boolean onPreferenceClick(Preference preference) {
 				
 				if(cbpf.isChecked()){
-				    app.putInt("playmode", 1);
+				    AcApp.putInt("playmode", 1);
 				}else{
-				    app.putInt("playmode", 0);
+				    AcApp.putInt("playmode", 0);
 				}
 				
 				return false;
 			}
 		});
+		// 匿名版
+		findPreference("hfun").setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                try{
+                    ComponentName cmp = new ComponentName("acfunh.yoooo.org", ".MainActivity");
+                    if(getPackageManager().getActivityInfo(cmp, 0)!= null){
+                        Intent intent = new Intent("android.intent.action.MAIN");
+                        intent.addCategory("android.intent.category.LAUNCHER");
+                        intent.setComponent(cmp);
+                        startActivity(intent);
+                    }
+                    
+                } catch (Exception e) {
+                    try{
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse("market://details?id=acfunh.yoooo.org"));
+                        startActivity(intent);
+                    }
+                    catch (Exception ex) {
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse(getString(R.string.acfunh)));
+                        startActivity(intent);
+                    
+                    }
+                }
+                return true;
+            }
+        });
 	}
 	
 	public void onResume() {
@@ -114,4 +151,9 @@ public class Settings_Activity  extends SherlockPreferenceActivity{
 		}
 		return super.onOptionsItemSelected(item);
 	}
+
+    private void feedBack() {
+        UMFeedbackService.openUmengFeedbackSDK(Settings_Activity.this);
+        UMFeedbackService.setGoBackButtonVisible();
+    }
 }

@@ -11,13 +11,18 @@ import android.os.Message;
  */
 public abstract class MyAsyncTask {
     // 默认为执行成功
+    private boolean result = true;
     private static final int OK = 0;
-    private static final int SIGH =1;
+    private static final int GOT =1;
     private boolean shouldBeCancel = false;
     private Handler mHandler = new Handler(){
         public void handleMessage(Message msg) {
-            onPublishResult(msg.what==OK);
-            onPostExecute();
+            if(!shouldBeCancel){  // 保证中途取消也不会被执行
+                if(msg.what == GOT)
+                    onPublishResult(result);
+                else if(msg.what == OK)
+                    onPostExecute();
+            }
         }
     };
     
@@ -32,8 +37,10 @@ public abstract class MyAsyncTask {
         onPreExecute();
         new Thread(){
             public void run() {
-                if(!shouldBeCancel)
+                if(!shouldBeCancel){
                     doInBackground();
+                    mHandler.obtainMessage(OK).sendToTarget();
+                }
             }
         }.start();
         
@@ -43,7 +50,8 @@ public abstract class MyAsyncTask {
      * @param succeeded 成功与否
      */
     public final void publishResult(boolean succeeded){
-        mHandler.sendEmptyMessage(succeeded?OK:SIGH);
+        result = succeeded;
+        mHandler.sendEmptyMessage(GOT);
     }
     /**
      * 发布出去。运行在主线程
