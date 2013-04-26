@@ -5,6 +5,8 @@ import java.io.StringWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.Field;
 
+import com.umeng.analytics.MobclickAgent;
+
 import tv.avfun.BuildConfig;
 import tv.avfun.MainActivity;
 import tv.avfun.util.DataStore;
@@ -62,6 +64,7 @@ public class CrashExceptionHandler implements UncaughtExceptionHandler {
         }
         if (BuildConfig.DEBUG)
             Log.i(TAG, "哦喽！崩溃了"+ ex.toString()+ "\n"+ logFile );
+        MobclickAgent.reportError(AcApp.context(),"Crashed:\n"+sw.toString());
         new Thread() {
 
             public void run() {

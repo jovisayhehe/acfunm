@@ -46,8 +46,7 @@ public class MainActivity extends SlidingFragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MobclickAgent.onError(this);
-        UmengUpdateAgent.update(this);
+        initUmeng();
         // 得到界面宽高
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -74,6 +73,13 @@ public class MainActivity extends SlidingFragmentActivity {
         // 启用home
         bar = getSupportActionBar();
         bar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void initUmeng() {
+        MobclickAgent.setDebugMode(BuildConfig.DEBUG);
+        MobclickAgent.setAutoLocation(false);
+        MobclickAgent.onError(this);
+        UmengUpdateAgent.update(this);
     }
 
     private void initNav() {
@@ -128,7 +134,7 @@ public class MainActivity extends SlidingFragmentActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    
+    @Deprecated
     public void switchContent(Fragment fragment, int navId) {
         if(mContent != fragment) {
             mContent = fragment;
@@ -232,4 +238,12 @@ public class MainActivity extends SlidingFragmentActivity {
             super.onBackPressed();
     }
     
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
 }

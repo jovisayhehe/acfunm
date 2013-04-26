@@ -3,8 +3,8 @@ package tv.avfun;
 import java.util.ArrayList;
 
 import tv.avfun.db.DBService;
+import tv.avfun.entity.Contents;
 import tv.avfun.entity.History;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,9 +35,7 @@ public class History_Activity extends SherlockActivity implements OnItemClickLis
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.list_layout);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		
-			getSupportActionBar().setTitle("播放历史");
-		
+		getSupportActionBar().setTitle("播放历史");
 		progressBar = (ProgressBar)findViewById(R.id.time_progress);
 		list = (ListView)findViewById(android.R.id.list);
 		list.setVisibility(View.INVISIBLE);
@@ -104,10 +102,10 @@ public class History_Activity extends SherlockActivity implements OnItemClickLis
 		
 		if(data.get(position).getTpye()==0){
 			Intent intent = new Intent(History_Activity.this, Detail_Activity.class);
-			intent.putExtra("aid", data.get(position).getAid());
-			intent.putExtra("title", data.get(position).getTitle());
-			intent.putExtra("channelId", data.get(position).getChannelid());
-			intent.putExtra("from", 1);
+			Contents c = new Contents();
+			c.setAid(data.get(position).getAid());
+			c.setTitle(data.get(position).getTitle());
+			c.setChannelId(Integer.parseInt(data.get(position).getChannelid()));
 			startActivity(intent);
 			
 		}else{

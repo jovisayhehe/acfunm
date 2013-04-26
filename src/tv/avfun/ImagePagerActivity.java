@@ -34,6 +34,7 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.umeng.analytics.MobclickAgent;
 
 public class ImagePagerActivity extends SherlockActivity{
 	private String channelid;
@@ -272,4 +273,12 @@ public class ImagePagerActivity extends SherlockActivity{
 		public void startUpdate(View container) {
 		}
 	}
+	public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
 }

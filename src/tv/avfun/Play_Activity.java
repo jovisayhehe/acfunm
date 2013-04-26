@@ -9,6 +9,8 @@ import io.vov.vitamio.widget.VideoView;
 
 import java.util.ArrayList;
 
+import com.umeng.analytics.MobclickAgent;
+
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -87,4 +89,12 @@ public class Play_Activity extends Activity{
 			mVideoView.setVideoLayout(VideoView.VIDEO_LAYOUT_SCALE, 0);
 		super.onConfigurationChanged(newConfig);
 	}
+	public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
 }
