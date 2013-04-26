@@ -3,6 +3,7 @@ package tv.avfun;
 import java.util.HashMap;
 import java.util.Map;
 
+import tv.avfun.app.AcApp;
 import tv.avfun.fragment.HomeChannelListFragment;
 import tv.avfun.fragment.PlayTime;
 import tv.avfun.fragment.UserHomeFragment;
@@ -17,7 +18,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
@@ -46,6 +52,7 @@ public class MainActivity extends SlidingFragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
         initUmeng();
         // 得到界面宽高
         DisplayMetrics dm = new DisplayMetrics();
@@ -69,12 +76,53 @@ public class MainActivity extends SlidingFragmentActivity {
         
         // above view
         setContentView(R.layout.content_frame);
+        
         mFragmentMan.beginTransaction().replace(R.id.content_frame, mContent).commit();
         // 启用home
         bar = getSupportActionBar();
         bar.setDisplayHomeAsUpEnabled(true);
+        
+       
     }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        boolean isFirstRun = AcApp.getConfig().getBoolean("first_run", true);
+        if(isFirstRun){
+            showOverlays();
+        }
+    }
+    private void showOverlays() {
+        overlays = LayoutInflater.from(this).inflate(R.layout.overlays, null);
+        overlays.findViewById(R.id.ok).setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                
+                hideOverlays();
+                AcApp.putBoolean("first_run", false);
+            }
 
+            
+        });
+        ((FrameLayout)findViewById(R.id.content_frame)).addView(overlays);
+        overlays.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in));
+    }
+    private void hideOverlays() {
+        Animation anim = AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_out);
+        anim.setAnimationListener(new AnimationListener() {
+            
+            @Override
+            public void onAnimationStart(Animation animation) {}
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                overlays.setVisibility(View.GONE);
+            }
+        });
+        overlays.startAnimation(anim);
+    }
     private void initUmeng() {
         MobclickAgent.setDebugMode(BuildConfig.DEBUG);
         MobclickAgent.setAutoLocation(false);
@@ -178,6 +226,7 @@ public class MainActivity extends SlidingFragmentActivity {
      */
     private int[] navIds = {R.id.slide_nav_home,R.id.slide_nav_bangumi};
     private SparseArray<SlideNavItemView> mNavItems;
+    private View overlays;
     private void initNavItems(){
         
         mNavItems = new SparseArray<SlideNavItemView>();
