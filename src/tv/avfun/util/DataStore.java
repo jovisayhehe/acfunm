@@ -130,10 +130,12 @@ public class DataStore {
     // 首页频道列表
     // =======================================================
     /**
+     * <b>废弃</b>。调用者应由{@link #getChannelListLastUpdateTime()}来判断是否有缓存
      * @return 没有缓存文件，或缓存时间超过 {@link #CHANNEL_LIST_EXPIRED}<br>
      *         或者主页显示模式被更改了
      *         则返回false
      */
+    @Deprecated
     public boolean isChannelListCached() {
         synchronized (this.channelList) {
             if (this.channelList.channels == null) {
@@ -145,7 +147,6 @@ public class DataStore {
             return this.channelList.cacheTime + CHANNEL_LIST_EXPIRED >= System.currentTimeMillis();
         }
     }
-
     /** 加载频道列表缓存 */
     public Channel[] loadChannelList() {
         synchronized (this.channelList) {

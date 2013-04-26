@@ -88,7 +88,10 @@ public class ApiParser {
                     c.contents  = getChannelHotList(c.getChannelId(), count);
                 else
                     c.contents  = getChannelDefault(c.getChannelId(), count);
+                if(c.contents == null) return null; // 有一个获取失败直接返回null
             }
+            
+            
             return channels;
         } catch (Exception e) {
             if (BuildConfig.DEBUG) {

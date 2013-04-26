@@ -1,5 +1,6 @@
 package tv.avfun.fragment;
 
+import java.security.acl.LastOwnerException;
 import java.text.DateFormat;
 
 import tv.avfun.BuildConfig;
@@ -167,12 +168,15 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
                 channels = cs;
                 handler.sendEmptyMessage(REFRESH);
                 updateList();
+                updateInfo.setText(getString(R.string.update_success));
                 return DataStore.getInstance().saveChannelList(channels);
             } else
                 return false;
         }
         @Override
         protected void onPostExecute(Boolean result) {
+            if(result) setLastUpdatedLabel(0);
+            else updateInfo.setText(getString(R.string.update_fail));
             showUpdateInfo();
             mPtr.onRefreshComplete();
         }
@@ -181,63 +185,46 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
     private void loadData() {
         new LoadData().execute();
     }
-    
+    /**
+     * 加载缓存。刷新数据的操作交由 {@link RefreshData}来做
+     */
     private class LoadData extends AsyncTask<Void,Long,Boolean>{
         boolean isCached;
         @Override
         protected void onPreExecute() {
-            
-            if(!(isCached = dataStore.isChannelListCached())){
-                if(BuildConfig.DEBUG) Log.i(TAG, "loading new data");
-                showLoadingView();
-            }
+            long cachedTime = dataStore.getChannelListLastUpdateTime(); 
+            isCached = cachedTime == -1? false: true;
+            setLastUpdatedLabel(cachedTime);
         }
         @Override
         protected void onPostExecute(Boolean result) {
             showUpdateInfo();
-            hideLoadingView();
-            if(!result) showTimeOutView();
-            else setLastUpdatedLabel(0);
+            if (System.currentTimeMillis() - updatedTime > LOCK_TIME) {
+                if(BuildConfig.DEBUG) Log.i(TAG, "going to refresh data");
+                new RefreshData().execute();
+            }
         }
         @Override
         protected Boolean doInBackground(Void... params) {
-            if(isCached){
-                if(BuildConfig.DEBUG) Log.i(TAG, "read channel list cache");
+            
+            if (BuildConfig.DEBUG)
+                Log.i(TAG, "try to read channel list cache ");
+            if (readCache()) {
                 updateInfo.setText(getString(R.string.read_cache));
-                if(!readCache()) return false;
-            }else{
-                Channel[] recommendChannels = ApiParser.getRecommendChannels(3, mode);
-                if(recommendChannels == null){
-                    updateInfo.setText(getString(R.string.update_fail));
-                    // 获取不到在线数据，尝试读缓存
-                    if(!readCache()) {
-                        updateInfo.setText(R.string.update_error);
-                        return false;
-                    }
-                }else{
-                    updateInfo.setText(getString(R.string.update_success));
-                    channels = recommendChannels;
-                    dataStore.saveChannelList(channels);
-                    publishProgress(System.currentTimeMillis());
-                }
-            }
-            updateList();
-            return true;
-        }
-        @Override
-        protected void onProgressUpdate(Long... values) {
-            setLastUpdatedLabel(values[0]);
-        }
-        boolean readCache(){
-            Channel[] cachedList = dataStore.loadChannelList();
-            if(cachedList != null){
-                
-                channels = cachedList;
-                publishProgress(dataStore.getChannelListLastUpdateTime());
+                updateList();
                 return true;
             }
-            else 
-                return false;
+            return false;
+        }
+        boolean readCache(){
+            if(isCached){
+                Channel[] cachedList = dataStore.loadChannelList();
+                if(cachedList != null){
+                    channels = cachedList;
+                    return true;
+                }
+            }
+            return false;
         }
     }
     public View findViewById(int id) {
@@ -347,10 +334,13 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
             msg.sendToTarget();
         }
     }
-
+    private boolean isInfoShow;
     private void showUpdateInfo() {
-        updateInfo.setVisibility(View.VISIBLE);
-        updateInfo.startAnimation(fadeIn);
+        if(!isInfoShow){
+            isInfoShow = true;
+            updateInfo.setVisibility(View.VISIBLE);
+            updateInfo.startAnimation(fadeIn);
+        }
     }
 
     private void hideUpdateInfo() {
