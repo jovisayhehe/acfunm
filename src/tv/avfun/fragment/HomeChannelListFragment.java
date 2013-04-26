@@ -1,6 +1,5 @@
 package tv.avfun.fragment;
 
-import java.security.acl.LastOwnerException;
 import java.text.DateFormat;
 
 import tv.avfun.BuildConfig;
@@ -130,6 +129,7 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                if(isInfoShow) isInfoShow = false;
                 handler.sendMessageDelayed(Message.obtain(handler, HIDE_INFO), showDuration);
             }
         });
@@ -344,6 +344,7 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
     }
 
     private void hideUpdateInfo() {
+        
         updateInfo.startAnimation(fadeOut);
     }
 
