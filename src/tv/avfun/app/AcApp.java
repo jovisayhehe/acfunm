@@ -77,11 +77,11 @@ public class AcApp extends Application {
         sp.edit().putFloat(key, value).commit();
     }
     /**
-     * 获得视频文件下载路径，默认为/sdcard/Download/AcFun/videos/{aid}
+     * 获得视频文件下载路径，默认为/sdcard/Download/AcFun/videos/{aid}/{vid}
      * @return
      */
-    public static File getDownloadPath(String aid){
-        File path = new File(sp.getString("download_path", getSDcardDir()+"/Download/AcFun"+VIDEO+"/ac"+aid));
+    public static File getDownloadPath(String aid, String vid){
+        File path = new File(sp.getString("download_path", getSDcardDir()+"/Download/AcFun"+VIDEO+"/"+aid+"/"+vid));
         path.mkdirs();
         return path;
     }

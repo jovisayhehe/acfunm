@@ -16,6 +16,7 @@ import tv.avfun.util.DataStore;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -91,7 +92,7 @@ public class ChannelFragment extends BaseListFragment implements OnClickListener
 		    channelid = Integer.valueOf(url.substring(43, url.length()-13));
 		    channel = ChannelApi.channels.get(channelid);
 		}
-		channel.contents = this.data;
+		
 		this.activity = getActivity();
 		 progressBar = (ProgressBar) this.main_v.findViewById(R.id.time_progress);
 		 time_outtext = (TextView) this.main_v.findViewById(R.id.time_out_text);
@@ -119,7 +120,18 @@ public class ChannelFragment extends BaseListFragment implements OnClickListener
 		getdatas(1, false);
 		
 	}
-	
+	private Handler handler = new Handler(){
+	    public void handleMessage(android.os.Message msg) {
+	        switch (msg.what) {
+            case 1:
+                
+                break;
+
+            default:
+                break;
+            }
+	    }
+	};
 	public void getdatas(final int page, final boolean isadd) {
 		if(!isadd){
 			time_outtext.setVisibility(View.GONE);
@@ -133,11 +145,11 @@ public class ChannelFragment extends BaseListFragment implements OnClickListener
 				    if(DataStore.isChannelCached(channelid)){
     				    if(c!= null){
     				        data = c.contents;
-    				        return;
+    				        //TODO 显示缓存
     				    }
 				    }
 				    final List<Contents> templist = ApiParser.getChannelContents(url+page);
-					if (!isadd) {
+				    if (!isadd) {
 					    data = ApiParser.getChannelHotList(channelid, 10);
 					    data.addAll(templist);
 					} 
@@ -270,13 +282,16 @@ public class ChannelFragment extends BaseListFragment implements OnClickListener
         //TODO 刷新列表
         Toast.makeText(activity, "洗刷刷", 0).show();
         Log.i(TAG, "list== getListView?"+(list == getListView()));
+        getdatas(1, false);
         onRefreshCompleted();
     }
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onDestroyView() {
+        super.onDestroyView();
+        channel.contents = this.data;
         if(channel.contents != null && !channel.contents.isEmpty()){
             DataStore.saveChannel(channel);
         }
     }
+
 }

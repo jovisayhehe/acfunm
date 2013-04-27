@@ -1,5 +1,6 @@
 package tv.avfun;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,8 +9,10 @@ import java.util.List;
 
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.net.UserAgent;
+import tv.avfun.app.Downloader;
 import tv.avfun.db.DBService;
 import tv.avfun.entity.Contents;
+import tv.avfun.entity.VideoInfo;
 import tv.avfun.util.DensityUtil;
 import tv.avfun.util.FileUtil;
 import tv.avfun.util.lzlist.ImageLoader;
@@ -316,18 +319,23 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 						itemlayout.setTag(map);
 						itemlayout.setOnClickListener(new PrtckListener());
 						layout.addView(itemlayout);
-						View btnDown = itemlayout.findViewById(R.id.detail_btn_downlaod);
-						if(Build.VERSION.SDK_INT>=9){
-						    btnDown.setVisibility(View.VISIBLE);
-						    btnDown.setOnClickListener(new OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    v.setEnabled(false);
-                                    startDownload(map.get("vtype").toString(), map.get("vid").toString());
-                                }
-                            });
+						ImageView btnDown = (ImageView) itemlayout.findViewById(R.id.detail_btn_downlaod);
+						if(Downloader.hasDownload(aid,map.get("vid").toString())){
+						    btnDown.setVisibility(View.GONE);
+						    itemlayout.findViewById(R.id.detail_downloaded).setVisibility(View.VISIBLE);
 						}
-						
+						else{
+    						if(Build.VERSION.SDK_INT>=9){
+    						    btnDown.setVisibility(View.VISIBLE);
+    						    btnDown.setOnClickListener(new OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        v.setVisibility(View.GONE);
+                                        startDownload(map.get("vtype").toString(), map.get("vid").toString(),map.get("title").toString());
+                                    }
+                                });
+    						}
+						}
 						//添加分割线
 						if(i!=data.size()-1){
 							View lineView = new View(DetailActivity.this);
@@ -373,14 +381,20 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 		
 	}
 	// TODO 下载
-	private void startDownload(final String type, final String vid) {
+	private void startDownload(final String type, final String vid, final String title) {
 	    new Thread(){
             public void run() {
-	            Environment.getExternalStoragePublicDirectory("AcFun/Download/"+aid).mkdirs();
+
 	            try {
 	                List<String> urls = ApiParser.ParserVideopath(type, vid);
-	                if(urls!=null)
-	                    handler.obtainMessage(1, urls).sendToTarget();
+	                if(urls!=null){
+	                    VideoInfo info = new VideoInfo();
+	                    info.vid = vid;
+	                    info.subtitle = title;
+	                    info.files = (ArrayList<String>) urls;
+	                    handler.obtainMessage(1, info).sendToTarget();
+	                }
+	                else handler.sendEmptyMessage(2);
 	            } catch (Exception e) {
 	                e.printStackTrace();
 	            }
@@ -391,9 +405,11 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 	    @TargetApi(9)
 	    public void handleMessage(Message msg) {
 	        if(msg.what == 1){
-	            Toast.makeText(getApplicationContext(), title+"已开始下载", 0).show();
+	            VideoInfo info = (VideoInfo) msg.obj;
+	            Toast.makeText(getApplicationContext(), info.subtitle+"已开始下载！", 0).show();
 	            // urls 不应为null
-	            List<String> urls = (List<String>)msg.obj;
+	            List<String> urls = info.files;
+	            
 	            for(int i = 0 ; i< urls.size(); i++){
                     String url = urls.get(i);
                     String filename = i+FileUtil.getUrlExt(url);
@@ -403,16 +419,17 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
                     .addRequestHeader("User-Agent", UserAgent.IPAD)
                     .setAllowedNetworkTypes(Request.NETWORK_WIFI)
                     .setAllowedOverRoaming(false)
-                    .setTitle(title+"_"+filename)
-                    .setDestinationInExternalPublicDir("AcFun/Download/"+aid, filename);
+                    .setDescription(title)
+                    .setTitle(info.subtitle+"_"+filename)
+                    .setDestinationInExternalPublicDir("Download/AcFun/Videos/"+aid+"/"+info.vid, filename);
                     // TODO 将id存起来监听下载进度
                     downloadMan.enqueue(request);
                 }
 	            //TODO 改变界面btn状态为 下载中
-	            
+	        }else if(msg.what == 2){
+	            Toast.makeText(getApplicationContext(), "可恶，解析视频地址失败！", 0).show();
 	        }
 	    }
-	    
 	};
 	private final class PrtckListener implements OnClickListener{
 
@@ -457,6 +474,7 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 		intent.putExtra("title", title);
 		intent.putExtra("vid", vid);
 		intent.putExtra("vtype", vtype);
+		intent.putExtra("aid", aid);
 		startActivity(intent);
 	}
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="40dip"
     android:orientation="horizontal"
     android:background="@drawable/selectable_background"
     >
@@ -38,5 +38,18 @@
     android:src="@drawable/av_download"
     android:background="@drawable/selectable_background"
     />
+    <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:id="@+id/detail_downloaded"
+        android:text="已下载"
+        android:layout_gravity="center_vertical"
+        android:padding="4dip"
+        android:textSize="10sp"
+        android:textColor="@color/white"
+        android:background="@drawable/corner_bg_pressed"
+        android:visibility="gone"
+        />
 
 </LinearLayout>
