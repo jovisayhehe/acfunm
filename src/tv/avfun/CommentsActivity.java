@@ -39,7 +39,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.umeng.analytics.MobclickAgent;
 
-public class Comments_Activity extends SherlockActivity  implements OnClickListener,OnScrollListener,OnItemClickListener{
+public class CommentsActivity extends SherlockActivity  implements OnClickListener,OnScrollListener,OnItemClickListener{
 	private ListView list;
 	private String aid;
 	private CommentsAdaper adaper;
@@ -109,7 +109,7 @@ public class Comments_Activity extends SherlockActivity  implements OnClickListe
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
     	
-        menu.add(1, Comments_Activity.COMMENTID, 1,"评论")
+        menu.add(1, CommentsActivity.COMMENTID, 1,"评论")
         .setIcon(R.drawable.social_chat)
         .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         
@@ -197,7 +197,7 @@ public class Comments_Activity extends SherlockActivity  implements OnClickListe
 		case android.R.id.home:
 			this.finish();
 			break;
-		case Comments_Activity.COMMENTID:
+		case CommentsActivity.COMMENTID:
 			bottomlinevisible();
 			break;
 		default:
@@ -290,7 +290,7 @@ public class Comments_Activity extends SherlockActivity  implements OnClickListe
 			return;
 		}
 		send_btn.setEnabled(false);
-		Toast.makeText(Comments_Activity.this, "发送中...", Toast.LENGTH_SHORT).show();
+		Toast.makeText(CommentsActivity.this, "发送中...", Toast.LENGTH_SHORT).show();
 		new Thread(){
 			public void run(){
 				try {
@@ -298,7 +298,7 @@ public class Comments_Activity extends SherlockActivity  implements OnClickListe
 					runOnUiThread(new Runnable() {
 						public void run() {
 							if(suss){
-								Toast.makeText(Comments_Activity.this, "评论成功", Toast.LENGTH_SHORT).show();
+								Toast.makeText(CommentsActivity.this, "评论成功", Toast.LENGTH_SHORT).show();
 								send_btn.setEnabled(true);
 								bottomlinevisible();
 								Map<String, Object> cmap = new HashMap<String, Object>();
@@ -325,7 +325,7 @@ public class Comments_Activity extends SherlockActivity  implements OnClickListe
 						public void run() {
 							
 							send_btn.setEnabled(true);
-							Toast.makeText(Comments_Activity.this, "(=ﾟωﾟ)= 服务器想应异常...", Toast.LENGTH_SHORT).show();
+							Toast.makeText(CommentsActivity.this, "(=ﾟωﾟ)= 服务器想应异常...", Toast.LENGTH_SHORT).show();
 						}
 					});
 					e.printStackTrace();
@@ -336,7 +336,7 @@ public class Comments_Activity extends SherlockActivity  implements OnClickListe
 						public void run() {
 							
 							send_btn.setEnabled(true);
-							Toast.makeText(Comments_Activity.this, "(=ﾟωﾟ)= 网络异常,请检查网络...", Toast.LENGTH_SHORT).show();
+							Toast.makeText(CommentsActivity.this, "(=ﾟωﾟ)= 网络异常,请检查网络...", Toast.LENGTH_SHORT).show();
 						}
 					});
 					e.printStackTrace();

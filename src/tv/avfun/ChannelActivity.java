@@ -8,7 +8,7 @@ import java.util.List;
 import tv.avfun.api.Channel;
 import tv.avfun.api.ChannelApi;
 import tv.avfun.app.AcApp;
-import tv.avfun.fragment.Channel_Fragment;
+import tv.avfun.fragment.ChannelFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -28,7 +28,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 import com.umeng.analytics.MobclickAgent;
 
-public class Channel_Activity extends SherlockFragmentActivity implements OnPageChangeListener, TabListener {
+public class ChannelActivity extends SherlockFragmentActivity implements OnPageChangeListener, TabListener {
 
     private int               gdposition;
     private ActionBar         ab;
@@ -98,9 +98,9 @@ public class Channel_Activity extends SherlockFragmentActivity implements OnPage
 
         if (isarticle) {
             subMenu1 = menu.addSubMenu("阅读模式");
-            subMenu1.add(1, Channel_Activity.MIX, 1, "图文").setIcon(R.drawable.mode_mix);
-            subMenu1.add(1, Channel_Activity.NOPIC, 1, "文本").setIcon(R.drawable.mode_article);
-            subMenu1.add(1, Channel_Activity.PIC, 1, "漫画").setIcon(R.drawable.mode_picture);
+            subMenu1.add(1, ChannelActivity.MIX, 1, "图文").setIcon(R.drawable.mode_mix);
+            subMenu1.add(1, ChannelActivity.NOPIC, 1, "文本").setIcon(R.drawable.mode_article);
+            subMenu1.add(1, ChannelActivity.PIC, 1, "漫画").setIcon(R.drawable.mode_picture);
             MenuItem subMenu1Item = subMenu1.getItem();
             switch (modecode) {
             case 0:
@@ -140,19 +140,19 @@ public class Channel_Activity extends SherlockFragmentActivity implements OnPage
         case android.R.id.home:
             this.finish();
             break;
-        case Channel_Activity.MIX:
+        case ChannelActivity.MIX:
             modecode = 0;
             subMenu1.setIcon(R.drawable.mode_mix);
             Toast.makeText(this, "图文模式", Toast.LENGTH_SHORT).show();
             acApp.putInt("view_mode", 0);
             break;
-        case Channel_Activity.NOPIC:
+        case ChannelActivity.NOPIC:
             modecode = 1;
             subMenu1.setIcon(R.drawable.mode_article);
             Toast.makeText(this, "文本模式", Toast.LENGTH_SHORT).show();
             acApp.putInt("view_mode", 1);
             break;
-        case Channel_Activity.PIC:
+        case ChannelActivity.PIC:
             modecode = 2;
             subMenu1.setIcon(R.drawable.mode_picture);
             Toast.makeText(this, "漫画模式", Toast.LENGTH_SHORT).show();
@@ -209,7 +209,7 @@ public class Channel_Activity extends SherlockFragmentActivity implements OnPage
 
         @Override
         public Fragment getItem(int position) {
-            return Channel_Fragment.newInstance(apis.get(position));
+            return ChannelFragment.newInstance(apis.get(position));
 
         }
     }

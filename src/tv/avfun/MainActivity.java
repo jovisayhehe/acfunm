@@ -276,7 +276,7 @@ public class MainActivity extends SlidingFragmentActivity {
                 nextContent = PlayTime.newInstance();
                 instances.put("play_time",nextContent);
             }*/
-            Intent intent = new Intent(getApplicationContext(), Channel_Activity.class);
+            Intent intent = new Intent(getApplicationContext(), ChannelActivity.class);
             intent.putExtra("position", 6);
             intent.putExtra("isarticle", true);
             startActivity(intent);

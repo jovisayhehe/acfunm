@@ -23,7 +23,7 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-public class History_Activity extends SherlockActivity implements OnItemClickListener{
+public class HistoryActivity extends SherlockActivity implements OnItemClickListener{
 	private ArrayList<History> data = new ArrayList<History>();
 	private ListView list;
 	private ProgressBar progressBar;
@@ -49,7 +49,7 @@ public class History_Activity extends SherlockActivity implements OnItemClickLis
 		new Thread() {
 			public void run() {
 					
-				data = new DBService(History_Activity.this).getHiss();
+				data = new DBService(HistoryActivity.this).getHiss();
 				
 					runOnUiThread(new Runnable() {
 						public void run() {
@@ -67,7 +67,7 @@ public class History_Activity extends SherlockActivity implements OnItemClickLis
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
     	
-    	 menu.add(1, History_Activity.HISTORYID, 1,"清除历史")
+    	 menu.add(1, HistoryActivity.HISTORYID, 1,"清除历史")
 	      .setIcon(R.drawable.history_clear)
 	      .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         return super.onCreateOptionsMenu(menu);
@@ -81,7 +81,7 @@ public class History_Activity extends SherlockActivity implements OnItemClickLis
 		case android.R.id.home:
 			this.finish();
 			break;
-		case History_Activity.HISTORYID:
+		case HistoryActivity.HISTORYID:
 			new DBService(this).cleanHis();
 			data.clear();
 			adaper.setData(data);
@@ -101,7 +101,7 @@ public class History_Activity extends SherlockActivity implements OnItemClickLis
 		
 		
 		if(data.get(position).getTpye()==0){
-			Intent intent = new Intent(History_Activity.this, Detail_Activity.class);
+			Intent intent = new Intent(HistoryActivity.this, DetailActivity.class);
 			Contents c = new Contents();
 			c.setAid(data.get(position).getAid());
 			c.setTitle(data.get(position).getTitle());
@@ -109,8 +109,8 @@ public class History_Activity extends SherlockActivity implements OnItemClickLis
 			startActivity(intent);
 			
 		}else{
-			Intent intent = new Intent(History_Activity.this, WebView_Activity.class);
-			intent.putExtra("modecode", Channel_Activity.modecode);
+			Intent intent = new Intent(HistoryActivity.this, WebViewActivity.class);
+			intent.putExtra("modecode", ChannelActivity.modecode);
 			intent.putExtra("aid", data.get(position).getAid());
 			intent.putExtra("title", data.get(position).getTitle());
 			intent.putExtra("channelId", data.get(position).getChannelid());

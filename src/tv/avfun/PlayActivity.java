@@ -19,7 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class Play_Activity extends Activity{
+public class PlayActivity extends Activity{
 	private VideoView mVideoView;
 	private TextView textView;
 	private ProgressBar progress;
@@ -65,13 +65,13 @@ public class Play_Activity extends Activity{
 	            finish();
 	            return;
 	        }
-			Toast.makeText(Play_Activity.this, "开始缓冲下一段...稍后", 1).show();
+			Toast.makeText(PlayActivity.this, "开始缓冲下一段...稍后", 1).show();
 			mPlayer.getDuration();
 
 			mVideoView.setVideoPath(paths.get(index));
 			mVideoView.setOnCompletionListener(new MOnCompletionListener());
 			mVideoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_MEDIUM);
-			mVideoView.setMediaController(new MediaController(Play_Activity.this));
+			mVideoView.setMediaController(new MediaController(PlayActivity.this));
 			mVideoView.setOnPreparedListener(new OnPreparedListener() {
 				
 				@Override

@@ -39,7 +39,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class WebView_Activity extends SherlockActivity implements OnClickListener{
+public class WebViewActivity extends SherlockActivity implements OnClickListener{
 	private SWebView mWebView;
 	private TextView btn;
 	private Document doc;
@@ -255,7 +255,7 @@ public class WebView_Activity extends SherlockActivity implements OnClickListene
 		
 		switch (v.getId()) {
 		case R.id.web_comment_btn:
-			Intent intent = new Intent(WebView_Activity.this, Comments_Activity.class);
+			Intent intent = new Intent(WebViewActivity.this, CommentsActivity.class);
 			intent.putExtra("aid", aid);
 			startActivity(intent);
 			break;
@@ -290,13 +290,13 @@ public class WebView_Activity extends SherlockActivity implements OnClickListene
         				SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 hh:mm");
         				idiv.append("<p align=\"center\">"+sdf.format(date)+"</p>");
         				if(modecode == 2){
-                            Intent intent = new Intent(WebView_Activity.this, ImagePagerActivity.class);
+                            Intent intent = new Intent(WebViewActivity.this, ImagePagerActivity.class);
                             intent.putStringArrayListExtra("imgs", article.getImgUrls());
                             intent.putExtra("title", article.getTitle());
                             intent.putExtra("aid", article.getId());
                             intent.putExtra("channelId", channelid);
                             startActivity(intent);
-                            WebView_Activity.this.finish();
+                            WebViewActivity.this.finish();
                             return;
                         }
         				

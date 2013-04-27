@@ -3,8 +3,8 @@ package tv.avfun.fragment;
 import java.text.DateFormat;
 
 import tv.avfun.BuildConfig;
-import tv.avfun.Channel_Activity;
-import tv.avfun.Detail_Activity;
+import tv.avfun.ChannelActivity;
+import tv.avfun.DetailActivity;
 import tv.avfun.R;
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.Banner;
@@ -299,7 +299,7 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
             @Override
             public void onClick(View v) {
                 int position = (Integer) v.getTag();
-                Intent intent = new Intent(getActivity(), Channel_Activity.class);
+                Intent intent = new Intent(getActivity(), ChannelActivity.class);
                 intent.putExtra("position", position);
                 startActivity(intent);
             }
@@ -323,7 +323,7 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
     @Override
     public void onClick(View view, Contents c) {
 
-        Intent intent = new Intent(getActivity(), Detail_Activity.class);
+        Intent intent = new Intent(getActivity(), DetailActivity.class);
         intent.putExtra("contents", c);
         startActivity(intent);
     }

@@ -24,7 +24,7 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.umeng.analytics.MobclickAgent;
 
-public class Section_Activity extends SherlockActivity implements OnClickListener{
+public class SectionActivity extends SherlockActivity implements OnClickListener{
 	private String aid;
 	private String vtype;
 	private ProgressBar progressBar;
@@ -91,24 +91,24 @@ public class Section_Activity extends SherlockActivity implements OnClickListene
 //									adapter.setData(data);
 //									adapter.notifyDataSetChanged();
 									
-									Intent intent = new Intent(Section_Activity.this, Play_Activity.class);
+									Intent intent = new Intent(SectionActivity.this, PlayActivity.class);
 //									intent.putExtra("path", data.get(0));
 									intent.putStringArrayListExtra("paths", data);
 							        startActivity(intent);
-							        Section_Activity.this.finish();
+							        SectionActivity.this.finish();
 								}else{
 
 									if(playmode==0){
-										Intent intent = new Intent(Section_Activity.this, Play_Activity.class);
+										Intent intent = new Intent(SectionActivity.this, PlayActivity.class);
 										intent.putExtra("paths", data);
 								        startActivity(intent);
-								        Section_Activity.this.finish();
+								        SectionActivity.this.finish();
 									}else{
 										Intent it = new Intent(Intent.ACTION_VIEW);  
 								        Uri uri = Uri.parse(data.get(0));  
 								        it.setDataAndType(uri , "video/flv");
 								        startActivity(it);
-								        Section_Activity.this.finish();
+								        SectionActivity.this.finish();
 									}
 
 								}
@@ -186,7 +186,7 @@ public class Section_Activity extends SherlockActivity implements OnClickListene
 		public View getView(int position, View convertView, ViewGroup parent) {
 			
 			
-			TextView textView = new TextView(Section_Activity.this);
+			TextView textView = new TextView(SectionActivity.this);
 			
 			textView.setText(String.valueOf(position+1));
 			textView.setTextSize(24);
@@ -194,7 +194,7 @@ public class Section_Activity extends SherlockActivity implements OnClickListene
 			textView.setPadding(12, 12, 12, 12);
 			textView.setTextColor(Color.BLACK);
 			textView.setTag(data.get(position));
-			textView.setOnClickListener(Section_Activity.this);
+			textView.setOnClickListener(SectionActivity.this);
 			textView.setBackgroundResource(R.drawable.selectable_background);
 			convertView = textView;
 			return convertView;
@@ -218,7 +218,7 @@ public class Section_Activity extends SherlockActivity implements OnClickListene
                 Toast.makeText(getApplicationContext(), "没有可用的外部播放器！", 0).show();
             }
         }
-        Intent intent = new Intent(Section_Activity.this, Play_Activity.class);
+        Intent intent = new Intent(SectionActivity.this, PlayActivity.class);
         intent.putExtra("path", flvpath);
         startActivity(intent);
 	}

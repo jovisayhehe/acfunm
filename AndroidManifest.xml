@@ -56,28 +56,28 @@
         </activity>
         
         <activity 
-        android:name=".Channel_Activity"
+        android:name=".ChannelActivity"
         />
         <activity 
-        android:name=".Detail_Activity"
+        android:name=".DetailActivity"
         />
         <activity 
-        android:name=".Comments_Activity"
+        android:name=".CommentsActivity"
         />
         <activity 
-        android:name=".Settings_Activity"
+        android:name=".SettingsActivity"
         />
         <activity 
-        android:name=".WebView_Activity"
+        android:name=".WebViewActivity"
         />
         <activity 
-        android:name=".History_Activity"
+        android:name=".HistoryActivity"
         />
         <activity 
         android:name=".ImagePagerActivity"
         />
         <activity 
-        android:name=".Play_Activity"
+        android:name=".PlayActivity"
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
         android:configChanges="orientation|screenSize|screenLayout"
 		android:screenOrientation="landscape" 
@@ -90,10 +90,10 @@
         android:theme="@android:style/Theme.NoTitleBar"
         android:windowSoftInputMode="stateAlwaysHidden" />
         <activity 
-        android:name="tv.avfun.Favorite_Activity"
+        android:name="tv.avfun.FavoriteActivity"
         />
         <activity 
-        android:name="tv.avfun.Section_Activity"
+        android:name="tv.avfun.SectionActivity"
         />
         <service
             android:name="com.umeng.common.net.DownloadingService"

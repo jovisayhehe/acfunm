@@ -219,7 +219,7 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 			if(channelId!= ChannelApi.id.ARTICLE.AN_CULTURE && channelId!=ChannelApi.id.ARTICLE.COLLECTION 
 			        &&channelId!=ChannelApi.id.ARTICLE.COMIC_LIGHT_NOVEL &&channelId!=ChannelApi.id.ARTICLE.WORK_EMOTION){
 				
-				Intent intent = new Intent(this, Detail_Activity.class);
+				Intent intent = new Intent(this, DetailActivity.class);
 				ImageView img = (ImageView) view.findViewById(R.id.channellist_item_img);
 				Drawable da = img.getDrawable();
 				BitmapDrawable bd = (BitmapDrawable) da;
@@ -237,8 +237,8 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 				startActivity(intent);
 			}else{
 				
-				Intent intent = new Intent(SearchResultActivity.this, WebView_Activity.class);
-				intent.putExtra("modecode", Channel_Activity.modecode);
+				Intent intent = new Intent(SearchResultActivity.this, WebViewActivity.class);
+				intent.putExtra("modecode", ChannelActivity.modecode);
 				intent.putExtra("aid", c.getAid());
 				intent.putExtra("title", c.getTitle());
 				intent.putExtra("channelId", String.valueOf(channelId));

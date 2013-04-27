@@ -41,7 +41,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.ShareActionProvider;
 import com.umeng.analytics.MobclickAgent;
 
-public class Detail_Activity extends SherlockActivity implements OnClickListener{
+public class DetailActivity extends SherlockActivity implements OnClickListener{
 	private ListView listview;
 	private String aid;
 	private String description;
@@ -210,7 +210,7 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 									 
 								}
 								paly_btn.setText("播放");
-								paly_btn.setOnClickListener(Detail_Activity.this);
+								paly_btn.setOnClickListener(DetailActivity.this);
 								adaper.setData(data);
 								adaper.notifyDataSetChanged();
 							}else{
@@ -274,23 +274,23 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			
-			LinearLayout layout = new LinearLayout(Detail_Activity.this);
+			LinearLayout layout = new LinearLayout(DetailActivity.this);
 			layout.setOrientation(LinearLayout.VERTICAL);
 			
 			switch (position) {
 			case 0:
-				TextView descriptiontext = new TextView(Detail_Activity.this);
+				TextView descriptiontext = new TextView(DetailActivity.this);
 				descriptiontext.setText(description);
-				int dpx = DensityUtil.dip2px(Detail_Activity.this, 8);
+				int dpx = DensityUtil.dip2px(DetailActivity.this, 8);
 				descriptiontext.setPadding(0, dpx, 0, dpx);
 				
-				TextView pttext = new TextView(Detail_Activity.this);
+				TextView pttext = new TextView(DetailActivity.this);
 				pttext.setText("视频段落");
 				pttext.setTextSize(15);
 				pttext.setTextColor(0xFFFF9A03);
 				pttext.setPadding(0, dpx, dpx, 3);
 				
-				View ylline = new View(Detail_Activity.this);
+				View ylline = new View(DetailActivity.this);
 				ylline.setLayoutParams(new LinearLayout.LayoutParams(-1, 2));
 				ylline.setBackgroundColor(0xFFFF9A03);
 				
@@ -304,7 +304,7 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 					for (int i = 0; i < data.size(); i++) {
 						final HashMap<String, Object> map = data.get(i);
 						
-						LinearLayout itemlayout = (LinearLayout) LayoutInflater.from(Detail_Activity.this).inflate(R.layout.detail_video_list_item, null);
+						LinearLayout itemlayout = (LinearLayout) LayoutInflater.from(DetailActivity.this).inflate(R.layout.detail_video_list_item, null);
 						
 						TextView title = (TextView) itemlayout.findViewById(R.id.detail_video_list_item_title);
 						title.setLines(1);
@@ -330,26 +330,26 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 						
 						//添加分割线
 						if(i!=data.size()-1){
-							View lineView = new View(Detail_Activity.this);
+							View lineView = new View(DetailActivity.this);
 							lineView.setBackgroundResource(R.drawable.listview_divider);
-							lineView.setLayoutParams(new LinearLayout.LayoutParams(-1, DensityUtil.dip2px(Detail_Activity.this, 1)));
+							lineView.setLayoutParams(new LinearLayout.LayoutParams(-1, DensityUtil.dip2px(DetailActivity.this, 1)));
 							layout.addView(lineView);
 						}
 					}
 					convertView = layout;
 				}else{
 					if(iserror){
-						LayoutInflater mInflater = LayoutInflater.from(Detail_Activity.this);
+						LayoutInflater mInflater = LayoutInflater.from(DetailActivity.this);
 						convertView = mInflater.inflate(R.layout.list_footerview, null);
 						convertView.findViewById(R.id.list_footview_progress).setVisibility(View.GONE);
 						TextView textview = (TextView) convertView.findViewById(R.id.list_footview_text);
 						textview.setText(R.string.reloading);
 						convertView.setTag(100);
 						convertView.setEnabled(true);
-						convertView.setOnClickListener(Detail_Activity.this);
+						convertView.setOnClickListener(DetailActivity.this);
 						
 					}else{
-						LayoutInflater mInflater = LayoutInflater.from(Detail_Activity.this);
+						LayoutInflater mInflater = LayoutInflater.from(DetailActivity.this);
 						convertView = mInflater.inflate(R.layout.list_footerview, null);;
 						convertView.setEnabled(false);
 					}
@@ -357,12 +357,12 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 				}
 				break;
 			case 2:
-				View.inflate(Detail_Activity.this, R.layout.detail_comments_btn_layout, layout);
+				View.inflate(DetailActivity.this, R.layout.detail_comments_btn_layout, layout);
 				//layout.addView(comments);
 				layout.setBackgroundResource(R.drawable.selectable_background);
 				convertView = layout;
 				convertView.setTag(101);
-				convertView.setOnClickListener(Detail_Activity.this);
+				convertView.setOnClickListener(DetailActivity.this);
 				break;
 			default:
 				break;
@@ -436,7 +436,7 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 			getdatas(aid);
 			break;
 		case 101:
-			Intent intent = new Intent(Detail_Activity.this, Comments_Activity.class);
+			Intent intent = new Intent(DetailActivity.this, CommentsActivity.class);
 			intent.putExtra("aid", aid);
 			startActivity(intent);
 			break;
@@ -453,7 +453,7 @@ public class Detail_Activity extends SherlockActivity implements OnClickListener
 		String vtype = (String) map.get("vtype");
 		String vid = (String) map.get("vid");
 		String title = (String) map.get("title"); 
-		Intent intent = new Intent(Detail_Activity.this, Section_Activity.class);
+		Intent intent = new Intent(DetailActivity.this, SectionActivity.class);
 		intent.putExtra("title", title);
 		intent.putExtra("vid", vid);
 		intent.putExtra("vtype", vtype);

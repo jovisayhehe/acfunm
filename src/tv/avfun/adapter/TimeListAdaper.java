@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import tv.avfun.Detail_Activity;
+import tv.avfun.DetailActivity;
 import tv.avfun.R;
 import tv.avfun.animation.ExpandAnimation;
 import tv.avfun.animation.ExpandCollapseAnimation;
@@ -179,7 +179,7 @@ public class TimeListAdaper extends BaseAdapter{
 		@Override
 		public void onClick(View v) {
 			
-			Intent intent = new Intent(context, Detail_Activity.class);
+			Intent intent = new Intent(context, DetailActivity.class);
 			Contents c = new Contents();
 			c.setTitle(data.get(position)[i].title);
 			c.setAid(v.getTag().toString());

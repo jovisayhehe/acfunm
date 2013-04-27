@@ -3,10 +3,10 @@ package tv.avfun.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
-import tv.avfun.Channel_Activity;
-import tv.avfun.Detail_Activity;
+import tv.avfun.ChannelActivity;
+import tv.avfun.DetailActivity;
 import tv.avfun.R;
-import tv.avfun.WebView_Activity;
+import tv.avfun.WebViewActivity;
 import tv.avfun.adapter.ChannelContentListViewAdaper;
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.Channel;
@@ -33,7 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class Channel_Fragment extends BaseListFragment implements OnClickListener,OnItemClickListener,OnScrollListener{
+public class ChannelFragment extends BaseListFragment implements OnClickListener,OnItemClickListener,OnScrollListener{
 	private static final String TAG = "Channel_Fragment";
     private String url;
 	private ProgressBar progressBar;
@@ -50,8 +50,8 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 	private int channelid;
 	private View main_v;
     private Channel channel;
-	public static Channel_Fragment newInstance(String url) {
-		Channel_Fragment f = new Channel_Fragment();
+	public static ChannelFragment newInstance(String url) {
+		ChannelFragment f = new ChannelFragment();
 		Bundle args = new Bundle();
 		args.putString("url", url);
         f.setArguments(args);
@@ -221,17 +221,17 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 				}
 			}else{
 			    Contents c = data.get(position);
-				if(Channel_Activity.isarticle){
+				if(ChannelActivity.isarticle){
 					 
-					Intent intent = new Intent(activity, WebView_Activity.class);
-					intent.putExtra("modecode", Channel_Activity.modecode);
+					Intent intent = new Intent(activity, WebViewActivity.class);
+					intent.putExtra("modecode", ChannelActivity.modecode);
 					intent.putExtra("aid", c.getAid()); 
 					intent.putExtra("title", c.getTitle());
 					intent.putExtra("channelId", c.getChannelId()+""); // int?
 					startActivity(intent);
 					
 				}else{
-					Intent intent = new Intent(activity, Detail_Activity.class);
+					Intent intent = new Intent(activity, DetailActivity.class);
 					intent.putExtra("contents", c);
 					
 					startActivity(intent);
@@ -257,7 +257,7 @@ public class Channel_Fragment extends BaseListFragment implements OnClickListene
 
 
     public static Fragment newInstance(Channel channel) {
-        Channel_Fragment f = new Channel_Fragment();
+        ChannelFragment f = new ChannelFragment();
         Bundle args = new Bundle();
         args.putSerializable("channel", channel);
         f.setArguments(args);

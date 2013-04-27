@@ -16,7 +16,7 @@ import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.UMFeedbackService;
 
-public class Settings_Activity  extends SherlockPreferenceActivity{
+public class SettingsActivity  extends SherlockPreferenceActivity{
 	private CheckBoxPreference cbpf;
     private AcApp app;
 	@SuppressWarnings("deprecation")
@@ -155,7 +155,7 @@ public class Settings_Activity  extends SherlockPreferenceActivity{
 	}
 
     private void feedBack() {
-        UMFeedbackService.openUmengFeedbackSDK(Settings_Activity.this);
+        UMFeedbackService.openUmengFeedbackSDK(SettingsActivity.this);
         UMFeedbackService.setGoBackButtonVisible();
     }
 }

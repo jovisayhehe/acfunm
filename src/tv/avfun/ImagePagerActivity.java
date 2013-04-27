@@ -166,7 +166,7 @@ public class ImagePagerActivity extends SherlockActivity{
 			break;
 		case ImagePagerActivity.COMMID:
 			
-			Intent intent = new Intent(ImagePagerActivity.this, Comments_Activity.class);
+			Intent intent = new Intent(ImagePagerActivity.this, CommentsActivity.class);
 			intent.putExtra("aid", aid);
 			startActivity(intent);
 			

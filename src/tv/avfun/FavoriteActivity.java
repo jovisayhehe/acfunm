@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 
-public class Favorite_Activity extends SherlockActivity implements OnItemClickListener{
+public class FavoriteActivity extends SherlockActivity implements OnItemClickListener{
 	private ArrayList<Favorite> data = new ArrayList<Favorite>();
 	private ListView list;
 	private ProgressBar progressBar;
@@ -47,7 +47,7 @@ public class Favorite_Activity extends SherlockActivity implements OnItemClickLi
 		new Thread() {
 			public void run() {
 					
-				data = new DBService(Favorite_Activity.this).getFovs();
+				data = new DBService(FavoriteActivity.this).getFovs();
 				
 					runOnUiThread(new Runnable() {
 						public void run() {
@@ -83,7 +83,7 @@ public class Favorite_Activity extends SherlockActivity implements OnItemClickLi
 			long id) {
 		
 		if(data.get(position).getTpye()==0){
-			Intent intent = new Intent(Favorite_Activity.this, Detail_Activity.class);
+			Intent intent = new Intent(FavoriteActivity.this, DetailActivity.class);
 			intent.putExtra("aid", data.get(position).getAid());
 			intent.putExtra("title", data.get(position).getTitle());
 			intent.putExtra("channelId", data.get(position).getChannelid());
@@ -91,8 +91,8 @@ public class Favorite_Activity extends SherlockActivity implements OnItemClickLi
 			startActivity(intent);
 			
 		}else{
-			Intent intent = new Intent(Favorite_Activity.this, WebView_Activity.class);
-			intent.putExtra("modecode", Channel_Activity.modecode);
+			Intent intent = new Intent(FavoriteActivity.this, WebViewActivity.class);
+			intent.putExtra("modecode", ChannelActivity.modecode);
 			intent.putExtra("aid", data.get(position).getAid());
 			intent.putExtra("title", data.get(position).getTitle());
 			intent.putExtra("channelId", data.get(position).getChannelid());
