@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/overlays_arrow_topleft"
+        android:drawableLeft="@drawable/overlays_arrow_top_left"
         android:gravity="center"
         android:text="点击图标进入导航菜单"
         android:textColor="@color/white"
@@ -22,9 +22,11 @@
         android:gravity="center"
         android:text="左右滑动切换界面"
         android:textColor="@color/white"
+        android:visibility="gone"
         android:textSize="14sp" />
 
     <TextView
+        android:visibility="gone"
         android:layout_margin="10dip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -35,6 +37,9 @@
         android:textSize="14sp" />
 
     <TextView
+        android:focusable="true"
+        android:clickable="true"
+        android:visibility="gone"
         android:layout_margin="10dip"
         android:padding="10dip"
         android:id="@+id/ok"

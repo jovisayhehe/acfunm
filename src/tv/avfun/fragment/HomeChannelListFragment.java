@@ -129,7 +129,6 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                if(isInfoShow) isInfoShow = false;
                 handler.sendMessageDelayed(Message.obtain(handler, HIDE_INFO), showDuration);
             }
         });
@@ -143,6 +142,7 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                if(isInfoShow) isInfoShow = false;
                 updateInfo.setVisibility(View.GONE);
             }
         });
@@ -168,14 +168,16 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
                 channels = cs;
                 handler.sendEmptyMessage(REFRESH);
                 updateList();
-                updateInfo.setText(getString(R.string.update_success));
                 return DataStore.getInstance().saveChannelList(channels);
             } else
                 return false;
         }
         @Override
         protected void onPostExecute(Boolean result) {
-            if(result) setLastUpdatedLabel(0);
+            if(result) {
+                updateInfo.setText(getString(R.string.update_success));
+                setLastUpdatedLabel(0);
+            }
             else updateInfo.setText(getString(R.string.update_fail));
             showUpdateInfo();
             mPtr.onRefreshComplete();

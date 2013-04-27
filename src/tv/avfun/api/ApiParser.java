@@ -28,10 +28,7 @@ import tv.avfun.api.net.UserAgent;
 import tv.avfun.app.AcApp;
 import tv.avfun.entity.Article;
 import tv.avfun.entity.Contents;
-import tv.avfun.entity.VideoInfo;
 import tv.avfun.util.NetWorkUtil;
-import tv.avfun.util.StringUtil;
-import android.text.Html;
 import android.util.Log;
 
 public class ApiParser {

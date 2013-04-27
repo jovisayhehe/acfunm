@@ -24,6 +24,7 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
@@ -93,7 +94,16 @@ public class MainActivity extends SlidingFragmentActivity {
         }
     }
     private void showOverlays() {
-        overlays = LayoutInflater.from(this).inflate(R.layout.overlays, null);
+        overlays = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.overlays, null);
+        overlays.setOnClickListener(new View.OnClickListener() {
+            int count = overlays.getChildCount();
+            int i = 0;
+            @Override
+            public void onClick(View v) {
+                if(i<count)
+                    overlays.getChildAt(i++).setVisibility(View.VISIBLE);
+            }
+        });
         overlays.findViewById(R.id.ok).setOnClickListener(new View.OnClickListener() {
             
             @Override
@@ -102,8 +112,6 @@ public class MainActivity extends SlidingFragmentActivity {
                 hideOverlays();
                 AcApp.putBoolean("first_run", false);
             }
-
-            
         });
         ((FrameLayout)findViewById(R.id.content_frame)).addView(overlays);
         overlays.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in));
@@ -226,7 +234,7 @@ public class MainActivity extends SlidingFragmentActivity {
      */
     private int[] navIds = {R.id.slide_nav_home,R.id.slide_nav_bangumi};
     private SparseArray<SlideNavItemView> mNavItems;
-    private View overlays;
+    private LinearLayout overlays;
     private void initNavItems(){
         
         mNavItems = new SparseArray<SlideNavItemView>();
