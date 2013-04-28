@@ -106,6 +106,7 @@ public class HistoryActivity extends SherlockActivity implements OnItemClickList
 			c.setAid(data.get(position).getAid());
 			c.setTitle(data.get(position).getTitle());
 			c.setChannelId(Integer.parseInt(data.get(position).getChannelid()));
+			intent.putExtra("contents", c); // 居然忘了加=。=
 			startActivity(intent);
 			
 		}else{
