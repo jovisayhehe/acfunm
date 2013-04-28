@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="tv.avfun"
     
-    android:versionCode="73"
-    android:versionName="0.7.3" 
+    android:versionCode="74"
+    android:versionName="0.7.4" 
     >
     <uses-sdk
         android:minSdkVersion="8"
