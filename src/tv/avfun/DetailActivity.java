@@ -1,11 +1,12 @@
 package tv.avfun;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.net.UserAgent;
@@ -26,6 +27,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
+import android.text.util.Linkify;
+import android.text.util.Linkify.TransformFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +38,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,12 +71,20 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 	public static final int SHARE = 211;
     private static final String TAG = "Detail";
 	public ImageLoader imageLoader;
+	private Intent mIntent;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.detail_layout);
-		from = getIntent().getIntExtra("from", 0);
+		mIntent = getIntent();
+		if(Intent.ACTION_VIEW.equals(mIntent.getAction())){
+		    from = "av".equalsIgnoreCase(mIntent.getScheme())?2:0;
+		    if(BuildConfig.DEBUG)
+		    Log.i(TAG, "看av: "+mIntent.getDataString());
+		}else{
+    		from = mIntent.getIntExtra("from", 0);
+		}
 		imageLoader=ImageLoader.getInstance();
 		initview();
 	}
@@ -139,31 +152,34 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
         imageView = (ImageView) findViewById(R.id.detail_img);
         paly_btn = (TextView) findViewById(R.id.detail_play_btn);
         paly_btn.setTag(123);
-        Contents c = (Contents) getIntent().getExtras().get("contents");
-        if (c == null) {
-            throw new IllegalArgumentException("你从异次元来的吗？");
-        } else {
-            title = c.getTitle();
-            aid = c.getAid();
-            channelid = c.getChannelId() + "";
+        if(from == 2){
+            // av://ac000000
+            aid = mIntent.getDataString().substring(7);
         }
-        getSupportActionBar().setTitle("详情");
-        titleView.setText(title);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 hh:mm");
-        new DBService(this).addtoHis(aid, title, sdf.format(new Date()), 0, channelid);
-        isfavorite = new DBService(this).isFoved(aid);
-        if (from == 1) {
-            imageView.setBackgroundResource(R.drawable.face);
+        else{
+            Contents c = (Contents) getIntent().getExtras().get("contents");
+            if (c == null) {
+                throw new IllegalArgumentException("你从异次元来的吗？");
+            } else {
+                title = c.getTitle();
+                aid = c.getAid();
+                channelid = c.getChannelId() + "";
+                imageLoader.displayImage(c.getTitleImg(), imageView);
+                user_name.setText(c.getUsername());
+                views.setText("点击" + "" + c.getViews());
+                comments.setText("评论" + "" + c.getComments());
+                description = c.getDescription();
+                paly_btn.setText("正在加载...");
+                titleView.setText(title);
+            }
+        }
+        getSupportActionBar().setTitle("ac"+aid);
+
+        if (from > 0) {
+            imageView.setBackgroundResource(R.drawable.no_picture);
             user_name.setText("正在加载...");
             views.setText("正在加载...");
             comments.setText("正在加载...");
-            paly_btn.setText("正在加载...");
-        } else {
-            imageLoader.displayImage(c.getTitleImg(), imageView);
-            user_name.setText(c.getUsername());
-            views.setText("点击" + "" + c.getViews());
-            comments.setText("评论" + "" + c.getComments());
-            description = c.getDescription();
             paly_btn.setText("正在加载...");
         }
         listview = (ListView) findViewById(R.id.detail_listview);
@@ -188,7 +204,7 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 			@SuppressWarnings("unchecked")
 			public void run() {
 				try {
-					if(from!=1){
+					if(from == 0){
 						video = ApiParser.ParserAcId(aid,false);
 					}else{
 						video = ApiParser.ParserAcId(aid,true);
@@ -199,16 +215,19 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 					runOnUiThread(new Runnable() {
 						public void run() {
 							if(data!=null){
-								if(from==1){
+								if(from > 0){
 									 user_name.setText(info.get("username"));
 									 views.setText(info.get("views"));
 									 comments.setText(info.get("comments"));
 									 description = info.get("description");
+									 channelid = info.get("channelId");
+									 title = info.get("title");
+									 titleView.setText(title);
 									 String imgurl = info.get("titleimage");
-									 if(imgurl!=""&&!imgurl.equals("")){
+									 if(!TextUtils.isEmpty(imgurl)){
 										 imageLoader.displayImage(imgurl, imageView);
 									 }else{
-										 imageView.setBackgroundResource(R.drawable.face);
+										 imageView.setBackgroundResource(R.drawable.no_picture);
 									 }
 									 
 								}
@@ -283,10 +302,10 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 			switch (position) {
 			case 0:
 				TextView descriptiontext = new TextView(DetailActivity.this);
-				descriptiontext.setText(description);
+				
 				int dpx = DensityUtil.dip2px(DetailActivity.this, 8);
 				descriptiontext.setPadding(0, dpx, 0, dpx);
-				
+				setDescription(descriptiontext);
 				TextView pttext = new TextView(DetailActivity.this);
 				pttext.setText("视频段落");
 				pttext.setTextSize(15);
@@ -308,7 +327,7 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 						final HashMap<String, Object> map = data.get(i);
 						
 						LinearLayout itemlayout = (LinearLayout) LayoutInflater.from(DetailActivity.this).inflate(R.layout.detail_video_list_item, null);
-						
+						itemlayout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,DensityUtil.dip2px(getApplicationContext(), 40)));
 						TextView title = (TextView) itemlayout.findViewById(R.id.detail_video_list_item_title);
 						title.setLines(1);
 						title.setText(map.get("title").toString());
@@ -464,9 +483,30 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 			break;
 		}
 	}
-	
+	public void setDescription(TextView text){
+	    Pattern wiki = Pattern.compile("\\[wiki(.+)\\]",Pattern.CASE_INSENSITIVE);
+	    String localDesc = description;
+	    text.setText(localDesc);
+	    Linkify.addLinks(text, wiki,null,null,new TransformFilter() {
+	        @Override
+	        public String transformUrl(Matcher match, String url) {
+	            String t = match.group(1);
+	            return "http://wiki.acfun.tv/index.php/"+t;
+	        }
+	    });
+	    Pattern http = Pattern.compile("(http://(?:[a-z0-9.-]+[.][a-z]{2,}+(?::[0-9]+)?)(?:/\\S*)?)",Pattern.CASE_INSENSITIVE);
+	    Linkify.addLinks(text,http,"http://");
+        Linkify.addLinks(text, Pattern.compile("(ac\\d{5,})", Pattern.CASE_INSENSITIVE),"av://");
+        
+	}
+	public void addToHistory(){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 hh:mm");
+        new DBService(this).addtoHis(aid, title, sdf.format(new Date()), 0, channelid);
+        isfavorite = new DBService(this).isFoved(aid);
+	}
 
     public void startToPlay(HashMap<String, Object> map){
+        addToHistory();
 		String vtype = (String) map.get("vtype");
 		String vid = (String) map.get("vid");
 		String title = (String) map.get("title"); 

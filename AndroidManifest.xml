@@ -59,8 +59,13 @@
         android:name=".ChannelActivity"
         />
         <activity 
-        android:name=".DetailActivity"
-        />
+        android:name=".DetailActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="av"/>
+            </intent-filter>
+        </activity>
         <activity 
         android:name=".CommentsActivity"
         />
@@ -100,7 +105,6 @@
             android:exported="true"
             android:process=":DownloadingService" >
         </service>
-
         <activity
             android:name="com.umeng.fb.ui.SendFeedback"
             android:windowSoftInputMode="adjustResize" />

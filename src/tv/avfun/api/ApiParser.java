@@ -234,12 +234,14 @@ public class ApiParser {
         if (isfromtime) {
             JSONObject jsoninfo = jsonObject.getJSONObject("info");
             HashMap<String, String> info = new HashMap<String, String>();
+            info.put("title", jsoninfo.getString("title"));
             info.put("description", jsoninfo.get("description").toString().replace("&nbsp;", " ")
                     .replace("&amp;", "&").replaceAll("\\<.*?>", ""));
             info.put("username", jsoninfo.getJSONObject("postuser").getString("name").toString());
             info.put("views", jsoninfo.getJSONArray("statistics").getInt(0) + "");
             info.put("comments", jsoninfo.getJSONArray("statistics").getInt(1) + "");
             info.put("titleimage", jsoninfo.getString("titleimage"));
+            info.put("channelId", jsoninfo.getJSONObject("channel").get("channelID").toString());
             video.put("info", info);
         }
 
