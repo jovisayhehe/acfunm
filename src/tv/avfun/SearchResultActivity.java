@@ -6,7 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import tv.avfun.adapter.ChannelContentListViewAdaper;
+import tv.avfun.adapter.ChannelContentListAdaper;
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.ChannelApi;
 import tv.avfun.entity.Contents;
@@ -38,7 +38,7 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 	private TextView time_outtext;
 	private ListView list;
 	private List<Contents> data = new ArrayList<Contents>();
-	private ChannelContentListViewAdaper adaper;
+	private ChannelContentListAdaper adaper;
 	private int indexpage = 1;
 	private boolean isload = false;
 	private View footview;
@@ -72,7 +72,7 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 			list.addFooterView(footview);
 			footview.setClickable(false);
 			list.setFooterDividersEnabled(false);
-			adaper = new ChannelContentListViewAdaper(this, data);
+			adaper = new ChannelContentListAdaper(this, data);
 			list.setAdapter(adaper);
 			list.setOnItemClickListener(this);
 			list.setOnScrollListener(this);

@@ -8,6 +8,7 @@ import java.util.List;
 import tv.avfun.api.Channel;
 import tv.avfun.api.ChannelApi;
 import tv.avfun.app.AcApp;
+import tv.avfun.fragment.ChannelContentFragment;
 import tv.avfun.fragment.ChannelFragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -209,7 +210,8 @@ public class ChannelActivity extends SherlockFragmentActivity implements OnPageC
 
         @Override
         public Fragment getItem(int position) {
-            return ChannelFragment.newInstance(apis.get(position));
+            return ChannelContentFragment.newInstance(apis.get(position));
+//            return ChannelFragment.newInstance(apis.get(position));
 
         }
     }

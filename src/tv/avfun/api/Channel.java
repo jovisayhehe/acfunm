@@ -18,6 +18,7 @@ public class Channel implements Serializable {
      * 频道内容。用于缓存
      */
     public List<Contents> contents;
+    public int pageIndex;
     public int titleBgResId;
     public int channelId;
     public String title;

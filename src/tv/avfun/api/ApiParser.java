@@ -35,8 +35,17 @@ public class ApiParser {
 
     public static List<Contents> getChannelContents(String address) throws Exception {
 
-        List<Contents> contents = new ArrayList<Contents>();
         JSONObject jsonObject = Connectivity.getJSONObject(address);
+        return getChannelContents(jsonObject);
+    }
+    /**
+     * 获取频道内容。
+     * @param jsonObject
+     * @return
+     * @throws Exception
+     */
+    public static List<Contents> getChannelContents(JSONObject jsonObject) throws Exception{
+        List<Contents> contents = new ArrayList<Contents>();
         if(jsonObject == null) return null;
         JSONArray jsarray = jsonObject.getJSONArray("contents");
         for (int i = 0; i < jsarray.length(); i++) {
@@ -55,8 +64,8 @@ public class ApiParser {
             contents.add(c);
         }
         return contents;
-
     }
+    
     /*
      * 首页主频道列表
      */

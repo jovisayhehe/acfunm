@@ -7,7 +7,7 @@ import tv.avfun.ChannelActivity;
 import tv.avfun.DetailActivity;
 import tv.avfun.R;
 import tv.avfun.WebViewActivity;
-import tv.avfun.adapter.ChannelContentListViewAdaper;
+import tv.avfun.adapter.ChannelContentListAdaper;
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.Channel;
 import tv.avfun.api.ChannelApi;
@@ -15,6 +15,7 @@ import tv.avfun.entity.Contents;
 import tv.avfun.util.DataStore;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -42,7 +43,7 @@ public class ChannelFragment extends BaseListFragment implements OnClickListener
 	private ListView list;
 	private List<Contents> data = new ArrayList<Contents>();
 	private Activity activity;
-	private ChannelContentListViewAdaper adaper;
+	private ChannelContentListAdaper adaper;
 	private int indexpage = 1;
 	private boolean isload = false;
 	private View footview;
@@ -113,25 +114,31 @@ public class ChannelFragment extends BaseListFragment implements OnClickListener
 		list.addHeaderView(listheader);
 		list.setHeaderDividersEnabled(false);
 		//TODO 逻辑好乱=.=
-		adaper = new ChannelContentListViewAdaper(this.activity, data);
+		adaper = new ChannelContentListAdaper(this.activity, data);
 		list.setAdapter(adaper);
 		list.setOnItemClickListener(this);
 		list.setOnScrollListener(this);
 		getdatas(1, false);
 		
 	}
-	private Handler handler = new Handler(){
-	    public void handleMessage(android.os.Message msg) {
-	        switch (msg.what) {
-            case 1:
-                
-                break;
 
-            default:
-                break;
-            }
+	private class RefreshData extends AsyncTask<Void, Void, Boolean>{
+	    @Override
+	    protected void onPreExecute() {
+	        
 	    }
-	};
+	    
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            
+            
+            
+            return false;
+        }
+	    
+	}
+	
+	
 	public void getdatas(final int page, final boolean isadd) {
 		if(!isadd){
 			time_outtext.setVisibility(View.GONE);

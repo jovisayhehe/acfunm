@@ -17,13 +17,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class ChannelContentListViewAdaper extends BaseAdapter {
+public class ChannelContentListAdaper extends BaseAdapter {
 
     private LayoutInflater mInflater;
     private List<Contents> data;
     public ImageLoader     imageLoader;
 
-    public ChannelContentListViewAdaper(Context context, List<Contents> data) {
+    public ChannelContentListAdaper(Context context, List<Contents> data) {
         this.mInflater = LayoutInflater.from(context);
         this.data = data;
         imageLoader = ImageLoader.getInstance();

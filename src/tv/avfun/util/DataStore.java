@@ -14,6 +14,9 @@ import java.io.Writer;
 import java.util.Calendar;
 import java.util.List;
 
+import org.json.external.JSONException;
+import org.json.external.JSONObject;
+
 import tv.avfun.BuildConfig;
 import tv.avfun.api.Bangumi;
 import tv.avfun.api.BangumiList;
@@ -284,8 +287,8 @@ public class DataStore {
             throw new IllegalArgumentException("path 或 str 不能为null、空白或空字符串！");
         File file = new File(path);
         try {
-            if (!file.createNewFile())
-                throw new IllegalArgumentException("it is not file" + path);
+            if(file.exists()) file.delete();                // 确保是一个
+            file.createNewFile();                           // 全新的文件
             Writer writer = new FileWriter(file);
             writer.write(str);
             writer.close();
@@ -324,7 +327,6 @@ public class DataStore {
     public static boolean isChannelCached(int channelId){
         long lastModified = new File(getChannelCacheFile(channelId)).lastModified();
         return System.currentTimeMillis() - lastModified < CHANNEL_EXPIRED;
-            
     }
     public static Channel getCachedChannel(int channelId){
         Object obj = readObject(getChannelCacheFile(channelId));
@@ -332,4 +334,30 @@ public class DataStore {
             return (Channel)obj;
         else return null;
     }
+    public static String getJsonCachePath(int channelId){
+        return AcApp.context().getExternalCacheDir()+"/"+channelId+".json";
+    }
+//    /** 保存原始json数据 */
+//    public static boolean saveJson(int channelId, String json){
+//        
+//        
+//        return writeToFile(getJsonCachePath(channelId), json);
+//    }
+//    /** 读取缓存的json数据 */
+//    public static JSONObject readJson(int channelId){
+//        
+//        try {
+//            return new JSONObject(readFromFile(getJsonCachePath(channelId)));
+//        } catch (JSONException e) {
+//            Log.e(TAG, "failed to read json of channel"+channelId ,e);
+//            return null;
+//        }
+//    }
+//    /** Returns 0 if the json file does not exist */
+//    public static long getJsonLastUpdateTime(int channelId){
+//        
+//        File jsonCacheFile = new File(getJsonCachePath(channelId));
+//        return jsonCacheFile.lastModified();
+//        
+//    }
 }
