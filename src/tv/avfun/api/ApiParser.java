@@ -140,14 +140,19 @@ public class ApiParser {
     public static List<Bangumi[]> getBangumiTimeList(){
         Document doc;
         try {
-            doc = Connectivity.getDoc("http://www.acfun.tv/v/list67/index.htm", UserAgent.CHROME_25);
+            // http://www.acfun.tv/v/list67/index.htm
+            doc = Connectivity.getDoc("http://yrom.sinaapp.com/bangumi.html", UserAgent.CHROME_25);
         } catch (IOException e) {
             if(BuildConfig.DEBUG)
                 Log.e("Parser", "get time list failed", e);
             return null;
         }
-        Elements ems = doc.getElementsByAttributeValue("id", "bangumi").get(0)
-                .getElementsByTag("li");
+        Elements ems = doc.getElementsByAttributeValue("id", "bangumi");
+        if(ems.size() == 0) {
+            if(BuildConfig.DEBUG) Log.e("Parser", "获取失败！检查网页连接！"); 
+            return null;
+        }
+        ems = ems.get(0).getElementsByTag("li");
         ems.remove(ems.size() - 1);
         List<Bangumi[]> timelist = new ArrayList<Bangumi[]>();
 
