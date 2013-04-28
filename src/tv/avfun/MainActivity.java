@@ -25,6 +25,7 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
@@ -102,6 +103,10 @@ public class MainActivity extends SlidingFragmentActivity {
             public void onClick(View v) {
                 if(i<count)
                     overlays.getChildAt(i++).setVisibility(View.VISIBLE);
+                else{
+                    hideOverlays();
+                    AcApp.putBoolean("first_run", false);
+                }
             }
         });
         overlays.findViewById(R.id.ok).setOnClickListener(new View.OnClickListener() {
@@ -286,13 +291,22 @@ public class MainActivity extends SlidingFragmentActivity {
         switchContent(mContent, nextContent,id);
         
     }
+    private boolean isFirst = true;
     @Override
     public void onBackPressed() {
         if(this.navId != R.id.slide_nav_home){
             nextContent = instances.get("home");
-            switchContent(nextContent,R.id.slide_nav_home);
-        } else
-            super.onBackPressed();
+            bar.setTitle("主页");
+            switchContent(mContent, nextContent,R.id.slide_nav_home);
+            return;
+        } else if(this.navId == R.id.slide_nav_home){
+            if(isFirst){
+                Toast.makeText(getApplicationContext(), "( ⊙o⊙ ) 真的要退出吗？", 0).show();
+                isFirst = false;
+                return;
+            }
+        }
+        super.onBackPressed();
     }
     
     public void onResume() {

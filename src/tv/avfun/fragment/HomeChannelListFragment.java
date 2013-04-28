@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -100,6 +101,7 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
     }
 
     private void initView() {
+        
         // header (banner)
         if (this.banners != null) {
             headerView = mInflater.inflate(R.layout.home_banner_view, channelList, false);
@@ -152,9 +154,10 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
 
         @Override
         public void onPreExecute() {
-            if (System.currentTimeMillis() - updatedTime < LOCK_TIME) {
+            if (!DataStore.getInstance().isDisplayModeChanged())            // 显示模式没有改变
+            if (System.currentTimeMillis() - updatedTime < LOCK_TIME) {     // 刷新间隔小于锁定时间
                 this.cancel(false);
-                updateInfo.setText(getString(R.string.update_lock));
+                updateInfo.setText(activity.getString(R.string.update_lock));
                 showUpdateInfo();
                 mPtr.onRefreshComplete();
             }
@@ -176,13 +179,13 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
         @Override
         protected void onPostExecute(Boolean result) {
             if(result) {
-                updateInfo.setText(getString(R.string.update_success));
+                updateInfo.setText(activity.getString(R.string.update_success));
                 setLastUpdatedLabel(0);
                 if(isAdded() && !isUpdated){
                     updateList(); 
                 }
             }
-            else updateInfo.setText(getString(R.string.update_fail));
+            else updateInfo.setText(activity.getString(R.string.update_fail));
             showUpdateInfo();
             mPtr.onRefreshComplete();
         }
@@ -201,11 +204,16 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
             long cachedTime = dataStore.getChannelListLastUpdateTime(); 
             isCached = cachedTime == -1? false: true;
             setLastUpdatedLabel(cachedTime);
+            if(!isCached){
+                this.cancel(true);
+                new RefreshData().execute();
+            }
         }
         @Override
         protected void onPostExecute(Boolean result) {
             if(result && !isUpdated)
                 updateList();
+            updateInfo.setText(activity.getString(R.string.read_cache));
             showUpdateInfo();
             if (System.currentTimeMillis() - updatedTime > LOCK_TIME) {
                 if(BuildConfig.DEBUG) Log.i(TAG, "going to refresh data");
@@ -218,8 +226,8 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
             if (BuildConfig.DEBUG)
                 Log.i(TAG, "try to read channel list cache ");
             if (readCache()) {
-                updateInfo.setText(getString(R.string.read_cache));
                 if(isAdded())
+                    
                     updateList();
                 return true;
             }
@@ -272,6 +280,7 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        activity = getActivity();
         loadData();
     }
     
@@ -324,7 +333,7 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
         if (channel.titleBgResId == 0) {
             channel.titleBgResId = R.drawable.title_bg_none;
         }
-        title.setBackgroundDrawable(getResources().getDrawable(channel.titleBgResId));
+        title.setBackgroundDrawable(activity.getResources().getDrawable(channel.titleBgResId));
     }
 
     @Override
@@ -345,6 +354,7 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
         isUpdated = true;
     }
     private boolean isInfoShow;
+    private FragmentActivity activity;
     private void showUpdateInfo() {
         if(!isInfoShow){
             isInfoShow = true;

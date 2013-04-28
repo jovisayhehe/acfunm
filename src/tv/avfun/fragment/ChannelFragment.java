@@ -142,12 +142,12 @@ public class ChannelFragment extends BaseListFragment implements OnClickListener
 		    Channel c = DataStore.getCachedChannel(channelid);
 			public void run() {
 				try {
-				    if(DataStore.isChannelCached(channelid)){
+				    /*if(DataStore.isChannelCached(channelid)){
     				    if(c!= null){
     				        data = c.contents;
     				        //TODO 显示缓存
     				    }
-				    }
+				    }*/
 				    final List<Contents> templist = ApiParser.getChannelContents(url+page);
 				    if (!isadd) {
 					    data = ApiParser.getChannelHotList(channelid, 10);
@@ -156,7 +156,7 @@ public class ChannelFragment extends BaseListFragment implements OnClickListener
 					activity.runOnUiThread(new Runnable() {
 						public void run() {
 							
-							if (isadd)
+							if (isadd && templist!= null)
 								data.addAll(templist);
 							else{
 								progressBar.setVisibility(View.GONE);

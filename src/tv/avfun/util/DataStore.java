@@ -147,6 +147,9 @@ public class DataStore {
             return this.channelList.cacheTime + CHANNEL_LIST_EXPIRED >= System.currentTimeMillis();
         }
     }
+    public boolean isDisplayModeChanged(){
+        return !AcApp.getHomeDisplayMode().equals(this.channelList.displayMode);
+    }
     /** 加载频道列表缓存 */
     public Channel[] loadChannelList() {
         synchronized (this.channelList) {
