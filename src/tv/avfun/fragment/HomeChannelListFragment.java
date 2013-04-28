@@ -159,15 +159,16 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
                 mPtr.onRefreshComplete();
             }
             timeOutView.setVisibility(View.GONE);
-
         }
 
         protected Boolean doInBackground(Void... params) {
             Channel[] cs = ApiParser.getRecommendChannels(3, mode);
+            isUpdated = false;
             if (cs != null) {
                 channels = cs;
                 handler.sendEmptyMessage(REFRESH);
-                updateList();
+                if(isAdded())
+                    updateList();
                 return DataStore.getInstance().saveChannelList(channels);
             } else
                 return false;
@@ -177,6 +178,9 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
             if(result) {
                 updateInfo.setText(getString(R.string.update_success));
                 setLastUpdatedLabel(0);
+                if(isAdded() && !isUpdated){
+                    updateList(); 
+                }
             }
             else updateInfo.setText(getString(R.string.update_fail));
             showUpdateInfo();
@@ -200,6 +204,8 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
         }
         @Override
         protected void onPostExecute(Boolean result) {
+            if(result && !isUpdated)
+                updateList();
             showUpdateInfo();
             if (System.currentTimeMillis() - updatedTime > LOCK_TIME) {
                 if(BuildConfig.DEBUG) Log.i(TAG, "going to refresh data");
@@ -213,7 +219,8 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
                 Log.i(TAG, "try to read channel list cache ");
             if (readCache()) {
                 updateInfo.setText(getString(R.string.read_cache));
-                updateList();
+                if(isAdded())
+                    updateList();
                 return true;
             }
             return false;
@@ -327,7 +334,7 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
         intent.putExtra("contents", c);
         startActivity(intent);
     }
-
+    private boolean isUpdated =false;
     private void updateList() {
         for (int i = 0; i < channels.length; i++) {
             Message msg = Message.obtain(handler);
@@ -335,6 +342,7 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
             msg.arg1 = i;
             msg.sendToTarget();
         }
+        isUpdated = true;
     }
     private boolean isInfoShow;
     private void showUpdateInfo() {
