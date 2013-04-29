@@ -4,12 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import tv.avfun.entity.VideoInfo;
 
 
 public class Downloader {
-    public static VideoInfo getDownloadedVideo(String aid, String vid){
-        VideoInfo info = new VideoInfo();
+    /*public static VideoItemInfo getDownloadedVideo(String aid, String vid){
+        VideoItemInfo info = new VideoItemInfo();
         if(!hasDownload(aid, vid)) return null;
         info.vid = vid;
         File[] files = AcApp.getDownloadPath(aid, vid).listFiles();
@@ -18,7 +17,7 @@ public class Downloader {
             info.files.add(files[i].getAbsolutePath());
         }
         return info;
-    }
+    }*/
     public static boolean hasDownload(String aid, String vid){
         
         File path = AcApp.getDownloadPath(aid, vid);

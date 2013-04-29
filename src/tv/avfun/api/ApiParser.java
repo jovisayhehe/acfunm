@@ -28,7 +28,13 @@ import tv.avfun.api.net.UserAgent;
 import tv.avfun.app.AcApp;
 import tv.avfun.entity.Article;
 import tv.avfun.entity.Contents;
+import tv.avfun.entity.VideoInfo;
+import tv.avfun.entity.VideoInfo.VideoItem;
 import tv.avfun.util.NetWorkUtil;
+import android.os.PatternMatcher;
+import android.text.Html;
+import android.text.StaticLayout;
+import android.text.TextUtils;
 import android.util.Log;
 
 public class ApiParser {
@@ -180,7 +186,77 @@ public class ApiParser {
         return timelist;
 
     }
-    
+    public static VideoInfo getVideoInfoByAid(String aid) throws Exception{
+        VideoInfo video = new VideoInfo();
+        video.parts = new ArrayList<VideoInfo.VideoItem>();
+        String url = "http://www.acfun.tv/api/content.aspx?query=" + aid;
+        JSONObject jsonObject = Connectivity.getJSONObject(url);
+        // get tags
+        JSONArray tagsArray = jsonObject.getJSONArray("tags");
+        video.tags = new String[tagsArray.length()];
+        for(int i=0; i<tagsArray.length();i++){
+            video.tags[i] = tagsArray.getJSONObject(i).getString("name");
+        }
+        // get info 
+        JSONObject info = jsonObject.getJSONObject("info");
+        video.title = info.getString("title");
+        video.titleImage = info.getString("titleimge");
+        video.description = info.getString("description");
+        video.channelId = info.getJSONObject("channel").getString("channelID");
+        video.upman = info.getJSONObject("postuser").getString("name");
+        // statistics Array
+        JSONArray statisArray = jsonObject.getJSONArray("statistics");
+        video.views = statisArray.getInt(0);
+        video.comments = statisArray.getInt(1);
+        // get content array
+        JSONArray contentArray = jsonObject.getJSONArray("content");
+        if (Integer.parseInt(aid) > 327496) {
+            for (int i = 0; i < contentArray.length(); i++) {
+                VideoItem item = video.new VideoItem();
+                JSONObject job = (JSONObject) contentArray.get(i);
+                String videoContent = job.getString("content"); // content: "[video]425564[/video]"
+                Matcher matcher = Pattern.compile("\\[video\\](.\\d+)\\[/video\\]", Pattern.CASE_INSENSITIVE).matcher(videoContent);
+                String contentId = "";
+                if(matcher.find()) contentId = matcher.group(1); 
+                item.subtitle = Html.fromHtml(job.getString("subtitle")).toString();
+                // parse vid and type into item
+                parseVideoItem(contentId, item);
+                video.parts.add(item);
+            }
+        } else {
+            for (int i = 0; i < contentArray.length(); i++) {
+                String vid = "";
+                VideoItem item = video.new VideoItem();
+                JSONObject job = (JSONObject) contentArray.get(i);
+                String ContentStr = job.toString();
+                
+                //System.out.println(ContentStr);
+                ContentStr = ContentStr.replace("id='ACFlashPlayer'", "").replace(
+                        "id=\\\"ACFlashPlayer\\\"", "");
+                
+                //System.out.println(ContentStr);
+                Pattern p = Pattern.compile("id=(.[0-9a-zA-Z]+)");
+                Matcher matcher = p.matcher(ContentStr);
+                if (matcher.find()) {
+                    vid = matcher.group(1);
+                }
+
+                String title = (String) job.get("subtitle");
+                item.subtitle = Html.fromHtml(title).toString();
+                item.vid = vid;
+                item.vtype = parseVideoType(ContentStr);
+                video.parts.add(item);
+            }
+        }
+        return video;
+    }
+    private static void parseVideoItem(String contentId, VideoItem item) throws Exception{
+        String url = "http://www.acfun.tv/api/player/vids/" + contentId + ".aspx";
+        JSONObject jsonObject = Connectivity.getJSONObject(url);
+        item.vtype = jsonObject.getString("vtype");
+        item.vid = jsonObject.get("vid").toString();
+    }
+    @Deprecated
     public static HashMap<String, Object> ParserAcId(String id, boolean isfromtime)
             throws Exception {
 
@@ -236,7 +312,7 @@ public class ApiParser {
                 String title = (String) job.get("subtitle");
                 map.put("title", title.replace("&amp;", "&"));
 
-                map.put("vtype", ParseVideoType(ContentStr));
+                map.put("vtype", parseVideoType(ContentStr));
                 map.put("vid", vid);
                 map.put("success", true);
                 parts.add(map);
@@ -264,7 +340,7 @@ public class ApiParser {
         return video;
     }
 
-    public static final String ParseVideoType(String str) {
+    public static final String parseVideoType(String str) {
         String Type = "";
 
         if (str.contains("youku")) {
@@ -481,14 +557,27 @@ public class ApiParser {
         return paths;
         
     }
+    public static Map<String,Long> getSinaFlvFiles(String id) throws IOException{
+        String url = "http://v.iask.com/v_play.php?vid=" + id;
+        Document doc = Connectivity.getDoc(url, UserAgent.IPAD);
+        Elements durls = doc.getElementsByTag("durl");
+        Map<String,Long> map= new HashMap<String, Long>(durls.size());
+        for(int i=0;i<durls.size();i++){
+            Element durl = durls.get(i);
+            String length = durl.getElementsByTag("length").get(0).text();
+            String text = durl.getElementsByTag("url").get(0).text();
+            Log.i("parse sina", "url="+text+"，lenght="+length);
+            map.put(text, Long.parseLong(length));
+        }
+        return map;
+    }
     public static ArrayList<String> getSinaflv(String id) throws IOException {
         ArrayList<String> paths = new ArrayList<String>();
         String url = "http://v.iask.com/v_play.php?vid=" + id;
-        Elements ems = Connectivity.getElements(url, "url");
-        for (Element em : ems) {
-            paths.add(em.text());
+        Elements urls = Connectivity.getElements(url, "url");
+        for(int i=0;i<urls.size();i++){
+            paths.add(urls.get(i).text());
         }
-
         return paths;
     }
 

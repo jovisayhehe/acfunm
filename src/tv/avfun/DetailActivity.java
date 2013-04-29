@@ -14,6 +14,7 @@ import tv.avfun.app.Downloader;
 import tv.avfun.db.DBService;
 import tv.avfun.entity.Contents;
 import tv.avfun.entity.VideoInfo;
+import tv.avfun.entity.VideoInfo.VideoItem;
 import tv.avfun.util.DensityUtil;
 import tv.avfun.util.FileUtil;
 import tv.avfun.util.lzlist.ImageLoader;
@@ -24,7 +25,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
@@ -53,7 +53,7 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 	private ListView listview;
 	private String aid;
 	private String description;
-	private ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String,Object>>();
+	private List<VideoItem> data = new ArrayList<VideoItem>();
 	private int from;
 	private String title;
 	private DetailAdaper adaper;
@@ -65,8 +65,7 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 	private TextView paly_btn;
 	private String channelid;
 	private boolean isfavorite = false;
-	private HashMap<String, Object> video;
-	private HashMap<String, String> info ;
+	private VideoInfo video;
 	public static final int FAVORITE = 210;
 	public static final int SHARE = 211;
     private static final String TAG = "Detail";
@@ -204,27 +203,21 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 			@SuppressWarnings("unchecked")
 			public void run() {
 				try {
-					if(from == 0){
-						video = ApiParser.ParserAcId(aid,false);
-					}else{
-						video = ApiParser.ParserAcId(aid,true);
-						info = (HashMap<String, String>) video.get("info");
-					}
-					
-					data = (ArrayList<HashMap<String, Object>>) video.get("pts");
+				    video = ApiParser.getVideoInfoByAid(aid);
+					data = video.parts;
 					runOnUiThread(new Runnable() {
 						public void run() {
-							if(data!=null){
+							if(data!=null && !data.isEmpty()){
 								if(from > 0){
-									 user_name.setText(info.get("username"));
-									 views.setText(info.get("views"));
-									 comments.setText(info.get("comments"));
-									 description = info.get("description");
-									 channelid = info.get("channelId");
-									 title = info.get("title");
+									 user_name.setText(video.upman);
+									 views.setText(video.views+"");
+									 comments.setText(video.comments+"");
+									 description = video.description;
+									 channelid = video.channelId;
+									 title = video.title;
 									 titleView.setText(title);
-									 String imgurl = info.get("titleimage");
-									 if(!TextUtils.isEmpty(imgurl)){
+									 String imgurl = video.titleImage;
+									 if(!TextUtils.isEmpty(imgurl) || !"null".equals(imgurl)){
 										 imageLoader.displayImage(imgurl, imageView);
 									 }else{
 										 imageView.setBackgroundResource(R.drawable.no_picture);
@@ -261,14 +254,14 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 	
 	
 	private final class DetailAdaper extends BaseAdapter {
-		private ArrayList<HashMap<String, Object>> data;
+		private List<VideoItem> data;
 		private boolean iserror;
-		public DetailAdaper(ArrayList<HashMap<String, Object>> data) {
+		public DetailAdaper(List<VideoItem> data) {
 			
 			this.data = data;
 		}
 		
-		public void setData(ArrayList<HashMap<String, Object>> data){
+		public void setData(List<VideoItem> data){
 			this.data = data;
 		}
 		
@@ -324,22 +317,22 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 			case 1:
 				if(data!=null&&!data.isEmpty()){
 					for (int i = 0; i < data.size(); i++) {
-						final HashMap<String, Object> map = data.get(i);
+						final VideoItem item = data.get(i);
 						
 						LinearLayout itemlayout = (LinearLayout) LayoutInflater.from(DetailActivity.this).inflate(R.layout.detail_video_list_item, null);
 						itemlayout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,DensityUtil.dip2px(getApplicationContext(), 40)));
 						TextView title = (TextView) itemlayout.findViewById(R.id.detail_video_list_item_title);
 						title.setLines(1);
-						title.setText(map.get("title").toString());
+						title.setText(item.subtitle);
 						
 						TextView vtype = (TextView) itemlayout.findViewById(R.id.detail_video_list_item_vtype);
-						vtype.setText(map.get("vtype").toString());
+						vtype.setText(item.vtype);
 						
-						itemlayout.setTag(map);
+						itemlayout.setTag(item);
 						itemlayout.setOnClickListener(new PrtckListener());
 						layout.addView(itemlayout);
 						ImageView btnDown = (ImageView) itemlayout.findViewById(R.id.detail_btn_downlaod);
-						if(Downloader.hasDownload(aid,map.get("vid").toString())){
+						if(Downloader.hasDownload(aid,item.vid)){
 						    btnDown.setVisibility(View.GONE);
 						    itemlayout.findViewById(R.id.detail_downloaded).setVisibility(View.VISIBLE);
 						}
@@ -350,7 +343,7 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
                                     @Override
                                     public void onClick(View v) {
                                         v.setVisibility(View.GONE);
-                                        startDownload(map.get("vtype").toString(), map.get("vid").toString(),map.get("title").toString());
+                                        startDownload(item);
                                     }
                                 });
     						}
@@ -400,18 +393,15 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 		
 	}
 	// TODO 下载
-	private void startDownload(final String type, final String vid, final String title) {
+	private void startDownload(final VideoItem item) {
 	    new Thread(){
             public void run() {
 
 	            try {
-	                List<String> urls = ApiParser.ParserVideopath(type, vid);
+	                List<String> urls = ApiParser.ParserVideopath(item.vtype, item.vid);
 	                if(urls!=null){
-	                    VideoInfo info = new VideoInfo();
-	                    info.vid = vid;
-	                    info.subtitle = title;
-	                    info.files = (ArrayList<String>) urls;
-	                    handler.obtainMessage(1, info).sendToTarget();
+	                    // item.files
+	                    handler.obtainMessage(1, item).sendToTarget();
 	                }
 	                else handler.sendEmptyMessage(2);
 	            } catch (Exception e) {
@@ -424,12 +414,12 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 	    @TargetApi(9)
 	    public void handleMessage(Message msg) {
 	        if(msg.what == 1){
-	            VideoInfo info = (VideoInfo) msg.obj;
+	            VideoItem info = (VideoItem) msg.obj;
 	            Toast.makeText(getApplicationContext(), info.subtitle+"已开始下载！", 0).show();
 	            // urls 不应为null
-	            List<String> urls = info.files;
+	            //List<String> urls = item.files;
 	            
-	            for(int i = 0 ; i< urls.size(); i++){
+	            /*for(int i = 0 ; i< urls.size(); i++){
                     String url = urls.get(i);
                     String filename = i+FileUtil.getUrlExt(url);
                     if(BuildConfig.DEBUG) Log.i(TAG, url);
@@ -443,7 +433,7 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
                     .setDestinationInExternalPublicDir("Download/AcFun/Videos/"+aid+"/"+info.vid, filename);
                     // TODO 将id存起来监听下载进度
                     downloadMan.enqueue(request);
-                }
+                }*/
 	            //TODO 改变界面btn状态为 下载中
 	        }else if(msg.what == 2){
 	            Toast.makeText(getApplicationContext(), "可恶，解析视频地址失败！", 0).show();
@@ -455,8 +445,8 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 		@Override
 		public void onClick(View v) {
 			
-			HashMap<String, Object> map = (HashMap<String, Object>) v.getTag();
-			startToPlay(map);
+			VideoItem item =(VideoItem) v.getTag();
+			startToPlay(item);
 		}
 		
 	}
@@ -505,11 +495,11 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
         isfavorite = new DBService(this).isFoved(aid);
 	}
 
-    public void startToPlay(HashMap<String, Object> map){
+    public void startToPlay(VideoItem item){
         addToHistory();
-		String vtype = (String) map.get("vtype");
-		String vid = (String) map.get("vid");
-		String title = (String) map.get("title"); 
+		String vtype = item.vtype;
+		String vid = item.vid;
+		String title = item.subtitle;
 		Intent intent = new Intent(DetailActivity.this, SectionActivity.class);
 		intent.putExtra("title", title);
 		intent.putExtra("vid", vid);

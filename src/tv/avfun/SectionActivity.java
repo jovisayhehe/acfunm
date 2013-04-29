@@ -7,7 +7,6 @@ import java.util.List;
 import tv.avfun.api.ApiParser;
 import tv.avfun.app.AcApp;
 import tv.avfun.app.Downloader;
-import tv.avfun.entity.VideoInfo;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -130,12 +129,12 @@ public class SectionActivity extends SherlockActivity implements OnClickListener
 
             public void run() {
                 try {
-                    VideoInfo info= Downloader.getDownloadedVideo(aid,vid);
+                    /*VideoItem info= Downloader.getDownloadedVideo(aid,vid);
                     if(info != null){
                         data.addAll(info.files);
                         Log.d("Section", "使用缓存进行播放");
                     }
-                    else data = (ArrayList<String>) ApiParser.ParserVideopath(vtype, vid);
+                    else*/ data = (ArrayList<String>) ApiParser.ParserVideopath(vtype, vid);
                     if (data != null && data.size() > 0) {
                         handler.obtainMessage(PARSE_OK, data).sendToTarget();
                     }else{
