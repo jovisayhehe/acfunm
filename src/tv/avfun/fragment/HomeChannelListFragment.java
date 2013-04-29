@@ -74,7 +74,6 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
         super.onCreate(savedInstanceState);
         dataStore = DataStore.getInstance();
         setHasOptionsMenu(false);
-        mode = AcApp.getConfig().getString("home_display_mode", "1");
     }
 
     private Handler handler = new Handler() {
@@ -154,9 +153,10 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
 
         @Override
         public void onPreExecute() {
+            mode = AcApp.getHomeDisplayMode();
             if (!DataStore.getInstance().isDisplayModeChanged())            // 显示模式没有改变
             if (System.currentTimeMillis() - updatedTime < LOCK_TIME) {     // 刷新间隔小于锁定时间
-                this.cancel(false);
+                this.cancel(true);
                 updateInfo.setText(activity.getString(R.string.update_lock));
                 showUpdateInfo();
                 mPtr.onRefreshComplete();

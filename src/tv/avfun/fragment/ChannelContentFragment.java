@@ -16,6 +16,7 @@ import tv.avfun.api.Channel;
 import tv.avfun.app.AcApp;
 import tv.avfun.entity.Contents;
 import tv.avfun.util.DataStore;
+import tv.avfun.util.DensityUtil;
 import tv.avfun.util.NetWorkUtil;
 import android.app.Activity;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -43,7 +45,7 @@ public class ChannelContentFragment extends Fragment implements OnItemClickListe
     private static final int         LOAD_SUCCESS  = 2;
     private static final int         LOAD_TIME_OUT = 3;
     private static final String      TAG           = ChannelContentFragment.class.getSimpleName();
-    public static final int          LOAD_FAIL     = 4;
+    private static final int          LOAD_FAIL     = 4;
     private Channel                  channel;
     private Activity                 activity;
     private View                     mView;
@@ -79,9 +81,10 @@ public class ChannelContentFragment extends Fragment implements OnItemClickListe
         mListView.setDivider(AcApp.getR().getDrawable(R.drawable.listview_divider));
         mListView.setDividerHeight(2);
 
-        LinearLayout header = (LinearLayout) mInflater.inflate(R.layout.list_header, mListView, false);
+        LinearLayout header = (LinearLayout) mInflater.inflate(R.layout.list_header, null, false);
         TextView headTitle = (TextView) header.findViewById(R.id.listheader_text);
         headTitle.setText("今日最热");
+//        headTitle.setTextSize(DensityUtil.dip2px(AcApp.context(), 12));
         mListView.addHeaderView(header);
         mListView.setHeaderDividersEnabled(false);
 
@@ -101,7 +104,8 @@ public class ChannelContentFragment extends Fragment implements OnItemClickListe
         super.onActivityCreated(savedInstanceState);
         this.activity = getActivity();
         this.channel = (Channel) getArguments().getSerializable("channel");
-        loadData(1, false);
+        indexpage = 1;
+        loadData(indexpage, false);
     }
 
     private void loadData(int page, boolean isAdd) {
@@ -124,7 +128,8 @@ public class ChannelContentFragment extends Fragment implements OnItemClickListe
 
     @Override
     public void onClick(View v) {
-        loadData(1, false);
+        indexpage = 1;
+        loadData(indexpage, false);
     }
 
     private boolean isLoading   = false;
