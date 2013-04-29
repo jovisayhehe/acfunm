@@ -9,6 +9,7 @@ import tv.avfun.R.layout;
 import tv.avfun.entity.Contents;
 import tv.avfun.util.lzlist.ImageLoader;
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,7 +77,8 @@ public class ChannelContentListAdaper extends BaseAdapter {
         final Contents art = data.get(position);
         holder.title.setText(art.getTitle());
         holder.views.setText(String.valueOf(art.getViews()));
-        holder.upman.setText(art.getUsername());
+        String up = art.getUsername();
+        holder.upman.setText(TextUtils.isEmpty(up)?"无名氏":up);
         final String imageUrl = art.getTitleImg();
         if (imageUrl != "null" && !"".equals(imageUrl)) {
             holder.img.setTag(imageUrl);

@@ -2,7 +2,6 @@ package tv.avfun;
 
 
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,9 +11,6 @@ import tv.avfun.api.ChannelApi;
 import tv.avfun.entity.Contents;
 import android.app.SearchManager;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +19,6 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -45,7 +40,6 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 	private int totalpage;
 	private boolean isreload = false;
 	private int channelId;
-	private ArrayList<Object> objs;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -220,20 +214,7 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 			        &&channelId!=ChannelApi.id.ARTICLE.COMIC_LIGHT_NOVEL &&channelId!=ChannelApi.id.ARTICLE.WORK_EMOTION){
 				
 				Intent intent = new Intent(this, DetailActivity.class);
-				ImageView img = (ImageView) view.findViewById(R.id.channellist_item_img);
-				Drawable da = img.getDrawable();
-				BitmapDrawable bd = (BitmapDrawable) da;
-				Bitmap bm = bd.getBitmap();
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-				intent.putExtra("thumb", baos.toByteArray());
-				intent.putExtra("aid", c.getAid());
-				intent.putExtra("title", c.getTitle());
-				intent.putExtra("username", c.getUsername());
-				intent.putExtra("views", c.getViews()+"");
-				intent.putExtra("comments", c.getComments()+"");
-				intent.putExtra("description", c.getDescription());
-				intent.putExtra("channelId", String.valueOf(channelId));
+				intent.putExtra("contents", c);
 				startActivity(intent);
 			}else{
 				
