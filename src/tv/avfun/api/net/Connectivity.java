@@ -3,6 +3,7 @@ package tv.avfun.api.net;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.json.external.JSONException;
@@ -51,7 +52,7 @@ public class Connectivity {
     }
 
     public static Elements getElements(String url, String tag) throws IOException {
-        return getDoc(url, UserAgent.CHROME_25).getElementsByTag(tag);
+        return getDoc(url, UserAgent.DEFAULT).getElementsByTag(tag);
     }
     /**
      * 获取指定标签的子元素集
@@ -87,5 +88,39 @@ public class Connectivity {
      */
     public static HttpURLConnection openConnection(String url) throws IOException {
         return openConnection(new URL(url), UserAgent.DEFAULT);
+    }
+    /**
+     * 获得重定向路径（一次重定向）
+     * @param httpUrl
+     * @param userAgent
+     * @return
+     */
+    public static String getRedirectLocation(URL httpUrl, String userAgent) {
+        String location = null;
+        try {
+            HttpURLConnection conn = openConnection(httpUrl, userAgent);
+            conn.setInstanceFollowRedirects(false);// 不跟随跳转
+            int code = conn.getResponseCode();
+            if(code == 302){
+                location = conn.getHeaderField("Location");
+                if (BuildConfig.DEBUG)
+                    Log.i("", "raw: "+httpUrl.toString()+", location: "+location);
+            }
+        } catch (IOException e) {
+            if (BuildConfig.DEBUG)
+                Log.e(TAG, "failed to get redirect loaction :"+httpUrl.toString(), e);
+        }
+        return location;
+    }
+    /**
+     * 获得重定向路径（二次重定向）
+     * @param httpUrl
+     * @param userAgent
+     * @return
+     * @throws IOException 
+     */
+    public static String getDuplicateRedirectLocation(URL httpUrl, String userAgent) throws IOException{
+        String url = getRedirectLocation(httpUrl, userAgent);
+        return getRedirectLocation(new URL(url), userAgent);
     }
 }

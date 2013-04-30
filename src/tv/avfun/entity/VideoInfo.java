@@ -18,12 +18,16 @@ public class VideoInfo {
     public int             comments;
     public List<VideoItem> parts;
 
-    public class VideoItem {
+    public static class VideoItem {
         public String       vid;
         public String       vtype;
         public String       subtitle;
-        /** key:url  value:duration*/
-        public Map<String,Long> files;
+        public List<String> urlList;
+        public List<Long> secondList;
+        public void put(String url, long seconds){
+            urlList.add(url);
+            secondList.add(seconds);
+        }
         //TODO danmu info
     }
 }

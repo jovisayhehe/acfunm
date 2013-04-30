@@ -1,5 +1,6 @@
 package tv.avfun;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.regex.Pattern;
 
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.net.UserAgent;
+import tv.avfun.app.AcApp;
 import tv.avfun.app.Downloader;
 import tv.avfun.db.DBService;
 import tv.avfun.entity.Contents;
@@ -200,7 +202,6 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 	
 	public void getdatas(final String aid){
 		new Thread() {
-			@SuppressWarnings("unchecked")
 			public void run() {
 				try {
 				    video = ApiParser.getVideoInfoByAid(aid);
@@ -398,8 +399,8 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
             public void run() {
 
 	            try {
-	                List<String> urls = ApiParser.ParserVideopath(item.vtype, item.vid);
-	                if(urls!=null){
+	                ApiParser.parseVideoParts(item);
+	                if(item.urlList!=null&& !item.urlList.isEmpty()){
 	                    // item.files
 	                    handler.obtainMessage(1, item).sendToTarget();
 	                }
@@ -417,15 +418,16 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 	            VideoItem info = (VideoItem) msg.obj;
 	            Toast.makeText(getApplicationContext(), info.subtitle+"已开始下载！", 0).show();
 	            // urls 不应为null
-	            //List<String> urls = item.files;
-	            
-	            /*for(int i = 0 ; i< urls.size(); i++){
+	            List<String> urls = info.urlList;
+	            File file = AcApp.getDownloadPath(aid, info.vid);
+	            file.mkdirs();
+	            for(int i = 0 ; i< urls.size(); i++){
                     String url = urls.get(i);
                     String filename = i+FileUtil.getUrlExt(url);
                     if(BuildConfig.DEBUG) Log.i(TAG, url);
                     DownloadManager downloadMan = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
                     Request request = new Request(Uri.parse(url))
-                    .addRequestHeader("User-Agent", UserAgent.IPAD)
+                    .addRequestHeader("User-Agent", UserAgent.DEFAULT)
                     .setAllowedNetworkTypes(Request.NETWORK_WIFI)
                     .setAllowedOverRoaming(false)
                     .setDescription(title)
@@ -433,7 +435,7 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
                     .setDestinationInExternalPublicDir("Download/AcFun/Videos/"+aid+"/"+info.vid, filename);
                     // TODO 将id存起来监听下载进度
                     downloadMan.enqueue(request);
-                }*/
+                }
 	            //TODO 改变界面btn状态为 下载中
 	        }else if(msg.what == 2){
 	            Toast.makeText(getApplicationContext(), "可恶，解析视频地址失败！", 0).show();
