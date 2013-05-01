@@ -43,10 +43,10 @@ import android.util.Log;
 public class ApiParser {
 
     private static final String TAG = ApiParser.class.getSimpleName();
-    public static List<Contents> getChannelContents(String address) throws Exception {
+    public static List<Contents> getChannelContents(int channelId, String address) throws Exception {
 
         JSONObject jsonObject = Connectivity.getJSONObject(address);
-        return getChannelContents(jsonObject);
+        return getChannelContents(channelId,jsonObject);
     }
     /**
      * 获取频道内容。
@@ -54,7 +54,7 @@ public class ApiParser {
      * @return
      * @throws Exception
      */
-    public static List<Contents> getChannelContents(JSONObject jsonObject) throws Exception{
+    public static List<Contents> getChannelContents(int channelId,JSONObject jsonObject) throws Exception{
         List<Contents> contents = new ArrayList<Contents>();
         if(jsonObject == null) return null;
         JSONArray jsarray = jsonObject.getJSONArray("contents");
@@ -63,12 +63,16 @@ public class ApiParser {
             Contents c = new Contents();
             c.setTitle(jobj.getString("title"));
             c.setUsername(jobj.getString("username"));
-            c.setDescription(jobj.getString("description").replace("&nbsp;", " ")
-                    .replace("&amp;", "&").replaceAll("\\<.*?>", ""));
+/*            c.setDescription(jobj.getString("description").replace("&nbsp;", " ")
+                    .replace("&amp;", "&").replaceAll("\\<.*?>", ""));*/
+            c.setDescription(jobj.getString("description"));
             c.setViews(jobj.getLong("views"));
             c.setTitleImg(jobj.getString("titleImg"));
             c.setAid(jobj.getString("aid"));
-            c.setChannelId(jobj.getInt("channelId"));
+            // 好多不知名的东西乱入... 比如 110 84 之类的id
+            // 由调用者自己决定id
+            // c.setChannelId(jobj.getInt("channelId"));
+            c.setChannelId(channelId);
             c.setComments(jobj.getInt("comments"));
 
             contents.add(c);
@@ -118,15 +122,15 @@ public class ApiParser {
     }
     public static List<Contents> getChannelDefault(int channelId, int count) throws Exception{
         String url = ChannelApi.getDefaultUrl(channelId, count);
-        return getChannelContents(url);
+        return getChannelContents(channelId,url);
     }
     public static List<Contents> getChannelHotList(int channelId, int count) throws Exception {
         String url = ChannelApi.getHotListUrl(channelId, count);
-        return getChannelContents(url);
+        return getChannelContents(channelId,url);
     }
     public static List<Contents> getChannelLatestReplied(int channelId, int count) throws Exception {
         String url = ChannelApi.getLatestRepliedUrl(channelId, count);
-        return getChannelContents(url);
+        return getChannelContents(channelId,url);
     }
     public static List<Map<String, Object>> getComment(String aid, int page) throws Exception {
         String url = "http://www.acfun.tv/comment_list_json.aspx?contentId=" + aid
@@ -206,7 +210,7 @@ public class ApiParser {
         video.title = info.getString("title");
         video.titleImage = info.getString("titleimge");
         video.description = info.getString("description");
-        video.channelId = info.getJSONObject("channel").getString("channelID");
+        video.channelId = info.getJSONObject("channel").getInt("channelID");
         video.upman = info.getJSONObject("postuser").getString("name");
         // statistics Array
         JSONArray statisArray = info.getJSONArray("statistics");

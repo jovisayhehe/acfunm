@@ -163,7 +163,7 @@ public class ChannelContentFragment extends Fragment implements OnItemClickListe
         protected Integer doInBackground(Void... params) {
             try {
                 // 先尝试读在线数据
-                List<Contents> templist = ApiParser.getChannelContents(channel.getUrl(page));
+                List<Contents> templist = ApiParser.getChannelContents(channel.channelId,channel.getUrl(page));
                 if (!isAdd) { // 第一次获取数据
                     List<Contents> hotlist = ApiParser.getChannelHotList(channel.channelId, 10);
                     if (hotlist != null)

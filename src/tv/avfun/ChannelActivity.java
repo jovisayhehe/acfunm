@@ -9,7 +9,6 @@ import tv.avfun.api.Channel;
 import tv.avfun.api.ChannelApi;
 import tv.avfun.app.AcApp;
 import tv.avfun.fragment.ChannelContentFragment;
-import tv.avfun.fragment.ChannelFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

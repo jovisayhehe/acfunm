@@ -2,15 +2,16 @@ package tv.avfun.db;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.httpclient.Cookie;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import tv.avfun.entity.Contents;
 import tv.avfun.entity.Favorite;
 import tv.avfun.entity.History;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -39,7 +40,7 @@ public class DBService {
 	 * @param type 类型
 	 * @param channelid 频道id
 	 */
-	public void addtoFov(String videoid,String title,int type,String channelid){
+	public void addtoFov(String videoid,String title,int type,int channelid){
 		db.execSQL("INSERT INTO NFAVORITES(VIDEOID,TITLE,TPYE,CHANNELID)" +
 				"VALUES(?,?,?,?)", new Object[]{videoid,title
 				 ,type,channelid});
@@ -68,10 +69,10 @@ public class DBService {
 		return isexist ;
 	}
 	
-	public void addtoHis(String id,String title,String time,int type,String channel){
+	public void addtoHis(String id,String title,String time,int type,int channelid){
 		db.execSQL("INSERT INTO NHISTORY(VIDEOID,TITLE,TIME,TPYE,CHANNELID)" +
 				"VALUES(?,?,?,?,?)", new Object[]{id,title
-				 ,time,type,channel});
+				 ,time,type,channelid});
 		db.close();
 	}
 	
@@ -98,14 +99,13 @@ public class DBService {
 		db.close();
 	}
 	
-	
-	public ArrayList<Favorite> getFovs(){
+	public List<Favorite> getFovs(){
 		ArrayList<Favorite> fovs = new ArrayList<Favorite>();
 		Cursor cursor = db.rawQuery("SELECT VIDEOID,TITLE,CHANNELID,TPYE FROM NFAVORITES ORDER BY _ID DESC",null);
 		while(cursor.moveToNext()){
 		Favorite fov = new Favorite();
 		fov.setAid(cursor.getString(cursor.getColumnIndex("VIDEOID")));
-		fov.setChannelid(cursor.getString(cursor.getColumnIndex("CHANNELID")));
+		fov.setChannelid(cursor.getInt(cursor.getColumnIndex("CHANNELID")));
 		fov.setTitle(cursor.getString(cursor.getColumnIndex("TITLE")));
 		fov.setTpye(cursor.getInt(cursor.getColumnIndex("TPYE")));
 		fovs.add(fov);

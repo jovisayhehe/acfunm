@@ -11,7 +11,7 @@ public class VideoInfo {
     public String          description;
     public String          upman;
     public String          titleImage;
-    public String          channelId;
+    public int             channelId;
     public long            postTime;
     public String[]        tags;
     public int             views;
@@ -19,15 +19,17 @@ public class VideoInfo {
     public List<VideoItem> parts;
 
     public static class VideoItem {
+
         public String       vid;
         public String       vtype;
         public String       subtitle;
         public List<String> urlList;
-        public List<Long> secondList;
-        public void put(String url, long seconds){
+        public List<Long>   secondList;
+
+        public void put(String url, long seconds) {
             urlList.add(url);
             secondList.add(seconds);
         }
-        //TODO danmu info
+        // TODO danmu info
     }
 }

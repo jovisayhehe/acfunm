@@ -75,7 +75,7 @@ public class ImagePagerActivity extends SherlockActivity{
 		imgUrls = getIntent().getStringArrayListExtra("imgs");
 		getSupportActionBar().setTitle(title);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 hh:mm");
-		new DBService(this).addtoHis(aid, title, sdf.format(new Date()),1,channelid);
+		new DBService(this).addtoHis(aid, title, sdf.format(new Date()),1,Integer.parseInt(channelid));
 		isfavorite = new DBService(this).isFoved(aid);
 		
 		options = new DisplayImageOptions.Builder()
@@ -157,7 +157,7 @@ public class ImagePagerActivity extends SherlockActivity{
 				item.setIcon(R.drawable.rating_favorite);
 				Toast.makeText(this, "取消成功", Toast.LENGTH_SHORT).show();
 			}else{
-				new DBService(this).addtoFov(aid, title, 0, channelid);
+				new DBService(this).addtoFov(aid, title, 0, Integer.parseInt(channelid));
 				isfavorite = true;
 				item.setIcon(R.drawable.rating_favorite_p);
 				Toast.makeText(this, "收藏成功", Toast.LENGTH_SHORT).show();
