@@ -13,7 +13,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import tv.avfun.BuildConfig;
+import tv.avfun.app.AcApp;
 import tv.avfun.util.DataStore;
+import tv.avfun.util.NetWorkUtil;
 import android.util.Log;
 
 public class Connectivity {
@@ -79,7 +81,7 @@ public class Connectivity {
         HttpURLConnection conn = (HttpURLConnection) httpUrl.openConnection();
         conn.addRequestProperty("User-Agent", userAgent);
         conn.setConnectTimeout(6000);
-        conn.setReadTimeout(6000);
+        //conn.setReadTimeout(10000); // 似乎需要去掉这个超时..
         return conn;
     }
     /**

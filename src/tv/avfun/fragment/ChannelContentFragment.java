@@ -163,7 +163,7 @@ public class ChannelContentFragment extends Fragment implements OnItemClickListe
         protected Integer doInBackground(Void... params) {
             try {
                 // 先尝试读在线数据
-                List<Contents> templist = ApiParser.getChannelContents(channel.getUrl() + page);
+                List<Contents> templist = ApiParser.getChannelContents(channel.getUrl(page));
                 if (!isAdd) { // 第一次获取数据
                     List<Contents> hotlist = ApiParser.getChannelHotList(channel.channelId, 10);
                     if (hotlist != null)
@@ -286,7 +286,7 @@ public class ChannelContentFragment extends Fragment implements OnItemClickListe
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         // 到底部 刷新数据 只有在成功获取在线数据后才生效
         if (view.getLastVisiblePosition() == (view.getCount() - 1) && !isLoading) {
-            Log.i(TAG, "add data");
+            Log.d(TAG, "add next page data");
             loadData(++indexpage, true);
         }
     }

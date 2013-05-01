@@ -656,13 +656,13 @@ public class ApiParser {
     public static void parseYoukuVideoItem(VideoItem item){
         if(item == null || TextUtils.isEmpty(item.vid))
             throw new IllegalArgumentException("item or item's vid cannot be null");
-        String url = "http:///v.youku.com/player/getPlayList/VideoIDS/"+item.vid;
+        String url = "http://v.youku.com/player/getPlayList/VideoIDS/"+item.vid;
         try {
             JSONObject jsonObject = Connectivity.getJSONObject(url);
             if(jsonObject == null) return;
             JSONObject data = jsonObject.getJSONArray("data").getJSONObject(0);
             Double seed = data.getDouble("seed");
-            JSONObject fileids = data.getJSONObject("sreamfileids");
+            JSONObject fileids = data.getJSONObject("streamfileids");
             String flvids = fileids.getString("flv");
             String realFileid =getFileID(flvids, seed); 
             

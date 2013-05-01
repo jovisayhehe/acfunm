@@ -43,8 +43,9 @@ public class Channel implements Serializable {
         return this.title;
     }
     
-    public String getUrl() {
-        url = "http://www.acfun.tv/api/channel.aspx?query="+channelId+"&currentPage=";
+    public String getUrl(int page) {
+        if(page < 1) page = 1;
+        url = "http://www.acfun.tv/api/getlistbyorder.aspx?orderby=0&channelIds=" + this.channelId + "&count=20&first=" + 20 * (page-1);
         return url;
     }
     public int getChannelId() {
