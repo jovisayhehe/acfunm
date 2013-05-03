@@ -16,13 +16,20 @@
             />
         <ListPreference
             android:icon="@drawable/ic_grid"
-            android:title="主页显示模式"
+            android:title="主页内容显示模式"
             android:key="home_display_mode"
             android:entries="@array/pref_entries_home_display_mode"
             android:entryValues="@array/pref_values_home_display_mode"
             android:defaultValue="1"
             android:dialogTitle="设置主页显示内容"
             android:summary="下次开启生效"
+            />
+        <CheckBoxPreference 
+            android:icon="@drawable/ic_video"
+            android:title="视频清晰度"
+            android:summaryOn="当前：高清货源"
+            android:summaryOff="当前：朱军画质"
+            android:key="isHD" 
             />
     </PreferenceCategory>
     <PreferenceCategory android:title="其他">

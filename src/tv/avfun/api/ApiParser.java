@@ -16,6 +16,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.httpclient.HttpClient;
 import org.json.external.JSONArray;
 import org.json.external.JSONException;
 import org.json.external.JSONObject;
@@ -227,7 +228,6 @@ public class ApiParser {
                 String contentId = "";
                 if(matcher.find()) contentId = matcher.group(1); 
                 item.subtitle = Html.fromHtml(job.getString("subtitle")).toString();
-                item.index = i;
                 // parse vid and type into item
                 parseVideoItem(contentId, item);
                 video.parts.add(item);
@@ -265,6 +265,9 @@ public class ApiParser {
         JSONObject jsonObject = Connectivity.getJSONObject(url);
         item.vtype = jsonObject.getString("vtype");
         item.vid = jsonObject.get("vid").toString();
+        if(!AcApp.getConfig().getBoolean("isHD", false) && "sina".equals(parseVideoType(item.vtype))){
+            item.vid = getSinaMp4Vid(item.vid);
+        }
     }
     @Deprecated
     public static HashMap<String, Object> ParserAcId(String id, boolean isfromtime)
@@ -535,14 +538,15 @@ public class ApiParser {
     /**
      * 解析视频地址 到item中
      * @param item
+     * @param parseMode 0为标清 1高清 2 超清如果有的话
      */
-    public static void parseVideoParts(VideoItem item){
+    public static void parseVideoParts(VideoItem item, int parseMode){
         if(item == null || TextUtils.isEmpty(item.vid))
             throw new IllegalArgumentException("item or item's vid cannot be null");
         if("sina".equals(item.vtype)){
-            parseSinaVideoItem(item);
+            parseSinaVideoItem(item, parseMode);
         }else if("youku".equals(item.vtype)){
-            parseYoukuVideoItem(item); 
+            parseYoukuVideoItem(item, parseMode); 
         }else if("tudou".equals(item.vtype)){
             parseTudouVideoItem(item);
         }else if("qq".equals(item.vtype)){
@@ -577,23 +581,41 @@ public class ApiParser {
         return paths;
         
     }
-    public static void parseSinaVideoItem(VideoItem item){
+    private static String getSinaMp4Vid(String vid) throws Exception{
+        String checkIdUrl = "http://video.sina.com.cn/interface/video_ids/video_ids.php?v="+vid;
+        JSONObject jsonObj = Connectivity.getJSONObject(checkIdUrl);
+        if(jsonObj == null) return null;
+        int ipadVid = jsonObj.getInt("ipad_vid");
+        if(ipadVid != 0 && ipadVid != Integer.valueOf(vid)) vid = ipadVid+""; // 赋予新Id
+        return vid;
+    }
+    public static void parseSinaVideoItem(VideoItem item, int parseMode){
         if(item == null || TextUtils.isEmpty(item.vid))
             throw new IllegalArgumentException("item or item's vid cannot be null");
         try {
+            if(parseMode<2){
+                item.vid = getSinaMp4Vid(item.vid); // 获取mp4 的vid
+                if(BuildConfig.DEBUG) Log.i(TAG, "获取sina MP4");
+            }
             String url = "http://v.iask.com/v_play.php?vid=" + item.vid;
             Document doc = Connectivity.getDoc(url, UserAgent.IPAD);
             Elements durls = doc.getElementsByTag("durl");
             item.urlList = new ArrayList<String>(durls.size());
             item.durationList = new ArrayList<Long>(durls.size());
+            item.bytesList = new ArrayList<Integer>(durls.size());
             for(int i=0;i<durls.size();i++){
                 Element durl = durls.get(i);
-                String length = durl.getElementsByTag("length").get(0).text();
+                String second = durl.getElementsByTag("length").get(0).text();
                 String text = durl.getElementsByTag("url").get(0).text();
-                Log.i("parse sina", "url="+text+"，lenght="+length);
-                item.put(text, Long.parseLong(length));
+                Log.i("parse sina", "url="+text+"，lenght="+second);
+                
+                int len = Connectivity.getContentLenth(text, UserAgent.IPAD);
+                if(len>0){
+                    item.bytesList.add(len);
+                }
+                item.put(text, Long.parseLong(second));
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             if(BuildConfig.DEBUG)
             Log.w(TAG, "获取sina视频失败"+item.vid,e);
         }
@@ -602,8 +624,11 @@ public class ApiParser {
         if(item == null || TextUtils.isEmpty(item.vid))
             throw new IllegalArgumentException("item or item's vid cannot be null");
         String url = "http://video.store.qq.com/"+item.vid+".flv?channel=web&rfc=v0";
-        item.urlList = new ArrayList<String>();
+        item.urlList = new ArrayList<String>(1);
         item.urlList.add(url);
+        item.bytesList = new ArrayList<Integer>(1);
+        int len = Connectivity.getContentLenth(url, UserAgent.DEFAULT);
+        item.bytesList.add(len);
     }
     @Deprecated
     public static ArrayList<String> getSinaflv(String id) throws IOException {
@@ -642,14 +667,17 @@ public class ApiParser {
         try {
             Elements ems = Connectivity.getElements(url, "f");
             item.urlList = new ArrayList<String>(ems.size());
+            item.bytesList = new ArrayList<Integer>(ems.size());
             String sha1 = "";
             for (Element em : ems) {
                 String eSha1 = em.attr("sha1");
                 if(!sha1.equals(eSha1)){
                     sha1 = eSha1;
+                    String size = em.attr("size");
+                    item.bytesList.add(Integer.valueOf(size));
                     String brt = em.attr("brt");
                     if(BuildConfig.DEBUG)
-                        Log.d(TAG, Integer.parseInt(brt)+"url="+em.text());
+                        Log.d(TAG, Integer.parseInt(brt)+"url="+em.text()+",size="+size);
                     item.urlList.add(em.text());
                 }
             }
@@ -658,8 +686,12 @@ public class ApiParser {
                 Log.w(TAG, "解析视频地址失败"+url,e);
         }
     }
-    
-    public static void parseYoukuVideoItem(VideoItem item){
+    /**
+     * 
+     * @param item
+     * @param parseMode 0为标清 1高清 2 超清如果有的话
+     */
+    public static void parseYoukuVideoItem(VideoItem item, int parseMode){
         if(item == null || TextUtils.isEmpty(item.vid))
             throw new IllegalArgumentException("item or item's vid cannot be null");
         String url = "http://v.youku.com/player/getPlayList/VideoIDS/"+item.vid;
@@ -669,22 +701,50 @@ public class ApiParser {
             JSONObject data = jsonObject.getJSONArray("data").getJSONObject(0);
             Double seed = data.getDouble("seed");
             JSONObject fileids = data.getJSONObject("streamfileids");
-            String flvids = fileids.getString("flv");
-            String realFileid =getFileID(flvids, seed); 
+            
+            String seg = null;
+            if(parseMode == 1){
+                seg = "mp4";
+                if(BuildConfig.DEBUG) Log.i(TAG, "mp4高清模式");
+            }else if(parseMode == 2){
+                seg ="hd2";
+                if(BuildConfig.DEBUG) Log.i(TAG, "hd2超清模式");
+            }else{
+                seg = "flv";
+                if(BuildConfig.DEBUG) Log.i(TAG, "flv标清模式");
+                
+            }
+            String fids = null;
+            try{
+                if(fileids.has(seg)){
+                    //do nothing
+                }
+                else if(fileids.has("mp4") && parseMode >= 1){
+                    seg = "mp4";
+                }else if(fileids.has("flv")){
+                    seg = "flv";
+                }
+                fids = fileids.getString(seg);
+            }catch (JSONException e) {
+            }
+            String realFileid =getFileID(fids, seed); 
             
             JSONObject segs = data.getJSONObject("segs");
-            JSONArray flvArray = segs.getJSONArray("flv");
             
-            item.durationList = new ArrayList<Long>(flvArray.length()); 
+            JSONArray vArray = segs.getJSONArray(seg);
             
-            item.urlList = new ArrayList<String>();
-            for(int i=0;i<flvArray.length();i++){
-                JSONObject part = flvArray.getJSONObject(i);
+            item.durationList = new ArrayList<Long>(vArray.length()); 
+            item.bytesList = new ArrayList<Integer>(vArray.length());
+            item.urlList = new ArrayList<String>(vArray.length());
+            String vPath = seg.equals("mp4")?"mp4":"flv";
+            for(int i=0;i<vArray.length();i++){
+                JSONObject part = vArray.getJSONObject(i);
                 String k = part.getString("k");
                 String k2 = part.getString("k2");
-                item.durationList.add(part.getLong("seconds")*1000);
-                String u = "http://f.youku.com/player/getFlvPath/sid/00_00/st/flv/fileid/"+ realFileid.substring(0, 8)+ String.format("%02d", i) + realFileid.substring(10)+"?K="+k+",k2:"+k2;
-                Log.i(TAG, "url="+u);
+                item.durationList.add(part.getInt("seconds")*1000L);
+                item.bytesList.add(part.getInt("size"));
+                String u = "http://f.youku.com/player/getFlvPath/sid/00_00/st/"+vPath+"/fileid/"+ realFileid.substring(0, 8)+ String.format("%02d", i) + realFileid.substring(10)+"?K="+k+",k2:"+k2;
+                if(BuildConfig.DEBUG) Log.i(TAG, "url= "+u);
                 item.urlList.add(Connectivity.getRedirectLocation(new URL(u), UserAgent.DEFAULT));
             }
         } catch (JSONException e) {
@@ -692,7 +752,6 @@ public class ApiParser {
         } catch (MalformedURLException e) {
              e.printStackTrace();
         }
-            
     }
     @Deprecated
     public static ArrayList<String> ParserYoukuFlv(String id) throws Exception {

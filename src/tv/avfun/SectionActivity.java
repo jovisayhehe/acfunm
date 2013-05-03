@@ -6,7 +6,8 @@ import java.util.List;
 
 import tv.avfun.api.ApiParser;
 import tv.avfun.app.AcApp;
-import tv.avfun.app.Downloader;
+import tv.avfun.entity.VideoInfo.VideoItem;
+import tv.avfun.util.FileUtil;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -37,10 +38,11 @@ public class SectionActivity extends SherlockActivity implements OnClickListener
     private TextView          time_outtext;
     private ListView          list;
     private SectionAdapter    adapter;
-    private ArrayList<String> data        = new ArrayList<String>();
+    private List<String> data        = new ArrayList<String>();
     private int               playmode    = 0;
     private static final int  PARSE_OK    = 1;
     private static final int  PARSE_ERROR = 2;
+    private static final String TAG = SectionActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +52,13 @@ public class SectionActivity extends SherlockActivity implements OnClickListener
 
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
-        ab.setTitle(getIntent().getStringExtra("title"));
-        aid = getIntent().getStringExtra("aid");
-        vid = getIntent().getStringExtra("vid");
-        vtype = getIntent().getStringExtra("vtype");
+        Intent intent = getIntent();
+        Object obj = intent.getExtras().getSerializable("item");
+        if(obj == null) throw new IllegalArgumentException("what does the video item you want to play?");
+        item = (VideoItem) obj;
+        ab.setTitle(item.subtitle);
+        vid = item.vid;
+        vtype = item.vtype;
         playmode = AcApp.getConfig().getInt("playmode", 0);
         list = (ListView) findViewById(android.R.id.list);
         progressBar = (ProgressBar) findViewById(R.id.time_progress);
@@ -93,23 +98,33 @@ public class SectionActivity extends SherlockActivity implements OnClickListener
                     list.setVisibility(View.VISIBLE);
                     if (data.size() > 1) {
                         Intent intent = new Intent(SectionActivity.this, PlayActivity.class);
-                        intent.putStringArrayListExtra("paths", data);
+                        intent.putStringArrayListExtra("paths", (ArrayList<String>) data);
                         startActivity(intent);
-                        SectionActivity.this.finish();
                     } else {
                         if (playmode == 0) {
                             Intent intent = new Intent(SectionActivity.this, PlayActivity.class);
-                            intent.putExtra("paths", data);
+                            intent.putExtra("path", data.get(0));
                             startActivity(intent);
-                            SectionActivity.this.finish();
                         } else {
                             Intent it = new Intent(Intent.ACTION_VIEW);
-                            Uri uri = Uri.parse(data.get(0));
-                            it.setDataAndType(uri, "video/flv");
+                            String url = data.get(0);
+                            Uri uri = Uri.parse(url);
+                            String ext = FileUtil.getUrlExt(url);
+                            String mimetype = null;
+                            if(".flv".equals(ext)){
+                                mimetype = "video/x-flv";
+                            }else if(".f4v".equals(ext)){
+                                mimetype = "video/x-f4v";
+                            }else if(".mp4".equals(ext)){
+                                mimetype = "video/mp4";
+                            }else if(".hlv".equals(ext)){
+                                mimetype = "video/x-flv"; // XXX: mimetype of hlv???
+                            }
+                            it.setDataAndType(uri, mimetype);
                             startActivity(it);
-                            SectionActivity.this.finish();
                         }
                     }
+                    SectionActivity.this.finish();
                     break;
                 case PARSE_ERROR:
                     list.setVisibility(View.GONE);
@@ -121,20 +136,26 @@ public class SectionActivity extends SherlockActivity implements OnClickListener
                 }
             }
         };
+    private VideoItem item;
 
     public void getdatas() {
         time_outtext.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
+        
         new Thread() {
 
             public void run() {
                 try {
-                    /*VideoItem info= Downloader.getDownloadedVideo(aid,vid);
-                    if(info != null){
-                        data.addAll(info.files);
-                        Log.d("Section", "使用缓存进行播放");
+                    //data = (ArrayList<String>) ApiParser.ParserVideopath(vtype, vid);
+                    if(!item.isdownloaded){
+                        if(BuildConfig.DEBUG)
+                            Log.i(TAG, "parsing parts for"+ vid);
+                        int parseMode = 1;
+                        if(AcApp.getConfig().getBoolean("isHD", false))
+                            parseMode = 2;
+                        ApiParser.parseVideoParts(item,parseMode);
                     }
-                    else*/ data = (ArrayList<String>) ApiParser.ParserVideopath(vtype, vid);
+                    data = item.urlList;
                     if (data != null && data.size() > 0) {
                         handler.obtainMessage(PARSE_OK, data).sendToTarget();
                     }else{
@@ -143,7 +164,7 @@ public class SectionActivity extends SherlockActivity implements OnClickListener
                 } catch (Exception e) {
                     handler.obtainMessage(PARSE_ERROR).sendToTarget();
                     if(BuildConfig.DEBUG)
-                    e.printStackTrace();
+                        e.printStackTrace();
                 }
             }
         }.start();

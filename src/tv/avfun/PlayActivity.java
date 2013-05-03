@@ -32,10 +32,11 @@ public class PlayActivity extends Activity{
 		if (!io.vov.vitamio.LibsChecker.checkVitamioLibs(this))
 			return;
 		setContentView(R.layout.videoview);
-//		path = getIntent().getStringExtra("path");
+		path = getIntent().getStringExtra("path");
 		paths = getIntent().getStringArrayListExtra("paths");
 		mVideoView = (VideoView) findViewById(R.id.surface_view);
-		mVideoView.setVideoPath(paths.get(index));
+		if(path != null) mVideoView.setVideoPath(path);
+		else mVideoView.setVideoPath(paths.get(index));
 		textView = (TextView) findViewById(R.id.video_proess_text);
 		progress = (ProgressBar) findViewById(R.id.video_time_progress);
 		mVideoView.setOnBufferingUpdateListener(new OnBufferingUpdateListener() {
@@ -61,7 +62,7 @@ public class PlayActivity extends Activity{
 
 		@Override
 		public void onCompletion(MediaPlayer mPlayer) {
-	        if(++index >= paths.size()) {
+	        if(paths == null || ++index >= paths.size()) {
 	            finish();
 	            return;
 	        }
