@@ -20,6 +20,8 @@ import android.util.DisplayMetrics;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -95,10 +97,10 @@ public class MainActivity extends SlidingFragmentActivity {
         }
     }
     private void showOverlays() {
-        overlays = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.overlays, null);
+        overlays = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.overlays, null);
         overlays.setOnClickListener(new View.OnClickListener() {
             int count = overlays.getChildCount();
-            int i = 0;
+            int i = 2;
             @Override
             public void onClick(View v) {
                 if(i<count)
@@ -109,7 +111,7 @@ public class MainActivity extends SlidingFragmentActivity {
                 }
             }
         });
-        overlays.findViewById(R.id.ok).setOnClickListener(new View.OnClickListener() {
+        OnClickListener l = new View.OnClickListener() {
             
             @Override
             public void onClick(View v) {
@@ -117,7 +119,9 @@ public class MainActivity extends SlidingFragmentActivity {
                 hideOverlays();
                 AcApp.putBoolean("first_run", false);
             }
-        });
+        };
+        overlays.findViewById(R.id.close).setOnClickListener(l);
+        overlays.findViewById(R.id.ok).setOnClickListener(l);
         ((FrameLayout)findViewById(R.id.content_frame)).addView(overlays);
         overlays.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in));
     }
@@ -239,7 +243,7 @@ public class MainActivity extends SlidingFragmentActivity {
      */
     private int[] navIds = {R.id.slide_nav_home,R.id.slide_nav_bangumi};
     private SparseArray<SlideNavItemView> mNavItems;
-    private LinearLayout overlays;
+    private ViewGroup overlays;
     private void initNavItems(){
         
         mNavItems = new SparseArray<SlideNavItemView>();

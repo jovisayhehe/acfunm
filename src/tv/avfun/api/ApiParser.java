@@ -164,7 +164,7 @@ public class ApiParser {
         Document doc;
         try {
             // http://www.acfun.tv/v/list67/index.htm
-            doc = Connectivity.getDoc("http://yrom.sinaapp.com/bangumi.html", UserAgent.CHROME_25);
+            doc = Connectivity.getDoc("http://www.acfun.tv/v/list67/index.htm", UserAgent.CHROME_25);
         } catch (IOException e) {
             if(BuildConfig.DEBUG)
                 Log.e("Parser", "get time list failed", e);
@@ -227,9 +227,11 @@ public class ApiParser {
                 String contentId = "";
                 if(matcher.find()) contentId = matcher.group(1); 
                 item.subtitle = Html.fromHtml(job.getString("subtitle")).toString();
+                item.index = i;
                 // parse vid and type into item
                 parseVideoItem(contentId, item);
                 video.parts.add(item);
+                
             }
         } else {
             for (int i = 0; i < contentArray.length(); i++) {
@@ -583,7 +585,7 @@ public class ApiParser {
             Document doc = Connectivity.getDoc(url, UserAgent.IPAD);
             Elements durls = doc.getElementsByTag("durl");
             item.urlList = new ArrayList<String>(durls.size());
-            item.secondList = new ArrayList<Long>(durls.size());
+            item.durationList = new ArrayList<Long>(durls.size());
             for(int i=0;i<durls.size();i++){
                 Element durl = durls.get(i);
                 String length = durl.getElementsByTag("length").get(0).text();
@@ -673,15 +675,16 @@ public class ApiParser {
             JSONObject segs = data.getJSONObject("segs");
             JSONArray flvArray = segs.getJSONArray("flv");
             
-            item.secondList = new ArrayList<Long>(flvArray.length()); 
+            item.durationList = new ArrayList<Long>(flvArray.length()); 
             
             item.urlList = new ArrayList<String>();
             for(int i=0;i<flvArray.length();i++){
                 JSONObject part = flvArray.getJSONObject(i);
                 String k = part.getString("k");
                 String k2 = part.getString("k2");
-                item.secondList.add(part.getLong("seconds"));
-                String u = "http://f.youku.com/player/getFlvPath/sid/00_00/st/flv/fileid/"+ realFileid+"?K="+k;
+                item.durationList.add(part.getLong("seconds")*1000);
+                String u = "http://f.youku.com/player/getFlvPath/sid/00_00/st/flv/fileid/"+ realFileid.substring(0, 8)+ String.format("%02d", i) + realFileid.substring(10)+"?K="+k+",k2:"+k2;
+                Log.i(TAG, "url="+u);
                 item.urlList.add(Connectivity.getRedirectLocation(new URL(u), UserAgent.DEFAULT));
             }
         } catch (JSONException e) {

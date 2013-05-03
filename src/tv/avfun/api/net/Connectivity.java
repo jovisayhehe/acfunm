@@ -106,7 +106,7 @@ public class Connectivity {
             if(code == 302){
                 location = conn.getHeaderField("Location");
                 if (BuildConfig.DEBUG)
-                    Log.i("", "raw: "+httpUrl.toString()+", location: "+location);
+                    Log.i("", "redirect location: "+location);
             }
         } catch (IOException e) {
             if (BuildConfig.DEBUG)

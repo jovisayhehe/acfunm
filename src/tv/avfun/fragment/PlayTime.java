@@ -10,6 +10,7 @@ import tv.avfun.api.Bangumi;
 import tv.avfun.util.DataStore;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,13 +53,19 @@ public class PlayTime extends SherlockFragment {
                 initList();
             }
         });
-        initList();
+        
         return this.main_v;
     }
 
     private boolean          isCached = DataStore.getInstance().isBangumiListCached();
-    private LoadTimeListTask task;
-
+    private FragmentActivity activity;
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        initList();
+        activity = getActivity();
+        
+    }
     public void initList() {
         new LoadTimeListTask().execute();
     }
@@ -94,7 +101,7 @@ public class PlayTime extends SherlockFragment {
         @Override
         protected void onPostExecute(Boolean result) {
             if (result) {
-                list.setAdapter(new TimeListAdaper(getActivity(), data));
+                list.setAdapter(new TimeListAdaper(activity, data));
             } else
                 time_outtext.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
