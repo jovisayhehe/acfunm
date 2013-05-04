@@ -5,27 +5,35 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import tv.avfun.api.ApiParser;
-import tv.avfun.api.net.UserAgent;
+import tv.avfun.app.AcApp;
+import tv.avfun.app.DownloadService;
+import tv.avfun.app.DownloadService.DownloadBinder;
 import tv.avfun.app.Downloader;
+import tv.avfun.app.Downloader.DownloadHandler;
 import tv.avfun.db.DBService;
 import tv.avfun.entity.Contents;
 import tv.avfun.entity.VideoInfo;
-import tv.avfun.util.DensityUtil;
-import tv.avfun.util.FileUtil;
+import tv.avfun.entity.VideoInfo.VideoItem;
+import tv.avfun.util.NetWorkUtil;
+import tv.avfun.util.StringUtil;
 import tv.avfun.util.lzlist.ImageLoader;
 import android.annotation.TargetApi;
 import android.app.DownloadManager;
-import android.app.DownloadManager.Request;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.text.TextUtils;
 import android.text.util.Linkify;
@@ -35,11 +43,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,33 +58,48 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.ShareActionProvider;
 import com.umeng.analytics.MobclickAgent;
 
-public class DetailActivity extends SherlockActivity implements OnClickListener{
+public class DetailActivity extends SherlockActivity implements OnClickListener,OnItemClickListener{
 	private ListView listview;
 	private String aid;
 	private String description;
-	private ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String,Object>>();
+	private List<VideoItem> data = new ArrayList<VideoItem>();
 	private int from;
 	private String title;
-	private DetailAdaper adaper;
+	private DetailAdaper adapter;
 	private TextView user_name;
 	private ImageView imageView;
 	private TextView titleView;
 	private TextView views;
 	private TextView comments;
 	private TextView paly_btn;
-	private String channelid;
+    private TextView desc;
+	private int channelid;
 	private boolean isfavorite = false;
-	private HashMap<String, Object> video;
-	private HashMap<String, String> info ;
+	private VideoInfo video;
 	public static final int FAVORITE = 210;
 	public static final int SHARE = 211;
-    private static final String TAG = "Detail";
+    private static final String TAG = "DetailActivity";
 	public ImageLoader imageLoader;
 	private Intent mIntent;
+	private DownloadBinder downloadService;
+    private ServiceConnection conn = new ServiceConnection() {
+        
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+        
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.d(TAG, service.getClass().getName());
+            downloadService = (DownloadBinder) service;
+        }
+    };
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
+        Intent service = new Intent(this,DownloadService.class);
+        bindService(service, conn , BIND_AUTO_CREATE);
 		setContentView(R.layout.detail_layout);
 		mIntent = getIntent();
 		if(Intent.ACTION_VIEW.equals(mIntent.getAction())){
@@ -87,61 +111,27 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 		}
 		imageLoader=ImageLoader.getInstance();
 		initview();
-	}
 		
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-    	getSupportMenuInflater().inflate(R.menu.share_action_provider, menu);
-    	MenuItem actionItem = menu.findItem(R.id.menu_item_share_action_provider_action_bar);
-        ShareActionProvider actionProvider = (ShareActionProvider) actionItem.getActionProvider();
-        actionProvider.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
-        actionProvider.setShareIntent(createShareIntent());
-    	
-        if(isfavorite){
-        	 menu.findItem(R.id.menu_item_fov_action_provider_action_bar).setIcon(R.drawable.rating_favorite_p);
-        }
-        return super.onCreateOptionsMenu(menu);
-    }
-    
+	}
 	@Override
-	public boolean onOptionsItemSelected(
-			com.actionbarsherlock.view.MenuItem item) {
-		
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			this.finish();
-			break;
-			
-		case R.id.menu_item_fov_action_provider_action_bar:
-			if(isfavorite){
-				new DBService(this).delFov(aid);
-				isfavorite = false;
-				item.setIcon(R.drawable.rating_favorite);
-				Toast.makeText(this, "取消成功", Toast.LENGTH_SHORT).show();
-			}else{
-				new DBService(this).addtoFov(aid, title, 0, channelid);
-				isfavorite = true;
-				item.setIcon(R.drawable.rating_favorite_p);
-				Toast.makeText(this, "收藏成功", Toast.LENGTH_SHORT).show();
-			}
+	protected void onStart() {
+	    super.onStart();
 
-			break;
-		default:
-			break;
-		}
-		return super.onOptionsItemSelected(item);
+        registerReceiver(onProgress, new IntentFilter(DownloadService.ACTION_VIEW_PROGRESS));
+        registerReceiver(onDownloadFail, new IntentFilter(DownloadService.ACTION_DOWNLOAD_FAIL));
+        registerReceiver(onDownloadComplete, new IntentFilter(DownloadService.ACTION_DOWNLOAD_SUCCESS));
+        if(adapter != null){
+            adapter.notifyDataSetChanged();
+        }
+        
 	}
-	
-	
-    private Intent createShareIntent() {
-    	String shareurl = title+"http://www.acfun.tv/v/ac"+aid;
-		Intent shareIntent = new Intent(Intent.ACTION_SEND);  
-		shareIntent.setType("text/plain");  
-		shareIntent.putExtra(Intent.EXTRA_SUBJECT, "分享");  
-		shareIntent.putExtra(Intent.EXTRA_TEXT, shareurl);  
-        return shareIntent;
-    }
-
+	@Override
+	protected void onStop() {
+	    super.onStop();
+	    unregisterReceiver(onProgress);
+	    unregisterReceiver(onDownloadFail);
+	    unregisterReceiver(onDownloadComplete);
+	}
 	
 	public void initview(){
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -151,6 +141,7 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
         comments = (TextView) findViewById(R.id.detail_comment);
         imageView = (ImageView) findViewById(R.id.detail_img);
         paly_btn = (TextView) findViewById(R.id.detail_play_btn);
+        desc = (TextView) findViewById(R.id.detail_desc);
         paly_btn.setTag(123);
         if(from == 2){
             // av://ac000000
@@ -161,16 +152,16 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
             if (c == null) {
                 throw new IllegalArgumentException("你从异次元来的吗？");
             } else {
-                title = c.getTitle();
+                title = StringUtil.getSource(c.getTitle());
                 aid = c.getAid();
-                channelid = c.getChannelId() + "";
+                channelid = c.getChannelId();
                 imageLoader.displayImage(c.getTitleImg(), imageView);
                 user_name.setText(c.getUsername());
                 views.setText("点击" + "" + c.getViews());
                 comments.setText("评论" + "" + c.getComments());
                 description = c.getDescription();
                 paly_btn.setText("正在加载...");
-                titleView.setText(title);
+                titleView.setText( c.getTitle());
             }
         }
         getSupportActionBar().setTitle("ac"+aid);
@@ -181,50 +172,133 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
             views.setText("正在加载...");
             comments.setText("正在加载...");
             paly_btn.setText("正在加载...");
+            desc.setText("正在加载...");
         }
         listview = (ListView) findViewById(R.id.detail_listview);
-        adaper = new DetailAdaper(data);
-        // TODO 似乎根本就不需要listview嘛
-        listview.setAdapter(adaper);
+        adapter = new DetailAdaper(data);
+        listview.setAdapter(adapter);
         listview.setDuplicateParentStateEnabled(true);
-        getdatas(aid);
+        listview.setOnItemClickListener(this);
+        mInflater = LayoutInflater.from(DetailActivity.this);
+        loadView = findViewById(R.id.load_view);
+        btnComment = mInflater.inflate(R.layout.detail_comments_btn_layout, listview,false);
+        btnComment.setBackgroundResource(R.drawable.selectable_background);
+        btnComment.setTag(101);
+        btnComment.setOnClickListener(DetailActivity.this);
+        listview.addFooterView(btnComment);
+        loadData(aid);
+	}
+
+	public void loadData(String aid){
+	    new RequestDetailTask().execute(aid);
+	}
+	private class RequestDetailTask extends AsyncTask<String, Void, Boolean>{
+	    
+	    private TextView text;
+        private View progress;
+        @Override
+	    protected void onPreExecute() {
+
+            loadView.setEnabled(false);
+            progress = loadView.findViewById(R.id.list_loadview_progress);
+            progress.setVisibility(View.VISIBLE);
+            text = (TextView) loadView.findViewById(R.id.list_loadview_text);
+            text.setText(R.string.loading);
+            loadView.setVisibility(View.VISIBLE);
+            listview.setVisibility(View.INVISIBLE);
+	    }
+	    
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            String aid = params[0];
+            try {
+                if(NetWorkUtil.isNetworkAvailable(getApplicationContext())){
+                    video = ApiParser.getVideoInfoByAid(aid);
+                    data = video.parts;
+                }
+                // 下载功能只有9以上才有
+                if(Build.VERSION.SDK_INT>=9){
+                    // 先从downloadlist数据库中查aid 对应的video item
+                    List<VideoItem> items = new DBService(getApplicationContext()).getVideoItems(aid);
+                    // 再从过滤掉已下载的vid
+                    if(data!=null){
+                        if (items != null && !items.isEmpty()) {
+                            for (int i = 0; i < items.size(); i++) {
+                                boolean b = data.remove(items.get(i));
+                                if (b && BuildConfig.DEBUG)
+                                    Log.i(TAG, "过滤掉" + items.get(i).vid + " - " + items.get(i).subtitle);
+                            }
+                            // 将已下载的item加到data中
+                            data.addAll(items);
+                        }
+                    } else data = items; // 没有解析到在线数据，把数据库查到的赋值给他，maybe empty although 
+                }
+                return data!=null && !data.isEmpty();
+            } catch (Exception e) {
+                if (BuildConfig.DEBUG)
+                    Log.w(TAG, "获取数据出错！"+aid,e);
+                return false;
+            }
+            
+        }
+	    @Override
+	    protected void onPostExecute(Boolean result) {
+
+            if (result) {
+                if (from > 0) {
+                    user_name.setText(video.upman);
+                    views.setText(video.views + "");
+                    comments.setText(video.comments + "");
+                    description = video.description;
+                    channelid = video.channelId;
+                    title = video.title;
+                    titleView.setText(title);
+                    String imgurl = video.titleImage;
+                    if (!TextUtils.isEmpty(imgurl) || !"null".equals(imgurl)) {
+                        imageLoader.displayImage(imgurl, imageView);
+                    } else {
+                        imageView.setBackgroundResource(R.drawable.no_picture);
+                    }
+
+                }
+                paly_btn.setText("播放");
+                paly_btn.setOnClickListener(DetailActivity.this);
+                listview.setVisibility(View.VISIBLE);
+                loadView.setVisibility(View.GONE);
+                adapter.setData(data);
+                adapter.notifyDataSetChanged();
+            } else {
+                progress.setVisibility(View.GONE);
+                text.setText(R.string.reloading);
+                loadView.setTag(100);
+                loadView.setEnabled(true);
+                loadView.setOnClickListener(DetailActivity.this);
+            }
+	        
+	    }
 	}
 	
-	public void onResume() {
-	    super.onResume();
-	    MobclickAgent.onResume(this);
-	}
-	public void onPause() {
-	    super.onPause();
-	    MobclickAgent.onPause(this);
-	}
-	
+/*	
 	public void getdatas(final String aid){
 		new Thread() {
-			@SuppressWarnings("unchecked")
 			public void run() {
 				try {
-					if(from == 0){
-						video = ApiParser.ParserAcId(aid,false);
-					}else{
-						video = ApiParser.ParserAcId(aid,true);
-						info = (HashMap<String, String>) video.get("info");
-					}
-					
-					data = (ArrayList<HashMap<String, Object>>) video.get("pts");
+				    video = ApiParser.getVideoInfoByAid(aid);
+					data = video.parts;
 					runOnUiThread(new Runnable() {
 						public void run() {
-							if(data!=null){
+							if(data!=null && !data.isEmpty()){
 								if(from > 0){
-									 user_name.setText(info.get("username"));
-									 views.setText(info.get("views"));
-									 comments.setText(info.get("comments"));
-									 description = info.get("description");
-									 channelid = info.get("channelId");
-									 title = info.get("title");
+									 user_name.setText(video.upman);
+									 views.setText(video.views+"");
+									 comments.setText(video.comments+"");
+									 description = video.description;
+									 channelid = video.channelId;
+									 title = video.title;
 									 titleView.setText(title);
-									 String imgurl = info.get("titleimage");
-									 if(!TextUtils.isEmpty(imgurl)){
+									 String imgurl = video.titleImage;
+									 if(!TextUtils.isEmpty(imgurl) || !"null".equals(imgurl)){
 										 imageLoader.displayImage(imgurl, imageView);
 									 }else{
 										 imageView.setBackgroundResource(R.drawable.no_picture);
@@ -257,18 +331,18 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 			}
 		}.start();
 	}
+	*/
 	
 	
-	
-	private final class DetailAdaper extends BaseAdapter {
-		private ArrayList<HashMap<String, Object>> data;
+	class DetailAdaper extends BaseAdapter {
+		private List<VideoItem> data;
 		private boolean iserror;
-		public DetailAdaper(ArrayList<HashMap<String, Object>> data) {
+		public DetailAdaper(List<VideoItem> data) {
 			
 			this.data = data;
 		}
 		
-		public void setData(ArrayList<HashMap<String, Object>> data){
+		public void setData(List<VideoItem> data){
 			this.data = data;
 		}
 		
@@ -278,188 +352,142 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 		@Override
 		public int getCount() {
 			
-			return 3;
+			return data.size();
 		}
 
 		@Override
-		public Object getItem(int position) {
+		public VideoItem getItem(int position) {
 			
-			return null;
+			return data.get(position);
 		}
 
 		@Override
 		public long getItemId(int position) {
-			
 			return position;
 		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			
-			LinearLayout layout = new LinearLayout(DetailActivity.this);
-			layout.setOrientation(LinearLayout.VERTICAL);
-			
-			switch (position) {
-			case 0:
-				TextView descriptiontext = new TextView(DetailActivity.this);
-				
-				int dpx = DensityUtil.dip2px(DetailActivity.this, 8);
-				descriptiontext.setPadding(0, dpx, 0, dpx);
-				setDescription(descriptiontext);
-				TextView pttext = new TextView(DetailActivity.this);
-				pttext.setText("视频段落");
-				pttext.setTextSize(15);
-				pttext.setTextColor(0xFFFF9A03);
-				pttext.setPadding(0, dpx, dpx, 3);
-				
-				View ylline = new View(DetailActivity.this);
-				ylline.setLayoutParams(new LinearLayout.LayoutParams(-1, 2));
-				ylline.setBackgroundColor(0xFFFF9A03);
-				
-				layout.addView(descriptiontext);
-				layout.addView(pttext);
-				layout.addView(ylline);
-				convertView = layout;
-				break;
-			case 1:
-				if(data!=null&&!data.isEmpty()){
-					for (int i = 0; i < data.size(); i++) {
-						final HashMap<String, Object> map = data.get(i);
-						
-						LinearLayout itemlayout = (LinearLayout) LayoutInflater.from(DetailActivity.this).inflate(R.layout.detail_video_list_item, null);
-						itemlayout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,DensityUtil.dip2px(getApplicationContext(), 40)));
-						TextView title = (TextView) itemlayout.findViewById(R.id.detail_video_list_item_title);
-						title.setLines(1);
-						title.setText(map.get("title").toString());
-						
-						TextView vtype = (TextView) itemlayout.findViewById(R.id.detail_video_list_item_vtype);
-						vtype.setText(map.get("vtype").toString());
-						
-						itemlayout.setTag(map);
-						itemlayout.setOnClickListener(new PrtckListener());
-						layout.addView(itemlayout);
-						ImageView btnDown = (ImageView) itemlayout.findViewById(R.id.detail_btn_downlaod);
-						if(Downloader.hasDownload(aid,map.get("vid").toString())){
-						    btnDown.setVisibility(View.GONE);
-						    itemlayout.findViewById(R.id.detail_downloaded).setVisibility(View.VISIBLE);
-						}
-						else{
-    						if(Build.VERSION.SDK_INT>=9){
-    						    btnDown.setVisibility(View.VISIBLE);
-    						    btnDown.setOnClickListener(new OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        v.setVisibility(View.GONE);
-                                        startDownload(map.get("vtype").toString(), map.get("vid").toString(),map.get("title").toString());
-                                    }
-                                });
-    						}
-						}
-						//添加分割线
-						if(i!=data.size()-1){
-							View lineView = new View(DetailActivity.this);
-							lineView.setBackgroundResource(R.drawable.listview_divider);
-							lineView.setLayoutParams(new LinearLayout.LayoutParams(-1, DensityUtil.dip2px(DetailActivity.this, 1)));
-							layout.addView(lineView);
-						}
-					}
-					convertView = layout;
-				}else{
-					if(iserror){
-						LayoutInflater mInflater = LayoutInflater.from(DetailActivity.this);
-						convertView = mInflater.inflate(R.layout.list_footerview, null);
-						convertView.findViewById(R.id.list_footview_progress).setVisibility(View.GONE);
-						TextView textview = (TextView) convertView.findViewById(R.id.list_footview_text);
-						textview.setText(R.string.reloading);
-						convertView.setTag(100);
-						convertView.setEnabled(true);
-						convertView.setOnClickListener(DetailActivity.this);
-						
-					}else{
-						LayoutInflater mInflater = LayoutInflater.from(DetailActivity.this);
-						convertView = mInflater.inflate(R.layout.list_footerview, null);;
-						convertView.setEnabled(false);
-					}
-			
-				}
-				break;
-			case 2:
-				View.inflate(DetailActivity.this, R.layout.detail_comments_btn_layout, layout);
-				//layout.addView(comments);
-				layout.setBackgroundResource(R.drawable.selectable_background);
-				convertView = layout;
-				convertView.setTag(101);
-				convertView.setOnClickListener(DetailActivity.this);
-				break;
-			default:
-				break;
-			}
-			return convertView;
+		public void setProgress(String vid,int progress,int total){
+		    ProgressBar pb = progressbars.get(vid);
+		    if(pb == null) return;
+		    pb.setIndeterminate(false);
+		    pb.setMax(total);
+		    pb.setProgress(progress);
+		    //this.notifyDataSetChanged();
+		}
+		public void hideProgress(boolean isFailed, String vid){
+		    if(isFailed){
+		        handler.sendEmptyMessage(2);
+		    }else{
+		        TextView st = statuss.get(vid);
+		        if(st == null) return;
+		        st.setText("已下载");
+		        st.setTag(3);
+		        VideoItem item = new DBService(getApplicationContext()).getDownloadedItemById(vid);
+                data.remove(item); //去掉原有的
+                data.add(item);
+                this.notifyDataSetChanged();
+		    }
+		    ProgressBar pb = progressbars.get(vid);
+		    pb.setVisibility(View.GONE);
+		    
 		}
 
-		
+		Map<String,ProgressBar> progressbars  = new HashMap<String, ProgressBar>();
+		Map<String,TextView> statuss = new HashMap<String, TextView>();
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final VideoItem item = data.get(position);
+            View itemlayout = LayoutInflater.from(DetailActivity.this).inflate(R.layout.detail_video_list_item, listview,false);
+            TextView title = (TextView) itemlayout.findViewById(R.id.detail_video_list_item_title);
+            TextView vtype = (TextView) itemlayout.findViewById(R.id.detail_video_list_item_vtype);
+            title.setText(StringUtil.getSource(item.subtitle));
+            vtype.setText(item.vtype==null?"本地":item.vtype);
+            if(Build.VERSION.SDK_INT>=9){
+                final TextView status = (TextView) itemlayout.findViewById(R.id.detail_status);
+                final ProgressBar progress = (ProgressBar) itemlayout.findViewById(R.id.detail_progress);
+                progress.setVisibility(View.GONE);
+                progress.setIndeterminate(true);
+                progressbars.put(item.vid, progress);
+                status.setVisibility(View.VISIBLE);
+                statuss.put(item.vid, status);
+                if(Downloader.isDownloaded(getApplicationContext(), item.vid)){ // 下载完毕
+                    item.isdownloaded = true;
+                    status.setText("已下载"); 
+                    status.setTag(3);
+                }else if(Downloader.isDownloading(getApplicationContext(), item.vid)){ // 下载中
+                    status.setText("取消");
+                    status.setTag(2);
+                    downloadService.doQueryStatus(item.vid);
+                    progress.setVisibility(View.VISIBLE);
+                }else{
+                    // TODO 开启download服务 监听下载进度
+                    status.setText("下载");
+                    status.setTag(1);
+                }
+                status.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if((Integer)status.getTag() == 1){
+                            status.setText("取消");
+                            startDownload(item);
+                            progress.setVisibility(View.VISIBLE);
+                            status.setTag(2);
+                        }else if((Integer)status.getTag() == 2){
+                            status.setText("下载");
+                            progress.setVisibility(View.INVISIBLE);
+                            removeDownload(item.vid);
+                            status.setTag(1);
+                        }else if((Integer)status.getTag() == 3){
+                            startActivity(new Intent(getApplicationContext(), DownloadManActivity.class));
+                        }
+                    }
+                    
+                });
+               
+            }
+            return itemlayout;
+        }
+	}
+
+	protected void removeDownload(String vid) {
+	    Downloader.removeDownload(this,vid);
 	}
 	// TODO 下载
-	private void startDownload(final String type, final String vid, final String title) {
+	private void startDownload(final VideoItem item) {
+
 	    new Thread(){
             public void run() {
 
 	            try {
-	                List<String> urls = ApiParser.ParserVideopath(type, vid);
-	                if(urls!=null){
-	                    VideoInfo info = new VideoInfo();
-	                    info.vid = vid;
-	                    info.subtitle = title;
-	                    info.files = (ArrayList<String>) urls;
-	                    handler.obtainMessage(1, info).sendToTarget();
+                    int parseMode = 1;
+                    if(AcApp.getConfig().getBoolean("isHD", false))
+                        parseMode = 2;
+	                ApiParser.parseVideoParts(item,parseMode);
+	                if(item.urlList != null && !item.urlList.isEmpty()){
+	                    Downloader.enqueue(getApplicationContext(), aid, item, handler);
+	                    
 	                }
-	                else handler.sendEmptyMessage(2);
+	                else
+	                    handler.sendEmptyMessage(DownloadHandler.DOWNLOAD_FAIL);
 	            } catch (Exception e) {
 	                e.printStackTrace();
 	            }
 	        }
 	    }.start();
     }
-	private Handler handler = new Handler(){
-	    @TargetApi(9)
+	private DownloadHandler handler = new DownloadHandler(){
+	    
+        @TargetApi(9)
 	    public void handleMessage(Message msg) {
-	        if(msg.what == 1){
-	            VideoInfo info = (VideoInfo) msg.obj;
-	            Toast.makeText(getApplicationContext(), info.subtitle+"已开始下载！", 0).show();
-	            // urls 不应为null
-	            List<String> urls = info.files;
-	            
-	            for(int i = 0 ; i< urls.size(); i++){
-                    String url = urls.get(i);
-                    String filename = i+FileUtil.getUrlExt(url);
-                    if(BuildConfig.DEBUG) Log.i(TAG, url);
-                    DownloadManager downloadMan = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-                    Request request = new Request(Uri.parse(url))
-                    .addRequestHeader("User-Agent", UserAgent.IPAD)
-                    .setAllowedNetworkTypes(Request.NETWORK_WIFI)
-                    .setAllowedOverRoaming(false)
-                    .setDescription(title)
-                    .setTitle(info.subtitle+"_"+filename)
-                    .setDestinationInExternalPublicDir("Download/AcFun/Videos/"+aid+"/"+info.vid, filename);
-                    // TODO 将id存起来监听下载进度
-                    downloadMan.enqueue(request);
-                }
-	            //TODO 改变界面btn状态为 下载中
-	        }else if(msg.what == 2){
-	            Toast.makeText(getApplicationContext(), "可恶，解析视频地址失败！", 0).show();
+	        if(msg.what == DOWNLOAD_START){
+	            Toast.makeText(AcApp.context(), "(^ω^) 开始下载", 0).show();
+
+	            String vid = (String) msg.obj;
+	            downloadService.doQueryStatus(vid);
+	        }else if(msg.what == DOWNLOAD_FAIL){
+	            Toast.makeText(getApplicationContext(), "(+﹏+) 可恶，下载失败！请换个姿势再来一次！", 0).show();
 	        }
 	    }
 	};
-	private final class PrtckListener implements OnClickListener{
-
-		@Override
-		public void onClick(View v) {
-			
-			HashMap<String, Object> map = (HashMap<String, Object>) v.getTag();
-			startToPlay(map);
-		}
-		
-	}
 
 	@Override
 	public void onClick(View v) {
@@ -467,9 +495,7 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 		switch ((Integer)v.getTag()) {
 		case 100:
 			v.setEnabled(false);
-			adaper.setIserror(false);
-			adaper.notifyDataSetChanged();
-			getdatas(aid);
+			loadData(aid);
 			break;
 		case 101:
 			Intent intent = new Intent(DetailActivity.this, CommentsActivity.class);
@@ -483,38 +509,153 @@ public class DetailActivity extends SherlockActivity implements OnClickListener{
 			break;
 		}
 	}
-	public void setDescription(TextView text){
-	    Pattern wiki = Pattern.compile("\\[wiki(.+)\\]",Pattern.CASE_INSENSITIVE);
-	    String localDesc = description;
-	    text.setText(localDesc);
-	    Linkify.addLinks(text, wiki,null,null,new TransformFilter() {
-	        @Override
-	        public String transformUrl(Matcher match, String url) {
-	            String t = match.group(1);
-	            return "http://wiki.acfun.tv/index.php/"+t;
-	        }
-	    });
-	    Pattern http = Pattern.compile("(http://(?:[a-z0-9.-]+[.][a-z]{2,}+(?::[0-9]+)?)(?:/\\S*)?)",Pattern.CASE_INSENSITIVE);
-	    Linkify.addLinks(text,http,"http://");
-        Linkify.addLinks(text, Pattern.compile("(ac\\d{5,})", Pattern.CASE_INSENSITIVE),"av://");
-        
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        VideoItem item = data.get(position);
+        startToPlay(item);
+    }
+	
+	//TODO 
+    public void startToPlay(VideoItem item){
+        addToHistory();
+		Intent intent = new Intent(DetailActivity.this, SectionActivity.class);
+		intent.putExtra("item",item);
+		startActivity(intent);
 	}
-	public void addToHistory(){
+    /**
+     * 下载事件 接收
+     */
+    private BroadcastReceiver onProgress = new BroadcastReceiver(){
+
+        @TargetApi(Build.VERSION_CODES.GINGERBREAD)
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(DownloadService.ACTION_VIEW_PROGRESS)){
+                Bundle bundle = intent.getExtras();
+                int progress = bundle.getInt("progress");
+                int total = bundle.getInt("total");
+                Log.i(TAG, "recieve progress: " + progress + "/"+ total);
+                String vid = bundle.getString("vid");
+                if(adapter !=null)
+                    adapter.setProgress(vid,progress,total);
+            }
+        }
+        
+    };
+    private BroadcastReceiver onDownloadFail = new BroadcastReceiver(){
+
+        @TargetApi(Build.VERSION_CODES.GINGERBREAD)
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(DownloadService.ACTION_DOWNLOAD_FAIL)){
+                String vid = intent.getExtras().getString("vid");
+                adapter.hideProgress(true, vid);
+                
+            }
+        }
+    };
+    private BroadcastReceiver onDownloadComplete = new BroadcastReceiver() {
+        
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(DownloadService.ACTION_DOWNLOAD_SUCCESS)){
+                String vid = intent.getExtras().getString("vid");
+                adapter.hideProgress(false, vid);
+                //TODO 修改下载按钮状态
+                
+            }
+        }
+    };
+    private LayoutInflater mInflater;
+    private View loadView;
+    private View btnComment;
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try{
+            unbindService(conn);
+        }catch (Exception e) {
+        }
+    }
+
+    private Intent createShareIntent() {
+        String shareurl = title+"http://www.acfun.tv/v/ac"+aid;
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);  
+        shareIntent.setType("text/plain");  
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "分享");  
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareurl);  
+        return shareIntent;
+    }
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
+    public void addToHistory(){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 hh:mm");
         new DBService(this).addtoHis(aid, title, sdf.format(new Date()), 0, channelid);
         isfavorite = new DBService(this).isFoved(aid);
-	}
+    }
+    public void setDescription(TextView text){
+        Pattern wiki = Pattern.compile("\\[wiki([^\\[]+)\\]",Pattern.CASE_INSENSITIVE);
+        CharSequence localDesc = StringUtil.getSource(description);
+        text.setText(localDesc);
+        Linkify.addLinks(text, wiki,null,null,new TransformFilter() {
+            @Override
+            public String transformUrl(Matcher match, String url) {
+                String t = match.group(1);
+                return "http://wiki.acfun.tv/index.php/"+t;
+            }
+        });
+        Pattern http = Pattern.compile("(http://(?:[a-z0-9.-]+[.][a-z]{2,}+(?::[0-9]+)?)(?:/\\S*)?)",Pattern.CASE_INSENSITIVE);
+        Linkify.addLinks(text,http,"http://");
+        Linkify.addLinks(text, Pattern.compile("(ac\\d{5,})", Pattern.CASE_INSENSITIVE),"av://");
+    }
+    @Override
+    public boolean onOptionsItemSelected(
+            com.actionbarsherlock.view.MenuItem item) {
+        
+        switch (item.getItemId()) {
+        case android.R.id.home:
+            this.finish();
+            break;
+            
+        case R.id.menu_item_fov_action_provider_action_bar:
+            if(isfavorite){
+                new DBService(this).delFov(aid);
+                isfavorite = false;
+                item.setIcon(R.drawable.rating_favorite);
+                Toast.makeText(this, "取消成功", Toast.LENGTH_SHORT).show();
+            }else{
+                new DBService(this).addtoFov(aid, title, 0, channelid);
+                isfavorite = true;
+                item.setIcon(R.drawable.rating_favorite_p);
+                Toast.makeText(this, "收藏成功", Toast.LENGTH_SHORT).show();
+            }
 
-    public void startToPlay(HashMap<String, Object> map){
-        addToHistory();
-		String vtype = (String) map.get("vtype");
-		String vid = (String) map.get("vid");
-		String title = (String) map.get("title"); 
-		Intent intent = new Intent(DetailActivity.this, SectionActivity.class);
-		intent.putExtra("title", title);
-		intent.putExtra("vid", vid);
-		intent.putExtra("vtype", vtype);
-		intent.putExtra("aid", aid);
-		startActivity(intent);
-	}
+            break;
+        default:
+            break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getSupportMenuInflater().inflate(R.menu.share_action_provider, menu);
+        MenuItem actionItem = menu.findItem(R.id.menu_item_share_action_provider_action_bar);
+        ShareActionProvider actionProvider = (ShareActionProvider) actionItem.getActionProvider();
+        actionProvider.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
+        actionProvider.setShareIntent(createShareIntent());
+        
+        if(isfavorite){
+             menu.findItem(R.id.menu_item_fov_action_provider_action_bar).setIcon(R.drawable.rating_favorite_p);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+    
 }

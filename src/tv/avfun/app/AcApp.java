@@ -82,7 +82,7 @@ public class AcApp extends Application {
      */
     public static File getDownloadPath(String aid, String vid){
         File path = new File(sp.getString("download_path", getSDcardDir()+"/Download/AcFun"+VIDEO+"/"+aid+"/"+vid));
-        path.mkdirs();
+        //path.mkdirs();
         return path;
     }
     /**

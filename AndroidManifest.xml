@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="tv.avfun"
     
-    android:versionCode="76"
-    android:versionName="0.7.6" 
+    android:versionCode="80"
+    android:versionName="0.8.0" 
     >
     <uses-sdk
         android:minSdkVersion="8"
@@ -13,6 +13,8 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER"/>
+	<uses-permission android:name="android.permission.ACCESS_ALL_DOWNLOADS"/>
 	<instrumentation android:name="android.test.InstrumentationTestRunner" android:targetPackage="tv.avfun"></instrumentation>
     <application
         android:name="tv.avfun.app.AcApp"
@@ -100,11 +102,15 @@
         <activity 
         android:name="tv.avfun.SectionActivity"
         />
+        <activity android:name="tv.avfun.DownloadManActivity" />
         <service
             android:name="com.umeng.common.net.DownloadingService"
             android:exported="true"
             android:process=":DownloadingService" >
         </service>
+        <service 
+            android:name=".app.DownloadService"
+            />
         <activity
             android:name="com.umeng.fb.ui.SendFeedback"
             android:windowSoftInputMode="adjustResize" />

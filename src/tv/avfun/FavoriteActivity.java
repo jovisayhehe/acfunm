@@ -1,8 +1,12 @@
 package tv.avfun;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import tv.avfun.api.Channel;
+import tv.avfun.api.ChannelApi;
 import tv.avfun.db.DBService;
+import tv.avfun.entity.Contents;
 import tv.avfun.entity.Favorite;
 
 import android.content.Context;
@@ -21,7 +25,7 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockActivity;
 
 public class FavoriteActivity extends SherlockActivity implements OnItemClickListener{
-	private ArrayList<Favorite> data = new ArrayList<Favorite>();
+	private List<Favorite> data = new ArrayList<Favorite>();
 	private ListView list;
 	private ProgressBar progressBar;
 	private AssistAdaper adaper;
@@ -81,16 +85,19 @@ public class FavoriteActivity extends SherlockActivity implements OnItemClickLis
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		
+	    Favorite favorite = data.get(position);
 		if(data.get(position).getTpye()==0){
 			Intent intent = new Intent(FavoriteActivity.this, DetailActivity.class);
-			intent.putExtra("aid", data.get(position).getAid());
-			intent.putExtra("title", data.get(position).getTitle());
-			intent.putExtra("channelId", data.get(position).getChannelid());
+			Contents c = new Contents();
+			c.setAid(favorite.aid);
+			c.setTitle(favorite.title);
+			c.setChannelId(favorite.channelid);
 			intent.putExtra("from", 1);
+			intent.putExtra("contents", c);
 			startActivity(intent);
 			
 		}else{
+		    //TODO 改为contents
 			Intent intent = new Intent(FavoriteActivity.this, WebViewActivity.class);
 			intent.putExtra("modecode", ChannelActivity.modecode);
 			intent.putExtra("aid", data.get(position).getAid());
@@ -103,15 +110,15 @@ public class FavoriteActivity extends SherlockActivity implements OnItemClickLis
 	
 	private final class AssistAdaper extends BaseAdapter{
 		private LayoutInflater mInflater;
-		private ArrayList<Favorite> data;
+		private List<Favorite> data;
 		
-		public AssistAdaper(Context context,ArrayList<Favorite> data) {
+		public AssistAdaper(Context context,List<Favorite> data) {
 			this.mInflater =LayoutInflater.from(context);
 			this.data = data;
 		}
 		
 		
-		public void setData(ArrayList<Favorite> data){
+		public void setData(List<Favorite> data){
 			this.data = data;
 		}
 		
@@ -147,9 +154,15 @@ public class FavoriteActivity extends SherlockActivity implements OnItemClickLis
 			}else {
 				holder = (ListViewHolder) convertView.getTag();
 			}
-			
 			holder.title.setText(data.get(position).getTitle());
-			holder.channel.setText(data.get(position).getChannelid());
+			Channel channel = ChannelApi.channels.get(data.get(position).getChannelid());
+			if(channel == null)
+			    // 不知名的id 暂且隐藏起来
+			    holder.channel.setVisibility(View.INVISIBLE);
+			else {
+			    holder.channel.setText(channel.title);
+			    holder.channel.setVisibility(View.VISIBLE);
+			}
 			holder.user.setText("ac"+data.get(position).getAid());
 			
 			return convertView;

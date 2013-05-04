@@ -334,9 +334,9 @@ public class DataStore {
             return (Channel)obj;
         else return null;
     }
-    public static String getJsonCachePath(int channelId){
-        return AcApp.context().getExternalCacheDir()+"/"+channelId+".json";
-    }
+//    public static String getJsonCachePath(int channelId){
+//        return AcApp.context().getExternalCacheDir()+"/"+channelId+".json";
+//    }
 //    /** 保存原始json数据 */
 //    public static boolean saveJson(int channelId, String json){
 //        
@@ -360,4 +360,5 @@ public class DataStore {
 //        return jsonCacheFile.lastModified();
 //        
 //    }
+    
 }

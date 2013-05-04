@@ -4,13 +4,15 @@ import java.io.File;
 import java.text.DecimalFormat;
 
 import tv.avfun.app.AcApp;
-
+import android.net.Uri;
 import android.os.Environment;
 import android.os.StatFs;
 import android.text.TextUtils;
 
 public class FileUtil {
-
+    public static Uri getLocalFileUri(File file){
+        return Uri.fromFile(file);
+    }
     public static long getFolderSize(File folder) {
         long size = 0;
         File[] files = folder.listFiles();
@@ -69,12 +71,16 @@ public class FileUtil {
 
     public static String getUrlExt(String url){
         if (!TextUtils.isEmpty(url)) {
-            int start = url.lastIndexOf('.');
+//            int start = url.lastIndexOf('.');
+            int start = url.lastIndexOf('/');
             int end = url.lastIndexOf('?');
             end = end <= start ? url.length() : end;
+            String ext = "";
             if (start > 0 && start < url.length() - 1) {
-                return url.substring(start, end).toLowerCase();
+                ext = url.substring(start, end).toLowerCase();
+                return ext.substring(ext.lastIndexOf('.'));
             }
+            
         }
         return "";
     }

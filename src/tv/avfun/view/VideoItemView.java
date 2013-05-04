@@ -73,11 +73,10 @@ public class VideoItemView extends LinearLayout implements View.OnClickListener{
     }
     public void setContents(Contents contents){
         this.contents = contents;
-        String title = contents.getTitle();
         String imageUrl = contents.getTitleImg();
         int comments = contents.getComments();
         long views = contents.getViews();
-        this.title.setText(title);
+        this.title.setText(contents.getTitle());
         this.comments.setText(comments+"");
         this.views.setText(views+"");
         if(!TextUtils.isEmpty(imageUrl))
