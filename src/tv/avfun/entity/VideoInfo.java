@@ -27,6 +27,7 @@ public class VideoInfo {
         public String             subtitle;
         public List<Long>         downloadIDs;
         public List<String>       urlList;
+        /** 如果值为-1则表示没能获取到content length */
         public List<Integer>      bytesList;
         public List<Long>         durationList;
         public boolean            isdownloaded     = false;
