@@ -1,5 +1,6 @@
 package tv.avfun.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -11,5 +12,8 @@ public class ArrayUtil {
             arr[i] = list.get(i).longValue();
         }
         return arr;
+    }
+    public static <E> ArrayList<E> newArrayList(){
+        return new ArrayList<E>();
     }
 }

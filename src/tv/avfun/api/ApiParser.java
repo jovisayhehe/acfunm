@@ -34,6 +34,7 @@ import tv.avfun.entity.Article;
 import tv.avfun.entity.Contents;
 import tv.avfun.entity.VideoInfo;
 import tv.avfun.entity.VideoInfo.VideoItem;
+import tv.avfun.util.ArrayUtil;
 import tv.avfun.util.NetWorkUtil;
 import android.os.PatternMatcher;
 import android.text.Html;
@@ -42,7 +43,10 @@ import android.text.TextUtils;
 import android.util.Log;
 
 public class ApiParser {
-
+    /**
+     * 确保解析失败时，立即重试
+     */
+    private class RetryParse extends Throwable{}
     private static final String TAG = ApiParser.class.getSimpleName();
     public static List<Contents> getChannelContents(int channelId, String address) throws Exception {
 
@@ -607,17 +611,16 @@ public class ApiParser {
                 Element durl = durls.get(i);
                 String second = durl.getElementsByTag("length").get(0).text();
                 String text = durl.getElementsByTag("url").get(0).text();
-                Log.i("parse sina", "url="+text+"，lenght="+second);
+                if(BuildConfig.DEBUG)
+                    Log.i("parse sina", "url="+text+"，lenght="+second);
                 
                 int len = Connectivity.getContentLenth(text, UserAgent.IPAD);
-                if(len>0){
-                    item.bytesList.add(len);
-                }
+                item.bytesList.add(len); 
                 item.put(text, Long.parseLong(second));
             }
         } catch (Exception e) {
             if(BuildConfig.DEBUG)
-            Log.w(TAG, "获取sina视频失败"+item.vid,e);
+                Log.w(TAG, "获取sina视频失败"+item.vid,e);
         }
     }
     public static void parseQQVideoItem(VideoItem item){

@@ -366,7 +366,7 @@ public class DBService {
      * 获取vid对应总字节数
      * 
      * @param vid
-     * @return 获取失败返回-1
+     * @return 负数，代表获取失败
      */
     public int getTotalSize(String vid) {
         String sql = "SELECT SUM(SIZE) FROM DOWNLOADLIST WHERE VID=?";
