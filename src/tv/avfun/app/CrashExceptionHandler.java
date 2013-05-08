@@ -56,7 +56,8 @@ public class CrashExceptionHandler implements UncaughtExceptionHandler {
             ex.printStackTrace(pw);
            
             pw.close();
-            DataStore.writeToFile(logFile,sw.toString());
+            // DataStore.writeToFile(logFile,sw.toString());
+            // 去掉本地记录log
             
         } catch (Exception e) {
             if (BuildConfig.DEBUG)
@@ -64,12 +65,13 @@ public class CrashExceptionHandler implements UncaughtExceptionHandler {
         }
         if (BuildConfig.DEBUG)
             Log.i(TAG, "哦喽！崩溃了"+ ex.toString()+ "\n"+ logFile );
-        MobclickAgent.reportError(AcApp.context(),"Crashed:\n"+sw.toString());
+        // Debug 模式下不发送
+        else MobclickAgent.reportError(AcApp.context(),sw.toString());
         new Thread() {
 
             public void run() {
                 Looper.prepare();
-                AcApp.showToast("( ⊙ o ⊙ ) 你被抓到异次元里了！！！");
+                AcApp.showToast("( ⊙ o ⊙ )  ‎不用力就不会挂，为什么就是不明白！");
                 Looper.loop();
             }
         }.start();

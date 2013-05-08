@@ -45,12 +45,13 @@ public class VideoInfo {
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + ((subtitle == null) ? 0 : subtitle.hashCode());
             result = prime * result + ((vid == null) ? 0 : vid.hashCode());
             result = prime * result + ((vtype == null) ? 0 : vtype.hashCode());
             return result;
         }
-
+        /**
+         * vid vtype 相等 认为是相等
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj)
@@ -60,11 +61,7 @@ public class VideoInfo {
             if (getClass() != obj.getClass())
                 return false;
             VideoItem other = (VideoItem) obj;
-            if (subtitle == null) {
-                if (other.subtitle != null)
-                    return false;
-            } else if (!subtitle.equals(other.subtitle))
-                return false;
+
             if (vid == null) {
                 if (other.vid != null)
                     return false;
@@ -78,7 +75,21 @@ public class VideoInfo {
             return true;
         }
 
-
+/*        public VideoItem cloneFromOther(VideoItem other){
+            if(other == null)
+                throw new NullPointerException("兄贵是空的呀！！");
+            if(!this.equals(other))
+                throw new IllegalArgumentException("那哥们属性不同，不能clone");
+            this.vid  = other.vid;
+            this.bytesList = other.bytesList;
+            this.downloadIDs = other.downloadIDs;
+            this.durationList = other.durationList;
+            this.isdownloaded = other.isdownloaded;
+            this.subtitle  = other.subtitle;
+            this.vtype = other.vtype;
+            this.urlList = other.urlList;
+            return this;
+        }*/
         // TODO danmu info
     }
 }

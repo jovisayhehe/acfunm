@@ -61,7 +61,7 @@
         android:name=".ChannelActivity"
         />
         <activity 
-        android:name=".DetailActivity" >
+        android:name=".DetailActivity" android:uiOptions="splitActionBarWhenNarrow">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>

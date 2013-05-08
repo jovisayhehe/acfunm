@@ -76,7 +76,7 @@ public class ImagePagerActivity extends SherlockActivity{
 		getSupportActionBar().setTitle(title);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 hh:mm");
 		new DBService(this).addtoHis(aid, title, sdf.format(new Date()),1,Integer.parseInt(channelid));
-		isfavorite = new DBService(this).isFoved(aid);
+		isfavorite = new DBService(this).isFaved(aid);
 		
 		options = new DisplayImageOptions.Builder()
 		.showImageForEmptyUri(R.drawable.no_picture)
@@ -152,12 +152,12 @@ public class ImagePagerActivity extends SherlockActivity{
 			
 		case R.id.menu_item_fov_action_provider_action_bar:
 			if(isfavorite){
-				new DBService(this).delFov(aid);
+				new DBService(this).delFav(aid);
 				isfavorite = false;
 				item.setIcon(R.drawable.rating_favorite);
 				Toast.makeText(this, "取消成功", Toast.LENGTH_SHORT).show();
 			}else{
-				new DBService(this).addtoFov(aid, title, 0, Integer.parseInt(channelid));
+				new DBService(this).addtoFav(aid, title, 0, Integer.parseInt(channelid));
 				isfavorite = true;
 				item.setIcon(R.drawable.rating_favorite_p);
 				Toast.makeText(this, "收藏成功", Toast.LENGTH_SHORT).show();

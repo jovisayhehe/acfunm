@@ -9,10 +9,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimerTask;
 
-
 import tv.avfun.BuildConfig;
 import tv.avfun.db.DBService;
-import tv.avfun.download.ThreadPool;
 import android.annotation.TargetApi;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Query;
@@ -32,22 +30,23 @@ import android.widget.Toast;
 @TargetApi(Build.VERSION_CODES.GINGERBREAD)
 public class DownloadService extends Service {
 
-    public static final String ACTION_VIEW_PROGRESS = "tv.avfun.action.ACTION_VIEW_PROGRESS";
-    public static final String ACTION_DOWNLOAD_SUCCESS = "tv.avfun.action.ACTION_DOWNLOAD_SUCCESS";
-    public static final String ACTION_DOWNLOAD_FAIL = "tv.avfun.action.ACTION_DOWNLOAD_FAIL";
-    public static final int STATUS_SUCCESS = 200;
-    public static final int STATUS_PENDING = 190;
-    public static final int STATUS_RUNNING = 192;
-    public static final int STATUS_PAUSED  = 193;
-    public static final int STATUS_ERROR   = 400;
-    public static final Uri CONTENT = Uri.parse("content://downloads/my_downloads");
-    private static final String TAG              = DownloadService.class.getSimpleName();
-    private DownloadManager    dm;
+    public static final String  ACTION_VIEW_PROGRESS    = "tv.avfun.action.ACTION_VIEW_PROGRESS";
+    public static final String  ACTION_DOWNLOAD_SUCCESS = "tv.avfun.action.ACTION_DOWNLOAD_SUCCESS";
+    public static final String  ACTION_DOWNLOAD_FAIL    = "tv.avfun.action.ACTION_DOWNLOAD_FAIL";
+    public static final int     STATUS_SUCCESS          = 200;
+    public static final int     STATUS_PENDING          = 190;
+    public static final int     STATUS_RUNNING          = 192;
+    public static final int     STATUS_PAUSED           = 193;
+    public static final int     STATUS_ERROR            = 400;
+    public static final Uri     CONTENT                 = Uri.parse("content://downloads/my_downloads");
+    private static final String TAG                     = DownloadService.class.getSimpleName();
+    private DownloadManager     dm;
 
     @Override
     public IBinder onBind(Intent intent) {
         return new DownloadBinder();
     }
+
     private DownloadsCompletedReceiver receiver = new DownloadsCompletedReceiver();
 
     @Override
@@ -57,21 +56,15 @@ public class DownloadService extends Service {
     }
 
     Map<String, Boolean> vids = Collections.synchronizedMap(new HashMap<String, Boolean>());
-//    public void queryProgress(String vid, long[] ids) {
-      public void queryProgress(String vid, List<Long> ids) {
-
-        Cursor c = getContentResolver().query(Uri.parse("content://downloads/my_downloads"), null, 
+    public void queryProgress(String vid, List<Long> ids) {
+        Cursor c = getContentResolver().query(Uri.parse("content://downloads/my_downloads"), null,
                 Downloader.getWhereClauseForIds(ids), Downloader.getWhereArgsForIds(ids), null);
-        /*dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-        Query query = new Query();
-        query.setFilterById(ids);
-
-        Cursor c = dm.query(query);*/
         if (c == null) {
             Log.i(TAG, "cursor =null !");
             return;
         }
-        int progress =0;
+        int progress = 0;
+        int totalbytes = 0;
         while (c.moveToNext()) {
             // TODO 过滤状态
             int status = c.getInt(c.getColumnIndex("status"));
@@ -79,44 +72,51 @@ public class DownloadService extends Service {
             boolean b = true;
             if (status == STATUS_SUCCESS) {
                 new DBService(getApplicationContext()).changeDownloadState(id, 3);
-                b &= true;                                                  // 下载成功，标记为true
-                progress += c.getInt(c.getColumnIndex("current_bytes"));   // 累计所有任务当前下载量，即为总进度
+                b &= true; // 下载成功，标记为true
+                progress += c.getInt(c.getColumnIndex("current_bytes")); // 累计所有任务当前下载量，即为总进度
             } else if (status >= STATUS_ERROR) {
                 new DBService(getApplicationContext()).changeDownloadState(id, 2);
-                b &= true;                                                  // 下载失败，也标记true
-                Intent intent = new Intent(ACTION_DOWNLOAD_FAIL);   // TODO 有一个任务失败了，应该提示用户重试
+                b &= true; // 下载失败，也标记true
+                Intent intent = new Intent(ACTION_DOWNLOAD_FAIL); // TODO
+                                                                  // 有一个任务失败了，应该提示用户重试
                 intent.putExtra("vid", vid);
                 sendBroadcast(intent);
             } else if (status == STATUS_PAUSED) {
                 new DBService(getApplicationContext()).changeDownloadState(id, 1);
-                b &= false;                                                 // 下载暂停，标记任务为false
+                b &= false; // 下载暂停，标记任务为false
                 progress += c.getInt(c.getColumnIndex("current_bytes"));
-            } else if (status == STATUS_RUNNING) { 
+            } else if (status == STATUS_RUNNING) {
                 new DBService(getApplicationContext()).changeDownloadState(id, 0);
-                b &= false;                                                 // 只要有一个任务在执行，标记为false
+                b &= false; // 只要有一个任务在执行，标记为false
                 progress += c.getInt(c.getColumnIndex("current_bytes"));
-            } else if(status == STATUS_PENDING){
+            } else if (status == STATUS_PENDING) {
                 new DBService(getApplicationContext()).changeDownloadState(id, 0);
                 b = false;
             }
-            if (BuildConfig.DEBUG) {    // print debug info for current download task
-                Log.d(TAG, "_id="+id);
-                Log.d(TAG, "Progress: " + c.getInt(c.getColumnIndex("current_bytes")) + "/" + c.getInt(c.getColumnIndex("total_bytes")));
+            if (BuildConfig.DEBUG) { // print debug info
+                Log.d(TAG, "_id=" + id);
+                Log.d(TAG,
+                        "Progress: " + c.getInt(c.getColumnIndex("current_bytes")) + "/"
+                                + c.getInt(c.getColumnIndex("total_bytes")));
                 Log.d(TAG, "Download status :  " + status);
             }
+            int bytes = c.getInt(c.getColumnIndex("total_bytes"));
+            if (bytes > 0)
+                totalbytes += bytes;
             vids.put(vid, b);
         }
         c.close();
         // send the progress broadcast to reciever
         int total = new DBService(getApplicationContext()).getTotalSize(vid);
-        if(total < 1) vids.put(vid,true); // 查询中止！
-        if(progress >0) {
-            if( progress == total){     // 累计的总进度 与总大小 相等了，downloaded
+        if (total < 0)
+            total = totalbytes; // 数据库里没有准确的长度信息，只能将不确定的长度赋予它
+        if (progress > 0) {
+            if (progress == total) { // 累计的总进度 与总大小 相等了，downloaded
                 Intent intent = new Intent();
                 intent.setAction(ACTION_DOWNLOAD_SUCCESS);
                 intent.putExtra("vid", vid);
                 sendBroadcast(intent);
-            }else {                     // send progress
+            } else { // send progress
                 Intent intent = new Intent();
                 intent.setAction(ACTION_VIEW_PROGRESS);
                 intent.putExtra("vid", vid);
@@ -125,14 +125,13 @@ public class DownloadService extends Service {
                 sendBroadcast(intent);
             }
         }
-        
 
     }
 
     public class DownloadsCompletedReceiver extends BroadcastReceiver {
 
-        private volatile int mNumDownloadsCompleted = 0;
-        private Set<Long>    downloadIds            = Collections.synchronizedSet(new HashSet<Long>());
+        private volatile int mNumCompleted = 0;
+        private Set<Long>    downloadIds   = Collections.synchronizedSet(new HashSet<Long>());
 
         /**
          * {@inheritDoc}
@@ -142,11 +141,11 @@ public class DownloadService extends Service {
             if (intent.getAction().equalsIgnoreCase(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
                 synchronized (this) {
                     long id = intent.getExtras().getLong(DownloadManager.EXTRA_DOWNLOAD_ID);
-                    Log.i(TAG, "Received Notification for download: " + id);
+                    if(BuildConfig.DEBUG)  Log.i(TAG, "Received Notification for download: " + id);
                     if (!downloadIds.contains(id)) {
-                        ++mNumDownloadsCompleted;
-                        Log.i(TAG, "CompletedReceiver got intent: " + intent.getAction() + " --> total count: "
-                                + mNumDownloadsCompleted);
+                        ++mNumCompleted;
+                        if(BuildConfig.DEBUG) Log.i(TAG, "CompletedReceiver got intent: " + intent.getAction() + " --> total count: "
+                                + mNumCompleted);
                         downloadIds.add(id);
                         if (dm == null)
                             dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
@@ -155,24 +154,24 @@ public class DownloadService extends Service {
                         try {
                             if (cursor.moveToFirst()) {
                                 int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
-                                if (status == DownloadManager.STATUS_SUCCESSFUL){
-                                    String title = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_TITLE));
+                                if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                                    String title = cursor
+                                            .getString(cursor.getColumnIndex(DownloadManager.COLUMN_TITLE));
                                     new DBService(getApplicationContext()).changeDownloadState(id, 3);
-                                    Toast.makeText(getApplicationContext(), title+" - 下载完成", 0).show();
-                                    
-                                }
-                                else if (status == DownloadManager.STATUS_FAILED)
+                                    Toast.makeText(getApplicationContext(), title + " - 下载完成", 0).show();
+
+                                } else if (status == DownloadManager.STATUS_FAILED)
                                     new DBService(getApplicationContext()).changeDownloadState(id, 2);
-                                Log.i(TAG, "Download status is: " + status);
+                                if(BuildConfig.DEBUG) Log.i(TAG, "Download status is: " + status);
                             } else {
-                                Log.w(TAG, "No status found for completed download!");
+                                if(BuildConfig.DEBUG) Log.w(TAG, "No status found for completed download!");
                             }
                         }
                         finally {
                             cursor.close();
                         }
                     } else {
-                        Log.i(TAG, "Notification for id: " + id + " has already been made.");
+                        if(BuildConfig.DEBUG) Log.i(TAG, "Notification for id: " + id + " has already been made.");
                     }
                 }
             }
@@ -186,7 +185,7 @@ public class DownloadService extends Service {
          * @return the number of downloads completed so far.
          */
         public int numDownloadsCompleted() {
-            return mNumDownloadsCompleted;
+            return mNumCompleted;
         }
 
         /**
@@ -204,52 +203,52 @@ public class DownloadService extends Service {
     }
 
     @Override
-    public boolean onUnbind(Intent intent) {
-        return false;
-    }
-
-    @Override
     public void onDestroy() {
-        for(Map.Entry<String,Boolean> e: vids.entrySet()){
+        for (Map.Entry<String, Boolean> e : vids.entrySet()) {
             e.setValue(true);
         }
+        pool.stop();
         unregisterReceiver(receiver);
         receiver = null;
     }
-    private ThreadPool pool = new ThreadPool();
+
+    private static ThreadPool pool = new ThreadPool(5); // 线程池 最多5个线程
+                                                 // 即，最多并行5个下载
+
     public class DownloadBinder extends Binder {
 
         public void doQueryStatus(String vid) {
-            if(vids.get(vid) == null)
+            if (vids.get(vid) == null)
                 pool.post(new QueryTask(vid));
         }
     }
 
     private class QueryTask extends TimerTask {
-        String vid;
-//        long[] ids;
+
+        String     vid;
+        // long[] ids;
         List<Long> downloadIDs;
+
         public QueryTask(String vid) {
             this.vid = vid;
             downloadIDs = new DBService(getApplicationContext()).getDownloadIds(vid);
             // 不应为空的！
-            if(downloadIDs == null || downloadIDs.isEmpty()) 
-                throw new IllegalStateException("没有在download list 中找到与之匹配的信息 : "+vid);
-            //ids = ArrayUtil.toLongArray(downloadIDs);
+            if (downloadIDs == null || downloadIDs.isEmpty())
+                throw new IllegalStateException("没有在download list 中找到与之匹配的信息 : " + vid);
+            // ids = ArrayUtil.toLongArray(downloadIDs);
             vids.put(vid, false);
-            //downloadIDs = null;
+            // downloadIDs = null;
         }
 
         @Override
         public void run() {
             while ((vids.get(vid) == null || !vids.get(vid))) {
-                Log.d(TAG, "------- querying status ---------");
-//                queryProgress(vid, ids);
+                if(BuildConfig.DEBUG) Log.d(TAG, "------- querying status ---------");
+                // queryProgress(vid, ids);
                 queryProgress(vid, downloadIDs);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
             }
         }

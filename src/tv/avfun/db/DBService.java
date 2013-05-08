@@ -51,7 +51,7 @@ public class DBService {
      * @param channelid
      *            频道id
      */
-    public void addtoFov(String videoid, String title, int type, int channelid) {
+    public void addtoFav(String videoid, String title, int type, int channelid) {
         db.execSQL("INSERT INTO NFAVORITES(VIDEOID,TITLE,TPYE,CHANNELID)" + "VALUES(?,?,?,?)", new Object[] { videoid,
                 title, type, channelid });
         db.close();
@@ -62,7 +62,7 @@ public class DBService {
      * @param id
      *            视频id
      */
-    public void delFov(String id) {
+    public void delFav(String id) {
         db.execSQL("DELETE FROM NFAVORITES WHERE VIDEOID = ?", new String[] { id });
         db.close();
     }
@@ -73,7 +73,7 @@ public class DBService {
      *            视频id
      * @return 是否存在收藏表中
      */
-    public boolean isFoved(String id) {
+    public boolean isFaved(String id) {
         Cursor cursor = db.rawQuery("SELECT VIDEOID FROM NFAVORITES WHERE VIDEOID = ?", new String[] { id });
         boolean isexist = cursor.moveToFirst();
         cursor.close();

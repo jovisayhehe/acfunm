@@ -11,4 +11,8 @@ public class StringUtil {
         return escapedHtml.replaceAll("&quot;", "\"").replaceAll("&amp;", "&").replaceAll("&lt;", "<")
                 .replaceAll("&gt;", ">").replaceAll("&nbsp;", " ");
     }
+    
+    public static boolean validate(String str){
+        return str!=null && str.isEmpty() && !"null".equalsIgnoreCase(str);
+    }
 }

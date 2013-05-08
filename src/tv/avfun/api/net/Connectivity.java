@@ -164,9 +164,8 @@ public class Connectivity {
             } else if (code == HttpURLConnection.HTTP_OK) {
                 return conn.getContentLength();
             }
-        } catch (SocketTimeoutException e) {
-
-        } catch (IOException e) {
+        } catch (Exception e) {
+            if(BuildConfig.DEBUG)
             Log.e(TAG, "failed to get content length of " + url, e);
         }
         return -1;
@@ -182,6 +181,7 @@ public class Connectivity {
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Connection", "close");
         conn.setDoInput(false);
+        conn.setUseCaches(false);
         return conn;
     }
 }

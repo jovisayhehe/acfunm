@@ -16,4 +16,7 @@ public class ArrayUtil {
     public static <E> ArrayList<E> newArrayList(){
         return new ArrayList<E>();
     }
+    public static <E> boolean validate(List<E> list){
+        return list != null && !list.isEmpty();
+    }
 }

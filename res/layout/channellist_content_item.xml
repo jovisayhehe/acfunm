@@ -45,7 +45,6 @@
         android:ellipsize="end"
         
         android:singleLine="true"
-        android:textColor="#EB7A02"
         android:textSize="12sp" />
     <TextView
         android:id="@+id/channelist_content_item_views"
