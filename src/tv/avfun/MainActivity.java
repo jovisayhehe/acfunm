@@ -197,17 +197,9 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        mSearchView = new SearchView(bar.getThemedContext());
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
-        mSearchView.setSearchableInfo(info);
-        mSearchView.setQueryHint("搜索...");
-        menu.add("Search").setIcon(R.drawable.action_search).setActionView(mSearchView)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
-        View v = mSearchView.findViewById(R.id.abs__search_plate);
-        v.setBackgroundResource(R.drawable.edit_text_holo_light);
-
-        return true;
+        AcApp.addSearchView(this, menu);
+        
+        return super.onCreateOptionsMenu(menu);
 
     }
 

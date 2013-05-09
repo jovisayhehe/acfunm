@@ -1,7 +1,6 @@
 
 package tv.avfun;
 
-import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,9 +9,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import tv.avfun.adapter.DetailAdaper;
+import tv.avfun.adapter.DetailAdaper.OnStatusClickListener;
 import tv.avfun.api.ApiParser;
+import tv.avfun.app.AcApp;
 import tv.avfun.app.DownloadService;
-import tv.avfun.app.DownloadService.DownloadBinder;
+import tv.avfun.app.Downloader;
+import tv.avfun.app.DownloadService.IDownloadBinder;
+import tv.avfun.app.Downloader.DownloadHandler;
 import tv.avfun.db.DBService;
 import tv.avfun.entity.Contents;
 import tv.avfun.entity.VideoInfo;
@@ -27,27 +30,22 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Shader.TileMode;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Message;
 import android.text.Html;
 import android.text.util.Linkify;
 import android.text.util.Linkify.TransformFilter;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewConfiguration;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,7 +53,6 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
 import com.actionbarsherlock.widget.SearchView;
 import com.actionbarsherlock.widget.ShareActionProvider;
 import com.umeng.analytics.MobclickAgent;
@@ -66,7 +63,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
     private static final String LOADING    = "正在加载...";
     private static final int    TAG_RELOAD = 100;
     private static final int    TAG_PLAY   = 200;
-    private DownloadBinder      downloadService;
+    private IDownloadBinder      mDService;
     private Intent              mIntent;
     /**
      * 来自：0 首页 1历史、搜索 2 Action_View av://12345
@@ -82,7 +79,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
     private String              description;
     private ListView            mListView;
     private List<VideoItem>     mData;
-    private DetailAdaper        adapter;
+    private DetailAdaper        mAdapter;
     private LayoutInflater      mInflater;
     private View                mLoadView;
     private boolean             isFavorite;
@@ -104,29 +101,20 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
             from = mIntent.getIntExtra("from", 0);
         }
         mImgLoader = ImageLoader.getInstance();
+
         initBar();
         initview();
         loadData();
     }
+
     private ServiceConnection conn = new DownloadServiceConnection();
+
+
     private void initBar() {
         getSupportActionBar().setBackgroundDrawable(this.getResources().getDrawable(R.drawable.ab_transparent));
         Drawable bg = getResources().getDrawable(R.drawable.border_bg);
         getSupportActionBar().setSplitBackgroundDrawable(bg);
-        //forceShowActionBarOverflowMenu();
     }
-    /*private void forceShowActionBarOverflowMenu() {
-        try {
-            ViewConfiguration config = ViewConfiguration.get(this);
-            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
-            if (menuKeyField != null) {
-                menuKeyField.setAccessible(true);
-                menuKeyField.setBoolean(config, false);
-            }
-        } catch (Exception ignored) {
-
-        }
-    }*/
 
     private void loadData() {
         new RequestDetailTask().execute();
@@ -179,7 +167,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         protected void onPostExecute(Boolean result) {
             if (result) {
                 if (from > 0) {
-                    tvUserName.setText(mVideoInfo.upman==null?"无名氏":mVideoInfo.upman);
+                    tvUserName.setText(mVideoInfo.upman == null ? "无名氏" : mVideoInfo.upman);
                     tvViews.setText(mVideoInfo.views + "");
                     tvComments.setText(mVideoInfo.comments + "");
                     description = mVideoInfo.description;
@@ -198,7 +186,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
                 tvBtnPlay.setOnClickListener(DetailActivity.this);
                 mListView.setVisibility(View.VISIBLE);
                 mLoadView.setVisibility(View.GONE);
-                adapter.setData(mData);
+                mAdapter.setData(mData);
             } else {
                 progress.setVisibility(View.GONE);
                 text.setText(R.string.reloading);
@@ -256,14 +244,13 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         mListView = (ListView) findViewById(R.id.detail_listview);
         mInflater = LayoutInflater.from(DetailActivity.this);
         mData = new ArrayList<VideoInfo.VideoItem>();
-        adapter = new DetailAdaper(mInflater, mData);
-        mListView.setAdapter(adapter);
+        mAdapter = new DetailAdaper(mInflater, mData);
+        mAdapter.setOnStatusClickListener(slistener);
+        mListView.setAdapter(mAdapter);
         mListView.setDuplicateParentStateEnabled(true);
         mListView.setOnItemClickListener(this);
         mLoadView = findViewById(R.id.load_view);
     }
-
-
 
     private class DownloadServiceConnection implements ServiceConnection {
 
@@ -272,7 +259,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            downloadService = (DownloadBinder) service;
+            mDService = (IDownloadBinder) service;
         }
     };
 
@@ -327,16 +314,8 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         if (isFavorite) {
             menu.findItem(R.id.menu_item_fov_action_provider_action_bar).setIcon(R.drawable.rating_favorite_p);
         }
-        SearchView searchView = new SearchView(getActionBar().getThemedContext());
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
-        searchView.setSearchableInfo(info);
-        searchView.setQueryHint("搜索...");
-        menu.add("Search").setIcon(R.drawable.action_search).setActionView(searchView)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS| MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW/*MenuItem.SHOW_AS_ACTION_IF_ROOM*/);
-        View v = searchView.findViewById(R.id.abs__search_plate);
-        v.setBackgroundResource(R.drawable.edit_text_holo_light);
-        return true;
+        AcApp.addSearchView(this, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -412,4 +391,52 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
             unbindService(conn);
         } catch (Exception e) {}
     }
+    
+    private OnStatusClickListener slistener = new OnStatusClickListener() {
+
+        @Override
+        public void doViewDownloadInfo(String vid) {
+            startActivity(new Intent(DetailActivity.this,DownloadManActivity.class));
+        }
+
+        @Override
+        public void doStartDownload(VideoItem item) {
+            // TODO start download
+            Downloader.enqueue(DetailActivity.this, aid, item, downloadHandler);
+            mDService.doQueryStatus(item.vid);
+        }
+
+        @Override
+        public void doCancelDownload(String vid) {
+            // TODO cancel download
+            Downloader.removeDownload(DetailActivity.this, vid);
+
+        }
+    };
+    private DownloadHandler downloadHandler  = new DownloadHandler() {
+
+        @Override
+        public void onSuccess(Message msg) {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public void onFail(Message msg) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onStart(Message msg) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onStop(Message msg) {
+            // TODO Auto-generated method stub
+            
+        }
+        
+    };
 }

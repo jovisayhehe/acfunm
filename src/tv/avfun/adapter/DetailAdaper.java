@@ -8,7 +8,6 @@ import tv.avfun.R;
 import tv.avfun.entity.VideoInfo.VideoItem;
 import tv.avfun.util.Maps;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,10 +15,13 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
+/**
+ * 详情页 listview 的adapter
+ * @author Yrom
+ *
+ */
 public class DetailAdaper extends BaseAdapter {
 
-    private static final int      TAG_VID            = 100;
     private static final int      STATUS_NONE        = 0;
     private static final int      STATUS_DOWNLOADED  = 1;
     private static final int      STATUS_DOWNLOADING = 2;
@@ -94,7 +96,7 @@ public class DetailAdaper extends BaseAdapter {
                 Integer status = (Integer) tag;
                 switch (status.intValue()) {
                 case STATUS_NONE:
-                    startDownload(item.vid);
+                    startDownload(item);
                     v.setTag(STATUS_DOWNLOADING);
                     ((TextView)v).setText("取消");
                     break;
@@ -170,10 +172,10 @@ public class DetailAdaper extends BaseAdapter {
         ProgressBar bar;
         TextView status;
     }
-    private void startDownload(String vid) {
+    private void startDownload(VideoItem item) {
         if (mListener != null)
-            mListener.doStartDownload(vid);
-        Log.i(TAG, "开始下载..."+vid);
+            mListener.doStartDownload(item);
+        Log.i(TAG, "开始下载..."+item.vid);
     }
 
     private void cancelDownload(String vid) {
@@ -200,7 +202,7 @@ public class DetailAdaper extends BaseAdapter {
          * @param view
          * @param vid
          */
-        void doStartDownload(String vid);
+        void doStartDownload(VideoItem item);
 
         /**
          * 取消（删除）下载
@@ -210,6 +212,10 @@ public class DetailAdaper extends BaseAdapter {
          */
         void doCancelDownload(String vid);
 
+        /**
+         * 查看下载
+         * @param vid
+         */
         void doViewDownloadInfo(String vid);
     }
 }

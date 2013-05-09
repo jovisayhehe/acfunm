@@ -3,7 +3,15 @@ package tv.avfun.app;
 
 import java.io.File;
 
+import tv.avfun.R;
+
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.SearchView;
+
+import android.app.Activity;
 import android.app.Application;
+import android.app.SearchManager;
+import android.app.SearchableInfo;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -11,6 +19,7 @@ import android.content.res.Resources;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
+import android.view.View;
 import android.widget.Toast;
 
 /**
@@ -180,4 +189,17 @@ public class AcApp extends Application {
     public static void showToast(String msg){
         Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
     }
+    
+    public static void addSearchView(Activity activity, com.actionbarsherlock.view.Menu menu) {
+        SearchView searchView = new SearchView(activity);
+        SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
+        SearchableInfo info = searchManager.getSearchableInfo(activity.getComponentName());
+        searchView.setSearchableInfo(info);
+        searchView.setQueryHint("搜索...");
+        menu.add("Search").setIcon(R.drawable.action_search).setActionView(searchView)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+        View v = searchView.findViewById(R.id.abs__search_plate);
+        v.setBackgroundResource(R.drawable.edit_text_holo_light);
+    }
+    
 }
