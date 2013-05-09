@@ -62,6 +62,8 @@
         />
         <activity 
         android:name=".DetailActivity" android:uiOptions="splitActionBarWhenNarrow">
+            <meta-data android:name="android.app.default_searchable"
+                       android:value=".SearchResultActivity" />
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>

@@ -24,5 +24,6 @@
     <color name="text_color_default">#ff000000</color>
     <color name="main_color_light">#ccFF9A03</color>
     <color name="gray_light">#e2e2e2</color>
+    <color name="gray">#ccc</color>
     <color name="half_transparent">#99000000</color>
 </resources>

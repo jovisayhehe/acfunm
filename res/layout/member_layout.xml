@@ -104,11 +104,11 @@
 
         <FrameLayout
             android:id="@+id/member_frame"
-            android:background="@drawable/mem_item_background"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
             <RelativeLayout
+            android:background="@drawable/mem_item_background"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="4dip" >

@@ -28,22 +28,20 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
 import com.actionbarsherlock.widget.SearchView;
 import com.slidingmenu.lib.SlidingMenu;
-import com.slidingmenu.lib.SlidingMenu.OnClosedListener;
-import com.slidingmenu.lib.SlidingMenu.OnOpenedListener;
+import com.slidingmenu.lib.SlidingMenu.OnCloseListener;
+import com.slidingmenu.lib.SlidingMenu.OnOpenListener;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.update.UmengUpdateAgent;
 
-public class MainActivity extends SlidingFragmentActivity implements OnOpenedListener, OnClosedListener {
+public class MainActivity extends SlidingFragmentActivity implements OnOpenListener, OnCloseListener {
 
     private static final String   TAG   = MainActivity.class.getSimpleName();
     public static int             width;
@@ -182,18 +180,18 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenedLis
         menu.setFadeDegree(0.35f);
         menu.setSecondaryMenu(R.layout.menu_frame_right);
         menu.setSecondaryShadowDrawable(R.drawable.slidingmenu_shadow_right);
-        menu.setOnOpenedListener(this);
-        menu.setOnClosedListener(this);
+        menu.setOnOpenListener(this);
+        menu.setOnCloseListener(this);
         mFragmentMan.beginTransaction().replace(R.id.menu_frame_right, UserHomeFragment.newInstance()).commit();
     }
 
     @Override
-    public void onOpened() {
+    public void onOpen() {
         this.bar.setDisplayHomeAsUpEnabled(false);
     }
 
     @Override
-    public void onClosed() {
+    public void onClose() {
         this.bar.setDisplayHomeAsUpEnabled(true);
     }
 

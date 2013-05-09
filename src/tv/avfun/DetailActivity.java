@@ -1,7 +1,10 @@
 
 package tv.avfun;
 
+import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,12 +35,15 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.text.Html;
 import android.text.util.Linkify;
 import android.text.util.Linkify.TransformFilter;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewConfiguration;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
@@ -49,6 +55,7 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 import com.actionbarsherlock.widget.SearchView;
 import com.actionbarsherlock.widget.ShareActionProvider;
 import com.umeng.analytics.MobclickAgent;
@@ -101,12 +108,25 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         initview();
         loadData();
     }
-
+    private ServiceConnection conn = new DownloadServiceConnection();
     private void initBar() {
         getSupportActionBar().setBackgroundDrawable(this.getResources().getDrawable(R.drawable.ab_transparent));
-        Drawable bg = getResources().getDrawable(R.color.main_color_light);
+        Drawable bg = getResources().getDrawable(R.drawable.border_bg);
         getSupportActionBar().setSplitBackgroundDrawable(bg);
+        //forceShowActionBarOverflowMenu();
     }
+    /*private void forceShowActionBarOverflowMenu() {
+        try {
+            ViewConfiguration config = ViewConfiguration.get(this);
+            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+            if (menuKeyField != null) {
+                menuKeyField.setAccessible(true);
+                menuKeyField.setBoolean(config, false);
+            }
+        } catch (Exception ignored) {
+
+        }
+    }*/
 
     private void loadData() {
         new RequestDetailTask().execute();
@@ -124,6 +144,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
             text = (TextView) mLoadView.findViewById(R.id.list_loadview_text);
             text.setText(R.string.loading);
             mLoadView.setVisibility(View.VISIBLE);
+
             mListView.setVisibility(View.INVISIBLE);
 
         }
@@ -158,10 +179,11 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         protected void onPostExecute(Boolean result) {
             if (result) {
                 if (from > 0) {
-                    tvUserName.setText(mVideoInfo.upman);
+                    tvUserName.setText(mVideoInfo.upman==null?"无名氏":mVideoInfo.upman);
                     tvViews.setText(mVideoInfo.views + "");
                     tvComments.setText(mVideoInfo.comments + "");
                     description = mVideoInfo.description;
+                    setDescription(tvDesc);
                     channelid = mVideoInfo.channelId;
                     title = mVideoInfo.title;
                     tvTitle.setText(title);
@@ -212,9 +234,10 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
             channelid = c.getChannelId();
             mImgLoader.displayImage(c.getTitleImg(), ivTitleImg);
             tvUserName.setText(c.getUsername());
-            tvViews.setText("点击" + "" + c.getViews());
-            tvComments.setText("评论" + "" + c.getComments());
+            tvViews.setText(String.valueOf(c.getViews()));
+            tvComments.setText(String.valueOf(c.getComments()));
             description = c.getDescription();
+            setDescription(tvDesc);
             tvBtnPlay.setText(LOADING);
             tvTitle.setText(c.getTitle());
 
@@ -231,37 +254,66 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
             tvDesc.setText(LOADING);
         }
         mListView = (ListView) findViewById(R.id.detail_listview);
+        mInflater = LayoutInflater.from(DetailActivity.this);
         mData = new ArrayList<VideoInfo.VideoItem>();
-        adapter = new DetailAdaper(mData);
+        adapter = new DetailAdaper(mInflater, mData);
         mListView.setAdapter(adapter);
         mListView.setDuplicateParentStateEnabled(true);
         mListView.setOnItemClickListener(this);
-        mInflater = LayoutInflater.from(DetailActivity.this);
         mLoadView = findViewById(R.id.load_view);
     }
 
-    private ServiceConnection conn 
-        = new ServiceConnection() {
 
-               @Override
-               public void onServiceDisconnected(ComponentName name) {}
 
-               @Override
-               public void onServiceConnected(ComponentName name, IBinder service) {
-                   downloadService = (DownloadBinder) service;
-               }
-           };
+    private class DownloadServiceConnection implements ServiceConnection {
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {}
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            downloadService = (DownloadBinder) service;
+        }
+    };
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        // TODO 播放
+        // 播放
+        VideoItem item = (VideoItem) parent.getItemAtPosition(position);
+        startPlay(item);
+    }
 
+    private void startPlay(VideoItem item) {
+        addToHistory();
+        Intent intent = new Intent(DetailActivity.this, SectionActivity.class);
+        intent.putExtra("item", item);
+        startActivity(intent);
+    }
+
+    private void addToHistory() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 hh:mm");
+        new DBService(this).addtoHis(aid, title, sdf.format(new Date()), 0, channelid);
     }
 
     @Override
     public void onClick(View v) {
-        // TODO 播放按钮
-        // TODO 重新加载
+        Object o = v.getTag();
+        if (o == null)
+            return;
+        switch (((Integer) o).intValue()) {
+        // 播放按钮
+        case TAG_PLAY:
+            if (mData.isEmpty())
+                return;
+            startPlay(mData.get(0));
+            break;
+
+        // 重新加载
+        case TAG_RELOAD:
+            v.setEnabled(false);
+            loadData();
+            break;
+        }
 
     }
 
@@ -281,7 +333,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         searchView.setSearchableInfo(info);
         searchView.setQueryHint("搜索...");
         menu.add("Search").setIcon(R.drawable.action_search).setActionView(searchView)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS| MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW/*MenuItem.SHOW_AS_ACTION_IF_ROOM*/);
         View v = searchView.findViewById(R.id.abs__search_plate);
         v.setBackgroundResource(R.drawable.edit_text_holo_light);
         return true;
@@ -313,13 +365,13 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
             startActivity(intent);
             break;
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     public void setDescription(TextView text) {
         Pattern wiki = Pattern.compile("\\[wiki([^\\[]+)\\]", Pattern.CASE_INSENSITIVE);
-        CharSequence localDesc = StringUtil.getSource(description);
-        text.setText(localDesc);
+        String localDesc = StringUtil.getSource(description);
+        text.setText(Html.fromHtml(localDesc));
         Linkify.addLinks(text, wiki, null, null, new TransformFilter() {
 
             @Override
@@ -352,7 +404,6 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         super.onPause();
         MobclickAgent.onPause(this);
     }
-    
 
     @Override
     protected void onDestroy() {

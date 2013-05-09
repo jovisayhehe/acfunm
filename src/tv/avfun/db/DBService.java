@@ -300,7 +300,7 @@ public class DBService {
                         items.add(item);
                     }
                     i = cursor.getInt(cursor.getColumnIndex("I"));
-                    // item.isdownloaded = true; // 由state=3 保证查到的数据为已下载的
+                    item.isdownloaded = true; // 由state=3 保证查到的数据为已下载的
                     item.urlList.add(i, cursor.getString(cursor.getColumnIndex("LOCALURI")));
                     item.downloadIDs.add(i, cursor.getLong(cursor.getColumnIndex("DOWNLOADID")));
                     item.durationList.add(i, cursor.getLong(cursor.getColumnIndex("DURATION")));
