@@ -88,7 +88,20 @@ public class FileUtil {
         }
         return "";
     }
-
+    
+    public static String guessMimetype(String ext){
+        String mimetype = null;
+        if(".flv".equals(ext)){
+            mimetype = "video/x-flv";
+        }else if(".f4v".equals(ext)){
+            mimetype = "video/x-f4v";
+        }else if(".mp4".equals(ext)){
+            mimetype = "video/mp4";
+        }else if(".hlv".equals(ext)){
+            mimetype = "video/x-f4v"; // XXX: mimetype of hlv???
+        }
+        return mimetype;
+    }
     public static final long _1KB = 1024;
     public static final long _1MB = _1KB * _1KB;
     public static final long _1GB = _1KB * _1MB;

@@ -8,6 +8,7 @@ import tv.avfun.api.ApiParser;
 import tv.avfun.app.AcApp;
 import tv.avfun.entity.VideoInfo.VideoItem;
 import tv.avfun.util.FileUtil;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -31,9 +32,7 @@ import com.umeng.analytics.MobclickAgent;
 
 public class SectionActivity extends SherlockActivity implements OnClickListener {
 
-    private String            aid;
     private String            vid;
-    private String            vtype;
     private ProgressBar       progressBar;
     private TextView          time_outtext;
     private ListView          list;
@@ -58,7 +57,6 @@ public class SectionActivity extends SherlockActivity implements OnClickListener
         item = (VideoItem) obj;
         ab.setTitle(item.subtitle);
         vid = item.vid;
-        vtype = item.vtype;
         playmode = AcApp.getConfig().getInt("playmode", 0);
         list = (ListView) findViewById(android.R.id.list);
         progressBar = (ProgressBar) findViewById(R.id.time_progress);
@@ -96,34 +94,27 @@ public class SectionActivity extends SherlockActivity implements OnClickListener
                 switch (msg.what) {
                 case PARSE_OK:
                     list.setVisibility(View.VISIBLE);
-                    if (data.size() > 1) {
-                        Intent intent = new Intent(SectionActivity.this, PlayActivity.class);
-                        intent.putStringArrayListExtra("paths", (ArrayList<String>) data);
-                        startActivity(intent);
-                    } else {
-                        if (playmode == 0) {
-                            Intent intent = new Intent(SectionActivity.this, PlayActivity.class);
-                            intent.putExtra("path", data.get(0));
-                            startActivity(intent);
-                        } else {
-                            Intent it = new Intent(Intent.ACTION_VIEW);
+                    Intent intent = new Intent();
+                    intent.putExtra("displayName", item.subtitle+"(共"+item.urlList.size()+"段)");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    if (playmode != 0) {
+                            intent.setAction(Intent.ACTION_VIEW);
                             String url = data.get(0);
                             Uri uri = Uri.parse(url);
                             String ext = FileUtil.getUrlExt(url);
-                            String mimetype = null;
-                            if(".flv".equals(ext)){
-                                mimetype = "video/x-flv";
-                            }else if(".f4v".equals(ext)){
-                                mimetype = "video/x-f4v";
-                            }else if(".mp4".equals(ext)){
-                                mimetype = "video/mp4";
-                            }else if(".hlv".equals(ext)){
-                                mimetype = "video/x-flv"; // XXX: mimetype of hlv???
+                            String mimetype = FileUtil.guessMimetype(ext);
+                            intent.setDataAndType(uri, mimetype);
+                            try{
+                                startActivity(intent);
+                                SectionActivity.this.finish();
+                                return;
+                            }catch (Exception e) {
+                                Toast.makeText(getApplicationContext(), "木有可用的外部播放器", 0).show();
                             }
-                            it.setDataAndType(uri, mimetype);
-                            startActivity(it);
-                        }
                     }
+                    intent.setClass(getApplicationContext(), PlayActivity.class);
+                    intent.putStringArrayListExtra("paths", (ArrayList<String>) data);
+                    startActivity(intent);
                     SectionActivity.this.finish();
                     break;
                 case PARSE_ERROR:

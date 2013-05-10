@@ -88,7 +88,7 @@
         <activity 
         android:name=".PlayActivity"
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-        android:configChanges="orientation|screenSize|screenLayout"
+        android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"
 		android:screenOrientation="landscape" 
         />
         

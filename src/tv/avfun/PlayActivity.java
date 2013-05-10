@@ -3,6 +3,7 @@ package tv.avfun;
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.MediaPlayer.OnBufferingUpdateListener;
 import io.vov.vitamio.MediaPlayer.OnCompletionListener;
+import io.vov.vitamio.MediaPlayer.OnErrorListener;
 import io.vov.vitamio.MediaPlayer.OnPreparedListener;
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
@@ -23,8 +24,8 @@ public class PlayActivity extends Activity{
 	private VideoView mVideoView;
 	private TextView textView;
 	private ProgressBar progress;
-	private String path;
 	private ArrayList<String> paths;
+	private String displayName;
 	private int index =0;
 	@Override
 	public void onCreate(Bundle icicle) {
@@ -32,11 +33,11 @@ public class PlayActivity extends Activity{
 		if (!io.vov.vitamio.LibsChecker.checkVitamioLibs(this))
 			return;
 		setContentView(R.layout.videoview);
-		path = getIntent().getStringExtra("path");
 		paths = getIntent().getStringArrayListExtra("paths");
+		displayName = getIntent().getStringExtra("displayName");
 		mVideoView = (VideoView) findViewById(R.id.surface_view);
-		if(path != null) mVideoView.setVideoPath(path);
-		else mVideoView.setVideoPath(paths.get(index));
+		mVideoView.setVideoPath(paths.get(index));
+		mVideoView.setMediaName(displayName);
 		textView = (TextView) findViewById(R.id.video_proess_text);
 		progress = (ProgressBar) findViewById(R.id.video_time_progress);
 		mVideoView.setOnBufferingUpdateListener(new OnBufferingUpdateListener() {
@@ -53,22 +54,31 @@ public class PlayActivity extends Activity{
 		});
 		
 		mVideoView.setOnCompletionListener(new MOnCompletionListener());
+		mVideoView.setOnErrorListener(errListener);
 		mVideoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_MEDIUM);
 		mVideoView.setMediaController(new MediaController(this));
 	}
 	
-
+	private OnErrorListener errListener = new OnErrorListener() {
+        
+        @Override
+        public boolean onError(MediaPlayer arg0, int arg1, int arg2) {
+            isError = true;
+            return false;
+        }
+    };
+    private boolean isError;
 	private final class MOnCompletionListener implements OnCompletionListener{
 
 		@Override
 		public void onCompletion(MediaPlayer mPlayer) {
-	        if(paths == null || ++index >= paths.size()) {
+		    
+	        if(paths == null || ++index >= paths.size() || isError) {
 	            finish();
 	            return;
 	        }
 			Toast.makeText(PlayActivity.this, "开始缓冲下一段...稍后", 1).show();
 			mPlayer.getDuration();
-
 			mVideoView.setVideoPath(paths.get(index));
 			mVideoView.setOnCompletionListener(new MOnCompletionListener());
 			mVideoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_MEDIUM);
