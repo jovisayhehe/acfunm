@@ -68,7 +68,11 @@ public class FileUtil {
             return -1;
 
     }
-
+    /**
+     *   "/" ~ "?"之间的".xxx"
+     * @param url
+     * @return
+     */
     public static String getUrlExt(String url){
         if (!TextUtils.isEmpty(url)) {
 //            int start = url.lastIndexOf('.');

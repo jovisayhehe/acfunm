@@ -1,6 +1,8 @@
 
 package tv.avfun.app;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,12 +10,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimerTask;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import tv.avfun.BuildConfig;
+import tv.avfun.api.net.UserAgent;
 import tv.avfun.db.DBService;
+import tv.avfun.entity.VideoInfo.VideoItem;
+import tv.avfun.util.ArrayUtil;
+import tv.avfun.util.FileUtil;
 import android.annotation.TargetApi;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Query;
+import android.app.DownloadManager.Request;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -30,24 +39,24 @@ import android.widget.Toast;
 @TargetApi(Build.VERSION_CODES.GINGERBREAD)
 public class DownloadService extends Service {
 
-    public static final String  ACTION_VIEW_PROGRESS    = "tv.avfun.action.ACTION_VIEW_PROGRESS";
-    public static final String  ACTION_DOWNLOAD_SUCCESS = "tv.avfun.action.ACTION_DOWNLOAD_SUCCESS";
-    public static final String  ACTION_DOWNLOAD_FAIL    = "tv.avfun.action.ACTION_DOWNLOAD_FAIL";
+    private static final String TAG                     = DownloadService.class.getSimpleName();
+    
+    public static final Uri     CONTENT_URI             = Uri.parse("content://downloads/my_downloads");
+    public static final String  ACTION_VIEW_PROGRESS    = "tv.avfun.action.VIEW_PROGRESS";
+    public static final String  ACTION_DOWNLOAD_SUCCESS = "tv.avfun.action.DOWNLOAD_SUCCESS";
+    public static final String  ACTION_DOWNLOAD_FAIL    = "tv.avfun.action.DOWNLOAD_FAIL";
+    public static final String  ACTION_DOWNLOAD_START   = "tv.avfun.action.DOWNLOAD_START";
+    public static final String  ACTION_DOWNLOAD_ENQUEUE = "tv.avfun.action.ENQUEUE";
+    public static final String  EXTRAS_ITEM_VID         = "item_vid";
+
     public static final int     STATUS_SUCCESS          = 200;
     public static final int     STATUS_PENDING          = 190;
     public static final int     STATUS_RUNNING          = 192;
     public static final int     STATUS_PAUSED           = 193;
     public static final int     STATUS_ERROR            = 400;
-    public static final Uri     CONTENT                 = Uri.parse("content://downloads/my_downloads");
-    private static final String TAG                     = DownloadService.class.getSimpleName();
+    
     private DownloadManager     dm;
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return new DownloadBinder();
-    }
-
-    private DownloadsCompletedReceiver receiver = new DownloadsCompletedReceiver();
+    private boolean             isBound;
 
     @Override
     public void onCreate() {
@@ -55,8 +64,80 @@ public class DownloadService extends Service {
         registerReceiver(receiver, filter);
     }
 
-    Map<String, Boolean> vids = Collections.synchronizedMap(new HashMap<String, Boolean>());
-    public void queryProgress(String vid, List<Long> ids) {
+    @Override
+    public IBinder onBind(Intent intent) {
+        // 绑定服务，意味着，可能需要下载
+        isBound = true;
+        new Thread(new DownloadTask()).start();
+        return new IDownloadBinder();
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        isBound = false;
+        return super.onUnbind(intent);
+    }
+
+    @Override
+    public void onDestroy() {
+        for (Map.Entry<String, Boolean> e : vids.entrySet()) {
+            e.setValue(true);
+        }
+        pool.stop();
+        unregisterReceiver(receiver);
+        receiver = null;
+    }
+
+    private CompletedReceiver           receiver = new CompletedReceiver();
+    private BlockingQueue<DownloadInfo> queue    = new LinkedBlockingQueue<DownloadInfo>(1);
+    private Map<String, Boolean>        vids     = Collections.synchronizedMap(new HashMap<String, Boolean>());
+    
+
+    private static ThreadPool           pool     = new ThreadPool(10);
+    protected long interval = 1000;
+
+    protected void startDownload(DownloadInfo dinfo) {
+
+        File file = AcApp.getDownloadPath(dinfo.aid, dinfo.item.vid);
+        file.mkdirs();
+        if (dm == null)
+            dm = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+
+        dinfo.item.downloadIDs = new ArrayList<Long>();
+        for (int i = 0; i < dinfo.item.urlList.size(); i++) {
+
+            String url = dinfo.item.urlList.get(i);
+            String filename = i + FileUtil.getUrlExt(url);
+            Request request = new Request(Uri.parse(url));
+            request.setAllowedNetworkTypes(Request.NETWORK_WIFI).setAllowedOverRoaming(false)
+                    .setDescription(dinfo.item.subtitle);
+
+            int len = 10;
+            if (dinfo.item.subtitle.length() < len)
+                len = dinfo.item.subtitle.length();
+            request.setTitle(dinfo.item.subtitle.substring(0, len) + "_" + filename)
+                    .addRequestHeader("User-Agent", UserAgent.DEFAULT)
+                    .setDestinationInExternalPublicDir("Download/AcFun/Videos/" + dinfo.aid + "/" + dinfo.item.vid,
+                            filename);
+            dinfo.item.downloadIDs.add(dm.enqueue(request));
+            pool.post(new QueryTask(dinfo.item));
+        }
+
+    }
+
+    /**
+     * 插入下载队列，成功，发送 ACTIONO_DOWNLOAD_START ，
+     */
+    public void enqueue(String aid, VideoItem item) {
+        if (item == null || item.urlList == null || item.urlList.isEmpty())
+            throw new IllegalArgumentException("item 验证不通过");
+        // 排队
+        sendBroadcast(new Intent(ACTION_DOWNLOAD_ENQUEUE));
+        pool.post(new Poster(new DownloadInfo(aid, item)));
+
+    }
+
+    protected void queryProgress(String vid, List<Long> ids) {
         Cursor c = getContentResolver().query(Uri.parse("content://downloads/my_downloads"), null,
                 Downloader.getWhereClauseForIds(ids), Downloader.getWhereArgsForIds(ids), null);
         if (c == null) {
@@ -128,7 +209,111 @@ public class DownloadService extends Service {
 
     }
 
-    public class DownloadsCompletedReceiver extends BroadcastReceiver {
+    private class DownloadTask implements Runnable {
+
+        @Override
+        public void run() {
+            try {
+                while (isBound) {
+                    startDownload(queue.take());
+                }
+            } catch (InterruptedException ex) {}
+
+        }
+
+    }
+
+    /** 阻塞，直到put成功，发布 ACTIONO_DOWNLOAD_START。 */
+    private class Poster implements Runnable {
+
+        DownloadInfo dinfo;
+
+        public Poster(DownloadInfo dinfo) {
+            this.dinfo = dinfo;
+        }
+
+        @Override
+        public void run() {
+            try {
+                queue.put(dinfo);
+                Intent intent = new Intent(ACTION_DOWNLOAD_START);
+                intent.putExtra("vid", dinfo.item.vid);
+                sendBroadcast(intent);
+            } catch (InterruptedException e) {}
+        }
+
+    }
+    /** download service */
+    public class IDownloadBinder extends Binder {
+
+        /**
+         * 下载！到下载队列中排队
+         * @param aid
+         * @param item
+         */
+        public void download(String aid, VideoItem item){
+            DownloadService.this.enqueue(aid, item);
+        }
+        /** 设置进度更新频率 */
+        public void setInterval(long interval){
+            DownloadService.this.interval  = interval;
+        }
+        /** 取消下载 */
+        public void cancel(String vid){
+            if (dm == null)
+                dm = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+            List<Long> downloadIds = new DBService(getApplicationContext()).getDownloadIds(vid);
+            long[] array = ArrayUtil.toLongArray(downloadIds);
+            
+            if(array != null){
+                int n = dm.remove(array);
+                if(n>0){
+                    Toast.makeText(getApplicationContext(), "删除成功", 0).show();
+                }
+            }
+            vids.remove(vid);
+            new DBService(getApplicationContext()).removeDownload(vid);
+        }
+        /** 是否下载完毕 */
+        public boolean isComplete(String vid){
+            return Downloader.isDownloaded(getApplicationContext(), vid); 
+        }
+        /** 是否正在下载 */
+        public boolean isDownloading(String vid){
+            return Downloader.isDownloading(getApplicationContext(), vid);
+        }
+        
+    }
+
+    private class QueryTask extends TimerTask {
+
+        String     vid;
+        List<Long> downloadIDs;
+
+        public QueryTask(VideoItem item) {
+            this.vid = item.vid;
+            downloadIDs = item.downloadIDs;
+            // 不应为空的！
+            if (downloadIDs == null || downloadIDs.isEmpty())
+                throw new IllegalStateException(vid+" 的download id 被吃掉了！！！");
+            vids.put(vid, false);
+        }
+
+        @Override
+        public void run() {
+            while (vids.get(vid)!= null && !vids.get(vid)) {
+                if (BuildConfig.DEBUG)
+                    Log.d(TAG, "------- querying status ---------");
+                queryProgress(vid, downloadIDs);
+                try {
+                    Thread.sleep(DownloadService.this.interval);
+                } catch (InterruptedException e) {}
+            }
+        }
+
+    }
+
+    private class CompletedReceiver extends BroadcastReceiver {
 
         private volatile int mNumCompleted = 0;
         private Set<Long>    downloadIds   = Collections.synchronizedSet(new HashSet<Long>());
@@ -141,11 +326,13 @@ public class DownloadService extends Service {
             if (intent.getAction().equalsIgnoreCase(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
                 synchronized (this) {
                     long id = intent.getExtras().getLong(DownloadManager.EXTRA_DOWNLOAD_ID);
-                    if(BuildConfig.DEBUG)  Log.i(TAG, "Received Notification for download: " + id);
+                    if (BuildConfig.DEBUG)
+                        Log.i(TAG, "Received Notification for download: " + id);
                     if (!downloadIds.contains(id)) {
                         ++mNumCompleted;
-                        if(BuildConfig.DEBUG) Log.i(TAG, "CompletedReceiver got intent: " + intent.getAction() + " --> total count: "
-                                + mNumCompleted);
+                        if (BuildConfig.DEBUG)
+                            Log.i(TAG, "CompletedReceiver got intent: " + intent.getAction() + " --> total count: "
+                                    + mNumCompleted);
                         downloadIds.add(id);
                         if (dm == null)
                             dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
@@ -162,16 +349,19 @@ public class DownloadService extends Service {
 
                                 } else if (status == DownloadManager.STATUS_FAILED)
                                     new DBService(getApplicationContext()).changeDownloadState(id, 2);
-                                if(BuildConfig.DEBUG) Log.i(TAG, "Download status is: " + status);
+                                if (BuildConfig.DEBUG)
+                                    Log.i(TAG, "Download status is: " + status);
                             } else {
-                                if(BuildConfig.DEBUG) Log.w(TAG, "No status found for completed download!");
+                                if (BuildConfig.DEBUG)
+                                    Log.w(TAG, "No status found for completed download!");
                             }
                         }
                         finally {
                             cursor.close();
                         }
                     } else {
-                        if(BuildConfig.DEBUG) Log.i(TAG, "Notification for id: " + id + " has already been made.");
+                        if (BuildConfig.DEBUG)
+                            Log.i(TAG, "Notification for id: " + id + " has already been made.");
                     }
                 }
             }
@@ -202,56 +392,19 @@ public class DownloadService extends Service {
 
     }
 
+    static class DownloadInfo {
+
+        String    aid;
+        VideoItem item;
+
+        DownloadInfo(String aid, VideoItem item) {
+            this.aid = aid;
+            this.item = item;
+        }
+    }
+
     @Override
-    public void onDestroy() {
-        for (Map.Entry<String, Boolean> e : vids.entrySet()) {
-            e.setValue(true);
-        }
-        pool.stop();
-        unregisterReceiver(receiver);
-        receiver = null;
-    }
-
-    private static ThreadPool pool = new ThreadPool(5); // 线程池 最多5个线程
-                                                 // 即，最多并行5个下载
-
-    public class DownloadBinder extends Binder {
-
-        public void doQueryStatus(String vid) {
-            if (vids.get(vid) == null)
-                pool.post(new QueryTask(vid));
-        }
-    }
-
-    private class QueryTask extends TimerTask {
-
-        String     vid;
-        // long[] ids;
-        List<Long> downloadIDs;
-
-        public QueryTask(String vid) {
-            this.vid = vid;
-            downloadIDs = new DBService(getApplicationContext()).getDownloadIds(vid);
-            // 不应为空的！
-            if (downloadIDs == null || downloadIDs.isEmpty())
-                throw new IllegalStateException("没有在download list 中找到与之匹配的信息 : " + vid);
-            // ids = ArrayUtil.toLongArray(downloadIDs);
-            vids.put(vid, false);
-            // downloadIDs = null;
-        }
-
-        @Override
-        public void run() {
-            while ((vids.get(vid) == null || !vids.get(vid))) {
-                if(BuildConfig.DEBUG) Log.d(TAG, "------- querying status ---------");
-                // queryProgress(vid, ids);
-                queryProgress(vid, downloadIDs);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                }
-            }
-        }
-
+    public void onLowMemory() {
+        System.gc();
     }
 }

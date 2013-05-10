@@ -15,7 +15,6 @@ import tv.avfun.app.AcApp;
 import tv.avfun.app.DownloadService;
 import tv.avfun.app.Downloader;
 import tv.avfun.app.DownloadService.IDownloadBinder;
-import tv.avfun.app.Downloader.DownloadHandler;
 import tv.avfun.db.DBService;
 import tv.avfun.entity.Contents;
 import tv.avfun.entity.VideoInfo;
@@ -402,41 +401,14 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         @Override
         public void doStartDownload(VideoItem item) {
             // TODO start download
-            Downloader.enqueue(DetailActivity.this, aid, item, downloadHandler);
-            mDService.doQueryStatus(item.vid);
+            //mDService.download(aid, item);
         }
 
         @Override
         public void doCancelDownload(String vid) {
             // TODO cancel download
-            Downloader.removeDownload(DetailActivity.this, vid);
-
+            //mDService.cancel(vid);
         }
     };
-    private DownloadHandler downloadHandler  = new DownloadHandler() {
 
-        @Override
-        public void onSuccess(Message msg) {
-            // TODO Auto-generated method stub
-        }
-
-        @Override
-        public void onFail(Message msg) {
-            // TODO Auto-generated method stub
-            
-        }
-
-        @Override
-        public void onStart(Message msg) {
-            // TODO Auto-generated method stub
-            
-        }
-
-        @Override
-        public void onStop(Message msg) {
-            // TODO Auto-generated method stub
-            
-        }
-        
-    };
 }

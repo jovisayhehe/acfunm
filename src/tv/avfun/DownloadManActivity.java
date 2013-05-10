@@ -3,6 +3,7 @@ package tv.avfun;
 import android.annotation.TargetApi;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Query;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 

@@ -270,6 +270,28 @@ public class DBService {
         db.close();
     }
 
+    public boolean isComplete(String aid, String vid) {
+        boolean b = true;
+        String sql = "SELECT STATE FROM DOWNLOADLIST WHERE AID=? AND VID=? ORDER BY I ASC";
+
+        Cursor query = db.rawQuery(sql, new String[] { aid, vid });
+        if (query == null)
+            return false;
+        try {
+            for (query.moveToFirst(); !query.isAfterLast(); query.moveToNext()) {
+                int state = query.getInt(0);
+                b &= state == 3;
+            }
+        } catch (Exception e) {
+            if (BuildConfig.DEBUG) 
+                Log.e("db", "fail to query state "+ vid,e);
+        }
+        finally {
+            query.close();
+        }
+        return b;
+    }
+
     /**
      * 获取下载完毕的videoitem
      * 
@@ -381,36 +403,38 @@ public class DBService {
         db.close();
         return total;
     }
-    
-    public VideoItem getDownloadedItemById(String vid){
+
+    public VideoItem getDownloadedItemById(String vid) {
         String sql = "SELECT LOCALURI,DURATION,TITLE,I,SIZE,VTYPE FROM DOWNLOADLIST WHERE VID=? AND STATE=3";
         Cursor cursor = db.rawQuery(sql, new String[] { vid });
 
         if (cursor != null) {
-            try{
-            VideoItem item =new VideoItem();
-            item.urlList  = new ArrayList<String>();
-            item.durationList = new ArrayList<Long>();
-            while(cursor.moveToNext()){
-                int i = cursor.getInt(cursor.getColumnIndex("I"));
-                if(i == 0){
-                    item.vid = vid;
-                    item.subtitle = cursor.getString(cursor.getColumnIndex("TITLE"));
-                    item.vtype = cursor.getString(cursor.getColumnIndex("VTYPE"));
-                    item.isdownloaded = true;
+            try {
+                VideoItem item = new VideoItem();
+                item.urlList = new ArrayList<String>();
+                item.durationList = new ArrayList<Long>();
+                while (cursor.moveToNext()) {
+                    int i = cursor.getInt(cursor.getColumnIndex("I"));
+                    if (i == 0) {
+                        item.vid = vid;
+                        item.subtitle = cursor.getString(cursor.getColumnIndex("TITLE"));
+                        item.vtype = cursor.getString(cursor.getColumnIndex("VTYPE"));
+                        item.isdownloaded = true;
+                    }
+                    item.urlList.add(i, cursor.getString(cursor.getColumnIndex("LOCALURI")));
+                    item.durationList.add(i, cursor.getLong(cursor.getColumnIndex("DURATION")));
                 }
-                item.urlList.add(i,cursor.getString(cursor.getColumnIndex("LOCALURI")));
-                item.durationList.add(i,cursor.getLong(cursor.getColumnIndex("DURATION")));
-            }
-            }catch (Exception e) {
-                if(BuildConfig.DEBUG) Log.e("db", "failed to getDownloadedItemById "+vid,e);
+            } catch (Exception e) {
+                if (BuildConfig.DEBUG)
+                    Log.e("db", "failed to getDownloadedItemById " + vid, e);
                 return null;
-            }finally{
+            }
+            finally {
                 cursor.close();
             }
         }
         db.close();
         return null;
-        
+
     }
 }
