@@ -1,12 +1,16 @@
 
 package tv.avfun.entity;
 
-import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
-
+/**
+ * 视频信息，有一个以上的段落parts
+ * @author Yrom
+ *
+ */
 public class VideoInfo {
-
+    /**
+     * 番号，acxxxxx
+     */
     public String          aid;
     public String          title;
     public String          description;
@@ -14,82 +18,15 @@ public class VideoInfo {
     public String          titleImage;
     public int             channelId;
     public long            postTime;
+    /**
+     * 标签
+     */
     public String[]        tags;
     public int             views;
     public int             comments;
-    public List<VideoItem> parts;
-
-    public static class VideoItem implements Serializable {
-
-        private static final long serialVersionUID = 976124L;
-        public String             vid;
-        public String             vtype;
-        public String             subtitle;
-        public List<Long>         downloadIDs;
-        public List<String>       urlList;
-        /** 如果值为-1则表示没能获取到content length */
-        public List<Integer>      bytesList;
-        public List<Long>         durationList;
-        public boolean            isdownloaded     = false;
-
-        public void put(String url, long seconds) {
-            urlList.add(url);
-            durationList.add(seconds);
-        }
-
-        public boolean validate() {
-            return urlList != null && !urlList.isEmpty() && downloadIDs != null && !downloadIDs.isEmpty();
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((vid == null) ? 0 : vid.hashCode());
-            result = prime * result + ((vtype == null) ? 0 : vtype.hashCode());
-            return result;
-        }
-        /**
-         * vid vtype 相等 认为是相等
-         */
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            VideoItem other = (VideoItem) obj;
-
-            if (vid == null) {
-                if (other.vid != null)
-                    return false;
-            } else if (!vid.equals(other.vid))
-                return false;
-            if (vtype == null) {
-                if (other.vtype != null)
-                    return false;
-            } else if (!vtype.equals(other.vtype))
-                return false;
-            return true;
-        }
-
-/*        public VideoItem cloneFromOther(VideoItem other){
-            if(other == null)
-                throw new NullPointerException("兄贵是空的呀！！");
-            if(!this.equals(other))
-                throw new IllegalArgumentException("那哥们属性不同，不能clone");
-            this.vid  = other.vid;
-            this.bytesList = other.bytesList;
-            this.downloadIDs = other.downloadIDs;
-            this.durationList = other.durationList;
-            this.isdownloaded = other.isdownloaded;
-            this.subtitle  = other.subtitle;
-            this.vtype = other.vtype;
-            this.urlList = other.urlList;
-            return this;
-        }*/
-        // TODO danmu info
-    }
+    /**
+     * 分p
+     */
+    public List<VideoPart> parts;
+    
 }

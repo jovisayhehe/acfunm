@@ -12,13 +12,10 @@ import tv.avfun.adapter.DetailAdaper;
 import tv.avfun.adapter.DetailAdaper.OnStatusClickListener;
 import tv.avfun.api.ApiParser;
 import tv.avfun.app.AcApp;
-import tv.avfun.app.DownloadService;
-import tv.avfun.app.Downloader;
-import tv.avfun.app.DownloadService.IDownloadBinder;
 import tv.avfun.db.DBService;
 import tv.avfun.entity.Contents;
 import tv.avfun.entity.VideoInfo;
-import tv.avfun.entity.VideoInfo.VideoItem;
+import tv.avfun.entity.VideoPart;
 import tv.avfun.util.ArrayUtil;
 import tv.avfun.util.NetWorkUtil;
 import tv.avfun.util.StringUtil;
@@ -62,7 +59,6 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
     private static final String LOADING    = "正在加载...";
     private static final int    TAG_RELOAD = 100;
     private static final int    TAG_PLAY   = 200;
-    private IDownloadBinder      mDService;
     private Intent              mIntent;
     /**
      * 来自：0 首页 1历史、搜索 2 Action_View av://12345
@@ -77,7 +73,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
     private int                 channelid;
     private String              description;
     private ListView            mListView;
-    private List<VideoItem>     mData;
+    private List<VideoPart>     mData;
     private DetailAdaper        mAdapter;
     private LayoutInflater      mInflater;
     private View                mLoadView;
@@ -88,8 +84,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        Intent service = new Intent(this, DownloadService.class);
-        bindService(service, conn, BIND_AUTO_CREATE);
+        //TODO 注册监听
 
         mIntent = getIntent();
         if (Intent.ACTION_VIEW.equals(mIntent.getAction())) {
@@ -105,9 +100,6 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         initview();
         loadData();
     }
-
-    private ServiceConnection conn = new DownloadServiceConnection();
-
 
     private void initBar() {
         getSupportActionBar().setBackgroundDrawable(this.getResources().getDrawable(R.drawable.ab_transparent));
@@ -144,14 +136,15 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
                     mData.addAll(mVideoInfo.parts);
                 }
                 // 下载功能只支持9+
-                if (Build.VERSION.SDK_INT >= 9) {
-                    // 先从downloadlist数据库中查aid 对应的video item
-                    List<VideoItem> items = new DBService(getApplicationContext()).getVideoItems(aid);
-                    for (VideoItem item : items) {
-                        mData.remove(item); // call equals
-                    }
-                    mData.addAll(items);
-                }
+                //TODO
+//                if (Build.VERSION.SDK_INT >= 9) {
+//                    // 先从downloadlist数据库中查aid 对应的video item
+//                    List<VideoItem> items = new DBService(getApplicationContext()).getVideoItems(aid);
+//                    for (VideoItem item : items) {
+//                        mData.remove(item); // call equals
+//                    }
+//                    mData.addAll(items);
+//                }
 
             } catch (Exception e) {
                 // TODO 向umeng 发送自定义事件: aid获取失败
@@ -242,7 +235,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         }
         mListView = (ListView) findViewById(R.id.detail_listview);
         mInflater = LayoutInflater.from(DetailActivity.this);
-        mData = new ArrayList<VideoInfo.VideoItem>();
+        mData = new ArrayList<VideoPart>();
         mAdapter = new DetailAdaper(mInflater, mData);
         mAdapter.setOnStatusClickListener(slistener);
         mListView.setAdapter(mAdapter);
@@ -251,25 +244,15 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         mLoadView = findViewById(R.id.load_view);
     }
 
-    private class DownloadServiceConnection implements ServiceConnection {
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {}
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            mDService = (IDownloadBinder) service;
-        }
-    };
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         // 播放
-        VideoItem item = (VideoItem) parent.getItemAtPosition(position);
+        VideoPart item = (VideoPart) parent.getItemAtPosition(position);
         startPlay(item);
     }
 
-    private void startPlay(VideoItem item) {
+    private void startPlay(VideoPart item) {
         addToHistory();
         Intent intent = new Intent(DetailActivity.this, SectionActivity.class);
         intent.putExtra("item", item);
@@ -386,9 +369,6 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        try {
-            unbindService(conn);
-        } catch (Exception e) {}
     }
     
     private OnStatusClickListener slistener = new OnStatusClickListener() {
@@ -399,7 +379,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         }
 
         @Override
-        public void doStartDownload(VideoItem item) {
+        public void doStartDownload(VideoPart item) {
             // TODO start download
             //mDService.download(aid, item);
         }

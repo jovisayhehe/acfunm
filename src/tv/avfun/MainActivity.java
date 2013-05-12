@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import tv.avfun.app.AcApp;
-import tv.avfun.app.DownloadService;
 import tv.avfun.fragment.HomeChannelListFragment;
 import tv.avfun.fragment.PlayTime;
 import tv.avfun.fragment.UserHomeFragment;
@@ -60,8 +59,8 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent service = new Intent(this, DownloadService.class);
-        startService(service);
+//        Intent service = new Intent(this, DownloadService.class);
+//        startService(service);
         initUmeng();
         // 得到界面宽高
         DisplayMetrics dm = new DisplayMetrics();
@@ -325,7 +324,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
                 return;
             } else {
                 // 退出
-                stopService(new Intent(this, DownloadService.class));
+// TODO               stopService(new Intent(this, DownloadService.class));
             }
         }
         super.onBackPressed();

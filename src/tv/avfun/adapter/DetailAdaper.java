@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import tv.avfun.R;
-import tv.avfun.entity.VideoInfo.VideoItem;
+import tv.avfun.entity.VideoPart;
 import tv.avfun.util.Maps;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,11 +26,11 @@ public class DetailAdaper extends BaseAdapter {
     private static final int      STATUS_DOWNLOADED  = 1;
     private static final int      STATUS_DOWNLOADING = 2;
     private static final String TAG = DetailAdaper.class.getSimpleName();
-    private List<VideoItem>       mData;
+    private List<VideoPart>       mData;
     private LayoutInflater        mInflater;
     private OnStatusClickListener mListener;
 
-    public DetailAdaper(LayoutInflater inflater, List<VideoItem> items) {
+    public DetailAdaper(LayoutInflater inflater, List<VideoPart> items) {
         if (items == null)
             throw new NullPointerException("items cannot be null!!!");
         this.mData = items;
@@ -43,7 +43,7 @@ public class DetailAdaper extends BaseAdapter {
      * @param data
      *            items
      */
-    public void setData(List<VideoItem> data) {
+    public void setData(List<VideoPart> data) {
         this.mData = data;
         this.notifyDataSetChanged();
     }
@@ -54,7 +54,7 @@ public class DetailAdaper extends BaseAdapter {
     }
 
     @Override
-    public VideoItem getItem(int position) {
+    public VideoPart getItem(int position) {
         return mData.get(position);
     }
 
@@ -65,7 +65,7 @@ public class DetailAdaper extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final VideoItem item = getItem(position);
+        final VideoPart item = getItem(position);
         ItemViewHolder holder = null;
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.detail_video_list_item, parent, false);
@@ -79,7 +79,7 @@ public class DetailAdaper extends BaseAdapter {
         ItemHolder iHolder= new ItemHolder();
         iHolder.status = (TextView) convertView.findViewById(R.id.detail_status);
         iHolder.bar = (ProgressBar) convertView.findViewById(R.id.detail_progress);
-        if (item.isdownloaded) {
+        if (item.isDownloaded) {
             iHolder.status.setText("已下载");
             iHolder.status.setTag(STATUS_DOWNLOADED);
         } else {
@@ -172,7 +172,7 @@ public class DetailAdaper extends BaseAdapter {
         ProgressBar bar;
         TextView status;
     }
-    private void startDownload(VideoItem item) {
+    private void startDownload(VideoPart item) {
         if (mListener != null)
             mListener.doStartDownload(item);
         Log.i(TAG, "开始下载..."+item.vid);
@@ -202,7 +202,7 @@ public class DetailAdaper extends BaseAdapter {
          * @param view
          * @param vid
          */
-        void doStartDownload(VideoItem item);
+        void doStartDownload(VideoPart item);
 
         /**
          * 取消（删除）下载

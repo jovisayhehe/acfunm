@@ -6,7 +6,8 @@ import java.util.List;
 
 import tv.avfun.api.ApiParser;
 import tv.avfun.app.AcApp;
-import tv.avfun.entity.VideoInfo.VideoItem;
+import tv.avfun.entity.VideoPart;
+import tv.avfun.entity.VideoSegment;
 import tv.avfun.util.FileUtil;
 import android.app.ActivityOptions;
 import android.content.Context;
@@ -37,7 +38,7 @@ public class SectionActivity extends SherlockActivity implements OnClickListener
     private TextView          time_outtext;
     private ListView          list;
     private SectionAdapter    adapter;
-    private List<String> data        = new ArrayList<String>();
+    private ArrayList<VideoSegment> data = new ArrayList<VideoSegment>();
     private int               playmode    = 0;
     private static final int  PARSE_OK    = 1;
     private static final int  PARSE_ERROR = 2;
@@ -54,7 +55,7 @@ public class SectionActivity extends SherlockActivity implements OnClickListener
         Intent intent = getIntent();
         Object obj = intent.getExtras().getSerializable("item");
         if(obj == null) throw new IllegalArgumentException("what does the video item you want to play?");
-        item = (VideoItem) obj;
+        item = (VideoPart) obj;
         ab.setTitle(item.subtitle);
         vid = item.vid;
         playmode = AcApp.getConfig().getInt("playmode", 0);
@@ -95,11 +96,11 @@ public class SectionActivity extends SherlockActivity implements OnClickListener
                 case PARSE_OK:
                     list.setVisibility(View.VISIBLE);
                     Intent intent = new Intent();
-                    intent.putExtra("displayName", item.subtitle+"(共"+item.urlList.size()+"段)");
+                    intent.putExtra("displayName", item.subtitle+"(共"+item.segments.size()+"段)");
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     if (playmode != 0) {
                             intent.setAction(Intent.ACTION_VIEW);
-                            String url = data.get(0);
+                            String url = data.get(0).url;
                             Uri uri = Uri.parse(url);
                             String ext = FileUtil.getUrlExt(url);
                             String mimetype = FileUtil.guessVideoMimetype(ext);
@@ -113,7 +114,9 @@ public class SectionActivity extends SherlockActivity implements OnClickListener
                             }
                     }
                     intent.setClass(getApplicationContext(), PlayActivity.class);
-                    intent.putStringArrayListExtra("paths", (ArrayList<String>) data);
+                    Bundle b = new Bundle();
+                    b.putSerializable("parts", item.segments);
+                    intent.putExtras(b);
                     startActivity(intent);
                     SectionActivity.this.finish();
                     break;
@@ -127,7 +130,7 @@ public class SectionActivity extends SherlockActivity implements OnClickListener
                 }
             }
         };
-    private VideoItem item;
+    private VideoPart item;
 
     public void getdatas() {
         time_outtext.setVisibility(View.GONE);
@@ -138,7 +141,7 @@ public class SectionActivity extends SherlockActivity implements OnClickListener
             public void run() {
                 try {
                     //data = (ArrayList<String>) ApiParser.ParserVideopath(vtype, vid);
-                    if(!item.isdownloaded){
+                    if(!item.isDownloaded){
                         if(BuildConfig.DEBUG)
                             Log.i(TAG, "parsing parts for"+ vid);
                         int parseMode = 1;
@@ -146,7 +149,7 @@ public class SectionActivity extends SherlockActivity implements OnClickListener
                             parseMode = 2;
                         ApiParser.parseVideoParts(item,parseMode);
                     }
-                    data = item.urlList;
+                    data = item.segments;
                     if (data != null && data.size() > 0) {
                         handler.obtainMessage(PARSE_OK, data).sendToTarget();
                     }else{
@@ -176,13 +179,13 @@ public class SectionActivity extends SherlockActivity implements OnClickListener
 
     private final class SectionAdapter extends BaseAdapter {
 
-        private List<String> data;
+        private List<VideoSegment> data;
 
-        public SectionAdapter(Context context, List<String> data) {
+        public SectionAdapter(Context context, List<VideoSegment> data) {
             this.data = data;
         }
 
-        public void setData(List<String> data) {
+        public void setData(List<VideoSegment> data) {
             this.data = data;
         }
 
@@ -214,7 +217,7 @@ public class SectionActivity extends SherlockActivity implements OnClickListener
             textView.setTypeface(null, Typeface.BOLD);
             textView.setPadding(12, 12, 12, 12);
             textView.setTextColor(Color.BLACK);
-            textView.setTag(data.get(position));
+            textView.setTag(data.get(position).url);
             textView.setOnClickListener(SectionActivity.this);
             textView.setBackgroundResource(R.drawable.selectable_background);
             convertView = textView;

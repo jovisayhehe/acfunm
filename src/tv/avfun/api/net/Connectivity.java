@@ -36,7 +36,7 @@ public class Connectivity {
      */
     public static String getJson(String url) {
         try {
-            HttpURLConnection conn = openConnection(new URL(url), UserAgent.CHROME_25);
+            HttpURLConnection conn = openConnection(new URL(url), UserAgent.getRandom());
             if (conn.getResponseCode() != 200)
                 return null;
             InputStream in = conn.getInputStream();
@@ -86,7 +86,7 @@ public class Connectivity {
 
     /**
      * 打开一个新的Http连接
-     * 
+     * TODO 引入重试机制！
      * @param httpUrl
      * @param userAgent
      * @throws IOException
@@ -110,40 +110,41 @@ public class Connectivity {
 
     /**
      * 获得重定向路径（一次重定向）
-     * 
+     * 如果没有重定向，则返回传入的url
      * @param httpUrl
      * @param userAgent
      * @return
      */
-    public static String getRedirectLocation(URL httpUrl, String userAgent) {
-        String location = null;
+    public static String getRedirectLocation(String url, String userAgent) {
+        String location = url;
         try {
-            HttpURLConnection conn = openConnection(httpUrl, userAgent);
+            HttpURLConnection conn = openConnection(new URL(url), userAgent);
             conn.setInstanceFollowRedirects(false);// 不跟随跳转
             int code = conn.getResponseCode();
-            if (code == 302) {
+            if (code == 302 || code == 301) {
                 location = conn.getHeaderField("Location");
                 if (BuildConfig.DEBUG)
                     Log.i("", "redirect location: " + location);
             }
         } catch (IOException e) {
             if (BuildConfig.DEBUG)
-                Log.e(TAG, "failed to get redirect loaction :" + httpUrl.toString(), e);
+                Log.e(TAG, "failed to get redirect loaction :" + url, e);
         }
         return location;
     }
 
     /**
      * 获得重定向路径（二次重定向）
-     * 
+     * 无重定向，则返回源地址
      * @param httpUrl
      * @param userAgent
      * @return
      * @throws IOException
      */
-    public static String getDuplicateRedirectLocation(URL httpUrl, String userAgent) throws IOException {
+    public static String getDuplicateRedirectLocation(String httpUrl, String userAgent) throws IOException {
         String url = getRedirectLocation(httpUrl, userAgent);
-        return getRedirectLocation(new URL(url), userAgent);
+        if(httpUrl.equals(url)) return url;
+        else return getRedirectLocation(url, userAgent);
     }
 
     /**

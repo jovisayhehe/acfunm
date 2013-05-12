@@ -10,6 +10,9 @@ import io.vov.vitamio.widget.VideoView;
 
 import java.util.ArrayList;
 
+import tv.avfun.app.AcApp;
+import tv.avfun.entity.VideoSegment;
+
 import com.umeng.analytics.MobclickAgent;
 
 import android.app.Activity;
@@ -24,7 +27,7 @@ public class PlayActivity extends Activity{
 	private VideoView mVideoView;
 	private TextView textView;
 	private ProgressBar progress;
-	private ArrayList<String> paths;
+	private ArrayList<VideoSegment> parts;
 	private String displayName;
 	private int index =0;
 	@Override
@@ -33,10 +36,10 @@ public class PlayActivity extends Activity{
 		if (!io.vov.vitamio.LibsChecker.checkVitamioLibs(this))
 			return;
 		setContentView(R.layout.videoview);
-		paths = getIntent().getStringArrayListExtra("paths");
+		parts = (ArrayList<VideoSegment>) getIntent().getSerializableExtra("parts");
 		displayName = getIntent().getStringExtra("displayName");
 		mVideoView = (VideoView) findViewById(R.id.surface_view);
-		mVideoView.setVideoPath(paths.get(index));
+		mVideoView.setVideoPath(parts.get(index).url);
 		mVideoView.setMediaName(displayName);
 		textView = (TextView) findViewById(R.id.video_proess_text);
 		progress = (ProgressBar) findViewById(R.id.video_time_progress);
@@ -55,7 +58,9 @@ public class PlayActivity extends Activity{
 		
 		mVideoView.setOnCompletionListener(new MOnCompletionListener());
 		mVideoView.setOnErrorListener(errListener);
-		mVideoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_MEDIUM);
+		// 朱军画质，选择高质量播放，反之则选择中等的
+		// TODO 让用户选择
+		mVideoView.setVideoQuality(AcApp.getConfig().getInt("playmode", 0) == 0? MediaPlayer.VIDEOQUALITY_HIGH: MediaPlayer.VIDEOQUALITY_MEDIUM);
 		mVideoView.setMediaController(new MediaController(this));
 	}
 	
@@ -73,13 +78,13 @@ public class PlayActivity extends Activity{
 		@Override
 		public void onCompletion(MediaPlayer mPlayer) {
 		    
-	        if(paths == null || ++index >= paths.size() || isError) {
+	        if(parts == null || ++index >= parts.size() || isError) {
 	            finish();
 	            return;
 	        }
 			Toast.makeText(PlayActivity.this, "开始缓冲下一段...稍后", 1).show();
 			mPlayer.getDuration();
-			mVideoView.setVideoPath(paths.get(index));
+			mVideoView.setVideoPath(parts.get(index).url);
 			mVideoView.setOnCompletionListener(new MOnCompletionListener());
 			mVideoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_MEDIUM);
 			mVideoView.setMediaController(new MediaController(PlayActivity.this));
