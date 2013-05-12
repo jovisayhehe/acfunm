@@ -16,10 +16,10 @@ import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.UMFeedbackService;
 
+@SuppressWarnings("deprecation")
 public class SettingsActivity  extends SherlockPreferenceActivity{
 	private CheckBoxPreference cbpf;
     private AcApp app;
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

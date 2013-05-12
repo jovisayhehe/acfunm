@@ -102,7 +102,7 @@ public class SectionActivity extends SherlockActivity implements OnClickListener
                             String url = data.get(0);
                             Uri uri = Uri.parse(url);
                             String ext = FileUtil.getUrlExt(url);
-                            String mimetype = FileUtil.guessMimetype(ext);
+                            String mimetype = FileUtil.guessVideoMimetype(ext);
                             intent.setDataAndType(uri, mimetype);
                             try{
                                 startActivity(intent);

@@ -17,9 +17,6 @@ public class DownloadManActivity extends SherlockActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDownloadMan = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-        Query query = new Query();
-       // query.setFilterById(ids);
-        mDownloadMan.query(query);
+
     }
 }

@@ -40,7 +40,6 @@ public class ChannelActivity extends SherlockFragmentActivity implements OnPageC
     private static final int  PIC      = 502;
     private static final int  NOPIC    = 503;
     public static int         modecode = 0;
-    private AcApp             acApp;
     private SubMenu           subMenu1;
 
     @Override
@@ -50,9 +49,8 @@ public class ChannelActivity extends SherlockFragmentActivity implements OnPageC
         setContentView(R.layout.activity_main);
         gdposition = getIntent().getIntExtra("position", -1);
         isarticle = getIntent().getBooleanExtra("isarticle", false);
-        acApp = (AcApp) getApplicationContext();
         if (isarticle) {
-            modecode = acApp.getConfig().getInt("view_mode", 0);
+            modecode = AcApp.getConfig().getInt("view_mode", 0);
         }
         ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
@@ -144,19 +142,19 @@ public class ChannelActivity extends SherlockFragmentActivity implements OnPageC
             modecode = 0;
             subMenu1.setIcon(R.drawable.mode_mix);
             Toast.makeText(this, "图文模式", Toast.LENGTH_SHORT).show();
-            acApp.putInt("view_mode", 0);
+            AcApp.putInt("view_mode", 0);
             break;
         case ChannelActivity.NOPIC:
             modecode = 1;
             subMenu1.setIcon(R.drawable.mode_article);
             Toast.makeText(this, "文本模式", Toast.LENGTH_SHORT).show();
-            acApp.putInt("view_mode", 1);
+            AcApp.putInt("view_mode", 1);
             break;
         case ChannelActivity.PIC:
             modecode = 2;
             subMenu1.setIcon(R.drawable.mode_picture);
             Toast.makeText(this, "漫画模式", Toast.LENGTH_SHORT).show();
-            acApp.putInt("view_mode", 2);
+            AcApp.putInt("view_mode", 2);
             break;
         default:
             break;
