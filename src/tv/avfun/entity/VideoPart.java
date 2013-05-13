@@ -3,14 +3,16 @@ package tv.avfun.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+
 /**
  * 视频分p，一个视频可能有很多的视频分段segments
+ * 
  * @author Yrom
- *
+ * 
  */
 public class VideoPart implements Serializable {
 
-    private static final long serialVersionUID = 976124L;
+    private static final long      serialVersionUID = 976124L;
     /**
      * 视频编号
      */
@@ -24,10 +26,15 @@ public class VideoPart implements Serializable {
      */
     public String                  subtitle;
     /**
+     * 总持续时间 second
+     */
+    public int                     totalDur;
+    /**
      * 视频的分段
      */
     public ArrayList<VideoSegment> segments;
-    public boolean isDownloaded;
+    public boolean                 isDownloaded;
+
     @Override
     public int hashCode() {
         final int prime = 31;
