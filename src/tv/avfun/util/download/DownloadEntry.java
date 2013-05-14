@@ -21,6 +21,9 @@ public class DownloadEntry implements Serializable {
     public String            aid = "";
     public String            title = "";
     public String            destination = "";
+    /**
+     * 欲下载的视频分p
+     */
     public VideoPart         part;
     
 }

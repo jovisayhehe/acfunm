@@ -1,7 +1,10 @@
 package tv.avfun.api.net;
 
 import java.lang.reflect.Field;
+import java.util.Locale;
 import java.util.Random;
+
+import android.os.Build;
 
 public final class UserAgent {
 
@@ -10,6 +13,8 @@ public final class UserAgent {
     public static final String CHROME_26 = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31";
     public static final String IE_9      = "Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)";
     public static final String DEFAULT   = CHROME_26;
+    /** Acfun ua */
+    public static final String MY_UA     = "AcFun (Linux; Android "+Build.VERSION.RELEASE+"; "+Build.MODEL+" "+Build.DISPLAY+"; "+Locale.getDefault().toString()+")";
     private static Random random;
     static{
         random = new Random();

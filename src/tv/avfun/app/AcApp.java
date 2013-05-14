@@ -101,7 +101,12 @@ public class AcApp extends Application {
     public static String getHomeDisplayMode(){
         return sp.getString("home_display_mode", "1");
     }
-    
+    public static int getParseMode(){
+        int parseMode = 1;
+        if(AcApp.getConfig().getBoolean("isHD", false))
+            parseMode = 2;
+        return parseMode;
+    }
     // ====================================
     // statics
     // ====================================

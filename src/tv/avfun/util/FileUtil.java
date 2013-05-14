@@ -2,6 +2,7 @@ package tv.avfun.util;
 
 import java.io.File;
 import java.text.DecimalFormat;
+import java.util.Locale;
 
 import tv.avfun.app.AcApp;
 import android.net.Uri;
@@ -106,4 +107,21 @@ public class FileUtil {
     public static final long _1KB = 1024;
     public static final long _1MB = _1KB * _1KB;
     public static final long _1GB = _1KB * _1MB;
+    /**
+     * @param type the http header, content-type
+     * @return
+     */
+    public static String getMimeType(String type) {
+        if (type == null) {
+            return null;
+        }
+
+        type = type.trim().toLowerCase(Locale.US);
+
+        final int semicolonIndex = type.indexOf(';');
+        if (semicolonIndex != -1) {
+            type = type.substring(0, semicolonIndex);
+        }
+        return type;
+    }
 }

@@ -454,7 +454,7 @@ public class ApiParser {
      * FIXME 解析似乎有问题！！！
      * 解析视频地址 到item中
      * @param item
-     * @param parseMode 0为标清 1高清 2 超清如果有的话
+     * @param parseMode 0为标清 1高清优先 2 超清优先
      */
     public static void parseVideoParts(VideoPart item, int parseMode){
         if(item == null || TextUtils.isEmpty(item.vid))
@@ -577,7 +577,7 @@ public class ApiParser {
         }
     }
     /**
-     * TODO MP4解析似乎有问题
+     * FIXME MP4解析似乎有问题
      * @param item
      * @param parseMode 0为标清 1高清 2 超清如果有的话
      */

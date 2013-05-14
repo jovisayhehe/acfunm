@@ -4,7 +4,7 @@ package tv.avfun.util.download;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
+import static tv.avfun.util.download.DownloadDB.*;
 /**
  * 存储下载的数据
  * 
@@ -14,26 +14,27 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DownloadDBHelper extends SQLiteOpenHelper {
 
     public DownloadDBHelper(Context context) {
-        super(context, DownloadDB.DOWNLOAD_DB, null, DownloadDB.VERSION);
+        super(context, DOWNLOAD_DB, null, VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table " + DownloadDB.DOWNLOAD_TABLE + "("
-                + DownloadDB.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," 
-                + DownloadDB.COLUMN_AID + " VARCHAR," 
-                + DownloadDB.COLUMN_VID+ " VARCHAR,"
-                + DownloadDB.COLUMN_NUM + " INTEGER,"
-                + DownloadDB.COLUMN_STATUS + " INTEGER,"
-                + DownloadDB.COLUMN_TOTAL + " INTEGER,"
-                + DownloadDB.COLUMN_CURRENT + " INTEGER,"
-                + DownloadDB.COLUMN_ETAG + " TEXT,"
-                + DownloadDB.COLUMN_URL + " VARCHAR,"
-                + DownloadDB.COLUMN_DEST + " VARCHAR," 
-                + DownloadDB.COLUMN_TITLE + " VARCHAR," 
-                + DownloadDB.COLUMN_SUBTITLE + " VARCHAR," 
-                + DownloadDB.COLUMN_UA + " TEXT,"
-                + DownloadDB.COLUMN_MIME + " VARCHAR(20)"
+        db.execSQL("create table " + DOWNLOAD_TABLE + "("
+                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," 
+                + COLUMN_AID + " VARCHAR," 
+                + COLUMN_VID + " VARCHAR,"
+                + COLUMN_VTYPE + " VARCHAR,"
+                + COLUMN_NUM + " INTEGER,"
+                + COLUMN_STATUS + " INTEGER,"
+                + COLUMN_TOTAL + " INTEGER,"
+                + COLUMN_CURRENT + " INTEGER,"
+                + COLUMN_ETAG + " TEXT,"
+                + COLUMN_URL + " VARCHAR,"
+                + COLUMN_DEST + " VARCHAR," 
+                + COLUMN_TITLE + " VARCHAR," 
+                + COLUMN_SUBTITLE + " VARCHAR," 
+                + COLUMN_UA + " TEXT,"
+                + COLUMN_MIME + " VARCHAR(20)"
                 + ");");
 
     }
