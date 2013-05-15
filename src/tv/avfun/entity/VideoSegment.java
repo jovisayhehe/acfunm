@@ -34,6 +34,7 @@ public class VideoSegment implements Serializable {
     public long   size     = -1;
     
     public String fileName = null;
+    public String etag     = null;
     @Override
     public String toString() {
         return "Segment [num=" + num + ", url=" + url +"]";

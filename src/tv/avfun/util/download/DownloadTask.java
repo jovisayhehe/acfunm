@@ -41,59 +41,73 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
     private static final int MAX_REDIRECTS = 5;
     private static final int BUFFER_SIZE = 1 << 13;
     
-    private boolean isCompleted;
+    private boolean isPaused;
     private DownloadInfo mInfo;
-    
+    private DownloadTaskListener mListener;
     public DownloadTask(DownloadInfo info){
         this.mInfo = info;
     }
     
-    //TODO pause task
     public void pause(){
-        
+        isPaused = true;
+        if(mListener!=null)
+            mListener.onPause(this);
     }
     //TODO resume task
     public void resume(){
-        
+        isPaused = false;
+        if(mListener!=null)
+            mListener.onResume(this);
+        // this.execute();
     }
     /**
      * shut down task, right now.
      */
     public void cancel(){
-        
+        cancel(true);
+        if(mListener!=null)
+            mListener.onCancel(this);
+    }
+    private void initParams(HttpParams params){
+        HttpConnectionParams.setConnectionTimeout(params, 3000);
+        HttpConnectionParams.setSoTimeout(params, 5000);
+        HttpConnectionParams.setSocketBufferSize(params, BUFFER_SIZE);
+        HttpProtocolParams.setUserAgent(params, userAgent());
+        HttpClientParams.setRedirecting(params, false); 
     }
     @Override
     protected Boolean doInBackground(Void... ps) {
         State state = new State();
         HttpParams params = new BasicHttpParams();
         HttpClient client = new DefaultHttpClient();
+        initParams(params);
         
-        HttpConnectionParams.setConnectionTimeout(params, 3000);
-        HttpConnectionParams.setSoTimeout(params, 5000);
-        HttpConnectionParams.setSocketBufferSize(params, BUFFER_SIZE);
-        HttpProtocolParams.setUserAgent(params, userAgent());
-        HttpClientParams.setRedirecting(params, false); 
         int finalStatus = 0;
+        boolean finished = false;
         try{
-            while(mInfo.retryTimes < MAX_RETRIES){
+            while(!finished && mInfo.retryTimes < MAX_RETRIES){
                 if(BuildConfig.DEBUG) Log.i(TAG, mInfo.retryTimes+"次尝试下载"+mInfo.url);
+                if(mListener!=null) 
+                    mListener.onStart(this);
                 HttpGet request = new HttpGet(mInfo.url);
                 if(mInfo.retryTimes == 1)
                     HttpConnectionParams.setConnectionTimeout(params, 5000);
                 request.setParams(params);
                 try{
                     executeDownload(client,request,state);
-                    mInfo.retryTimes = MAX_RETRIES;
+                    finished = true;
+                    finalStatus = DownloadDB.STATUS_SUCCESS;
                 } catch (RetryDownload e) {
                     mInfo.retryTimes++;
+                    if(mListener!=null) 
+                        mListener.onRetry(this);
                 }finally{
                     request.abort();
                     request = null;
                 }
             }
             return true;
-        }catch (StopRequestException e) {
-            // TODO: handle exception
+        }catch (StopRequest e) {
             finalStatus = e.mFinalStatus;
             return false;
         }finally{
@@ -103,14 +117,15 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
             }
             closeStream(state);
             if(finalStatus >= DownloadDB.STATUS_BAD_REQUEST){
-                state.mSavePath.delete();
-                state.mSavePath = null;
+                state.mSaveFile.delete();
+                state.mSaveFile = null;
             }
+            if(mListener != null)
+                mListener.onCompleted(finalStatus, this);
         }
         
     }
-    
-    private void executeDownload(HttpClient client, HttpGet request, State state) throws RetryDownload, StopRequestException {
+    private void executeDownload(HttpClient client, HttpGet request, State state) throws RetryDownload, StopRequest {
         byte data[] = new byte[BUFFER_SIZE];
         
         setupDestinationFile(state);
@@ -121,7 +136,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
             return ;
         }
         if(!NetWorkUtil.isWifiConnected(AcApp.context()))
-            throw new StopRequestException(DownloadDB.STATUS_QUEUED_FOR_WIFI, "WIFI unvailabe");
+            throw new StopRequest(DownloadDB.STATUS_QUEUED_FOR_WIFI, "WIFI unvailabe");
         HttpResponse response = sendRequest(state, client, request);
         handleExceptionalStatus(state, response);
 
@@ -133,15 +148,104 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
         InputStream entityStream = openResponseEntity(state, response);
         transferData(state, data, entityStream);
     }
-    
-    private void transferData(State state, byte[] data, InputStream entityStream) {
-        // TODO transferData
+    private void reportProgress(State state){
+        publishProgress(state.mDownloadedBytes);
+        ContentValues values = new ContentValues();
+        values.put(DownloadDB.COLUMN_CURRENT, state.mDownloadedBytes);
+        values.put(DownloadDB.COLUMN_STATUS, DownloadDB.STATUS_RUNNING);
+        update(values);
+        if(mListener != null)
+            mListener.onProgress(state.mDownloadedBytes, this);
+        
+    }
+    private void transferData(State state, byte[] data, InputStream entityStream) throws StopRequest {
+        for (;;) {
+            int bytesRead = readFromResponse(state, data, entityStream);
+            if (bytesRead == -1) { // success, end of stream already reached
+                handleEndOfStream(state);
+                return;
+            }
+
+            state.mGotData = true;
+            writeDataToDestination(state, data, bytesRead);
+            state.mDownloadedBytes += bytesRead;
+            reportProgress(state);
+            if(isPaused)
+                throw new StopRequest(DownloadDB.STATUS_PAUSED, "paused by user");
+        }
         
     }
 
-    private InputStream openResponseEntity(State state, HttpResponse response) {
-        // TODO openResponseEntity
-        return null;
+    private void writeDataToDestination(State state, byte[] data, int bytesRead) {
+        for (;;) {
+            try {
+                if (state.mStream == null) {
+                    state.mStream = new FileOutputStream(state.mSaveFile, true);
+                }
+                state.mStream.write(data, 0, bytesRead);
+
+                return;
+            } catch (IOException ex) {
+                // TODO 
+            }
+            finally {
+                closeStream(state);
+            }
+        }
+        
+    }
+
+    private void handleEndOfStream(State state) throws StopRequest {
+        ContentValues values = new ContentValues();
+        values.put(DownloadDB.COLUMN_CURRENT, state.mDownloadedBytes);
+        if (state.mHeaderContentLength == null) {
+            values.put(DownloadDB.COLUMN_TOTAL, state.mDownloadedBytes);
+        }
+        mInfo.manager.getProvider().update(mInfo.vid, mInfo.snum, values);
+
+        boolean lengthMismatched = (state.mHeaderContentLength != null)
+                && (state.mDownloadedBytes != Integer.parseInt(state.mHeaderContentLength));
+        if (lengthMismatched) {
+            if (cannotResume(state)) {
+                throw new StopRequest(DownloadDB.STATUS_CANNOT_RESUME,
+                        "mismatched content length");
+            } else {
+                throw new StopRequest(DownloadDB.STATUS_HTTP_DATA_ERROR,
+                        "closed socket before end of file");
+            }
+        }
+    }
+    private boolean cannotResume(State state) {
+        return state.mDownloadedBytes > 0 && state.mHeaderETag == null;
+    }
+    private int readFromResponse(State state, byte[] data, InputStream entityStream) throws StopRequest {
+        try {
+            return entityStream.read(data);
+        } catch (IOException ex) {
+            ContentValues values = new ContentValues();
+            values.put(DownloadDB.COLUMN_CURRENT, state.mDownloadedBytes);
+            update(values);
+            if (cannotResume(state)) {
+                String message = "while reading response: " + ex.toString()+ 
+                        ", can't resume interrupted download with no ETag";
+                throw new StopRequest(DownloadDB.STATUS_CANNOT_RESUME,
+                        message, ex);
+            } else {
+                throw new StopRequest(DownloadDB.STATUS_BAD_REQUEST,
+                        "while reading response: " + ex.toString(), ex);
+            }
+        }
+    }
+    private void update(ContentValues values){
+        mInfo.manager.getProvider().update(mInfo.vid, mInfo.snum, values);
+    }
+    private InputStream openResponseEntity(State state, HttpResponse response) throws StopRequest {
+        try {
+            return response.getEntity().getContent();
+        } catch (IOException ex) {
+            throw new StopRequest(DownloadDB.STATUS_BAD_REQUEST,
+                    "while getting entity: " + ex.toString(), ex);
+        }
     }
 
     private void processResponseHeaders(State state, HttpResponse response) {
@@ -149,15 +253,18 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
             // ignore response headers on resume requests
             return;
         readResponseHeaders(state, response);
-        updateDatabase(state);
+        initDB(state);
     }
 
-    private void updateDatabase(State state) {
+    private void initDB(State state) {
         ContentValues values = new ContentValues();
         values.put(DownloadDB.COLUMN_TOTAL, state.mTotalBytes);
         values.put(DownloadDB.COLUMN_ETAG, state.mHeaderETag);
         values.put(DownloadDB.COLUMN_MIME, state.mMimeType);
-        mInfo.manager.getProvider().update(mInfo.vid, mInfo.snum, values );
+        values.put(DownloadDB.COLUMN_STATUS, DownloadDB.STATUS_RUNNING);
+        if(TextUtils.isEmpty(mInfo.fileName))
+            values.put(DownloadDB.COLUMN_DATA, state.mSaveFile.getName());
+        update(values);
     }
 
     private void readResponseHeaders(State state, HttpResponse response) {
@@ -183,15 +290,15 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
             header = response.getFirstHeader("Content-Length");
             if (header != null) {
                 state.mHeaderContentLength = header.getValue();
-                state.mTotalBytes = mInfo.totalBytes =
-                        Integer.parseInt(state.mHeaderContentLength);
+                state.mTotalBytes = Integer.parseInt(state.mHeaderContentLength);
+                mInfo.totalBytes = state.mTotalBytes;
             }
         } else {
             Log.v(TAG, "ignoring content-length because of xfer-encoding");
         }
     }
 
-    private void handleExceptionalStatus(State state, HttpResponse response) throws StopRequestException, RetryDownload {
+    private void handleExceptionalStatus(State state, HttpResponse response) throws StopRequest, RetryDownload {
         int statusCode = response.getStatusLine().getStatusCode();
 
         if (statusCode == 301 || statusCode == 302 || statusCode == 303 || statusCode == 307) {
@@ -203,19 +310,19 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
         }
     }
 
-    private void handleOtherStatus(State state, int statusCode) throws StopRequestException {
+    private void handleOtherStatus(State state, int statusCode) throws StopRequest {
         if (statusCode == 416) {
             // range request failed. it should never fail.
             throw new IllegalStateException("Http Range request failure: totalBytes = " +
                     state.mTotalBytes + ", downloadedBytes = " + state.mDownloadedBytes);
         }
-        throw new StopRequestException(statusCode, "http error " +
+        throw new StopRequest(statusCode, "http error " +
                 statusCode + ", mContinuingDownload: " + state.mContinuingDownload);
     }
 
-    private void handleRedirect(State state, HttpResponse response, int statusCode) throws StopRequestException, RetryDownload {
+    private void handleRedirect(State state, HttpResponse response, int statusCode) throws StopRequest, RetryDownload {
         if (state.redirectCount >= MAX_REDIRECTS)
-            throw new StopRequestException(DownloadDB.STATUS_TOO_MANY_REDIRECTS,
+            throw new StopRequest(DownloadDB.STATUS_TOO_MANY_REDIRECTS,
                     "too many redirects");
         Header header = response.getFirstHeader("Location");
         if (header == null) return;
@@ -223,7 +330,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
         try {
             newUri = new URI(mInfo.url).resolve(new URI(header.getValue())).toString();
         } catch (URISyntaxException e) {
-            throw new StopRequestException(DownloadDB.STATUS_HTTP_DATA_ERROR,
+            throw new StopRequest(DownloadDB.STATUS_HTTP_DATA_ERROR,
                     "Couldn't resolve redirect URI");
         }
         ++ state.redirectCount;
@@ -235,13 +342,13 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
         throw new RetryDownload();
     }
 
-    private HttpResponse sendRequest(State state, HttpClient client, HttpGet request) throws StopRequestException {
+    private HttpResponse sendRequest(State state, HttpClient client, HttpGet request) throws StopRequest {
         try {
             return client.execute(request);
         }catch (IllegalArgumentException e) {
-            throw new StopRequestException(DownloadDB.STATUS_HTTP_DATA_ERROR, "try to execute request: "+e.toString());
+            throw new StopRequest(DownloadDB.STATUS_HTTP_DATA_ERROR, "try to execute request: "+e.toString());
         } catch (IOException ex) {
-            throw new StopRequestException(DownloadDB.STATUS_BAD_REQUEST,
+            throw new StopRequest(DownloadDB.STATUS_BAD_REQUEST,
                     "try to send request: " + ex.toString(), ex);
         }
         
@@ -256,15 +363,19 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
         }
     }
     
-    private void setupDestinationFile(State state) throws StopRequestException{
+    private void setupDestinationFile(State state) throws StopRequest{
         File path = null;
         if(TextUtils.isEmpty(mInfo.savePath))
             path = AcApp.getDownloadPath(mInfo.aid, mInfo.vid);
         if(TextUtils.isEmpty(mInfo.url))
-            throw new StopRequestException(DownloadDB.STATUS_BAD_REQUEST, "found invalidate url");
-        String fileName = mInfo.snum+DOWNLOADING_FILE_EXT;
+            throw new StopRequest(DownloadDB.STATUS_BAD_REQUEST, "found invalidate url");
+        String fileName = mInfo.fileName;
+        if(TextUtils.isEmpty(fileName)){
+            fileName = mInfo.snum+DOWNLOADING_FILE_EXT;
+            mInfo.fileName = fileName;
+        }
         File f = new File(path, fileName);
-        state.mSavePath = f;
+        state.mSaveFile = f;
         if(f.exists()){
             long fileLength = f.length();
             if (fileLength == 0) {
@@ -274,7 +385,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
                     // append to it
                     state.mStream = new FileOutputStream(f,true);
                 } catch (FileNotFoundException e) {
-                    throw new StopRequestException(DownloadDB.STATUS_BAD_REQUEST, "resume download fail: " + e.toString(), e);
+                    throw new StopRequest(DownloadDB.STATUS_BAD_REQUEST, "resume download fail: " + e.toString(), e);
                 }
                 state.mDownloadedBytes = (int) fileLength;
                 if(mInfo.totalBytes != -1){
@@ -303,7 +414,8 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
         
     }
     private static class State{
-        public File mSavePath;
+        public boolean mGotData;
+        public File mSaveFile;
         public String mMimeType;
         /**
          * moved 
@@ -328,19 +440,34 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
     /**
      * stop
      */
-    private class StopRequestException extends Exception {
+    private class StopRequest extends Exception {
         private static final long serialVersionUID = 621316701L;
         public int mFinalStatus;
 
-        public StopRequestException(int finalStatus, String message) {
+        public StopRequest(int finalStatus, String message) {
             super(message);
             mFinalStatus = finalStatus;
         }
 
-        public StopRequestException(int finalStatus, String message, Throwable throwable) {
+        public StopRequest(int finalStatus, String message, Throwable throwable) {
             super(message, throwable);
             mFinalStatus = finalStatus;
         }
     }
-   
+    public void setDownloadTaskListener(DownloadTaskListener l){
+        mListener = l;
+    }
+    public int getTotalBytes(){
+        return mInfo.totalBytes;
+    }
+    public interface DownloadTaskListener {
+        void onStart(DownloadTask task);
+        void onResume(DownloadTask task);
+        void onProgress(int currentBytes, DownloadTask task);
+        void onPause(DownloadTask task);
+        void onCancel(DownloadTask task);
+        void onRetry(DownloadTask task);
+        void onCompleted(int status, DownloadTask task);
+    }
+
 }

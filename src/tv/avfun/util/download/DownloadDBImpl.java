@@ -37,18 +37,22 @@ public class DownloadDBImpl implements DownloadDB {
                     // 是否同一个part
                     if(job == null || !(job.getEntry().aid.equals(aid) && job.getEntry().part.vid.equals(vid))){
                         job = buildJob(query);
+                        job.setUserAgent(query.getString(query.getColumnIndex(COLUMN_UA)));
+                        
                         all.add(job);
                     }
                     VideoSegment s = new VideoSegment();
                     s.num = query.getInt(query.getColumnIndex(COLUMN_NUM));
                     s.size = query.getLong(query.getColumnIndex(COLUMN_TOTAL));
                     s.stream = query.getString(query.getColumnIndex(COLUMN_URL));
+                    s.etag = query.getString(query.getColumnIndex(COLUMN_ETAG));
                     job.getEntry().part.segments.add(s);
                     
                     int downloadedSize = query.getInt(query.getColumnIndex(COLUMN_CURRENT));
                     job.addDownloadedSize(downloadedSize);
                     int totalSize = query.getInt(query.getColumnIndex(COLUMN_TOTAL));
                     if(totalSize != -1) job.addTotalSize(totalSize);
+                    
                 }
             }catch (Exception e) {
             }finally{

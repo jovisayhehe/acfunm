@@ -4,6 +4,7 @@ package tv.avfun.app;
 import java.io.File;
 
 import tv.avfun.R;
+import tv.avfun.util.download.DownloadManager;
 
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
@@ -36,6 +37,8 @@ public class AcApp extends Application {
     public static final String LOG = "/Logs"; 
     public static final String IMAGE = "/Imgs";
     public static final String VIDEO = "/Videos";
+    
+    private DownloadManager mDownloadManager;
     /**
      * <b>NOTE:</b>在 <code>getApplicationContext()</code> 调用一次之后才能用这个方便的方法
      */
@@ -49,6 +52,7 @@ public class AcApp extends Application {
         mContext = instance = this;
         mResources = getResources();
         sp = PreferenceManager.getDefaultSharedPreferences(mContext);
+        mDownloadManager = new DownloadManager(this);
     }
     
     @Override
@@ -205,6 +209,9 @@ public class AcApp extends Application {
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
         View v = searchView.findViewById(R.id.abs__search_plate);
         v.setBackgroundResource(R.drawable.edit_text_holo_light);
+    }
+    public DownloadManager getDownloadManager() {
+        return mDownloadManager;
     }
     
 }

@@ -1,12 +1,17 @@
 
 package tv.avfun.util.download;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import tv.avfun.DownloadService;
 import tv.avfun.app.AcApp;
-
+import tv.avfun.entity.VideoSegment;
+import tv.avfun.util.FileUtil;
 import android.content.Context;
+import android.content.Intent;
+import android.sax.StartElementListener;
 import android.text.TextUtils;
 
 /**
@@ -34,6 +39,8 @@ public class DownloadManager {
      */
     public void download(DownloadEntry entry){
         //TODO
+        Intent service = new Intent(mContext,DownloadService.class);
+        mContext.startService(service);
     }
 
     /**
@@ -66,11 +73,17 @@ public class DownloadManager {
     }
 
     private void deleteDownloadFile(DownloadJob job) {
-        // TODO Auto-generated method stub
         String path = job.getEntry().destination;
         if(TextUtils.isEmpty(path))
             path = AcApp.getDownloadPath(job.getEntry().aid, job.getEntry().part.vid).getAbsolutePath();
-        String fileName;
+        for(VideoSegment s : job.getEntry().part.segments){
+            String fileName = s.fileName;
+            if(TextUtils.isEmpty(fileName)){
+                fileName = s.num +FileUtil.getUrlExt(s.stream);
+            }
+            new File(path,fileName).delete();
+        }
+        new File(path).delete();
     }
 
 

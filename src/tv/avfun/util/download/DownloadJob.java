@@ -4,7 +4,9 @@ package tv.avfun.util.download;
 import java.util.LinkedList;
 import java.util.List;
 
+import tv.avfun.app.AcApp;
 import tv.avfun.entity.VideoSegment;
+import tv.avfun.util.download.DownloadTask.DownloadTaskListener;
 
 /**
  * Job of download(TODO)
@@ -22,8 +24,9 @@ public class DownloadJob {
     private int                 mTotalSize      = 0; // part总量
     private DownloadJobListener mListener;
     private DownloadManager     mDownloadMan;
-    private String              userAgent;
+    private String              mUserAgent;
     private List<DownloadTask>  mTasks;
+
 
     public DownloadJob(DownloadEntry entry) {
         this(entry, 0);
@@ -32,6 +35,7 @@ public class DownloadJob {
     public DownloadJob(DownloadEntry entry, int startId) {
         mEntry = entry;
         mStartId = startId;
+        mDownloadMan = AcApp.instance().getDownloadManager();
         initTask();
     }
 
@@ -42,7 +46,10 @@ public class DownloadJob {
         } else
             mTasks = new LinkedList<DownloadTask>();
         for (VideoSegment s : mEntry.part.segments) {
-            DownloadTask task = new DownloadTask(new DownloadInfo(mEntry.aid, mEntry.part.vid, s.num, mDownloadMan));
+            DownloadInfo info = new DownloadInfo(mDownloadMan,
+                    mEntry.aid, mEntry.part.vid, s.num, s.stream,
+                    mEntry.destination, s.fileName, mUserAgent, (int) s.size, s.etag);
+            DownloadTask task = new DownloadTask(info);
             mTasks.add(task);
         }
     }
@@ -59,6 +66,7 @@ public class DownloadJob {
                 continue;
             task.cancel();
         }
+        mDownloadMan.deleteDownload(this);
     }
 
     public void pause() {
@@ -91,7 +99,7 @@ public class DownloadJob {
      * @return
      */
     public int getProgress() {
-        if (mTotalSize > 0) {
+        if (mProgress == 0 && mTotalSize > 0) {
             mProgress = mDownloadedSize * 100 / mTotalSize;
         }
         return mProgress;
@@ -136,7 +144,7 @@ public class DownloadJob {
     }
 
     public boolean isRunning() {
-        return mProgress < 100;
+        return getProgress() < 100;
     }
 
     public DownloadEntry getEntry() {
@@ -156,11 +164,11 @@ public class DownloadJob {
     }
 
     public String getUserAgent() {
-        return userAgent;
+        return mUserAgent;
     }
 
     public void setUserAgent(String userAgent) {
-        this.userAgent = userAgent;
+        this.mUserAgent = userAgent;
     }
 
     public void notifyDownloadStarted() {
@@ -169,12 +177,9 @@ public class DownloadJob {
         mProgress = 0;
     }
 
-    public void notifyDownloadCompleted(boolean result) {
+    public void notifyDownloadCompleted() {
         if (mListener != null) {
-            if (result)
-                mListener.onDownloadSuccess(this);
-            else
-                mListener.onDownloadError(this);
+            mListener.onDownloadFinished(this);
         }
         // TODO
     }
@@ -189,12 +194,7 @@ public class DownloadJob {
         /**
          * Callback when a download finished
          */
-        public void onDownloadSuccess(DownloadJob job);
-
-        /**
-         * Callback when a download failed
-         */
-        public void onDownloadError(DownloadJob job);
+        public void onDownloadFinished(DownloadJob job);
 
         /**
          * Callback when a download started
@@ -202,4 +202,54 @@ public class DownloadJob {
         public void onDownloadStarted();
 
     }
+    private DownloadTaskListener mTaskListener = new DownloadTaskListener() {
+        
+        @Override
+        public void onStart(DownloadTask task) {
+            // TODO Auto-generated method stub
+        }
+        
+        @Override
+        public void onRetry(DownloadTask task) {
+            // TODO Auto-generated method stub
+            notifyDownloadStarted();
+        }
+        
+        @Override
+        public void onResume(DownloadTask task) {
+            // TODO Auto-generated method stub
+            
+        }
+        
+        @Override
+        public void onProgress(int currentBytes, DownloadTask task) {
+            if(task.getTotalBytes() >0 && currentBytes>0)
+                mProgress += currentBytes * 100 / task.getTotalBytes();
+        }
+        
+        @Override
+        public void onPause(DownloadTask task) {
+            // TODO Auto-generated method stub
+            
+        }
+        
+        @Override
+        public void onCompleted(int status, DownloadTask task) {
+            // TODO Auto-generated method stub
+            notifyDownloadCompleted();
+        }
+        
+        @Override
+        public void onCancel(DownloadTask task) {
+            // TODO Auto-generated method stub
+            
+        }
+    };
+    @Override
+    public String toString() {
+        return "DownloadJob [mEntry=" + mEntry + ", mStartId=" + mStartId + ", mProgress=" + mProgress
+                + ", mTotalSize=" + mTotalSize + "]";
+    }
+    
+    
 }
