@@ -23,6 +23,7 @@ public class DownloadDBHelper extends SQLiteOpenHelper {
                 + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," 
                 + COLUMN_AID + " VARCHAR," 
                 + COLUMN_VID + " VARCHAR,"
+                + COLUMN_DATA + " TEXT,"
                 + COLUMN_VTYPE + " VARCHAR,"
                 + COLUMN_NUM + " INTEGER,"
                 + COLUMN_STATUS + " INTEGER,"

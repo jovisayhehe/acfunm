@@ -4,7 +4,10 @@ package tv.avfun.util.download;
 import java.util.ArrayList;
 import java.util.List;
 
+import tv.avfun.app.AcApp;
+
 import android.content.Context;
+import android.text.TextUtils;
 
 /**
  * Manager(TODO)
@@ -12,59 +15,87 @@ import android.content.Context;
  * @author Yrom
  * 
  */
-public abstract class DownloadManager {
+public class DownloadManager {
     private Context mContext;
     private List<DownloadObserver> mObservers;
-    private DownloadProvider provider;
+    private DownloadProvider mProvider;
     public DownloadManager(Context context) {
         mContext = context;
         mObservers = new ArrayList<DownloadObserver>();
-        provider = new DownloadProvider(context, this);
+        mProvider = new DownloadProvider(context, this);
     }
     
     
     public DownloadProvider getProvider() {
-        return provider;
+        return mProvider;
     }
     /**
      * Start download
      */
-    public abstract void download(DownloadEntry entry);
+    public void download(DownloadEntry entry){
+        //TODO
+    }
 
     /**
      * Return all download jobs.
      */
-    public abstract ArrayList<DownloadJob> getAllDownloads();
+    public List<DownloadJob> getAllDownloads(){
+        return mProvider.getAllDownloads();
+    }
 
     /**
      * Return completed download jobs.
      */
-    public abstract ArrayList<DownloadJob> getCompletedDownloads();
+    public List<DownloadJob> getCompletedDownloads(){
+        return mProvider.getCompletedDownloads();
+    }
 
     /**
      * Return queued download jobs.
      */
-    public abstract ArrayList<DownloadJob> getQueuedDownloads();
+    public List<DownloadJob> getQueuedDownloads(){
+        return mProvider.getQueuedDownloads();
+    }
 
     /**
      * Delete the download job and related files.
      */
-    public abstract void deleteDownload(DownloadJob job);
+    public void deleteDownload(DownloadJob job){
+        mProvider.removeDownload(job);
+        deleteDownloadFile(job);
+    }
+
+    private void deleteDownloadFile(DownloadJob job) {
+        // TODO Auto-generated method stub
+        String path = job.getEntry().destination;
+        if(TextUtils.isEmpty(path))
+            path = AcApp.getDownloadPath(job.getEntry().aid, job.getEntry().part.vid).getAbsolutePath();
+        String fileName;
+    }
+
 
     /**
      * Add passed object to the download observers list
      */
-    public abstract void registerDownloadObserver(DownloadObserver observer);
+    public synchronized void registerDownloadObserver(DownloadObserver observer){
+        mObservers.add(observer);
+    }
 
     /**
      * Remove passed object to the download observers list
      */
-    public abstract void unregisterDownloadObserver(DownloadObserver observer);
+    public synchronized void unregisterDownloadObserver(DownloadObserver observer){
+        mObservers.remove(observer);
+    }
 
     /**
      * Notifie all observers that the state of the downloads has changed.
      */
-    public abstract void notifyObservers();
+    public synchronized void notifyAllObservers(){
+        for(DownloadObserver o : mObservers){
+            o.onDownloadChanged(this);
+        }
+    }
     /**
      * Observe download envent
      * @author Yrom

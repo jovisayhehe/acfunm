@@ -4,15 +4,16 @@ package tv.avfun.util.download;
 import java.util.ArrayList;
 import java.util.List;
 
-import tv.avfun.BuildConfig;
+import tv.avfun.app.AcApp;
 import tv.avfun.entity.VideoPart;
 import tv.avfun.entity.VideoSegment;
+import tv.avfun.util.FileUtil;
 import tv.avfun.util.download.exception.IllegalEntryException;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+import android.text.TextUtils;
 
 public class DownloadDBImpl implements DownloadDB {
 
@@ -47,7 +48,7 @@ public class DownloadDBImpl implements DownloadDB {
                     int downloadedSize = query.getInt(query.getColumnIndex(COLUMN_CURRENT));
                     job.addDownloadedSize(downloadedSize);
                     int totalSize = query.getInt(query.getColumnIndex(COLUMN_TOTAL));
-                    job.addTotalSize(totalSize);
+                    if(totalSize != -1) job.addTotalSize(totalSize);
                 }
             }catch (Exception e) {
             }finally{
@@ -90,49 +91,23 @@ public class DownloadDBImpl implements DownloadDB {
         values.put(COLUMN_CURRENT, 0);
         values.put(COLUMN_AID, entry.aid);
         values.put(COLUMN_TITLE, entry.title);
-        values.put(COLUMN_DEST, entry.destination);
         values.put(COLUMN_VID, entry.part.vid);
         values.put(COLUMN_VTYPE, entry.part.vtype);
         values.put(COLUMN_SUBTITLE, entry.part.subtitle);
+        String path = entry.destination;
+        if(TextUtils.isEmpty(path))
+            path = AcApp.getDownloadPath(entry.aid, entry.part.vid).getAbsolutePath();
+        values.put(COLUMN_DEST, path);
         String whereClause = COLUMN_AID+"=? and "+COLUMN_VID + "=? and " + COLUMN_NUM +"=?";
         for(int i =0;i < entry.part.segments.size(); i++){
             VideoSegment s = entry.part.segments.get(i);
             values.put(COLUMN_TOTAL,s.size);
             values.put(COLUMN_NUM, s.num);
             values.put(COLUMN_URL, s.stream);
+            values.put(COLUMN_DATA, s.num+FileUtil.getUrlExt(s.stream));
             int rowCount = mDb.update(DOWNLOAD_TABLE, values, whereClause, new String[]{entry.aid,entry.part.vid,String.valueOf(s.num)});
             if(rowCount == 0) mDb.insert(DOWNLOAD_TABLE, null, values);
         }
-    }
-
-    @Override
-    public void setStatus(String vid, int num, int status) {
-        if (mDb == null)
-            return;
-        
-        String[] args = new String[] { vid, "" + num };
-        String whereClause = COLUMN_VID + "=? and "+COLUMN_NUM +"=?";
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_STATUS, status);
-        int update = mDb.update(DOWNLOAD_TABLE, values, whereClause, args);
-        if(update == 0 && BuildConfig.DEBUG)
-            Log.e("db", "Failed to set status for "+vid + " - " +num);
-
-    }
-
-    @Override
-    public void setEtag(String vid, int num, String etag) {
-        if (mDb == null) {
-            return;
-        }
-        String[] args = new String[] { vid, "" + num };
-        String whereClause = COLUMN_VID + "=? and "+COLUMN_NUM +"=?";
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_ETAG, etag);
-        int update = mDb.update(DOWNLOAD_TABLE, values, whereClause, args);
-        if(update == 0 && BuildConfig.DEBUG)
-            Log.e("db", "Failed to set etag for "+vid + " - " +num);
-
     }
 
     @Override

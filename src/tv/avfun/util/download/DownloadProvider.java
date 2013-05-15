@@ -37,11 +37,13 @@ public class DownloadProvider {
         for(DownloadJob j : oldDownloads){
             if(!j.isRunning()){
                 mCompletedJobs.add(j); // complete
-            }else
+            }else{
                 // start failed job
                 mDownloadManager.download(j.getEntry());
+                mQueuedJobs.add(j);
+            }
         }
-        mDownloadManager.notifyObservers();
+        mDownloadManager.notifyAllObservers();
     }
 
     public List<DownloadJob> getAllDownloads() {
@@ -66,12 +68,22 @@ public class DownloadProvider {
         mQueuedJobs.remove(job);
         mCompletedJobs.add(job);
         for(VideoSegment s :job.getEntry().part.segments){
-            mDb.setStatus(job.getEntry().part.vid, s.num, DownloadDB.STATUS_SUCCESS);
+            setStatus(job.getEntry().part.vid, s.num, DownloadDB.STATUS_SUCCESS);
         }
-        mDownloadManager.notifyObservers();
+        mDownloadManager.notifyAllObservers();
     }
     public void update(String vid, int num, ContentValues values){
         mDb.updateDownload(vid,num,values);
+    }
+    public void setStatus(String vid, int num, int status){
+        ContentValues values = new ContentValues();
+        values.put(DownloadDB.COLUMN_STATUS, status);
+        update(vid, num, values);
+    }
+    public void setEtag(String vid, int num, String etag){
+        ContentValues values = new ContentValues();
+        values.put(DownloadDB.COLUMN_ETAG, etag);
+        update(vid, num, values);
     }
     public boolean enqueue(DownloadJob job) {
         if(contains(mCompletedJobs,job.getEntry().part)
@@ -81,7 +93,7 @@ public class DownloadProvider {
         try {
             mDb.addDownload(job.getEntry());
             mQueuedJobs.add(job);
-            mDownloadManager.notifyObservers();
+            mDownloadManager.notifyAllObservers();
             return true;
         } catch (IllegalEntryException e) {
             Log.e(TAG, "fail to enqueue",e);
@@ -100,7 +112,7 @@ public class DownloadProvider {
             mCompletedJobs.remove(job);
         }
         mDb.remove(job);
-        mDownloadManager.notifyObservers();
+        mDownloadManager.notifyAllObservers();
     }
     private boolean contains(List<DownloadJob> jobs, VideoPart part){
         for(DownloadJob j : jobs){
