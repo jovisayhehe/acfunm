@@ -38,8 +38,9 @@ public class DownloadManager {
      * Start download
      */
     public void download(DownloadEntry entry){
-        //TODO
         Intent service = new Intent(mContext,DownloadService.class);
+        service.setAction(DownloadService.ACTION_ADD_TO_DOWNLOAD);
+        service.putExtra(DownloadService.EXTRA_DOWNLOAD_ENTRY, entry);
         mContext.startService(service);
     }
 
@@ -63,8 +64,15 @@ public class DownloadManager {
     public List<DownloadJob> getQueuedDownloads(){
         return mProvider.getQueuedDownloads();
     }
-    public DownloadJob getQueueJobByVid(String vid){
-        return mProvider.getQueueJobByVid(vid);
+    public DownloadEntry getEntryByVid(String vid){
+        return mProvider.getQueueJobByVid(vid).getEntry();
+    }
+    
+    public void cancel(String vid, boolean shouldDeleFile) {
+        DownloadJob job = mProvider.getQueueJobByVid(vid);
+        job.cancel();
+        if(shouldDeleFile)
+            deleteDownload(job);
     }
     /**
      * Delete the download job and related files.
@@ -121,5 +129,6 @@ public class DownloadManager {
         void onDownloadChanged(DownloadManager manager);
 
     }
+
 
 }

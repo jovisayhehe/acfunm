@@ -624,6 +624,7 @@ public class ApiParser {
                 String u = "http://f.youku.com/player/getFlvPath/sid/00_"+ String.format("%02d", i)+"/st/"+vPath+"/fileid/"+ realFileid.substring(0, 8)+ String.format("%02d", i) + realFileid.substring(10)+"?K="+k+",k2:"+k2;
                 if(BuildConfig.DEBUG) Log.i(TAG, "url= "+u);
                 s.url = Connectivity.getRedirectLocation(u, UserAgent.DEFAULT);
+                s.stream = s.url;
                 item.segments.add(s);
             }
         } catch (JSONException e) {

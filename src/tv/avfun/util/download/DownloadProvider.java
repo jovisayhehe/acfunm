@@ -39,7 +39,8 @@ public class DownloadProvider {
                 mCompletedJobs.add(j); // complete
             }else{
                 // start failed job
-                mDownloadManager.download(j.getEntry());
+                // mDownloadManager.download(j.getEntry());
+                // 应由用户启动
                 mQueuedJobs.add(j);
             }
         }
@@ -72,11 +73,11 @@ public class DownloadProvider {
     /**
      * mark job completed
      */
-    public void complete(DownloadJob job) {
+    public void complete(int status, DownloadJob job) {
         mQueuedJobs.remove(job);
         mCompletedJobs.add(job);
         for(VideoSegment s :job.getEntry().part.segments){
-            setStatus(job.getEntry().part.vid, s.num, DownloadDB.STATUS_SUCCESS);
+            setStatus(job.getEntry().part.vid, s.num, status);
         }
         mDownloadManager.notifyAllObservers();
     }

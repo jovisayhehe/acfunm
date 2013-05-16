@@ -19,19 +19,15 @@ import tv.avfun.entity.VideoPart;
 import tv.avfun.util.ArrayUtil;
 import tv.avfun.util.NetWorkUtil;
 import tv.avfun.util.StringUtil;
+import tv.avfun.util.download.DownloadEntry;
+import tv.avfun.util.download.DownloadJob;
+import tv.avfun.util.download.DownloadManager;
 import tv.avfun.util.lzlist.ImageLoader;
-import android.app.SearchManager;
-import android.app.SearchableInfo;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.os.Message;
+import android.os.Handler;
 import android.text.Html;
 import android.text.util.Linkify;
 import android.text.util.Linkify.TransformFilter;
@@ -49,7 +45,6 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.widget.SearchView;
 import com.actionbarsherlock.widget.ShareActionProvider;
 import com.umeng.analytics.MobclickAgent;
 
@@ -79,13 +74,14 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
     private View                mLoadView;
     private boolean             isFavorite;
     private VideoInfo           mVideoInfo;
-
+    private DownloadManager     mDownloadManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         //TODO 注册监听
-
+        
+        mDownloadManager = AcApp.instance().getDownloadManager();
         mIntent = getIntent();
         if (Intent.ACTION_VIEW.equals(mIntent.getAction())) {
             from = "av".equalsIgnoreCase(mIntent.getScheme()) ? 2 : 0;
@@ -131,20 +127,13 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
+                //TODO 查数据库获得离线数据！
+                
                 if (NetWorkUtil.isNetworkAvailable(getApplicationContext())) {
                     mVideoInfo = ApiParser.getVideoInfoByAid(aid);
                     mData.addAll(mVideoInfo.parts);
                 }
-                // 下载功能只支持9+
-                //TODO
-//                if (Build.VERSION.SDK_INT >= 9) {
-//                    // 先从downloadlist数据库中查aid 对应的video item
-//                    List<VideoItem> items = new DBService(getApplicationContext()).getVideoItems(aid);
-//                    for (VideoItem item : items) {
-//                        mData.remove(item); // call equals
-//                    }
-//                    mData.addAll(items);
-//                }
+                
 
             } catch (Exception e) {
                 // TODO 向umeng 发送自定义事件: aid获取失败
@@ -379,16 +368,41 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         }
 
         @Override
-        public void doStartDownload(VideoPart item) {
+        public void doStartDownload(final VideoPart item) {
             // TODO start download
-            //mDService.download(aid, item);
+            final DownloadEntry entry = new DownloadEntry(aid,title,item);
+            
+            if (item.segments == null || item.segments.isEmpty()) {
+                new Thread() {
+
+                    public void run() {
+                        
+                        ApiParser.parseVideoParts(item, AcApp.getParseMode());
+                        if (item.segments == null || item.segments.isEmpty())
+                            mHanlder.sendEmptyMessage(0);
+                        else 
+                            mHanlder.obtainMessage(1, entry).sendToTarget();
+                    }
+                }.start();
+            }else
+                mDownloadManager.download(entry);
+                
         }
 
         @Override
         public void doCancelDownload(String vid) {
-            // TODO cancel download
-            //mDService.cancel(vid);
+            // TODO show confirm dialog to cancel.
+            mDownloadManager.cancel(vid,true);
         }
+        private Handler mHanlder =  new Handler(){
+            public void handleMessage(android.os.Message msg) {
+                if(msg.what ==0 ){
+                    AcApp.showToast(getString(R.string.download_fail));
+                }else if(msg.what == 1){
+                    DownloadEntry entry = (DownloadEntry) msg.obj;
+                    mDownloadManager.download(entry);
+                }
+            }
+        };
     };
-
 }

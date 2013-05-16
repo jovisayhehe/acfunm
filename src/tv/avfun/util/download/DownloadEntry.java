@@ -26,4 +26,12 @@ public class DownloadEntry implements Serializable {
      */
     public VideoPart         part;
     
+    public DownloadEntry() {
+    }
+    
+    public DownloadEntry(String aid, String title,VideoPart part) {
+        this.aid = aid;
+        this.title = title;
+        this.part = part;
+    }
 }

@@ -13,8 +13,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-	<uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER"/>
-	<uses-permission android:name="android.permission.ACCESS_ALL_DOWNLOADS"/>
+
 	<instrumentation android:name="android.test.InstrumentationTestRunner" android:targetPackage="tv.avfun"></instrumentation>
     <application
         android:name="tv.avfun.app.AcApp"
@@ -111,7 +110,7 @@
             android:process=":DownloadingService" >
         </service>
         <service 
-            android:name=".app.DownloadService"
+            android:name=".DownloadService"
             />
         <activity
             android:name="com.umeng.fb.ui.SendFeedback"

@@ -4,8 +4,6 @@ package tv.avfun.util.download;
 import java.util.LinkedList;
 import java.util.List;
 
-import android.content.Context;
-
 import tv.avfun.app.AcApp;
 import tv.avfun.entity.VideoSegment;
 import tv.avfun.util.download.DownloadTask.DownloadTaskListener;
@@ -60,9 +58,10 @@ public class DownloadJob {
             mTasks = new LinkedList<DownloadTask>();
         for (VideoSegment s : mEntry.part.segments) {
             DownloadInfo info = new DownloadInfo(mDownloadMan,
-                    mEntry.aid, mEntry.part.vid, s.num, s.stream,
+                    mEntry.aid, mEntry.part.vid, s.num, s.stream == null? s.url : s.stream,
                     mEntry.destination, s.fileName, mUserAgent, (int) s.size, s.etag);
             DownloadTask task = new DownloadTask(info);
+            task.setDownloadTaskListener(mTaskListener);
             mTasks.add(task);
         }
     }
@@ -185,13 +184,13 @@ public class DownloadJob {
 
     public void notifyDownloadStarted() {
         if (mListener != null)
-            mListener.onDownloadStarted();
+            mListener.onDownloadStarted(this);
         mProgress = 0;
     }
 
-    public void notifyDownloadCompleted() {
+    public void notifyDownloadCompleted(int status) {
         if (mListener != null) {
-            mListener.onDownloadFinished(this);
+            mListener.onDownloadFinished(status, this);
         }
         // TODO
     }
@@ -206,12 +205,12 @@ public class DownloadJob {
         /**
          * Callback when a download finished
          */
-        public void onDownloadFinished(DownloadJob job);
+        public void onDownloadFinished(int status, DownloadJob job);
 
         /**
          * Callback when a download started
          */
-        public void onDownloadStarted();
+        public void onDownloadStarted(DownloadJob job);
 
     }
     private DownloadTaskListener mTaskListener = new DownloadTaskListener() {
@@ -248,18 +247,19 @@ public class DownloadJob {
         @Override
         public void onCompleted(int status, DownloadTask task) {
             // TODO Auto-generated method stub
-            notifyDownloadCompleted();
+            notifyDownloadCompleted(status);
         }
         
         @Override
         public void onCancel(DownloadTask task) {
             // TODO Auto-generated method stub
+            mDownloadMan.notifyAllObservers();
             
         }
     };
     @Override
     public String toString() {
-        return "DownloadJob [mEntry=" + mEntry + ", mStartId=" + mStartId + ", mProgress=" + mProgress
+        return "DownloadJob [mEntry.aid=" + mEntry.aid + ", mStartId=" + mStartId + ", mProgress=" + mProgress
                 + ", mTotalSize=" + mTotalSize + "]";
     }
     

@@ -45,7 +45,7 @@ public class TestProvider extends AndroidTestCase {
         DownloadJob job = new DownloadJob(entry);
         assertEquals(true, provider.enqueue(job));
         assertEquals(false, provider.getQueuedDownloads().isEmpty());
-        provider.complete(job);
+        provider.complete(200,job);
         
     }
     public void testUpdate(){

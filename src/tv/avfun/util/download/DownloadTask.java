@@ -112,13 +112,17 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
         }catch (StopRequest e) {
             finalStatus = e.mFinalStatus;
             return false;
+        }catch (Exception e) {
+            finalStatus = 444; // 程序错误 = =
+            Log.e(TAG, "download fail - url: "+state.mRequestUri,e);
+            return false;
         }finally{
             if (client != null) {
                 client.getConnectionManager().shutdown();
                 client = null;
             }
             closeStream(state);
-            if(finalStatus >= DownloadDB.STATUS_BAD_REQUEST){
+            if(finalStatus >= DownloadDB.STATUS_BAD_REQUEST && state.mSaveFile != null){
                 state.mSaveFile.delete();
                 state.mSaveFile = null;
             }

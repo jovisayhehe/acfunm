@@ -47,12 +47,12 @@ public class TestDownloadJob extends AndroidTestCase {
         job.setListener(new DownloadJobListener() {
             
             @Override
-            public void onDownloadStarted() {
+            public void onDownloadStarted(DownloadJob job) {
                 Log.i("test", "onDownloadStarted");
             }
             
             @Override
-            public void onDownloadFinished(DownloadJob job) {
+            public void onDownloadFinished(int status,DownloadJob job) {
                 Log.i("test", "onDownloadFinished");
                 
             }
