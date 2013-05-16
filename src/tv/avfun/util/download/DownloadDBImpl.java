@@ -1,6 +1,7 @@
 
 package tv.avfun.util.download;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.text.TextUtils;
 
 public class DownloadDBImpl implements DownloadDB {
@@ -37,7 +39,7 @@ public class DownloadDBImpl implements DownloadDB {
                     // 是否同一个part
                     if(job == null || !(job.getEntry().aid.equals(aid) && job.getEntry().part.vid.equals(vid))){
                         job = buildJob(query);
-                        job.setUserAgent(query.getString(query.getColumnIndex(COLUMN_UA)));
+                        
                         
                         all.add(job);
                     }
@@ -46,10 +48,20 @@ public class DownloadDBImpl implements DownloadDB {
                     s.size = query.getLong(query.getColumnIndex(COLUMN_TOTAL));
                     s.stream = query.getString(query.getColumnIndex(COLUMN_URL));
                     s.etag = query.getString(query.getColumnIndex(COLUMN_ETAG));
+                    s.fileName = query.getString(query.getColumnIndex(COLUMN_DATA));
                     job.getEntry().part.segments.add(s);
+                    if(!TextUtils.isEmpty(job.getEntry().destination)
+                            && !TextUtils.isEmpty(s.fileName)){
+                        // TODO 设置segment的播放路径为本地文件uri
+                        // TODO 实现边下边播的功能 (未实测 = =)
+                        File file = new File(job.getEntry().destination, s.fileName);
+                        s.url = Uri.fromFile(file).toString();
+                    }
+                    // 真实的下载进度由file.length来确定比较好。
+                    // @see downloadTask.setupDestinationFile()
+                    // int downloadedSize = query.getInt(query.getColumnIndex(COLUMN_CURRENT));
+                    // job.addDownloadedSize(downloadedSize);
                     
-                    int downloadedSize = query.getInt(query.getColumnIndex(COLUMN_CURRENT));
-                    job.addDownloadedSize(downloadedSize);
                     int totalSize = query.getInt(query.getColumnIndex(COLUMN_TOTAL));
                     if(totalSize != -1) job.addTotalSize(totalSize);
                     
@@ -73,6 +85,7 @@ public class DownloadDBImpl implements DownloadDB {
         entry.part.vtype = cursor.getString(cursor.getColumnIndex(COLUMN_VTYPE));
         entry.part.segments = new ArrayList<VideoSegment>();
         DownloadJob job = new DownloadJob(entry);
+        job.setUserAgent(cursor.getString(cursor.getColumnIndex(COLUMN_UA)));
         return job;
     }
     @Override

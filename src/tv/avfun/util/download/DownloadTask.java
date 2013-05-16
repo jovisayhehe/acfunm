@@ -78,6 +78,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
     @Override
     protected Boolean doInBackground(Void... ps) {
         State state = new State();
+        state.mRequestUri = mInfo.url;
         HttpParams params = new BasicHttpParams();
         HttpClient client = new DefaultHttpClient();
         initParams(params);
@@ -86,10 +87,10 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
         boolean finished = false;
         try{
             while(!finished && mInfo.retryTimes < MAX_RETRIES){
-                if(BuildConfig.DEBUG) Log.i(TAG, mInfo.retryTimes+"次尝试下载"+mInfo.url);
+                if(BuildConfig.DEBUG) Log.i(TAG, (mInfo.retryTimes+1)+"次尝试下载"+mInfo.url);
                 if(mListener!=null) 
                     mListener.onStart(this);
-                HttpGet request = new HttpGet(mInfo.url);
+                HttpGet request = new HttpGet(state.mRequestUri);
                 if(mInfo.retryTimes == 1)
                     HttpConnectionParams.setConnectionTimeout(params, 5000);
                 request.setParams(params);
@@ -98,7 +99,8 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
                     finished = true;
                     finalStatus = DownloadDB.STATUS_SUCCESS;
                 } catch (RetryDownload e) {
-                    mInfo.retryTimes++;
+                    if(state.mRequestUri.equals(mInfo.url)) // url 不同说明是重定向的，不计重试次数
+                        mInfo.retryTimes++;
                     if(mListener!=null) 
                         mListener.onRetry(this);
                 }finally{
@@ -176,22 +178,24 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
         
     }
 
-    private void writeDataToDestination(State state, byte[] data, int bytesRead) {
+    private void writeDataToDestination(State state, byte[] data, int bytesRead) throws StopRequest {
+        
         for (;;) {
             try {
-                if (state.mStream == null) {
-                    state.mStream = new FileOutputStream(state.mSaveFile, true);
+                if(!AcApp.isExternalStorageAvailable()){
+                    throw new StopRequest(600, "sdcard not availabe");
+                }
+                if (state.mStream == null) { // new download
+                    state.mStream = new FileOutputStream(state.mSaveFile);
                 }
                 state.mStream.write(data, 0, bytesRead);
-
                 return;
             } catch (IOException ex) {
                 // TODO 
-            }
-            finally {
-                closeStream(state);
+                Log.i(TAG, "failed to write " + state.mSaveFile.getAbsolutePath(),ex);
             }
         }
+        
         
     }
 
@@ -364,15 +368,18 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
     }
     
     private void setupDestinationFile(State state) throws StopRequest{
+        if(state.mSaveFile != null) return;
         File path = null;
         if(TextUtils.isEmpty(mInfo.savePath))
             path = AcApp.getDownloadPath(mInfo.aid, mInfo.vid);
+        else path = new File(mInfo.savePath);
+        path.mkdirs(); // make dirs
         if(TextUtils.isEmpty(mInfo.url))
             throw new StopRequest(DownloadDB.STATUS_BAD_REQUEST, "found invalidate url");
         String fileName = mInfo.fileName;
-        if(TextUtils.isEmpty(fileName)){
+        if(TextUtils.isEmpty(fileName)){ // new job
             fileName = mInfo.snum+DOWNLOADING_FILE_EXT;
-            mInfo.fileName = fileName;
+
         }
         File f = new File(path, fileName);
         state.mSaveFile = f;

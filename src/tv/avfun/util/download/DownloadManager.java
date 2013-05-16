@@ -63,7 +63,9 @@ public class DownloadManager {
     public List<DownloadJob> getQueuedDownloads(){
         return mProvider.getQueuedDownloads();
     }
-
+    public DownloadJob getQueueJobByVid(String vid){
+        return mProvider.getQueueJobByVid(vid);
+    }
     /**
      * Delete the download job and related files.
      */

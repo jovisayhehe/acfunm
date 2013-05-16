@@ -4,6 +4,8 @@ package tv.avfun.util.download;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.content.Context;
+
 import tv.avfun.app.AcApp;
 import tv.avfun.entity.VideoSegment;
 import tv.avfun.util.download.DownloadTask.DownloadTaskListener;
@@ -31,14 +33,25 @@ public class DownloadJob {
     public DownloadJob(DownloadEntry entry) {
         this(entry, 0);
     }
-
     public DownloadJob(DownloadEntry entry, int startId) {
+        this(entry, startId, null);
+    }
+    /**
+     * for test only
+     * @param entry
+     * @param startId
+     * @param manager
+     */
+    public DownloadJob(DownloadEntry entry, int startId, DownloadManager manager){
         mEntry = entry;
         mStartId = startId;
-        mDownloadMan = AcApp.instance().getDownloadManager();
-        initTask();
+        if(manager == null)
+            mDownloadMan = AcApp.instance().getDownloadManager();
+        else 
+            mDownloadMan = manager;
+        // FIXME: 从数据库中查到的job不会初始化Task！
+        initTask(); 
     }
-
     private void initTask() {
         if (mTasks != null) {
             cancel();
@@ -66,7 +79,6 @@ public class DownloadJob {
                 continue;
             task.cancel();
         }
-        mDownloadMan.deleteDownload(this);
     }
 
     public void pause() {

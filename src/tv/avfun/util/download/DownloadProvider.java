@@ -61,6 +61,14 @@ public class DownloadProvider {
     public List<DownloadJob> getQueuedDownloads() {
         return mQueuedJobs;
     }
+    
+    public DownloadJob getQueueJobByVid(String vid){
+        for(DownloadJob j : mQueuedJobs){
+            if(j.getEntry().part.vid.equals(vid)) 
+                return j;
+        }
+        return null;
+    }
     /**
      * mark job completed
      */
