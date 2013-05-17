@@ -24,6 +24,7 @@ import tv.avfun.api.net.UserAgent;
 import tv.avfun.app.AcApp;
 import tv.avfun.util.FileUtil;
 import tv.avfun.util.NetWorkUtil;
+import tv.avfun.util.StringUtil;
 import android.content.ContentValues;
 import android.os.AsyncTask;
 import android.text.TextUtils;
@@ -36,7 +37,6 @@ import android.util.Log;
  */
 public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
     private static final String TAG = "DownloadTask";
-    private static final String DOWNLOADING_FILE_EXT = ".av";
     private static final int MAX_RETRIES = 3;
     private static final int MAX_REDIRECTS = 5;
     private static final int BUFFER_SIZE = 1 << 13;
@@ -122,10 +122,18 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
                 client = null;
             }
             closeStream(state);
+            ContentValues values = new ContentValues();
             if(finalStatus >= DownloadDB.STATUS_BAD_REQUEST && state.mSaveFile != null){
                 state.mSaveFile.delete();
                 state.mSaveFile = null;
+            }else if(finalStatus == DownloadDB.STATUS_SUCCESS){
+//                File newFile = new File(mInfo.savePath, mInfo.snum + FileUtil.getUrlExt(state.mRequestUri));
+//                state.mSaveFile.renameTo(newFile);
+//                重命名失败。。。
+                values.put(DownloadDB.COLUMN_DATA, state.mSaveFile.getName());
             }
+            values.put(DownloadDB.COLUMN_STATUS, finalStatus);
+            update(values);
             if(mListener != null)
                 mListener.onCompleted(finalStatus, this);
         }
@@ -209,7 +217,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
         if (state.mHeaderContentLength == null) {
             values.put(DownloadDB.COLUMN_TOTAL, state.mDownloadedBytes);
         }
-        mInfo.manager.getProvider().update(mInfo.vid, mInfo.snum, values);
+        update(values);
 
         boolean lengthMismatched = (state.mHeaderContentLength != null)
                 && (state.mDownloadedBytes != Integer.parseInt(state.mHeaderContentLength));
@@ -382,8 +390,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
             throw new StopRequest(DownloadDB.STATUS_BAD_REQUEST, "found invalidate url");
         String fileName = mInfo.fileName;
         if(TextUtils.isEmpty(fileName)){ // new job
-            fileName = mInfo.snum+DOWNLOADING_FILE_EXT;
-
+            fileName = mInfo.snum+FileUtil.getUrlExt(mInfo.url);
         }
         File f = new File(path, fileName);
         state.mSaveFile = f;

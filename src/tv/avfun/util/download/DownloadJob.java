@@ -4,6 +4,8 @@ package tv.avfun.util.download;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.util.Log;
+
 import tv.avfun.app.AcApp;
 import tv.avfun.entity.VideoSegment;
 import tv.avfun.util.download.DownloadTask.DownloadTaskListener;
@@ -15,6 +17,8 @@ import tv.avfun.util.download.DownloadTask.DownloadTaskListener;
  * 
  */
 public class DownloadJob {
+
+    protected static final String TAG = "DownloadJob";
 
     private DownloadEntry       mEntry;
 
@@ -128,7 +132,9 @@ public class DownloadJob {
     public void setTotalSize(int totalSize) {
         this.mTotalSize = totalSize;
     }
-
+    public int getTotalSize(){
+        return mTotalSize;
+    }
     public int getDownloadedSize() {
         return mDownloadedSize;
     }
@@ -234,8 +240,12 @@ public class DownloadJob {
         
         @Override
         public void onProgress(int currentBytes, DownloadTask task) {
-            if(task.getTotalBytes() >0 && currentBytes>0)
+            if(task.getTotalBytes() >0 && currentBytes>0){
+                addDownloadedSize(currentBytes);
                 mProgress += currentBytes * 100 / task.getTotalBytes();
+                mDownloadMan.notifyAllObservers();
+            }
+            Log.i(TAG, "receive progress :"+currentBytes +"/"+task.getTotalBytes());
         }
         
         @Override
@@ -246,21 +256,19 @@ public class DownloadJob {
         
         @Override
         public void onCompleted(int status, DownloadTask task) {
-            // TODO Auto-generated method stub
             notifyDownloadCompleted(status);
         }
         
         @Override
         public void onCancel(DownloadTask task) {
-            // TODO Auto-generated method stub
             mDownloadMan.notifyAllObservers();
             
         }
     };
     @Override
     public String toString() {
-        return "DownloadJob [mEntry.aid=" + mEntry.aid + ", mStartId=" + mStartId + ", mProgress=" + mProgress
-                + ", mTotalSize=" + mTotalSize + "]";
+        return "[aid=" + mEntry.aid + ", vid=" + mEntry.part.vid + ", bytes=" + mDownloadedSize
+                + ", TotalSize=" + mTotalSize + "]";
     }
     
     

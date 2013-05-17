@@ -159,19 +159,6 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 		super.onNewIntent(intent);
 	}
 	
-	@Override
-	public boolean onOptionsItemSelected(
-			com.actionbarsherlock.view.MenuItem item) {
-		
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			this.finish();
-			break;
-		default:
-			break;
-		}
-		return super.onOptionsItemSelected(item);
-	}
 
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {

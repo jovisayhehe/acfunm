@@ -78,7 +78,7 @@ public class DownloadService extends Service {
     private void showNoti(String text,int icon, CharSequence title){
         Notification notification = new Notification(icon,text,System.currentTimeMillis());
         Intent manIntent = new Intent(this, DownloadManActivity.class);
-        manIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        manIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, manIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notification.setLatestEventInfo(this, title, text, contentIntent);
         notification.flags |= Notification.FLAG_AUTO_CANCEL;

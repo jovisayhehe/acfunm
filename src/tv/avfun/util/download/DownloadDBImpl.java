@@ -55,7 +55,11 @@ public class DownloadDBImpl implements DownloadDB {
                         // TODO 设置segment的播放路径为本地文件uri
                         // TODO 实现边下边播的功能 (未实测 = =)
                         File file = new File(job.getEntry().destination, s.fileName);
-                        s.url = Uri.fromFile(file).toString();
+                        if(file.exists()){
+                            s.url = Uri.fromFile(file).toString();
+                            int downloadedSize = (int) file.length();
+                            job.addDownloadedSize(downloadedSize);
+                        }
                     }
                     // 真实的下载进度由file.length来确定比较好。
                     // @see downloadTask.setupDestinationFile()

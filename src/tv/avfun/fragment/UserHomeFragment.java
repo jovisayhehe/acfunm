@@ -7,6 +7,7 @@ import java.util.HashMap;
 import org.apache.commons.httpclient.HttpException;
 import org.json.external.JSONException;
 
+import tv.avfun.DownloadManActivity;
 import tv.avfun.FavoriteActivity;
 import tv.avfun.HistoryActivity;
 import tv.avfun.R;
@@ -88,7 +89,7 @@ public class UserHomeFragment extends Fragment implements OnClickListener {
         TextView subs_btn = (TextView) mContent.findViewById(R.id.mem_btn_subs);
         TextView fov_btn = (TextView) mContent.findViewById(R.id.mem_btn_fov);
         TextView his_btn = (TextView) mContent.findViewById(R.id.mem_btn_his);
-        
+        mContent.findViewById(R.id.mem_btn_download).setOnClickListener(this);
         set_btn.setOnClickListener(this);
         subs_btn.setOnClickListener(this);
         fov_btn.setOnClickListener(this);
@@ -152,6 +153,9 @@ public class UserHomeFragment extends Fragment implements OnClickListener {
             break;
         case R.id.mem_login_btn:
             login();
+            break;
+        case R.id.mem_btn_download:
+            startActivity(new Intent(activity, DownloadManActivity.class));
             break;
         default:
             break;

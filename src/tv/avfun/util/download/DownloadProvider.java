@@ -76,9 +76,10 @@ public class DownloadProvider {
     public void complete(int status, DownloadJob job) {
         mQueuedJobs.remove(job);
         mCompletedJobs.add(job);
-        for(VideoSegment s :job.getEntry().part.segments){
-            setStatus(job.getEntry().part.vid, s.num, status);
-        }
+//        由task自己更新status
+//        for(VideoSegment s :job.getEntry().part.segments){
+//            setStatus(job.getEntry().part.vid, s.num, status);
+//        }
         mDownloadManager.notifyAllObservers();
     }
     public void update(String vid, int num, ContentValues values){
