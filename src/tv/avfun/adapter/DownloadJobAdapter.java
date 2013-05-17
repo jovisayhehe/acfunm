@@ -103,8 +103,15 @@ public class DownloadJobAdapter extends ArrayListAdapter<DownloadJob> implements
 	public void setOnItemCheckedListener(OnItemCheckedListener l){
 	    mListener = l;
 	}
-	public void unSelectAll(){
+	public void unCheckedAll(){
 	    checkedJobs.clear();
+	    notifyDataSetChanged();
+	}
+	public int getCheckedCount(){
+	    return checkedJobs.size();
+	}
+	public void checkedAll(){
+	    checkedJobs.addAll(mList);
 	    notifyDataSetChanged();
 	}
     @Override

@@ -13,6 +13,7 @@ import tv.avfun.util.download.DownloadJob;
 import tv.avfun.util.download.DownloadManager;
 import tv.avfun.util.download.DownloadManager.DownloadObserver;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,6 +25,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
@@ -52,14 +54,15 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_layout);
-        ActionBar bar = getSupportActionBar();
-        bar.setDisplayHomeAsUpEnabled(true);
+        mBar = getSupportActionBar();
+        mBar.setDisplayHomeAsUpEnabled(true);
         mStateArray = getResources().getStringArray(R.array.download_state);
         mDownloadMan = AcApp.instance().getDownloadManager();
-        ArrayAdapter adapter = ArrayAdapter.createFromResource(bar.getThemedContext(), R.array.download_state, R.layout.sherlock_spinner_item);
+        // TODO 换成popupwindow或者其他的显示方式
+        ArrayAdapter adapter = ArrayAdapter.createFromResource(mBar.getThemedContext(), R.array.download_state, R.layout.sherlock_spinner_item);
         adapter.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
-        bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        bar.setListNavigationCallbacks(adapter, this);
+        mBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        mBar.setListNavigationCallbacks(adapter, this);
         initView();
     }
     @Override
@@ -88,7 +91,11 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
             @Override
             public void onCheckedChanged(CompoundButton cb, boolean isChecked) {
                 // TODO start action mode
-                mMode = startActionMode(new DownloadActionMode());
+                if(mAdapter.getCheckedCount() < 1){
+                    if(mMode != null) mMode.finish();
+                }else if(mMode == null){
+                    mMode = startActionMode(new DownloadActionMode());
+                }
             }
         });
         mListView.setAdapter(mAdapter);
@@ -103,6 +110,7 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
         return true;
     }
     private int lastNavPosition = 0;
+    private ActionBar mBar;
     private void updateListView(int position) {
         // TODO Auto-generated method stub
         List<DownloadJob> jobs = null;
@@ -124,7 +132,7 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
             mListView.setVisibility(View.VISIBLE);
             mStateView.setVisibility(View.GONE);
         }
-        
+        mBar.setTitle("共"+mAdapter.getCount()+"个下载项");
         if (jobs.isEmpty()) {
             mStateView.setText("no download");
             mStateView.setVisibility(View.VISIBLE);
@@ -136,6 +144,7 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             // TODO Auto-generated method stub
+            mode.getMenuInflater().inflate(R.menu.menu_download_man_action_mode, menu);
             return true;
         }
 
@@ -148,7 +157,20 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             // TODO Auto-generated method stub
-            return false;
+            switch (item.getItemId()) {
+            case R.id.menu_download_delete:
+                AcApp.showToast("删除");
+                break;
+            case R.id.menu_download_resume:
+                AcApp.showToast("继续");
+                break;
+            case R.id.menu_download_pause:
+                AcApp.showToast("暂停");
+                
+                break;
+            }
+            
+            return true;
         }
 
         @Override
@@ -156,7 +178,7 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
             // TODO Auto-generated method stub
             if(mMode!= null){
                 mMode = null;
-                mAdapter.unSelectAll();
+                mAdapter.unCheckedAll();
             }
             
         }

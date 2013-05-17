@@ -103,7 +103,7 @@
         <activity 
         android:name="tv.avfun.SectionActivity"
         />
-        <activity android:name="tv.avfun.DownloadManActivity" />
+        <activity android:name="tv.avfun.DownloadManActivity" android:uiOptions="splitActionBarWhenNarrow"/>
         <service
             android:name="com.umeng.common.net.DownloadingService"
             android:exported="true"
