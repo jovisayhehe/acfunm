@@ -1,6 +1,7 @@
 
 package tv.avfun;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -59,8 +61,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        Intent service = new Intent(this, DownloadService.class);
-//        startService(service);
+
         initUmeng();
         // 得到界面宽高
         DisplayMetrics dm = new DisplayMetrics();
@@ -92,7 +93,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
         bar.setDisplayHomeAsUpEnabled(true);
         // TODO
         // bar.setDisplayUseLogoEnabled(true);
-
+        forceShowActionBarOverflowMenu();
     }
 
     @Override
@@ -198,15 +199,38 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
     public boolean onCreateOptionsMenu(Menu menu) {
         AcApp.addSearchView(this, menu);
         
+        menu.add(Menu.NONE, android.R.id.button1, Menu.NONE, "设置")
+        .setIcon(R.drawable.ic_action_settings).setIntent(new Intent(getApplicationContext(), SettingsActivity.class))
+        .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER); 
+        menu.add(Menu.NONE, android.R.id.button2, Menu.NONE, "用户中心")
+        .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER | MenuItem.SHOW_AS_ACTION_WITH_TEXT); 
+        menu.add(Menu.NONE, android.R.id.button3, Menu.NONE, "下载管理")
+        .setIcon(R.drawable.av_download).setIntent(new Intent(getApplicationContext(), DownloadManActivity.class))
+        .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        
         return super.onCreateOptionsMenu(menu);
 
     }
+    private void forceShowActionBarOverflowMenu() {
+        try {
+            ViewConfiguration config = ViewConfiguration.get(this);
+            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+            if (menuKeyField != null) {
+                menuKeyField.setAccessible(true);
+                menuKeyField.setBoolean(config, false);
+            }
+        } catch (Exception ignored) {
 
+        }
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case android.R.id.home:
             toggle();
+            return true;
+        case android.R.id.button2:
+            showSecondaryMenu();
             return true;
         }
         return super.onOptionsItemSelected(item);
