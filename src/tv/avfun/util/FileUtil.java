@@ -28,16 +28,17 @@ public class FileUtil {
 
     /*** 格式化文件大小(xxx.xx B/KB/MB/GB) */
     public static String formetFileSize(long size) {
+        if(size <=0) return "0B";
         DecimalFormat df = new DecimalFormat("#.00");
         String fileSizeString = "";
         if (size < _1KB)
             fileSizeString = df.format((double) size) + "B";
         else if (size < _1MB)
-            fileSizeString = df.format((double) size / 1024) + "KB";
+            fileSizeString = df.format((double) size / _1KB) + "KB";
         else if (size < _1GB)
-            fileSizeString = df.format((double) size / 1048576) + "MB";
+            fileSizeString = df.format((double) size / _1MB) + "MB";
         else
-            fileSizeString = df.format((double) size / 1073741824) + "GB";
+            fileSizeString = df.format((double) size / _1GB) + "GB";
 
         return fileSizeString;
     }

@@ -60,7 +60,7 @@ public class ApiParser {
         for (int i = 0; i < jsarray.length(); i++) {
             JSONObject jobj = (JSONObject) jsarray.get(i);
             Contents c = new Contents();
-            c.setTitle(jobj.getString("title"));
+            c.setTitle(StringUtil.getSource(jobj.getString("title")));
             c.setUsername(jobj.getString("username"));
 /*            c.setDescription(jobj.getString("description").replace("&nbsp;", " ")
                     .replace("&amp;", "&").replaceAll("\\<.*?>", ""));*/

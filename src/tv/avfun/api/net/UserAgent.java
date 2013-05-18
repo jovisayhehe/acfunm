@@ -14,7 +14,7 @@ public final class UserAgent {
     public static final String IE_9      = "Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)";
     public static final String DEFAULT   = CHROME_26;
     /** Acfun ua */
-    public static final String MY_UA     = "AcFun (Linux; Android "+Build.VERSION.RELEASE+"; "+Build.MODEL+"; "
+    public static final String MY_UA     = "AcFun/1.0 (Linux; Android "+Build.VERSION.RELEASE+"; "+Build.MODEL+"; "
                                                 +Locale.getDefault().getLanguage()+"-"+Locale.getDefault().getCountry().toLowerCase()+")";
     private static Random random;
     static{

@@ -58,9 +58,7 @@ public class PlayActivity extends Activity{
 		
 		mVideoView.setOnCompletionListener(new MOnCompletionListener());
 		mVideoView.setOnErrorListener(errListener);
-		// 朱军画质，选择高质量播放，反之则选择中等的
-		// TODO 让用户选择
-		mVideoView.setVideoQuality(AcApp.getConfig().getInt("playmode", 0) == 0? MediaPlayer.VIDEOQUALITY_HIGH: MediaPlayer.VIDEOQUALITY_MEDIUM);
+		mVideoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_MEDIUM);
 		mVideoView.setMediaController(new MediaController(this));
 	}
 	
