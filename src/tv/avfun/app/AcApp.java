@@ -3,6 +3,7 @@ package tv.avfun.app;
 
 import java.io.File;
 
+import tv.avfun.DownloadManActivity;
 import tv.avfun.R;
 import tv.avfun.util.download.DownloadManager;
 
@@ -11,9 +12,13 @@ import com.actionbarsherlock.widget.SearchView;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.res.Resources;
@@ -39,6 +44,7 @@ public class AcApp extends Application {
     public static final String VIDEO = "/Videos";
     
     private DownloadManager mDownloadManager;
+    private static NotificationManager mNotiManager;
     /**
      * <b>NOTE:</b>在 <code>getApplicationContext()</code> 调用一次之后才能用这个方便的方法
      */
@@ -53,6 +59,7 @@ public class AcApp extends Application {
         mResources = getResources();
         sp = PreferenceManager.getDefaultSharedPreferences(mContext);
         mDownloadManager = new DownloadManager(this);
+        mDownloadManager.getProvider().loadOldDownloads();
     }
     
     @Override
@@ -210,6 +217,19 @@ public class AcApp extends Application {
         View v = searchView.findViewById(R.id.abs__search_plate);
         v.setBackgroundResource(R.drawable.edit_text_holo_light);
     }
+    public static void showNotification(Intent mIntent, int notificationId, String text,int icon, CharSequence title){
+        Notification notification = new Notification(icon,text,System.currentTimeMillis());
+//            Intent manIntent = new Intent(this, DownloadManActivity.class);
+        mIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent contentIntent = PendingIntent.getActivity(mContext, 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        notification.setLatestEventInfo(mContext, title, text, contentIntent);
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        if(mNotiManager == null)
+            mNotiManager = (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
+        mNotiManager.notify(notificationId, notification);
+    }
+    
+    
     public DownloadManager getDownloadManager() {
         return mDownloadManager;
     }

@@ -23,13 +23,13 @@ public class DownloadJob {
     private DownloadEntry       mEntry;
 
     private int                 mStartId        = 0;
-    private int                 mProgress       = 0; // percent
     private int                 mDownloadedSize = 0; // part总已下载
     private int                 mTotalSize      = 0; // part总量
     private DownloadJobListener mListener;
     private DownloadManager     mDownloadMan;
     private String              mUserAgent;
     private List<DownloadTask>  mTasks;
+    private boolean             isRunning;
 
 
     public DownloadJob(DownloadEntry entry) {
@@ -52,25 +52,24 @@ public class DownloadJob {
         else 
             mDownloadMan = manager;
         // FIXME: 从数据库中查到的job不会初始化Task！
-        initTask(); 
+        // initTask(); 
     }
     private void initTask() {
-        if (mTasks != null) {
-            cancel();
-            mTasks.clear();
-        } else
-            mTasks = new LinkedList<DownloadTask>();
+        mTasks = new LinkedList<DownloadTask>();
+        int i=0;
         for (VideoSegment s : mEntry.part.segments) {
             DownloadInfo info = new DownloadInfo(mDownloadMan,
                     mEntry.aid, mEntry.part.vid, s.num, s.stream == null? s.url : s.stream,
                     mEntry.destination, s.fileName, mUserAgent, (int) s.size, s.etag);
-            DownloadTask task = new DownloadTask(info);
+            DownloadTask task = new DownloadTask(i,info);
             task.setDownloadTaskListener(mTaskListener);
-            mTasks.add(task);
+            mTasks.add(i++, task);
         }
     }
 
     public void start() {
+        initTask();
+        
         notifyDownloadStarted();
         for (DownloadTask task : mTasks) {
             task.execute();
@@ -91,6 +90,8 @@ public class DownloadJob {
     }
 
     public void resume() {
+        notifyDownloadStarted();
+        if(mTasks == null) initTask();
         for (DownloadTask task : mTasks) {
             task.resume();
         }
@@ -114,12 +115,16 @@ public class DownloadJob {
      * @return
      */
     public int getProgress() {
-        if (mProgress == 0 && mTotalSize > 0) {
-            mProgress = mDownloadedSize * 100 / mTotalSize;
+        if (mTotalSize > 0) {
+            // 避免数值溢出
+            return (int)(mDownloadedSize * 100L / mTotalSize);
         }
-        return mProgress;
+        return 0;
     }
-
+    public void setRunning(boolean running){
+        isRunning = running;
+    }
+   
     /**
      * 添加到part总大小
      * 
@@ -148,7 +153,6 @@ public class DownloadJob {
      */
     public void reset() {
         mDownloadedSize = 0;
-        mTotalSize = 0;
     }
 
     /**
@@ -161,7 +165,7 @@ public class DownloadJob {
     }
 
     public boolean isRunning() {
-        return getProgress() < 100;
+        return isRunning;
     }
 
     public DownloadEntry getEntry() {
@@ -191,7 +195,6 @@ public class DownloadJob {
     public void notifyDownloadStarted() {
         if (mListener != null)
             mListener.onDownloadStarted(this);
-        mProgress = 0;
     }
 
     public void notifyDownloadCompleted(int status) {
@@ -219,48 +222,63 @@ public class DownloadJob {
         public void onDownloadStarted(DownloadJob job);
 
     }
+    
     private DownloadTaskListener mTaskListener = new DownloadTaskListener() {
-        
+        int lastUpdateTaskId = -1;
         @Override
         public void onStart(DownloadTask task) {
-            // TODO Auto-generated method stub
+
+            isRunning = true;
         }
         
         @Override
         public void onRetry(DownloadTask task) {
             // TODO Auto-generated method stub
-            notifyDownloadStarted();
+            //notifyDownloadStarted();
+            isRunning =true;
         }
         
         @Override
         public void onResume(DownloadTask task) {
             // TODO Auto-generated method stub
-            
+            isRunning = true;
         }
         
         @Override
-        public void onProgress(int currentBytes, DownloadTask task) {
-            if(task.getTotalBytes() >0 && currentBytes>0){
-                addDownloadedSize(currentBytes);
-                mProgress += currentBytes * 100 / task.getTotalBytes();
+        public void onProgress(int bytesRead, DownloadTask task) {
+            int total = task.getTotalBytes();
+            if(total < 0) return;
+            if(lastUpdateTaskId == -1){
+                if(mTotalSize<0){
+                    addTotalSize(task.getTotalBytes());
+                    lastUpdateTaskId = task.getId();
+                }
+            }else if(lastUpdateTaskId != task.getId()){
+                addTotalSize(task.getTotalBytes());
+                lastUpdateTaskId = task.getId();
+            }
+            if(bytesRead > 0){
+                addDownloadedSize(bytesRead);
+//                mProgress += currentBytes * 100 / task.getTotalBytes();
                 mDownloadMan.notifyAllObservers();
             }
-            Log.i(TAG, "receive progress :"+currentBytes +"/"+task.getTotalBytes());
         }
         
         @Override
         public void onPause(DownloadTask task) {
-            // TODO Auto-generated method stub
-            
+            isRunning =false;
+//            mDownloadMan.notifyAllObservers();
         }
         
         @Override
         public void onCompleted(int status, DownloadTask task) {
+            isRunning = false;
             notifyDownloadCompleted(status);
         }
         
         @Override
         public void onCancel(DownloadTask task) {
+            Log.i(TAG, "canel");
             mDownloadMan.notifyAllObservers();
             
         }

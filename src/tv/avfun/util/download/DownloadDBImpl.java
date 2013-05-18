@@ -39,8 +39,6 @@ public class DownloadDBImpl implements DownloadDB {
                     // 是否同一个part
                     if(job == null || !(job.getEntry().aid.equals(aid) && job.getEntry().part.vid.equals(vid))){
                         job = buildJob(query);
-                        
-                        
                         all.add(job);
                     }
                     VideoSegment s = new VideoSegment();
@@ -57,8 +55,17 @@ public class DownloadDBImpl implements DownloadDB {
                         File file = new File(job.getEntry().destination, s.fileName);
                         if(file.exists()){
                             s.url = Uri.fromFile(file).toString();
-                            int downloadedSize = (int) file.length();
-                            job.addDownloadedSize(downloadedSize);
+                        }else 
+                            s.url = s.stream;
+                        int downloadedSize = (int) file.length();
+                        job.addDownloadedSize(downloadedSize);
+                        if(query.getInt(query.getColumnIndex(COLUMN_CURRENT)) != downloadedSize){
+                            // 数据库中的数据有误！
+                            // 写入正确的数据 
+                            // XXX: 也许根本就不需要current_bytes这个字段...
+                            ContentValues values = new ContentValues();
+                            values.put(COLUMN_CURRENT, downloadedSize);
+                            updateDownload(job.getEntry().part.vid,s.num,values);
                         }
                     }
                     // 真实的下载进度由file.length来确定比较好。
@@ -90,6 +97,9 @@ public class DownloadDBImpl implements DownloadDB {
         entry.part.segments = new ArrayList<VideoSegment>();
         DownloadJob job = new DownloadJob(entry);
         job.setUserAgent(cursor.getString(cursor.getColumnIndex(COLUMN_UA)));
+        int status = cursor.getInt(cursor.getColumnIndex(COLUMN_STATUS));
+        job.setRunning(status == STATUS_PENDING || status == STATUS_RUNNING);
+        entry.part.isDownloaded = status == STATUS_SUCCESS;
         return job;
     }
     @Override
@@ -115,7 +125,7 @@ public class DownloadDBImpl implements DownloadDB {
         values.put(COLUMN_VID, entry.part.vid);
         values.put(COLUMN_VTYPE, entry.part.vtype);
         values.put(COLUMN_SUBTITLE, entry.part.subtitle);
-        String path = entry.destination;
+        String path = entry.destination; // TODO 判断由调用者来做
         if(TextUtils.isEmpty(path))
             path = AcApp.getDownloadPath(entry.aid, entry.part.vid).getAbsolutePath();
         values.put(COLUMN_DEST, path);

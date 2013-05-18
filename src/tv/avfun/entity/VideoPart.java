@@ -34,7 +34,7 @@ public class VideoPart implements Serializable {
      */
     public ArrayList<VideoSegment> segments;
     public boolean                 isDownloaded;
-
+    public boolean                 isDownloading;
     @Override
     public int hashCode() {
         final int prime = 31;

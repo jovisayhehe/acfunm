@@ -36,15 +36,19 @@ import android.util.Log;
  *
  */
 public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
-    private static final String TAG = "DownloadTask";
     private static final int MAX_RETRIES = 3;
     private static final int MAX_REDIRECTS = 5;
     private static final int BUFFER_SIZE = 1 << 13;
-    
+    private int mId;
     private boolean isPaused;
     private DownloadInfo mInfo;
     private DownloadTaskListener mListener;
+    private String TAG = "DownloadTask - " + mId;
     public DownloadTask(DownloadInfo info){
+        this(0,info);
+    }
+    public DownloadTask(int id, DownloadInfo info){
+        this.mId = id;
         this.mInfo = info;
     }
     
@@ -58,7 +62,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
         isPaused = false;
         if(mListener!=null)
             mListener.onResume(this);
-        // this.execute();
+        this.execute();
     }
     /**
      * shut down task, right now.
@@ -68,12 +72,20 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
         if(mListener!=null)
             mListener.onCancel(this);
     }
+    /** 获得Task的id，以便区分*/
+    public int getId(){
+        return mId;
+    }
+    
     private void initParams(HttpParams params){
-        HttpConnectionParams.setConnectionTimeout(params, 3000);
-        HttpConnectionParams.setSoTimeout(params, 5000);
+        setTimeOut(params, 0);
         HttpConnectionParams.setSocketBufferSize(params, BUFFER_SIZE);
         HttpProtocolParams.setUserAgent(params, userAgent());
         HttpClientParams.setRedirecting(params, false); 
+    }
+    private void setTimeOut(HttpParams params, int retryTimes){
+        HttpConnectionParams.setConnectionTimeout(params, retryTimes*2000+3000);
+        HttpConnectionParams.setSoTimeout(params, retryTimes*2000 + 5000);
     }
     @Override
     protected Boolean doInBackground(Void... ps) {
@@ -87,12 +99,11 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
         boolean finished = false;
         try{
             while(!finished && mInfo.retryTimes < MAX_RETRIES){
-                if(BuildConfig.DEBUG) Log.i(TAG, (mInfo.retryTimes+1)+"次尝试下载"+mInfo.url);
+                if(BuildConfig.DEBUG) Log.i(TAG, (mInfo.retryTimes+1)+" 次尝试下载"+state.mRequestUri);
                 if(mListener!=null) 
                     mListener.onStart(this);
                 HttpGet request = new HttpGet(state.mRequestUri);
-                if(mInfo.retryTimes == 1)
-                    HttpConnectionParams.setConnectionTimeout(params, 5000);
+                setTimeOut(params, mInfo.retryTimes);
                 request.setParams(params);
                 try{
                     executeDownload(client,request,state);
@@ -111,6 +122,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
             return true;
         }catch (StopRequest e) {
             finalStatus = e.mFinalStatus;
+            if(BuildConfig.DEBUG) Log.w(TAG, "status = "+finalStatus,e);
             return false;
         }catch (Exception e) {
             finalStatus = 444; // 程序错误 = =
@@ -146,7 +158,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
         addRequestHeaders(state, request);
         if(state.mDownloadedBytes == state.mTotalBytes){
             if(BuildConfig.DEBUG) 
-                Log.i(TAG, "skip already completed "+mInfo.vid +" - "+mInfo.snum);
+                Log.v(TAG, "skip already completed "+mInfo.vid +" - "+mInfo.snum);
             return ;
         }
         if(!NetWorkUtil.isWifiConnected(AcApp.context()))
@@ -163,15 +175,14 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
         transferData(state, data, entityStream);
     }
     private void reportProgress(State state){
-        publishProgress(state.mDownloadedBytes);
+//        publishProgress(state.mDownloadedBytes);
         ContentValues values = new ContentValues();
         values.put(DownloadDB.COLUMN_CURRENT, state.mDownloadedBytes);
         values.put(DownloadDB.COLUMN_STATUS, DownloadDB.STATUS_RUNNING);
         update(values);
-        if(mListener != null)
-            mListener.onProgress(state.mDownloadedBytes, this);
         
     }
+    
     private void transferData(State state, byte[] data, InputStream entityStream) throws StopRequest {
         for (;;) {
             int bytesRead = readFromResponse(state, data, entityStream);
@@ -183,6 +194,8 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
             state.mGotData = true;
             writeDataToDestination(state, data, bytesRead);
             state.mDownloadedBytes += bytesRead;
+            if(mListener != null)
+                mListener.onProgress(bytesRead, this);
             reportProgress(state);
             if(isPaused)
                 throw new StopRequest(DownloadDB.STATUS_PAUSED, "paused by user");
@@ -481,7 +494,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
     public interface DownloadTaskListener {
         void onStart(DownloadTask task);
         void onResume(DownloadTask task);
-        void onProgress(int currentBytes, DownloadTask task);
+        void onProgress(int bytesRead, DownloadTask task);
         void onPause(DownloadTask task);
         void onCancel(DownloadTask task);
         void onRetry(DownloadTask task);

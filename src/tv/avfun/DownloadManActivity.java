@@ -1,35 +1,33 @@
 package tv.avfun;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import tv.avfun.adapter.DetailAdaper;
+import tv.avfun.DownloadService.IDownloadService;
 import tv.avfun.adapter.DownloadJobAdapter;
 import tv.avfun.adapter.DownloadJobAdapter.OnItemCheckedListener;
 import tv.avfun.app.AcApp;
+import tv.avfun.util.download.DownloadEntry;
 import tv.avfun.util.download.DownloadJob;
 import tv.avfun.util.download.DownloadManager;
 import tv.avfun.util.download.DownloadManager.DownloadObserver;
-import android.annotation.TargetApi;
+import android.content.ComponentName;
 import android.content.Intent;
-import android.os.Build;
+import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
-import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -54,6 +52,8 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_layout);
+        Intent service = new Intent(this, DownloadService.class);
+        bindService(service, conn, BIND_AUTO_CREATE);
         mBar = getSupportActionBar();
         mBar.setDisplayHomeAsUpEnabled(true);
         mStateArray = getResources().getStringArray(R.array.download_state);
@@ -65,22 +65,58 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
         mBar.setListNavigationCallbacks(adapter, this);
         initView();
     }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        menu.add(0,R.id.edit_query,0,"编辑").setIcon(R.drawable.ic_menu_mark).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+//        return true;
+//    }
     @Override
     protected void onStart() {
         super.onStart();
         mDownloadMan.registerDownloadObserver(this);
     }
+    private DownloadService mDownloadService;
+    private ServiceConnection conn =  new ServiceConnection() {
+        
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mDownloadService = null;
+        }
+        
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            if(service instanceof IDownloadService){
+                mDownloadService = ((IDownloadService)service).getService();
+            }
+        }
+    };
+    long lastUpdateTime ;
+    long UPDATE_INTERVAL = 500 ; // 500ms刷新一回，以免过快刷新导致崩溃
     @Override
     public void onDownloadChanged(DownloadManager manager) {
-        Log.d(TAG, "download changed");
-        runOnUiThread(mUpdateTask);
+        if(System.currentTimeMillis() - lastUpdateTime > UPDATE_INTERVAL){
+            runOnUiThread(mUpdateTask);
+            lastUpdateTime = System.currentTimeMillis();
+        }
     }
     
     @Override
     protected void onStop() {
         super.onStop();
         mDownloadMan.unregisterDownloadObserver(this);
-        
+        try{
+            unbindService(conn);
+        }catch (Exception e) {
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try{
+            unbindService(conn);
+        }catch (Exception e) {
+        }
     }
     private void initView() {
         mListView = (ListView) findViewById(android.R.id.list);
@@ -99,6 +135,7 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
             }
         });
         mListView.setAdapter(mAdapter);
+        mListView.setOnItemClickListener(itemClickListener);
         
     }
 
@@ -139,6 +176,23 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
             mListView.setVisibility(View.GONE);
         }
     }
+    private OnItemClickListener itemClickListener = new OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            if(mMode != null){
+//                mAdapter.checked(position);
+                CheckBox cb = (CheckBox) view.findViewById(R.id.download_checked);
+                cb.setChecked(!cb.isChecked());
+            }else{
+                DownloadJob item = mAdapter.getItem(position);
+                if(item != null)
+                    startToPlay(item.getEntry());
+            }
+            
+        }
+        
+    };
     private class DownloadActionMode implements ActionMode.Callback{
 
         @Override
@@ -150,23 +204,36 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
 
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            // TODO Auto-generated method stub
             return false;
         }
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            // TODO Auto-generated method stub
             switch (item.getItemId()) {
             case R.id.menu_download_delete:
                 AcApp.showToast("删除");
+                //TODO 
                 break;
             case R.id.menu_download_resume:
                 AcApp.showToast("继续");
+                for(DownloadJob job :mAdapter.getCheckedJobs()){
+                    if(job.getProgress() != 100){
+                        job.setListener(mDownloadService.mJobListener);
+                        job.resume();
+                    }
+                }
                 break;
             case R.id.menu_download_pause:
                 AcApp.showToast("暂停");
-                
+                for(DownloadJob job :mAdapter.getCheckedJobs()){
+                    if(job.isRunning()){
+                        job.setListener(mDownloadService.mJobListener);
+                        job.pause();
+                    }
+                }
+                break;
+            case R.id.menu_select_all:
+                mAdapter.checkedAll();
                 break;
             }
             
@@ -175,13 +242,16 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            // TODO Auto-generated method stub
             if(mMode!= null){
                 mMode = null;
                 mAdapter.unCheckedAll();
             }
             
         }
-        
+    }
+    protected void startToPlay(DownloadEntry entry) {
+        Intent intent = new Intent(this, SectionActivity.class);
+        intent.putExtra("item", entry.part);
+        startActivity(intent);
     }
 }

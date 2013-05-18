@@ -7,6 +7,7 @@ import java.util.List;
 
 import tv.avfun.DownloadService;
 import tv.avfun.app.AcApp;
+import tv.avfun.entity.VideoPart;
 import tv.avfun.entity.VideoSegment;
 import tv.avfun.util.FileUtil;
 import android.content.Context;
@@ -57,7 +58,13 @@ public class DownloadManager {
     public List<DownloadJob> getCompletedDownloads(){
         return mProvider.getCompletedDownloads();
     }
-
+    /**
+     * @param aid
+     * @return null, if not found in db
+     */
+    public List<VideoPart> getVideoParts(String aid){
+        return mProvider.getVideoParts(aid);
+    }
     /**
      * Return queued download jobs.
      */
@@ -70,6 +77,7 @@ public class DownloadManager {
     
     public void cancel(String vid, boolean shouldDeleFile) {
         DownloadJob job = mProvider.getQueueJobByVid(vid);
+        if(job == null) return;
         job.cancel();
         if(shouldDeleFile)
             deleteDownload(job);

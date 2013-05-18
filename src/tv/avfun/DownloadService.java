@@ -1,16 +1,20 @@
 package tv.avfun;
 
+import tv.avfun.api.net.UserAgent;
 import tv.avfun.app.AcApp;
+import tv.avfun.util.download.DownloadDB;
 import tv.avfun.util.download.DownloadEntry;
 import tv.avfun.util.download.DownloadJob;
-import tv.avfun.util.download.DownloadProvider;
 import tv.avfun.util.download.DownloadJob.DownloadJobListener;
+import tv.avfun.util.download.DownloadProvider;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.IBinder;
+import android.text.TextUtils;
 import android.util.Log;
 
 /**
@@ -21,7 +25,10 @@ import android.util.Log;
  */
 public class DownloadService extends Service {
     public static final String ACTION_ADD_TO_DOWNLOAD = "tv.avfun.action.ADD_TO_DOWNLOAD";
+    public static final String ACTION_RESUME_DOWNLOAD = "tv.avfun.action.RESUME_DOWNLOAD";
+    public static final String EXTRA_DOWNLOAD_JOB = "download_job";
     public static final String EXTRA_DOWNLOAD_ENTRY = "download_entry";
+    public static final String EXTRA_DOWNLOAD_UA = "download_ua";
     public static final int DOWNLOAD_NOTIFICATION_ID = 250;
     private static final String TAG = DownloadService.class.getSimpleName();
     
@@ -31,7 +38,18 @@ public class DownloadService extends Service {
     
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return new IDownloadBinder();
+    }
+    private class IDownloadBinder extends Binder implements IDownloadService{
+
+        @Override
+        public DownloadService getService() {
+            return DownloadService.this;
+        }
+        
+    }
+    public interface IDownloadService{
+        DownloadService getService();
     }
     @Override
     public void onCreate() {
@@ -45,13 +63,21 @@ public class DownloadService extends Service {
             Log.d(TAG, "onStart - "+action);
             if(ACTION_ADD_TO_DOWNLOAD.equals(action)){
                 DownloadEntry entry = (DownloadEntry) intent.getSerializableExtra(EXTRA_DOWNLOAD_ENTRY);
-                enqueue(entry, startId);
+                String ua = intent.getStringExtra(EXTRA_DOWNLOAD_UA);
+                if(ua == null)
+                    ua = UserAgent.MY_UA;
+                
+                enqueue(ua, entry, startId);
             }
+               
         }
         return super.onStartCommand(intent, flags, startId);
     }
-    private void enqueue(DownloadEntry entry, int startId) {
+    private void enqueue(String ua, DownloadEntry entry, int startId) {
+        if(TextUtils.isEmpty(entry.destination))
+            entry.destination = AcApp.getDownloadPath(entry.aid, entry.part.vid).getAbsolutePath();
         DownloadJob job  = new DownloadJob(entry,startId);
+        job.setUserAgent(ua);
         if(mDownloadProvider.enqueue(job)){
             Log.d(TAG, "new job!");
         }
@@ -59,7 +85,7 @@ public class DownloadService extends Service {
         job.start();
         
     }
-    private DownloadJobListener mJobListener = new DownloadJobListener() {
+    public DownloadJobListener mJobListener = new DownloadJobListener() {
         
         @Override
         public void onDownloadStarted(DownloadJob job) {
@@ -73,17 +99,10 @@ public class DownloadService extends Service {
             showDownloadedNoti(status,job);
         }
     };
-    @SuppressWarnings("deprecation")
     // TODO 移到AcApp中
     private void showNoti(String text,int icon, CharSequence title){
-        Notification notification = new Notification(icon,text,System.currentTimeMillis());
-        Intent manIntent = new Intent(this, DownloadManActivity.class);
-        manIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, manIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        notification.setLatestEventInfo(this, title, text, contentIntent);
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
-        mNotificationManager.notify(DOWNLOAD_NOTIFICATION_ID, notification);
-        
+        Intent mIntent = new Intent(this, DownloadManActivity.class);
+        AcApp.showNotification(mIntent, DOWNLOAD_NOTIFICATION_ID, text, icon, title);
     }
     private void showDownloadedNoti(int status,DownloadJob job) {
         String contentText = job.getEntry().part.subtitle;
@@ -94,10 +113,18 @@ public class DownloadService extends Service {
 //                                .setSmallIcon(android.R.drawable.stat_sys_download)
 //                                .build();
         String title = "";
-        if(job.getProgress() == 100)
-           title = getString(R.string.downloaded);
+        if (status == DownloadDB.STATUS_SUCCESS)
+            title = getString(R.string.downloaded);
+        else if (status == DownloadDB.STATUS_CANCELED)
+            title = "已取消";
+        else if (status == DownloadDB.STATUS_BAD_REQUEST || status == DownloadDB.STATUS_HTTP_DATA_ERROR)
+            title = "网络错误";
+        else if (status == DownloadDB.STATUS_PAUSED)
+            title = "已暂停";
+        else if (status == DownloadDB.STATUS_QUEUED_FOR_WIFI)
+            title = "等待WIFI";
         else
-           title = getString(R.string.download_fail)+" - 状态码：" +status;
+            title = getString(R.string.download_fail) + " - 状态码：" + status;
         showNoti(contentText, android.R.drawable.stat_sys_download_done, title);
 
     }

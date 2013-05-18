@@ -82,6 +82,9 @@ public class DetailAdaper extends BaseAdapter {
         if (item.isDownloaded) {
             iHolder.status.setText("已下载");
             iHolder.status.setTag(STATUS_DOWNLOADED);
+        }else if(item.isDownloading){
+            iHolder.status.setText("下载中");
+            iHolder.status.setTag(STATUS_DOWNLOADING);
         } else {
             iHolder.status.setText("下载");
             iHolder.status.setTag(STATUS_NONE);
@@ -98,15 +101,15 @@ public class DetailAdaper extends BaseAdapter {
                 case STATUS_NONE:
                     startDownload(item);
                     v.setTag(STATUS_DOWNLOADING);
-                    ((TextView)v).setText("取消");
-                    break;
-                case STATUS_DOWNLOADED:
-                    viewDownload(item.vid);
+                    ((TextView)v).setText("下载中");
                     break;
                 case STATUS_DOWNLOADING:
-                    cancelDownload(item.vid);
-                    v.setTag(STATUS_NONE);
-                    ((TextView)v).setText("下载");
+//                    将取消的操作交给Download Manager Activity来管理
+//                    cancelDownload(item.vid);
+//                    v.setTag(STATUS_NONE);
+//                    ((TextView)v).setText("下载");
+                case STATUS_DOWNLOADED:
+                    viewDownload(item.vid);
                     break;
                 }
             }
@@ -178,12 +181,6 @@ public class DetailAdaper extends BaseAdapter {
         Log.i(TAG, "开始下载..."+item.vid);
     }
 
-    private void cancelDownload(String vid) {
-        if (mListener != null)
-            mListener.doCancelDownload(vid);
-        Log.i(TAG, "取消下载..."+vid);
-    }
-
     private void viewDownload(String vid) {
         if (mListener != null)
             mListener.doViewDownloadInfo(vid);
@@ -203,14 +200,6 @@ public class DetailAdaper extends BaseAdapter {
          * @param vid
          */
         void doStartDownload(VideoPart item);
-
-        /**
-         * 取消（删除）下载
-         * 
-         * @param view
-         * @param vid
-         */
-        void doCancelDownload(String vid);
 
         /**
          * 查看下载

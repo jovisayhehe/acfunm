@@ -11,6 +11,7 @@ import android.util.Log;
 
 import tv.avfun.entity.VideoPart;
 import tv.avfun.entity.VideoSegment;
+import tv.avfun.util.ArrayUtil;
 import tv.avfun.util.download.exception.IllegalEntryException;
 /**
  * Download jobs provider.
@@ -23,16 +24,16 @@ public class DownloadProvider {
     private List<DownloadJob> mCompletedJobs;
     private DownloadManager mDownloadManager;
     private DownloadDB mDb;
+    private List<DownloadJob> allJobs;
     
     public DownloadProvider(Context context, DownloadManager manager) {
         this.mDownloadManager = manager;
         mQueuedJobs = new ArrayList<DownloadJob>();
         mCompletedJobs = new ArrayList<DownloadJob>();
         mDb = new DownloadDBImpl(context);
-        loadOldDownloads();
     }
 
-    private void loadOldDownloads() {
+    public void loadOldDownloads() {
         List<DownloadJob> oldDownloads = mDb.getAllDownloads();
         for(DownloadJob j : oldDownloads){
             if(!j.isRunning()){
@@ -41,6 +42,7 @@ public class DownloadProvider {
                 // start failed job
                 // mDownloadManager.download(j.getEntry());
                 // 应由用户启动
+                j.getEntry().part.isDownloading = true;
                 mQueuedJobs.add(j);
             }
         }
@@ -48,11 +50,13 @@ public class DownloadProvider {
     }
 
     public List<DownloadJob> getAllDownloads() {
-        // mDb.getAllDownloads();
-        List<DownloadJob> all = new ArrayList<DownloadJob>();
-        all.addAll(mCompletedJobs);
-        all.addAll(mQueuedJobs);
-        return all;
+        if(allJobs!=null)
+            allJobs.clear();
+        else 
+            allJobs = new ArrayList<DownloadJob>();
+        allJobs.addAll(mCompletedJobs);
+        allJobs.addAll(mQueuedJobs);
+        return allJobs;
     }
 
     public List<DownloadJob> getCompletedDownloads() {
@@ -70,6 +74,18 @@ public class DownloadProvider {
         }
         return null;
     }
+
+    public List<VideoPart> getVideoParts(String aid){
+        List<VideoPart> parts = null;
+        for(DownloadJob j : getAllDownloads()){
+            if(j.getEntry().aid.equals(aid)){
+                if(parts == null)
+                    parts = new ArrayList<VideoPart>();
+                parts.add(j.getEntry().part);
+            }
+        }
+        return parts;
+    }
     /**
      * mark job completed
      */
@@ -81,6 +97,9 @@ public class DownloadProvider {
 //            setStatus(job.getEntry().part.vid, s.num, status);
 //        }
         mDownloadManager.notifyAllObservers();
+    }
+    public void resume(DownloadJob job){
+        // TODO mark job resuming
     }
     public void update(String vid, int num, ContentValues values){
         mDb.updateDownload(vid,num,values);
@@ -101,6 +120,7 @@ public class DownloadProvider {
                 return false;
         
         try {
+            job.getEntry().part.isDownloading = true;
             mDb.addDownload(job.getEntry());
             mQueuedJobs.add(job);
             mDownloadManager.notifyAllObservers();

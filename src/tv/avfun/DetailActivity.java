@@ -128,12 +128,19 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         protected Boolean doInBackground(Void... params) {
             try {
                 //TODO 查数据库获得离线数据！
+                DownloadManager man = AcApp.instance().getDownloadManager();
+                List<VideoPart> downloadParts = man.getVideoParts(aid);
                 
                 if (NetWorkUtil.isNetworkAvailable(getApplicationContext())) {
                     mVideoInfo = ApiParser.getVideoInfoByAid(aid);
                     mData.addAll(mVideoInfo.parts);
                 }
-                
+                if(downloadParts != null){
+                    for(VideoPart part: downloadParts){
+                        mData.remove(part); // 过滤
+                    }
+                    mData.addAll(downloadParts);
+                }
 
             } catch (Exception e) {
                 // TODO 向umeng 发送自定义事件: aid获取失败
@@ -389,11 +396,6 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
                 
         }
 
-        @Override
-        public void doCancelDownload(String vid) {
-            // TODO show confirm dialog to cancel.
-            mDownloadManager.cancel(vid,true);
-        }
         private Handler mHanlder =  new Handler(){
             public void handleMessage(android.os.Message msg) {
                 if(msg.what ==0 ){

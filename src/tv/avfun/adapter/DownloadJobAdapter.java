@@ -66,15 +66,25 @@ public class DownloadJobAdapter extends ArrayListAdapter<DownloadJob> implements
 		cb.setTag(Integer.valueOf(position));
 		cb.setOnCheckedChangeListener(this);
 	    cb.setChecked(checkedJobs.contains(job));
-		
+	    int totalSize = job.getTotalSize();
+	    int downloadSize = job.getDownloadedSize();
 		if(job.getProgress() == 100){
 			holder.progressBar.setVisibility(View.GONE);
-			holder.progressText.setText(FileUtil.formetFileSize(job.getTotalSize())+"/已完成");
-		} else {
-			holder.progressBar.setVisibility(View.VISIBLE);
-			holder.progressBar.setMax(100);
-			holder.progressBar.setProgress(mList.get(position).getProgress());
-			holder.progressText.setText(mList.get(position).getProgress()+"% - " + FileUtil.formetFileSize(job.getTotalSize()));
+			holder.progressText.setText(FileUtil.formetFileSize(totalSize)+"/已完成");
+		}else if(downloadSize== 0 && job.isRunning()){
+		    holder.progressBar.setVisibility(View.VISIBLE);
+		    holder.progressBar.setIndeterminate(true);  
+		}
+		else if(totalSize >0 ){
+		    if(job.isRunning()){
+		        holder.progressBar.setVisibility(View.VISIBLE);
+		        holder.progressBar.setIndeterminate(false);   
+		        holder.progressBar.setProgress(job.getProgress());
+		    }
+			holder.progressText.setText(FileUtil.formetFileSize(downloadSize)+"/" + FileUtil.formetFileSize(totalSize));
+		} else{
+		    holder.progressBar.setVisibility(View.GONE);
+		    holder.progressText.setText("未知大小");
 		}
 		return row;
 	}
@@ -110,13 +120,19 @@ public class DownloadJobAdapter extends ArrayListAdapter<DownloadJob> implements
 	public int getCheckedCount(){
 	    return checkedJobs.size();
 	}
+	public void checked(int position){
+	    if(position>mList.size()) return;
+	    DownloadJob job = mList.get(position);
+	    if(!checkedJobs.remove(job))
+	        checkedJobs.add(job);
+	    notifyDataSetChanged();
+	}
 	public void checkedAll(){
 	    checkedJobs.addAll(mList);
 	    notifyDataSetChanged();
 	}
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        // TODO Auto-generated method stub
         Object o = buttonView.getTag();
         int position = 0;
         if(o!=null && o instanceof Integer){
@@ -128,5 +144,8 @@ public class DownloadJobAdapter extends ArrayListAdapter<DownloadJob> implements
             checkedJobs.remove(mList.get(position));
         if(mListener!= null)
             mListener.onCheckedChanged(buttonView, isChecked);
+    }
+    public List<DownloadJob> getCheckedJobs() {
+        return checkedJobs;
     }
 }
