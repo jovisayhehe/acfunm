@@ -172,6 +172,7 @@ public class UserHomeFragment extends Fragment implements OnClickListener {
         textusername.setText((String) vmap.get("uname"));
         textsignature.setText((String) vmap.get("signature"));
         imageLoader.displayImage((String) vmap.get("avatar"), avatar);
+        vlogin_btn.setText("注销");
     }
 
     public void unbuidview() {

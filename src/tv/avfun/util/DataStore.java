@@ -44,8 +44,8 @@ public class DataStore {
     public static final long       CHANNEL_EXPIRED      = 30 * 60000;
     /** 1 hour */
     public static final long       CHANNEL_LIST_EXPIRED = 60 * 60 * 1000;
-    /** 3 days (XXX: 待定) */
-    public static final long       TIME_LIST_EXPIRED    = 3 * 24 * 60 * 60 * 1000;
+    /** 2 days (XXX: 待定) */
+    public static final long       TIME_LIST_EXPIRED    = 2 * 24 * 60 * 60 * 1000;
     /** 首页频道列表缓存文件 */
     public static final String     CHANNEL_LIST_CACHE   = "channel_list.dat";
     /** 番组列表缓存文件 */

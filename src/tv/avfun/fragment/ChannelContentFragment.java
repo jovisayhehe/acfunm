@@ -72,7 +72,7 @@ public class ChannelContentFragment extends Fragment implements OnItemClickListe
         mTimeOutView = (TextView) findViewById(R.id.time_out_text);
         mTimeOutView.setOnClickListener(this);
         mProgress = (ProgressBar) findViewById(R.id.time_progress);
-        initView();
+        
         return mView;
     }
 
@@ -88,7 +88,7 @@ public class ChannelContentFragment extends Fragment implements OnItemClickListe
         mListView.addHeaderView(header);
         mListView.setHeaderDividersEnabled(false);
 
-        mAdapter = new ChannelContentListAdaper(AcApp.context(), data);
+        mAdapter = new ChannelContentListAdaper(activity, data);
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(this);
         mListView.setOnScrollListener(this);
@@ -104,6 +104,7 @@ public class ChannelContentFragment extends Fragment implements OnItemClickListe
         super.onActivityCreated(savedInstanceState);
         this.activity = getActivity();
         this.channel = (Channel) getArguments().getSerializable("channel");
+        initView();
         indexpage = 1;
         loadData(indexpage, false);
     }
