@@ -336,7 +336,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
                 return "http://wiki.acfun.tv/index.php/" + t;
             }
         });
-        Pattern http = Pattern.compile("(http://(?:[a-z0-9.-]+[.][a-z]{2,}+(?::[0-9]+)?)(?:/\\S*)?)",
+        Pattern http = Pattern.compile("(http://(?:[a-z0-9.-]+[.][a-z]{2,}+(?::[0-9]+)?)(?:/[^\u3010\u4e00-\u9fa5]*)?)",
                 Pattern.CASE_INSENSITIVE);
         Linkify.addLinks(text, http, "http://");
         Linkify.addLinks(text, Pattern.compile("(ac\\d{5,})", Pattern.CASE_INSENSITIVE), "av://");
