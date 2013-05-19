@@ -26,6 +26,7 @@ import tv.avfun.util.FileUtil;
 import tv.avfun.util.NetWorkUtil;
 import tv.avfun.util.StringUtil;
 import android.content.ContentValues;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
@@ -75,7 +76,6 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
     public int getId(){
         return mId;
     }
-    
     private void initParams(HttpParams params){
         setTimeOut(params, 0);
         HttpConnectionParams.setSocketBufferSize(params, BUFFER_SIZE);
@@ -99,8 +99,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
         try{
             while(!finished && mInfo.retryTimes < MAX_RETRIES){
                 if(BuildConfig.DEBUG) Log.i(TAG, (mInfo.retryTimes+1)+" 次尝试下载"+state.mRequestUri);
-                if(mListener!=null) 
-                    mListener.onStart(this);
+                
                 HttpGet request = new HttpGet(state.mRequestUri);
                 setTimeOut(params, mInfo.retryTimes);
                 request.setParams(params);
@@ -158,6 +157,8 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
         
         setupDestinationFile(state);
         addRequestHeaders(state, request);
+        if(mListener!=null) 
+            mListener.onStart(this);
         if(state.mDownloadedBytes == state.mTotalBytes){
             if(BuildConfig.DEBUG) 
                 Log.v(TAG, "skip already completed "+mInfo.vid +" - "+mInfo.snum);
@@ -291,6 +292,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
         values.put(DownloadDB.COLUMN_TOTAL, state.mTotalBytes);
         values.put(DownloadDB.COLUMN_ETAG, state.mHeaderETag);
         values.put(DownloadDB.COLUMN_MIME, state.mMimeType);
+        values.put(DownloadDB.COLUMN_UA, userAgent());
         values.put(DownloadDB.COLUMN_STATUS, DownloadDB.STATUS_RUNNING);
         if(TextUtils.isEmpty(mInfo.fileName))
             values.put(DownloadDB.COLUMN_DATA, state.mSaveFile.getName());
@@ -392,7 +394,11 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
             request.addHeader("Range", "bytes=" + state.mDownloadedBytes + "-");
         }
     }
-    
+    private String luri;
+    public String getLocalUri(){
+        return luri;
+        
+    }
     private void setupDestinationFile(State state) throws StopRequest{
         if(state.mSaveFile != null) return;
         File path = null;
@@ -408,6 +414,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
         }
         File f = new File(path, fileName);
         state.mSaveFile = f;
+        luri = Uri.fromFile(f).toString();
         if(f.exists()){
             long fileLength = f.length();
             if (fileLength == 0) {

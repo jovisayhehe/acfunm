@@ -59,11 +59,13 @@ public class DownloadJob {
         else{
             mTasks.clear();
         }
+        mTotalSize = 0;
         int i=0;
         for (VideoSegment s : mEntry.part.segments) {
             DownloadInfo info = new DownloadInfo(mDownloadMan,
                     mEntry.aid, mEntry.part.vid, s.num, s.stream == null? s.url : s.stream,
                     mEntry.destination, s.fileName, mUserAgent, (int) s.size, s.etag);
+            mTotalSize += s.size;
             DownloadTask task = new DownloadTask(i,info);
             task.setDownloadTaskListener(mTaskListener);
             mTasks.add(i++, task);
@@ -201,7 +203,7 @@ public class DownloadJob {
             else 
                 mListener.onDownloadFinished(status, this);
         }
-        // TODO
+        mDownloadMan.notifyAllObservers();
     }
 
     /**
@@ -230,6 +232,9 @@ public class DownloadJob {
         public void onStart(DownloadTask task) {
             lastUpdateTaskId = -1;
             mStatus = DownloadDB.STATUS_PENDING;
+            if(task.getLocalUri() != null && 
+                    !mEntry.part.segments.get(task.getId()).url.equals(task.getLocalUri()))
+                mEntry.part.segments.get(task.getId()).url = task.getLocalUri();
         }
         
         @Override

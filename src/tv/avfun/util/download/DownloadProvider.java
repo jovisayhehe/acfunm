@@ -136,10 +136,11 @@ public class DownloadProvider {
         
         try {
             job.getEntry().part.isDownloading = true;
-            if(TextUtils.isEmpty(job.getEntry().destination))
+            if(TextUtils.isEmpty(job.getEntry().destination)){
                 job.getEntry().destination = 
                     AcApp.getDownloadPath(job.getEntry().aid, job.getEntry().part.vid)
                         .getAbsolutePath();
+            }            
             mDb.addDownload(job.getEntry());
             mQueuedJobs.add(job);
             mDownloadManager.notifyAllObservers();

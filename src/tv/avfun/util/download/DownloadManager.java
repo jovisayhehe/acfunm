@@ -39,12 +39,15 @@ public class DownloadManager {
      * Start download
      */
     public void download(DownloadEntry entry){
+        download(null,entry);
+    }
+    public void download(String ua, DownloadEntry entry){
         Intent service = new Intent(mContext,DownloadService.class);
         service.setAction(DownloadService.ACTION_ADD_TO_DOWNLOAD);
         service.putExtra(DownloadService.EXTRA_DOWNLOAD_ENTRY, entry);
+        service.putExtra(DownloadService.EXTRA_DOWNLOAD_UA, ua);
         mContext.startService(service);
     }
-
     /**
      * Return all download jobs.
      */

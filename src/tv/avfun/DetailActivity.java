@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import tv.avfun.adapter.DetailAdaper;
 import tv.avfun.adapter.DetailAdaper.OnStatusClickListener;
 import tv.avfun.api.ApiParser;
+import tv.avfun.api.net.UserAgent;
 import tv.avfun.app.AcApp;
 import tv.avfun.db.DBService;
 import tv.avfun.entity.Contents;
@@ -400,7 +401,10 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
                     AcApp.showToast(getString(R.string.download_fail));
                 }else if(msg.what == 1){
                     DownloadEntry entry = (DownloadEntry) msg.obj;
-                    mDownloadManager.download(entry);
+                    String ua = null;
+                    if("tudou".equals(entry.part.vtype))
+                        ua = UserAgent.DEFAULT;
+                    mDownloadManager.download(ua,entry);
                 }
             }
         };

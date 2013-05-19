@@ -201,8 +201,9 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
                   cb.setChecked(!cb.isChecked());
               } else {
                   DownloadJob item = mAdapter.getItem(position);
-                  if (item != null)
+                  if (item != null){
                       startToPlay(item.getEntry());
+                  }
               }
 
           }
