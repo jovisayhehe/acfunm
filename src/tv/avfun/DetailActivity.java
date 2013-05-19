@@ -287,6 +287,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         MenuItem shareItem = menu.findItem(R.id.menu_item_share_action_provider_action_bar);
         ShareActionProvider shareProvider = (ShareActionProvider) shareItem.getActionProvider();
         // shareProvider.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
+        shareProvider.setShareHistoryFileName(null);
         shareProvider.setShareIntent(createShareIntent());
         if (isFavorite) {
             menu.findItem(R.id.menu_item_fov_action_provider_action_bar).setIcon(R.drawable.rating_favorite_p);

@@ -48,26 +48,31 @@ public class DownloadDBImpl implements DownloadDB {
                     s.etag = query.getString(query.getColumnIndex(COLUMN_ETAG));
                     s.fileName = query.getString(query.getColumnIndex(COLUMN_DATA));
                     job.getEntry().part.segments.add(s);
-                    if(!TextUtils.isEmpty(job.getEntry().destination)
+                    if(AcApp.isExternalStorageAvailable()){
+                        if(!TextUtils.isEmpty(job.getEntry().destination)
                             && !TextUtils.isEmpty(s.fileName)){
                         // TODO 设置segment的播放路径为本地文件uri
                         // TODO 实现边下边播的功能 (未实测 = =)
-                        File file = new File(job.getEntry().destination, s.fileName);
-                        if(file.exists()){
-                            s.url = Uri.fromFile(file).toString();
-                        }else 
-                            s.url = s.stream;
-                        int downloadedSize = (int) file.length();
-                        job.addDownloadedSize(downloadedSize);
-                        if(query.getInt(query.getColumnIndex(COLUMN_CURRENT)) != downloadedSize){
-                            // 数据库中的数据有误！
-                            // 写入正确的数据 
-                            // XXX: 也许根本就不需要current_bytes这个字段...
-                            ContentValues values = new ContentValues();
-                            values.put(COLUMN_CURRENT, downloadedSize);
-                            updateDownload(job.getEntry().part.vid,s.num,values);
+                        
+                            File file = new File(job.getEntry().destination, s.fileName);
+                            if(file.exists()){
+                                s.url = Uri.fromFile(file).toString();
+                            }else 
+                                s.url = s.stream;
+                            int downloadedSize = (int) file.length();
+                            job.addDownloadedSize(downloadedSize);
+                            if(query.getInt(query.getColumnIndex(COLUMN_CURRENT)) != downloadedSize){
+                                // 数据库中的数据有误！
+                                // 写入正确的数据 
+                                // XXX: 也许根本就不需要current_bytes这个字段...
+                                
+                                ContentValues values = new ContentValues();
+                                values.put(COLUMN_CURRENT, downloadedSize);
+                                updateDownload(job.getEntry().part.vid,s.num,values);
+                            }
                         }
                     }
+                        
                     // 真实的下载进度由file.length来确定比较好。
                     // @see downloadTask.setupDestinationFile()
                     // int downloadedSize = query.getInt(query.getColumnIndex(COLUMN_CURRENT));

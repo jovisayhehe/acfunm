@@ -53,13 +53,18 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mDownloadMan = AcApp.instance().getDownloadManager();
+        mBar = getSupportActionBar();
+        mBar.setTitle("下载管理");
+        mBar.setDisplayHomeAsUpEnabled(true);
+        if(!AcApp.isExternalStorageAvailable()){
+            setContentView(R.layout.no_sd_layout);
+            return;
+        }
         setContentView(R.layout.list_layout);
         Intent service = new Intent(this, DownloadService.class);
         bindService(service, conn, BIND_AUTO_CREATE);
-        mBar = getSupportActionBar();
-        mBar.setDisplayHomeAsUpEnabled(true);
         mStateArray = getResources().getStringArray(R.array.download_state);
-        mDownloadMan = AcApp.instance().getDownloadManager();
         // TODO 换成popupwindow或者其他的显示方式
         ArrayAdapter adapter = ArrayAdapter.createFromResource(mBar.getThemedContext(), R.array.download_state,
                 R.layout.sherlock_spinner_item);
@@ -147,6 +152,7 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
     @Override
     public boolean onNavigationItemSelected(int itemPosition, long itemId) {
         Log.i(TAG, mStateArray[itemPosition] + "selected");
+
         updateListView(itemPosition);
         lastNavPosition = itemPosition;
         return true;

@@ -11,7 +11,10 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -52,9 +55,28 @@ public class DownloadService extends Service {
     @Override
     public void onCreate() {
         mDownloadProvider = AcApp.instance().getDownloadManager().getProvider();
+        IntentFilter filter = new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
+        filter.setPriority(1000);
+        registerReceiver(sdCardMounted, filter);
     }
+    private BroadcastReceiver sdCardMounted = new BroadcastReceiver(){
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(Intent.ACTION_MEDIA_MOUNTED.equals(intent.getAction())){
+                mDownloadProvider.loadOldDownloads();
+                Log.d(TAG, "sdcard mounted");
+            }
+        }
+        
+    };
+    
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if(!AcApp.isExternalStorageAvailable()){
+            AcApp.showToast("SD卡未找到！");
+            return 0;
+        }
         if(intent != null){
             String action = intent.getAction();
             Log.d(TAG, "onStart - "+action);
@@ -130,6 +152,7 @@ public class DownloadService extends Service {
     }
     @Override
     public void onDestroy() {
+        unregisterReceiver(sdCardMounted);
         Log.d(TAG, "Download Service Destory!!");
     }
     

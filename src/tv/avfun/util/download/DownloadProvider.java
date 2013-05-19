@@ -37,6 +37,11 @@ public class DownloadProvider {
 
     public void loadOldDownloads() {
         List<DownloadJob> oldDownloads = mDb.getAllDownloads();
+        if(mCompletedJobs.size()>0 || mQueuedJobs.size()>0){
+            mCompletedJobs.clear();
+            mQueuedJobs.clear();
+            allJobs.clear();
+        }
         for(DownloadJob j : oldDownloads){
             if(!DownloadManager.isRunningStatus(j.getStatus())){
                 mCompletedJobs.add(j); // complete
