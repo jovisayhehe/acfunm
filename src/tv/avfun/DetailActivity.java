@@ -127,7 +127,6 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                //TODO 查数据库获得离线数据！
                 DownloadManager man = AcApp.instance().getDownloadManager();
                 List<VideoPart> downloadParts = man.getVideoParts(aid);
                 
@@ -376,7 +375,6 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
 
         @Override
         public void doStartDownload(final VideoPart item) {
-            // TODO start download
             final DownloadEntry entry = new DownloadEntry(aid,title,item);
             
             if (item.segments == null || item.segments.isEmpty()) {
@@ -393,7 +391,6 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
                 }.start();
             }else
                 mDownloadManager.download(entry);
-                
         }
 
         private Handler mHanlder =  new Handler(){

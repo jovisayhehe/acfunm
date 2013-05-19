@@ -31,7 +31,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 /**
- * Segment File Download Task(TODO)
+ * Segment File Download Task
  * @author Yrom
  *
  */

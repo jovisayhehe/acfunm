@@ -125,9 +125,7 @@ public class DownloadDBImpl implements DownloadDB {
         values.put(COLUMN_VID, entry.part.vid);
         values.put(COLUMN_VTYPE, entry.part.vtype);
         values.put(COLUMN_SUBTITLE, entry.part.subtitle);
-        String path = entry.destination; // TODO 判断由调用者来做
-        if(TextUtils.isEmpty(path))
-            path = AcApp.getDownloadPath(entry.aid, entry.part.vid).getAbsolutePath();
+        String path = entry.destination;
         values.put(COLUMN_DEST, path);
         String whereClause = COLUMN_AID+"=? and "+COLUMN_VID + "=? and " + COLUMN_NUM +"=?";
         for(int i =0;i < entry.part.segments.size(); i++){

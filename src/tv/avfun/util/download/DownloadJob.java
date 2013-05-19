@@ -11,7 +11,7 @@ import tv.avfun.entity.VideoSegment;
 import tv.avfun.util.download.DownloadTask.DownloadTaskListener;
 
 /**
- * Job of download(TODO)
+ * Job of download
  * 
  * @author Yrom
  * 
@@ -54,7 +54,11 @@ public class DownloadJob {
             mDownloadMan = manager;
     }
     private void initTask() {
-        mTasks = new LinkedList<DownloadTask>();
+        if(mTasks == null)
+            mTasks = new LinkedList<DownloadTask>();
+        else{
+            mTasks.clear();
+        }
         int i=0;
         for (VideoSegment s : mEntry.part.segments) {
             DownloadInfo info = new DownloadInfo(mDownloadMan,
@@ -89,11 +93,7 @@ public class DownloadJob {
     }
 
     public void resume() {
-        notifyDownloadStarted();
-        if(mTasks == null) initTask();
-        for (DownloadTask task : mTasks) {
-            task.resume();
-        }
+        start();
     }
 
     /**
@@ -234,14 +234,12 @@ public class DownloadJob {
         
         @Override
         public void onRetry(DownloadTask task) {
-            // TODO Auto-generated method stub
             //notifyDownloadStarted();
             mStatus = DownloadDB.STATUS_PENDING;
         }
         
         @Override
         public void onResume(DownloadTask task) {
-            // TODO Auto-generated method stub
             mStatus = DownloadDB.STATUS_PENDING;
         }
         
@@ -262,7 +260,6 @@ public class DownloadJob {
             }
             if(bytesRead > 0){
                 addDownloadedSize(bytesRead);
-//                mProgress += currentBytes * 100 / task.getTotalBytes();
                 mDownloadMan.notifyAllObservers();
             }
         }

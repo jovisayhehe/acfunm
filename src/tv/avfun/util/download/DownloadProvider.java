@@ -6,9 +6,11 @@ import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 
+import tv.avfun.app.AcApp;
 import tv.avfun.entity.VideoPart;
 import tv.avfun.entity.VideoSegment;
 import tv.avfun.util.ArrayUtil;
@@ -36,7 +38,7 @@ public class DownloadProvider {
     public void loadOldDownloads() {
         List<DownloadJob> oldDownloads = mDb.getAllDownloads();
         for(DownloadJob j : oldDownloads){
-            if(!mDownloadManager.isRunningStatus(j.getStatus())){
+            if(!DownloadManager.isRunningStatus(j.getStatus())){
                 mCompletedJobs.add(j); // complete
             }else{
                 // start failed job
@@ -129,6 +131,10 @@ public class DownloadProvider {
         
         try {
             job.getEntry().part.isDownloading = true;
+            if(TextUtils.isEmpty(job.getEntry().destination))
+                job.getEntry().destination = 
+                    AcApp.getDownloadPath(job.getEntry().aid, job.getEntry().part.vid)
+                        .getAbsolutePath();
             mDb.addDownload(job.getEntry());
             mQueuedJobs.add(job);
             mDownloadManager.notifyAllObservers();
@@ -143,7 +149,7 @@ public class DownloadProvider {
      * @param job
      */
     public void removeDownload(DownloadJob job) {
-        if(mDownloadManager.isRunningStatus(job.getStatus())){ 
+        if(DownloadManager.isRunningStatus(job.getStatus())){ 
             job.cancel();
             mQueuedJobs.remove(job);
         }else{
