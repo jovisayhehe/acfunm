@@ -171,7 +171,7 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
         }
         mBar.setTitle("共"+mAdapter.getCount()+"个下载项");
         if (jobs.isEmpty()) {
-            mStateView.setText("no download");
+            mStateView.setText(getString(R.string.no_download));
             mStateView.setVisibility(View.VISIBLE);
             mListView.setVisibility(View.GONE);
         }
@@ -211,8 +211,14 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
             case R.id.menu_download_delete:
-                AcApp.showToast("删除");
-                //TODO 
+                
+                int i =0;
+                for(DownloadJob job :mAdapter.getCheckedJobs()){
+                    mDownloadMan.deleteDownload(job);
+                    i++;
+                }
+                AcApp.showToast("删除完毕 - 共" + i +"项");
+                mAdapter.notifyDataSetChanged();
                 break;
             case R.id.menu_download_resume:
                 AcApp.showToast("继续");
@@ -220,13 +226,14 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
                     if(job.getProgress() != 100){
                         job.setListener(mDownloadService.mJobListener);
                         job.resume();
+                        mDownloadMan.getProvider().resume(job);
                     }
                 }
                 break;
             case R.id.menu_download_pause:
                 AcApp.showToast("暂停");
                 for(DownloadJob job :mAdapter.getCheckedJobs()){
-                    if(job.isRunning()){
+                    if(DownloadManager.isRunningStatus(job.getStatus())){
                         job.setListener(mDownloadService.mJobListener);
                         job.pause();
                     }

@@ -68,6 +68,9 @@ public class AcApp extends Application {
         super.onLowMemory();
     }
     
+    public DownloadManager getDownloadManager() {
+        return mDownloadManager;
+    }
     public String getVersionName(){
         PackageInfo info = null;
         try {
@@ -217,21 +220,20 @@ public class AcApp extends Application {
         View v = searchView.findViewById(R.id.abs__search_plate);
         v.setBackgroundResource(R.drawable.edit_text_holo_light);
     }
+    
     public static void showNotification(Intent mIntent, int notificationId, String text,int icon, CharSequence title){
+        showNotification(mIntent, notificationId, text, icon, title, Notification.FLAG_AUTO_CANCEL);
+    }
+    @SuppressWarnings("deprecation")
+    public static void showNotification(Intent mIntent, int notificationId, String text,int icon, CharSequence title,int flag){
         Notification notification = new Notification(icon,text,System.currentTimeMillis());
-//            Intent manIntent = new Intent(this, DownloadManActivity.class);
         mIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent contentIntent = PendingIntent.getActivity(mContext, 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notification.setLatestEventInfo(mContext, title, text, contentIntent);
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        notification.flags |= flag;
         if(mNotiManager == null)
             mNotiManager = (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
         mNotiManager.notify(notificationId, notification);
-    }
-    
-    
-    public DownloadManager getDownloadManager() {
-        return mDownloadManager;
     }
     
 }

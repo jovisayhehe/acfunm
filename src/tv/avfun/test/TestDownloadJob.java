@@ -56,6 +56,12 @@ public class TestDownloadJob extends AndroidTestCase {
                 Log.i("test", "onDownloadFinished");
                 
             }
+
+            @Override
+            public void onDownloadPaused(DownloadJob job) {
+                // TODO Auto-generated method stub
+                
+            }
         });
         manager.registerDownloadObserver(new DownloadObserver() {
             

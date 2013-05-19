@@ -101,7 +101,11 @@ public class DownloadManager {
             }
             new File(path,fileName).delete();
         }
-        new File(path).delete();
+        File f = new File(path);
+        f.delete();
+        File p = f.getParentFile();
+        if(p.listFiles().length == 0)
+            p.delete();
     }
 
 
@@ -138,5 +142,11 @@ public class DownloadManager {
 
     }
 
-
+    public static boolean isRunningStatus(int status){
+        return status>=DownloadDB.STATUS_PENDING && status <= DownloadDB.STATUS_RUNNING;
+    }
+    
+    public static boolean isErrorStatus(int status){
+        return status >= DownloadDB.STATUS_BAD_REQUEST;
+    }
 }

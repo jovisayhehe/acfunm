@@ -36,7 +36,7 @@ public class DownloadProvider {
     public void loadOldDownloads() {
         List<DownloadJob> oldDownloads = mDb.getAllDownloads();
         for(DownloadJob j : oldDownloads){
-            if(!j.isRunning()){
+            if(!mDownloadManager.isRunningStatus(j.getStatus())){
                 mCompletedJobs.add(j); // complete
             }else{
                 // start failed job
@@ -90,8 +90,14 @@ public class DownloadProvider {
      * mark job completed
      */
     public void complete(int status, DownloadJob job) {
+        if(mCompletedJobs.contains(job))
+            return;
         mQueuedJobs.remove(job);
         mCompletedJobs.add(job);
+        if(status == 200){
+            job.getEntry().part.isDownloaded = true;
+        }
+        job.getEntry().part.isDownloading = false;
 //        由task自己更新status
 //        for(VideoSegment s :job.getEntry().part.segments){
 //            setStatus(job.getEntry().part.vid, s.num, status);
@@ -99,7 +105,9 @@ public class DownloadProvider {
         mDownloadManager.notifyAllObservers();
     }
     public void resume(DownloadJob job){
-        // TODO mark job resuming
+        if(mQueuedJobs.contains(job)) return;
+        mQueuedJobs.add(job);
+        mCompletedJobs.remove(job);
     }
     public void update(String vid, int num, ContentValues values){
         mDb.updateDownload(vid,num,values);
@@ -135,7 +143,7 @@ public class DownloadProvider {
      * @param job
      */
     public void removeDownload(DownloadJob job) {
-        if(job.isRunning()){ 
+        if(mDownloadManager.isRunningStatus(job.getStatus())){ 
             job.cancel();
             mQueuedJobs.remove(job);
         }else{

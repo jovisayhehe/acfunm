@@ -57,7 +57,6 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
         if(mListener!=null)
             mListener.onPause(this);
     }
-    //TODO resume task
     public void resume(){
         isPaused = false;
         if(mListener!=null)
@@ -122,7 +121,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
             return true;
         }catch (StopRequest e) {
             finalStatus = e.mFinalStatus;
-            if(BuildConfig.DEBUG) Log.w(TAG, "status = "+finalStatus,e);
+            if(BuildConfig.DEBUG) Log.d(TAG, "status = "+finalStatus +","+e.getMessage());
             return false;
         }catch (Exception e) {
             finalStatus = 444; // 程序错误 = =
@@ -135,10 +134,13 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
             }
             closeStream(state);
             ContentValues values = new ContentValues();
-            if(finalStatus >= DownloadDB.STATUS_BAD_REQUEST && state.mSaveFile != null){
-                state.mSaveFile.delete();
-                state.mSaveFile = null;
-            }else if(finalStatus == DownloadDB.STATUS_SUCCESS){
+//           if(finalStatus == DownloadDB.STATUS_BAD_REQUEST && state.mSaveFile != null){
+//                state.mSaveFile.delete();
+//                state.mSaveFile = null;
+//            }else 
+//            去掉自动删除失败任务
+            
+            if(finalStatus == DownloadDB.STATUS_SUCCESS){
 //                File newFile = new File(mInfo.savePath, mInfo.snum + FileUtil.getUrlExt(state.mRequestUri));
 //                state.mSaveFile.renameTo(newFile);
 //                重命名失败。。。
@@ -216,7 +218,6 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
                 state.mStream.write(data, 0, bytesRead);
                 return;
             } catch (IOException ex) {
-                // TODO 
                 Log.i(TAG, "failed to write " + state.mSaveFile.getAbsolutePath(),ex);
             }
         }

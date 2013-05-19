@@ -37,7 +37,7 @@ public class DownloadDBImpl implements DownloadDB {
                     String aid = query.getString(query.getColumnIndex(COLUMN_AID));
                     String vid = query.getString(query.getColumnIndex(COLUMN_VID));
                     // 是否同一个part
-                    if(job == null || !(job.getEntry().aid.equals(aid) && job.getEntry().part.vid.equals(vid))){
+                    if(job == null || !job.getEntry().aid.equals(aid) || !job.getEntry().part.vid.equals(vid)){
                         job = buildJob(query);
                         all.add(job);
                     }
@@ -98,7 +98,7 @@ public class DownloadDBImpl implements DownloadDB {
         DownloadJob job = new DownloadJob(entry);
         job.setUserAgent(cursor.getString(cursor.getColumnIndex(COLUMN_UA)));
         int status = cursor.getInt(cursor.getColumnIndex(COLUMN_STATUS));
-        job.setRunning(status == STATUS_PENDING || status == STATUS_RUNNING);
+        job.setStatus(status);
         entry.part.isDownloaded = status == STATUS_SUCCESS;
         return job;
     }

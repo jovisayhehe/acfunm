@@ -12,6 +12,7 @@ import tv.avfun.util.ArrayUtil;
 import tv.avfun.util.FileUtil;
 import tv.avfun.util.download.DownloadEntry;
 import tv.avfun.util.download.DownloadJob;
+import tv.avfun.util.download.DownloadManager;
 import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,12 +72,15 @@ public class DownloadJobAdapter extends ArrayListAdapter<DownloadJob> implements
 		if(job.getProgress() == 100){
 			holder.progressBar.setVisibility(View.GONE);
 			holder.progressText.setText(FileUtil.formetFileSize(totalSize)+"/已完成");
-		}else if(downloadSize== 0 && job.isRunning()){
+		}else if(downloadSize== 0 && DownloadManager.isRunningStatus(job.getStatus())){
 		    holder.progressBar.setVisibility(View.VISIBLE);
 		    holder.progressBar.setIndeterminate(true);  
-		}
-		else if(totalSize >0 ){
-		    if(job.isRunning()){
+		}else if(DownloadManager.isErrorStatus(job.getStatus())){
+		    holder.progressBar.setVisibility(View.GONE);
+            holder.progressText.setText("下载失败 - " + job.getStatus());
+            
+		}else if(totalSize >0 ){
+		    if(DownloadManager.isRunningStatus(job.getStatus())){
 		        holder.progressBar.setVisibility(View.VISIBLE);
 		        holder.progressBar.setIndeterminate(false);   
 		        holder.progressBar.setProgress(job.getProgress());

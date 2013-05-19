@@ -13,6 +13,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
@@ -31,10 +32,7 @@ public class DownloadService extends Service {
     public static final String EXTRA_DOWNLOAD_UA = "download_ua";
     public static final int DOWNLOAD_NOTIFICATION_ID = 250;
     private static final String TAG = DownloadService.class.getSimpleName();
-    
-    
-    private NotificationManager mNotificationManager;
-    private DownloadProvider mDownloadProvider;
+    public DownloadProvider mDownloadProvider;
     
     @Override
     public IBinder onBind(Intent intent) {
@@ -53,7 +51,6 @@ public class DownloadService extends Service {
     }
     @Override
     public void onCreate() {
-        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mDownloadProvider = AcApp.instance().getDownloadManager().getProvider();
     }
     @Override
@@ -98,20 +95,19 @@ public class DownloadService extends Service {
             mDownloadProvider.complete(status, job);
             showDownloadedNoti(status,job);
         }
+
+        @Override
+        public void onDownloadPaused(DownloadJob job) {
+            showDownloadedNoti(DownloadDB.STATUS_PAUSED,job);
+        }
     };
-    // TODO 移到AcApp中
-    private void showNoti(String text,int icon, CharSequence title){
+    private void showNoti(String text,int icon, CharSequence title, int flag){
         Intent mIntent = new Intent(this, DownloadManActivity.class);
-        AcApp.showNotification(mIntent, DOWNLOAD_NOTIFICATION_ID, text, icon, title);
+        AcApp.showNotification(mIntent, DOWNLOAD_NOTIFICATION_ID, text, icon, title, flag);
     }
     private void showDownloadedNoti(int status,DownloadJob job) {
         String contentText = job.getEntry().part.subtitle;
-//        Notification notification = new Notification.Builder(this)
-//                                .setAutoCancel(true)
-//                                .setContentTitle("下载完成")
-//                                .setContentText(notificationMessage)
-//                                .setSmallIcon(android.R.drawable.stat_sys_download)
-//                                .build();
+        // FIXME: hard code
         String title = "";
         if (status == DownloadDB.STATUS_SUCCESS)
             title = getString(R.string.downloaded);
@@ -125,15 +121,16 @@ public class DownloadService extends Service {
             title = "等待WIFI";
         else
             title = getString(R.string.download_fail) + " - 状态码：" + status;
-        showNoti(contentText, android.R.drawable.stat_sys_download_done, title);
+        showNoti(contentText, android.R.drawable.stat_sys_download_done, title, Notification.FLAG_AUTO_CANCEL);
 
     }
     private void showStartNoti(DownloadJob job){
         String contentText = job.getEntry().part.subtitle;
-        showNoti(contentText, android.R.drawable.stat_sys_download, getString(R.string.start_download));
+        showNoti(contentText, android.R.drawable.stat_sys_download, getString(R.string.start_download),Notification.FLAG_NO_CLEAR);
     }
     @Override
     public void onDestroy() {
-        Log.d(TAG, "Destory!!");
+        Log.d(TAG, "Download Service Destory!!");
     }
+    
 }

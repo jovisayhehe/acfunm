@@ -38,5 +38,6 @@
 	<string name="menu_download_resume">继续</string>
 	<string name="menu_download_pause">暂停</string>
 	<string name="menu_select_all">全选</string>
+	<string name="no_download">O(∩_∩)O 没有下载项~</string>
 	
 </resources>

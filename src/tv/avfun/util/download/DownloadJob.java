@@ -29,7 +29,8 @@ public class DownloadJob {
     private DownloadManager     mDownloadMan;
     private String              mUserAgent;
     private List<DownloadTask>  mTasks;
-    private boolean             isRunning;
+
+    private int mStatus;
 
 
     public DownloadJob(DownloadEntry entry) {
@@ -51,8 +52,6 @@ public class DownloadJob {
             mDownloadMan = AcApp.instance().getDownloadManager();
         else 
             mDownloadMan = manager;
-        // FIXME: 从数据库中查到的job不会初始化Task！
-        // initTask(); 
     }
     private void initTask() {
         mTasks = new LinkedList<DownloadTask>();
@@ -121,10 +120,12 @@ public class DownloadJob {
         }
         return 0;
     }
-    public void setRunning(boolean running){
-        isRunning = running;
+    public int getStatus(){
+        return mStatus;
     }
-   
+    public void setStatus(int status){
+        this.mStatus = status;
+    }
     /**
      * 添加到part总大小
      * 
@@ -164,10 +165,6 @@ public class DownloadJob {
         this.mDownloadedSize += downloadedSize;
     }
 
-    public boolean isRunning() {
-        return isRunning;
-    }
-
     public DownloadEntry getEntry() {
         return mEntry;
     }
@@ -199,7 +196,10 @@ public class DownloadJob {
 
     public void notifyDownloadCompleted(int status) {
         if (mListener != null) {
-            mListener.onDownloadFinished(status, this);
+            if(status == DownloadDB.STATUS_PAUSED)
+                mListener.onDownloadPaused(this);
+            else 
+                mListener.onDownloadFinished(status, this);
         }
         // TODO
     }
@@ -215,7 +215,8 @@ public class DownloadJob {
          * Callback when a download finished
          */
         public void onDownloadFinished(int status, DownloadJob job);
-
+        
+        public void onDownloadPaused(DownloadJob job);
         /**
          * Callback when a download started
          */
@@ -223,33 +224,35 @@ public class DownloadJob {
 
     }
     
+    int lastUpdateTaskId = -1;
     private DownloadTaskListener mTaskListener = new DownloadTaskListener() {
-        int lastUpdateTaskId = -1;
         @Override
         public void onStart(DownloadTask task) {
-
-            isRunning = true;
+            lastUpdateTaskId = -1;
+            mStatus = DownloadDB.STATUS_PENDING;
         }
         
         @Override
         public void onRetry(DownloadTask task) {
             // TODO Auto-generated method stub
             //notifyDownloadStarted();
-            isRunning =true;
+            mStatus = DownloadDB.STATUS_PENDING;
         }
         
         @Override
         public void onResume(DownloadTask task) {
             // TODO Auto-generated method stub
-            isRunning = true;
+            mStatus = DownloadDB.STATUS_PENDING;
         }
         
         @Override
         public void onProgress(int bytesRead, DownloadTask task) {
+            mStatus = DownloadDB.STATUS_RUNNING;
             int total = task.getTotalBytes();
             if(total < 0) return;
             if(lastUpdateTaskId == -1){
-                if(mTotalSize<0){
+                if(mTotalSize<=0){              // 保证TotalSize只被初始化一次
+                                                // FIXME:优化逻辑
                     addTotalSize(task.getTotalBytes());
                     lastUpdateTaskId = task.getId();
                 }
@@ -266,14 +269,14 @@ public class DownloadJob {
         
         @Override
         public void onPause(DownloadTask task) {
-            isRunning =false;
+            mStatus = DownloadDB.STATUS_PAUSED;
 //            mDownloadMan.notifyAllObservers();
         }
         
         @Override
         public void onCompleted(int status, DownloadTask task) {
-            isRunning = false;
             notifyDownloadCompleted(status);
+            mStatus = status;
         }
         
         @Override
