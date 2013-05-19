@@ -144,10 +144,8 @@ public class SectionActivity extends SherlockActivity implements OnClickListener
                     if(!item.isDownloading && !item.isDownloaded){
                         if(BuildConfig.DEBUG)
                             Log.i(TAG, "parsing parts for "+ vid);
-                        int parseMode = 1;
-                        if(AcApp.getConfig().getBoolean("isHD", false))
-                            parseMode = 2;
-                        ApiParser.parseVideoParts(item,parseMode);
+                        
+                        ApiParser.parseVideoParts(item,AcApp.getParseMode());
                     }
                     data = item.segments;
                     if (data != null && data.size() > 0) {

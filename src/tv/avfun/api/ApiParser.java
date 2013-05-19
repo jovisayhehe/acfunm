@@ -263,7 +263,7 @@ public class ApiParser {
         JSONObject jsonObject = Connectivity.getJSONObject(url);
         item.vtype = jsonObject.getString("vtype");
         item.vid = jsonObject.get("vid").toString();
-        if(!AcApp.getConfig().getBoolean("isHD", false) && "sina".equals(parseVideoType(item.vtype))){
+        if(AcApp.getParseMode() < 2 && "sina".equals(parseVideoType(item.vtype))){
             item.vid = getSinaMp4Vid(item.vid);
         }
     }
@@ -395,61 +395,6 @@ public class ApiParser {
         return countpage;
     }
 
-    /*public static ArrayList<Object> getSearchResults(String word, int page) throws Exception {
-        ArrayList<Object> rsandtotalpage = new ArrayList<Object>();
-        String url = "http://www.acfun.tv/api/search.aspx?query="
-                + URLEncoder.encode(word, "utf-8") + "&orderId=0&channelId=0&pageNo="
-                + String.valueOf(page) + "&pageSize=20";
-
-        List<Map<String, Object>> contents = new ArrayList<Map<String, Object>>();
-
-        JSONObject jsonObject = Connectivity.getJSONObject(url);
-        Boolean success = jsonObject.getBoolean("success");
-        if (success) {
-            int totalcount = jsonObject.getInt("totalcount");
-            if (totalcount == 0) {
-                return null;
-            }
-            JSONArray jsonArray = jsonObject.getJSONArray("contents");
-            for (int i = 0; i < jsonArray.length(); i++) {
-
-                JSONObject job = (JSONObject) jsonArray.get(i);
-                String aid = job.optString("aid");
-                // if(Integer.parseInt(aid)<327496){
-                // continue;
-                // }
-                HashMap<String, Object> map = new HashMap<String, Object>();
-                map.put("aid", aid);
-                map.put("title", job.optString("title"));
-                map.put("username", job.optString("author"));
-                // map.put("url", job.optString("url"));
-                map.put("views", String.valueOf(job.optInt("views")));
-                // map.put("uptime", String.valueOf(job.optInt("releaseDate")));
-                map.put("titleImg", job.get("titleImg").toString());
-                // map.put("stows", String.valueOf(job.optInt("stows")));
-                map.put("description",
-                        job.optString("description").replace("&nbsp;", " ").replace("&amp;", "&")
-                                .replaceAll("\\<.*?>", ""));
-                map.put("comments", job.get("comments").toString());
-                map.put("channelId", job.optInt("channelId"));
-                contents.add(map);
-            }
-
-            rsandtotalpage.add(contents);
-            int countpage;
-            if (totalcount % 20 == 0) {
-                countpage = totalcount / 20;
-            } else {
-                countpage = totalcount / 20 + 1;
-            }
-            rsandtotalpage.add(countpage);
-        } else {
-            return null;
-        }
-
-        return rsandtotalpage;
-
-    }*/
     /**
      * FIXME 解析似乎有问题！！！
      * 解析视频地址 到item中

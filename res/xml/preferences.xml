@@ -23,12 +23,14 @@
             android:defaultValue="1"
             android:dialogTitle="设置主页显示内容"
             />
-        <CheckBoxPreference 
+        <ListPreference
             android:icon="@drawable/ic_video"
             android:title="视频清晰度"
-            android:summaryOn="高清货源"
-            android:summaryOff="朱军画质（适合爪机）"
-            android:key="isHD" 
+            android:entries="@array/pref_entries_parse_mode"
+            android:entryValues="@array/pref_values_parse_mode"
+            android:key="parse_mode" 
+            android:defaultValue="0"
+            android:dialogTitle="设置视频清晰度"
             />
     </PreferenceCategory>
     <PreferenceCategory android:title="其他">

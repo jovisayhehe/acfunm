@@ -23,6 +23,16 @@
         <item>2</item>
         <item>3</item>
     </string-array>
+    <string-array name="pref_entries_parse_mode">
+       	<item>流畅画质（省流量）</item>
+       	<item>高清画质（推荐）</item>
+       	<item>超清优先（你懂的）</item>
+    </string-array>
+    <string-array name="pref_values_parse_mode">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
     <string-array name="download_state">
         <item>所有</item>
         <item>下载中</item>
