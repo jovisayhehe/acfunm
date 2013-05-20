@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="查看评论"
+    android:gravity="center"
+    android:padding="8dip"
+    android:textSize="16sp"
+    android:duplicateParentState="true"
+    android:textColor="@color/text_selectable_item_color"
+     />
+

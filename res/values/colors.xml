@@ -20,5 +20,10 @@
     <color name="banner_indicator_highlight">#ffffffff</color>
     <color name="banner_indicator_normal">#66ffffff</color>
     <color name="update_info_bg">#CC2278FF</color>
-
+    <color name="text_color_pressed">#ccf47b26</color>
+    <color name="text_color_default">#ff000000</color>
+    <color name="main_color_light">#ccFF9A03</color>
+    <color name="gray_light">#e2e2e2</color>
+    <color name="gray">#CDCDCD</color>
+    <color name="half_transparent">#99000000</color>
 </resources>

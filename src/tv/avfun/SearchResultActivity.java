@@ -2,19 +2,15 @@ package tv.avfun;
 
 
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import tv.avfun.adapter.ChannelContentListViewAdaper;
+import tv.avfun.adapter.ChannelContentListAdaper;
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.ChannelApi;
 import tv.avfun.entity.Contents;
 import android.app.SearchManager;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +19,6 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -38,14 +33,13 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 	private TextView time_outtext;
 	private ListView list;
 	private List<Contents> data = new ArrayList<Contents>();
-	private ChannelContentListViewAdaper adaper;
+	private ChannelContentListAdaper adaper;
 	private int indexpage = 1;
 	private boolean isload = false;
 	private View footview;
 	private int totalpage;
 	private boolean isreload = false;
 	private int channelId;
-	private ArrayList<Object> objs;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -72,7 +66,7 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 			list.addFooterView(footview);
 			footview.setClickable(false);
 			list.setFooterDividersEnabled(false);
-			adaper = new ChannelContentListViewAdaper(this, data);
+			adaper = new ChannelContentListAdaper(this, data);
 			list.setAdapter(adaper);
 			list.setOnItemClickListener(this);
 			list.setOnScrollListener(this);
@@ -165,19 +159,6 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 		super.onNewIntent(intent);
 	}
 	
-	@Override
-	public boolean onOptionsItemSelected(
-			com.actionbarsherlock.view.MenuItem item) {
-		
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			this.finish();
-			break;
-		default:
-			break;
-		}
-		return super.onOptionsItemSelected(item);
-	}
 
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -219,26 +200,13 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 			if(channelId!= ChannelApi.id.ARTICLE.AN_CULTURE && channelId!=ChannelApi.id.ARTICLE.COLLECTION 
 			        &&channelId!=ChannelApi.id.ARTICLE.COMIC_LIGHT_NOVEL &&channelId!=ChannelApi.id.ARTICLE.WORK_EMOTION){
 				
-				Intent intent = new Intent(this, Detail_Activity.class);
-				ImageView img = (ImageView) view.findViewById(R.id.channellist_item_img);
-				Drawable da = img.getDrawable();
-				BitmapDrawable bd = (BitmapDrawable) da;
-				Bitmap bm = bd.getBitmap();
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-				intent.putExtra("thumb", baos.toByteArray());
-				intent.putExtra("aid", c.getAid());
-				intent.putExtra("title", c.getTitle());
-				intent.putExtra("username", c.getUsername());
-				intent.putExtra("views", c.getViews()+"");
-				intent.putExtra("comments", c.getComments()+"");
-				intent.putExtra("description", c.getDescription());
-				intent.putExtra("channelId", String.valueOf(channelId));
+				Intent intent = new Intent(this, DetailActivity.class);
+				intent.putExtra("contents", c);
 				startActivity(intent);
 			}else{
 				
-				Intent intent = new Intent(SearchResultActivity.this, WebView_Activity.class);
-				intent.putExtra("modecode", Channel_Activity.modecode);
+				Intent intent = new Intent(SearchResultActivity.this, WebViewActivity.class);
+				intent.putExtra("modecode", ChannelActivity.modecode);
 				intent.putExtra("aid", c.getAid());
 				intent.putExtra("title", c.getTitle());
 				intent.putExtra("channelId", String.valueOf(channelId));

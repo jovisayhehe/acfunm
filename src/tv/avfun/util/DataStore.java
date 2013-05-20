@@ -14,12 +14,15 @@ import java.io.Writer;
 import java.util.Calendar;
 import java.util.List;
 
-import tv.avfun.AcApp;
+import org.json.external.JSONException;
+import org.json.external.JSONObject;
+
 import tv.avfun.BuildConfig;
 import tv.avfun.api.Bangumi;
 import tv.avfun.api.BangumiList;
 import tv.avfun.api.Channel;
 import tv.avfun.api.ChannelList;
+import tv.avfun.app.AcApp;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -37,15 +40,17 @@ public class DataStore {
 
     private ChannelList            channelList          = new ChannelList();
     private BangumiList            bangumiList          = new BangumiList();
+    /** 30 min */
+    public static final long       CHANNEL_EXPIRED      = 30 * 60000;
     /** 1 hour */
     public static final long       CHANNEL_LIST_EXPIRED = 60 * 60 * 1000;
-    /** 3 days (XXX: 待定) */
-    public static final long       TIME_LIST_EXPIRED    = 3 * 24 * 60 * 60 * 1000;
+    /** 2 days (XXX: 待定) */
+    public static final long       TIME_LIST_EXPIRED    = 2 * 24 * 60 * 60 * 1000;
     /** 首页频道列表缓存文件 */
     public static final String     CHANNEL_LIST_CACHE   = "channel_list.dat";
     /** 番组列表缓存文件 */
     public static final String     TIME_LIST_CACHE      = "time_date.dat";
-
+    
     private DataStore() {
         initCache();
     }
@@ -92,7 +97,7 @@ public class DataStore {
     public List<Bangumi[]> loadTimeList() {
         synchronized (this.bangumiList) {
             if (this.bangumiList.bangumiTimeList == null) {
-                readTimeListCache();
+                if(!readTimeListCache()) return null;
             }
             return this.bangumiList.bangumiTimeList;
         }
@@ -128,24 +133,31 @@ public class DataStore {
     // 首页频道列表
     // =======================================================
     /**
+     * <b>废弃</b>。调用者应由{@link #getChannelListLastUpdateTime()}来判断是否有缓存
      * @return 没有缓存文件，或缓存时间超过 {@link #CHANNEL_LIST_EXPIRED}<br>
+     *         或者主页显示模式被更改了
      *         则返回false
      */
+    @Deprecated
     public boolean isChannelListCached() {
         synchronized (this.channelList) {
             if (this.channelList.channels == null) {
                 if (!readChannelListCache())
                     return false;
             }
+            if(!AcApp.getHomeDisplayMode().equals(this.channelList.displayMode))
+                return false;
             return this.channelList.cacheTime + CHANNEL_LIST_EXPIRED >= System.currentTimeMillis();
         }
     }
-
+    public boolean isDisplayModeChanged(){
+        return !AcApp.getHomeDisplayMode().equals(this.channelList.displayMode);
+    }
     /** 加载频道列表缓存 */
     public Channel[] loadChannelList() {
         synchronized (this.channelList) {
             if (this.channelList.channels == null) {
-                readChannelListCache();
+                if(!readChannelListCache()) return null;
             }
             return this.channelList.channels;
         }
@@ -183,6 +195,7 @@ public class DataStore {
      */
     public boolean saveChannelList(Channel[] list) {
         if (list != null) {
+            this.channelList.displayMode = AcApp.getHomeDisplayMode();
             this.channelList.channels = list;
             this.channelList.cacheTime = System.currentTimeMillis();
             return writeObject(channelListCachedFile.getAbsolutePath(), this.channelList);
@@ -211,7 +224,7 @@ public class DataStore {
             return obj;
         } catch (Exception e) {
             if (BuildConfig.DEBUG)
-                Log.e(TAG, "failed to read object from " + path, e);
+                Log.e(TAG, "failed to read object from " + path +"\n"+ e.getMessage());
             return null;
         }
     }
@@ -255,7 +268,7 @@ public class DataStore {
             }
         } catch (Exception e) {
             if (BuildConfig.DEBUG)
-                Log.e(TAG, "can not read from file " + path, e);
+                Log.e(TAG, "can not read from file " + path+"\n"+ e.getMessage());
         }
         return null;
     }
@@ -274,6 +287,8 @@ public class DataStore {
             throw new IllegalArgumentException("path 或 str 不能为null、空白或空字符串！");
         File file = new File(path);
         try {
+            if(file.exists()) file.delete();                // 确保是一个
+            file.createNewFile();                           // 全新的文件
             Writer writer = new FileWriter(file);
             writer.write(str);
             writer.close();
@@ -303,5 +318,47 @@ public class DataStore {
     public static String readData(InputStream in, String charset) throws IOException{
         return new String(readData(in),charset);
     }
+    public static String getChannelCacheFile(int channelId){
+        return AcApp.context().getCacheDir()+"/"+channelId+".dat";
+    }
+    public static boolean saveChannel(Channel channel) {
+        return writeObject(getChannelCacheFile(channel.channelId), channel);
+    }
+    public static boolean isChannelCached(int channelId){
+        long lastModified = new File(getChannelCacheFile(channelId)).lastModified();
+        return System.currentTimeMillis() - lastModified < CHANNEL_EXPIRED;
+    }
+    public static Channel getCachedChannel(int channelId){
+        Object obj = readObject(getChannelCacheFile(channelId));
+        if(obj!=null && obj instanceof Channel)
+            return (Channel)obj;
+        else return null;
+    }
+//    public static String getJsonCachePath(int channelId){
+//        return AcApp.context().getExternalCacheDir()+"/"+channelId+".json";
+//    }
+//    /** 保存原始json数据 */
+//    public static boolean saveJson(int channelId, String json){
+//        
+//        
+//        return writeToFile(getJsonCachePath(channelId), json);
+//    }
+//    /** 读取缓存的json数据 */
+//    public static JSONObject readJson(int channelId){
+//        
+//        try {
+//            return new JSONObject(readFromFile(getJsonCachePath(channelId)));
+//        } catch (JSONException e) {
+//            Log.e(TAG, "failed to read json of channel"+channelId ,e);
+//            return null;
+//        }
+//    }
+//    /** Returns 0 if the json file does not exist */
+//    public static long getJsonLastUpdateTime(int channelId){
+//        
+//        File jsonCacheFile = new File(getJsonCachePath(channelId));
+//        return jsonCacheFile.lastModified();
+//        
+//    }
     
 }
