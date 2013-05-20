@@ -1,10 +1,13 @@
 package tv.avfun;
 
+import java.io.File;
+
+import tv.avfun.app.AcApp;
+import tv.avfun.util.DataStore;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -36,7 +39,23 @@ public class SplashActivity extends Activity{
         Message msg = Message.obtain();
         msg.what = 0;
         mHandler.sendMessageDelayed(msg, 2000L);
+        //版本号更改后，清除原有缓存
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
+            int oldVersion = AcApp.getConfig().getInt("versionCode", 0);
+            
+            if(oldVersion != info.versionCode){
+                clearCache();
+                AcApp.putInt("versionCode", info.versionCode);
+            }
+        } catch (NameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
-    
+
+    private void clearCache() {
+        new File(getCacheDir(),DataStore.CHANNEL_LIST_CACHE).delete();
+        new File(getCacheDir(),DataStore.TIME_LIST_CACHE).delete();
+    }
     
 }

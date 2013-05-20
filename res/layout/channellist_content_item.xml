@@ -45,7 +45,6 @@
         android:ellipsize="end"
         
         android:singleLine="true"
-        android:textColor="#EB7A02"
         android:textSize="12sp" />
     <TextView
         android:id="@+id/channelist_content_item_views"
@@ -72,6 +71,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="12dip"
             android:layout_marginTop="3dip"
+            android:textSize="14sp"
             android:text="最近更新"
             android:textColor="@color/main_color" />
 

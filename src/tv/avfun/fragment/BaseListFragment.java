@@ -11,10 +11,9 @@ import com.actionbarsherlock.view.MenuItem;
 public class BaseListFragment extends SherlockListFragment {
 
     private boolean isRefreshing = false;
-
+    
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
         inflater.inflate(R.menu.menu_refresh, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -24,7 +23,7 @@ public class BaseListFragment extends SherlockListFragment {
         switch (item.getItemId()) {
         case R.id.refresh:
             if (!this.isRefreshing) {
-                startRefresh(true);
+                startRefresh();
             }
             return true;
         }
@@ -32,30 +31,28 @@ public class BaseListFragment extends SherlockListFragment {
     }
     /**
      * 开始刷新
-     * @param b
      */
-    public void startRefresh(boolean b) {
+    public void startRefresh() {
         if (NetWorkUtil.isNetworkAvailable(getActivity())){
             if(!this.isRefreshing) {
-                this.isRefreshing = b;
-                onRefresh(b);
+                this.isRefreshing = true;
+                onRefresh();
             }
         }else{
-            showConnectionError();
+            showNetWorkError();
         }
     }
     /**
      * 显示连接错误消息
      */
-    protected void showConnectionError() {
-        
+    protected void showNetWorkError() {
     }
 
     /**
      * 刷新数据。由子类来实现。
      * @param b
      */
-    protected void onRefresh(boolean b) {
+    protected void onRefresh() {
 
     }
     /**
@@ -66,5 +63,11 @@ public class BaseListFragment extends SherlockListFragment {
             getListView().smoothScrollToPosition(0);
             return;
         } catch (IllegalStateException e) {}
+    }
+    /**
+     * 刷新完成！
+     */
+    public void onRefreshCompleted(){
+        this.isRefreshing = false;
     }
 }

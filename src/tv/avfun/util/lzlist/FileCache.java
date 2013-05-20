@@ -2,7 +2,7 @@ package tv.avfun.util.lzlist;
 
 import java.io.File;
 
-import tv.avfun.AcApp;
+import tv.avfun.app.AcApp;
 import tv.avfun.util.FileUtil;
 /*import android.content.Context;*/
 
@@ -11,7 +11,7 @@ public final class FileCache {
     static {
         AcApp app = AcApp.instance();
         if(AcApp.isExternalStorageAvailable())
-            cacheDir = app.getExternalCacheDir();
+            cacheDir = AcApp.getExternalCacheDir(AcApp.IMAGE);
         else cacheDir = app.getCacheDir();
         if(!cacheDir.exists())
             cacheDir.mkdirs();

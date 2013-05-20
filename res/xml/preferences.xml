@@ -16,13 +16,21 @@
             />
         <ListPreference
             android:icon="@drawable/ic_grid"
-            android:title="主页显示模式"
+            android:title="主页内容显示模式"
             android:key="home_display_mode"
             android:entries="@array/pref_entries_home_display_mode"
             android:entryValues="@array/pref_values_home_display_mode"
             android:defaultValue="1"
             android:dialogTitle="设置主页显示内容"
-            android:summary="下次开启生效"
+            />
+        <ListPreference
+            android:icon="@drawable/ic_video"
+            android:title="视频清晰度"
+            android:entries="@array/pref_entries_parse_mode"
+            android:entryValues="@array/pref_values_parse_mode"
+            android:key="parse_mode" 
+            android:defaultValue="0"
+            android:dialogTitle="设置视频清晰度"
             />
     </PreferenceCategory>
     <PreferenceCategory android:title="其他">
@@ -47,6 +55,11 @@
             android:icon="@drawable/ic_email"
             android:title="反(tu)馈(cao)"
             android:key="feedback" />
+         <Preference 
+            android:icon="@drawable/ic_a"
+            android:title="A岛"
+            android:summary="一个充满A级爱情的地方"
+            android:key="hfun" />
     </PreferenceCategory>
     
 </PreferenceScreen>

@@ -4,20 +4,20 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import tv.avfun.Detail_Activity;
+import tv.avfun.DetailActivity;
 import tv.avfun.R;
 import tv.avfun.animation.ExpandAnimation;
 import tv.avfun.animation.ExpandCollapseAnimation;
 import tv.avfun.api.Bangumi;
-
+import tv.avfun.entity.Contents;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.animation.Animation;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -143,17 +143,6 @@ public class TimeListAdaper extends BaseAdapter{
 		        expandable.clearAnimation();
 		        Animation anim = new ExpandAnimation(expandable, 400);
 		        expandable.startAnimation(anim);
-				/*int type = expandable.getVisibility() == View.VISIBLE ? ExpandCollapseAnimation.COLLAPSE : ExpandCollapseAnimation.EXPAND;
-				Animation anim = new ExpandCollapseAnimation(expandable, 500, type);
-				if(type == ExpandCollapseAnimation.EXPAND) {
-					if(lastOpen != null && lastOpen != expandable && lastOpen.getVisibility() == View.VISIBLE) {
-						lastOpen.startAnimation(new ExpandCollapseAnimation(lastOpen, 400, ExpandCollapseAnimation.COLLAPSE));
-					}
-					lastOpen = expandable;
-				} else if(lastOpen == view) {
-					lastOpen = null;
-				}
-				view.startAnimation(anim);*/
 			}
 		});
 		
@@ -190,11 +179,13 @@ public class TimeListAdaper extends BaseAdapter{
 		@Override
 		public void onClick(View v) {
 			
-			Intent intent = new Intent(context, Detail_Activity.class);
-			intent.putExtra("title", data.get(position)[i].title);
-			intent.putExtra("aid", v.getTag().toString());
+			Intent intent = new Intent(context, DetailActivity.class);
+			Contents c = new Contents();
+			c.setTitle(data.get(position)[i].title);
+			c.setAid(v.getTag().toString());
+			c.setChannelId(67);
 			intent.putExtra("from", 1);
-			intent.putExtra("channelId", "67");
+			intent.putExtra("contents", c);
 			context.startActivity(intent);
 		}
 		

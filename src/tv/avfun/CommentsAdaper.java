@@ -63,7 +63,7 @@ public class CommentsAdaper  extends BaseAdapter{
 		holder.username.setText(String.valueOf(art.get("userName")));
 		
 		final String imageUrl =String.valueOf(art.get("userImg"));
-		if(imageUrl!= "null"&&!imageUrl.equals("null")){
+		if(imageUrl!= null &&!imageUrl.equals("null")){
 			holder.img.setTag(imageUrl);
 			imageLoader.displayImage(imageUrl, holder.img);
 		}

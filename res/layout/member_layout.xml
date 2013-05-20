@@ -2,12 +2,12 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="12dip"
     android:background="@drawable/layout_bg" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="12dip"
         android:orientation="vertical" >
 
         <LinearLayout
@@ -104,11 +104,11 @@
 
         <FrameLayout
             android:id="@+id/member_frame"
-            android:background="@android:color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
             <RelativeLayout
+            android:background="@drawable/mem_item_background"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="4dip" >
@@ -118,6 +118,8 @@
                     android:layout_width="70dip"
                     android:layout_height="70dip"
                     android:padding="2dip"
+                    android:scaleType="centerCrop"
+                    android:background="#ddd"
                     android:src="@drawable/mem_account_avatar" />
 
                 <TextView
@@ -198,7 +200,16 @@
                 android:text="播放历史"
                 android:textSize="15sp"
                 android:textStyle="bold" />
-
+            <TextView
+                android:id="@+id/mem_btn_download"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dip"
+                android:background="@drawable/mem_item_background"
+                android:padding="12dip"
+                android:text="下载管理"
+                android:textSize="15sp"
+                android:textStyle="bold" />
             <TextView
                 android:id="@+id/mem_btn_subs"
                 android:layout_width="match_parent"
@@ -207,6 +218,7 @@
                 android:background="@drawable/mem_item_background"
                 android:padding="12dip"
                 android:text="我的订阅"
+                android:visibility="gone"
                 android:textSize="15sp"
                 android:textStyle="bold" />
         </LinearLayout>

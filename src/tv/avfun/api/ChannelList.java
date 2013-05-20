@@ -11,4 +11,5 @@ public class ChannelList implements Serializable {
     private static final long serialVersionUID = 1L;
     public long cacheTime;
     public Channel[] channels;
+    public String displayMode;
 }

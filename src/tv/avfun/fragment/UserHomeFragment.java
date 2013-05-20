@@ -7,10 +7,11 @@ import java.util.HashMap;
 import org.apache.commons.httpclient.HttpException;
 import org.json.external.JSONException;
 
-import tv.avfun.Favorite_Activity;
-import tv.avfun.History_Activity;
+import tv.avfun.DownloadManActivity;
+import tv.avfun.FavoriteActivity;
+import tv.avfun.HistoryActivity;
 import tv.avfun.R;
-import tv.avfun.Settings_Activity;
+import tv.avfun.SettingsActivity;
 import tv.avfun.animation.ExpandAnimation;
 import tv.avfun.animation.ExpandCollapseAnimation;
 import tv.avfun.api.Login_And_Comments;
@@ -88,7 +89,7 @@ public class UserHomeFragment extends Fragment implements OnClickListener {
         TextView subs_btn = (TextView) mContent.findViewById(R.id.mem_btn_subs);
         TextView fov_btn = (TextView) mContent.findViewById(R.id.mem_btn_fov);
         TextView his_btn = (TextView) mContent.findViewById(R.id.mem_btn_his);
-        
+        mContent.findViewById(R.id.mem_btn_download).setOnClickListener(this);
         set_btn.setOnClickListener(this);
         subs_btn.setOnClickListener(this);
         fov_btn.setOnClickListener(this);
@@ -133,7 +134,7 @@ public class UserHomeFragment extends Fragment implements OnClickListener {
             }
             break;
         case R.id.mem_set_btn:
-            Intent intent = new Intent(activity, Settings_Activity.class);
+            Intent intent = new Intent(activity, SettingsActivity.class);
             activity.startActivity(intent);
             break;
 
@@ -142,16 +143,19 @@ public class UserHomeFragment extends Fragment implements OnClickListener {
             break;
         case R.id.mem_btn_fov:
 
-            Intent intent2 = new Intent(activity, Favorite_Activity.class);
+            Intent intent2 = new Intent(activity, FavoriteActivity.class);
             startActivity(intent2);
 
             break;
         case R.id.mem_btn_his:
-            Intent intent3 = new Intent(activity, History_Activity.class);
+            Intent intent3 = new Intent(activity, HistoryActivity.class);
             startActivity(intent3);
             break;
         case R.id.mem_login_btn:
             login();
+            break;
+        case R.id.mem_btn_download:
+            startActivity(new Intent(activity, DownloadManActivity.class));
             break;
         default:
             break;
@@ -168,6 +172,7 @@ public class UserHomeFragment extends Fragment implements OnClickListener {
         textusername.setText((String) vmap.get("uname"));
         textsignature.setText((String) vmap.get("signature"));
         imageLoader.displayImage((String) vmap.get("avatar"), avatar);
+        vlogin_btn.setText("注销");
     }
 
     public void unbuidview() {

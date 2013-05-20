@@ -34,6 +34,7 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.umeng.analytics.MobclickAgent;
 
 public class ImagePagerActivity extends SherlockActivity{
 	private String channelid;
@@ -74,8 +75,8 @@ public class ImagePagerActivity extends SherlockActivity{
 		imgUrls = getIntent().getStringArrayListExtra("imgs");
 		getSupportActionBar().setTitle(title);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 hh:mm");
-		new DBService(this).addtoHis(aid, title, sdf.format(new Date()),1,channelid);
-		isfavorite = new DBService(this).isFoved(aid);
+		new DBService(this).addtoHis(aid, title, sdf.format(new Date()),1,Integer.parseInt(channelid));
+		isfavorite = new DBService(this).isFaved(aid);
 		
 		options = new DisplayImageOptions.Builder()
 		.showImageForEmptyUri(R.drawable.no_picture)
@@ -151,12 +152,12 @@ public class ImagePagerActivity extends SherlockActivity{
 			
 		case R.id.menu_item_fov_action_provider_action_bar:
 			if(isfavorite){
-				new DBService(this).delFov(aid);
+				new DBService(this).delFav(aid);
 				isfavorite = false;
 				item.setIcon(R.drawable.rating_favorite);
 				Toast.makeText(this, "取消成功", Toast.LENGTH_SHORT).show();
 			}else{
-				new DBService(this).addtoFov(aid, title, 0, channelid);
+				new DBService(this).addtoFav(aid, title, 0, Integer.parseInt(channelid));
 				isfavorite = true;
 				item.setIcon(R.drawable.rating_favorite_p);
 				Toast.makeText(this, "收藏成功", Toast.LENGTH_SHORT).show();
@@ -165,7 +166,7 @@ public class ImagePagerActivity extends SherlockActivity{
 			break;
 		case ImagePagerActivity.COMMID:
 			
-			Intent intent = new Intent(ImagePagerActivity.this, Comments_Activity.class);
+			Intent intent = new Intent(ImagePagerActivity.this, CommentsActivity.class);
 			intent.putExtra("aid", aid);
 			startActivity(intent);
 			
@@ -272,4 +273,12 @@ public class ImagePagerActivity extends SherlockActivity{
 		public void startUpdate(View container) {
 		}
 	}
+	public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
 }

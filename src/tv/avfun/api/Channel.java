@@ -15,9 +15,10 @@ import tv.avfun.entity.Contents;
 public class Channel implements Serializable {
     private static final long serialVersionUID = 11L;
     /**
-     * 推荐视频
+     * 频道内容。用于缓存
      */
-    public List<Contents> recommends;
+    public List<Contents> contents;
+    public int pageIndex;
     public int titleBgResId;
     public int channelId;
     public String title;
@@ -42,8 +43,9 @@ public class Channel implements Serializable {
         return this.title;
     }
     
-    public String getUrl() {
-        url = "http://www.acfun.tv/api/channel.aspx?query="+channelId+"&currentPage=";
+    public String getUrl(int page) {
+        if(page < 1) page = 1;
+        url = "http://www.acfun.tv/api/getlistbyorder.aspx?orderby=0&channelIds=" + this.channelId + "&count=20&first=" + 20 * (page-1);
         return url;
     }
     public int getChannelId() {

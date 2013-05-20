@@ -37,7 +37,9 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:id="@+id/favrites_item_chann"
-    android:background="@drawable/channel_bgn"
+    android:padding="3dip"
+    android:textColor="@color/white"
+    android:background="@drawable/corner_bg_pressed"
     />
     </LinearLayout>
 
