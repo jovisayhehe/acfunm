@@ -82,7 +82,7 @@ public class DownloadJob {
     }
     public void cancel() {
         for (DownloadTask task : mTasks) {
-            if (task.isCancelled())
+            if (task.isCancelled)
                 continue;
             task.cancel();
         }
@@ -200,6 +200,8 @@ public class DownloadJob {
         if (mListener != null) {
             if(status == DownloadDB.STATUS_PAUSED)
                 mListener.onDownloadPaused(this);
+            else if(status == DownloadDB.STATUS_CANCELED)
+                mListener.onDownloadCancelled(this);
             else 
                 mListener.onDownloadFinished(status, this);
         }
@@ -218,6 +220,8 @@ public class DownloadJob {
          */
         public void onDownloadFinished(int status, DownloadJob job);
         
+        public void onDownloadCancelled(DownloadJob job);
+
         public void onDownloadPaused(DownloadJob job);
         /**
          * Callback when a download started
@@ -283,8 +287,8 @@ public class DownloadJob {
         
         @Override
         public void onCancel(DownloadTask task) {
-            Log.i(TAG, "canel");
-            mDownloadMan.notifyAllObservers();
+            Log.i(TAG, task +" caneled");
+//            notifyDownloadCompleted(DownloadDB.STATUS_CANCELED);
             
         }
     };

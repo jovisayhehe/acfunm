@@ -159,7 +159,6 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
                     tvViews.setText(mVideoInfo.views + "");
                     tvComments.setText(mVideoInfo.comments + "");
                     description = mVideoInfo.description;
-                    setDescription(tvDesc);
                     channelid = mVideoInfo.channelId;
                     title = mVideoInfo.title;
                     tvTitle.setText(title);
@@ -170,6 +169,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
                         ivTitleImg.setBackgroundResource(R.drawable.no_picture);
                     }
                 }
+                setDescription(tvDesc);
                 tvBtnPlay.setText("播放");
                 tvBtnPlay.setOnClickListener(DetailActivity.this);
                 mListView.setVisibility(View.VISIBLE);
@@ -213,7 +213,9 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
             tvViews.setText(String.valueOf(c.getViews()));
             tvComments.setText(String.valueOf(c.getComments()));
             description = c.getDescription();
-            setDescription(tvDesc);
+            if(description == null)
+                tvDesc.setText(LOADING);
+//            setDescription(tvDesc);
             tvBtnPlay.setText(LOADING);
             tvTitle.setText(c.getTitle());
 

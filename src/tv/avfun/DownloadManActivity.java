@@ -83,6 +83,7 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
     protected void onStart() {
         super.onStart();
         mDownloadMan.registerDownloadObserver(this);
+        mAdapter.notifyDataSetChanged();
     }
 
     private DownloadService   mDownloadService;

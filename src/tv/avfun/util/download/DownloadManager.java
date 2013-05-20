@@ -89,6 +89,7 @@ public class DownloadManager {
      * Delete the download job and related files.
      */
     public void deleteDownload(DownloadJob job){
+        if(job == null) throw new NullPointerException("job cannot be null");
         mProvider.removeDownload(job);
         deleteDownloadFile(job);
     }

@@ -122,6 +122,11 @@ public class DownloadService extends Service {
         public void onDownloadPaused(DownloadJob job) {
             showDownloadedNoti(DownloadDB.STATUS_PAUSED,job);
         }
+
+        @Override
+        public void onDownloadCancelled(DownloadJob job) {
+            showDownloadedNoti(DownloadDB.STATUS_CANCELED,job);
+        }
     };
     private void showNoti(String text,int icon, CharSequence title, int flag){
         Intent mIntent = new Intent(this, DownloadManActivity.class);

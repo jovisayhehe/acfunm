@@ -45,6 +45,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
     private DownloadInfo mInfo;
     private DownloadTaskListener mListener;
     private String TAG = "DownloadTask - " + mId;
+    public boolean isCancelled;
     public DownloadTask(DownloadInfo info){
         this(0,info);
     }
@@ -68,7 +69,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
      * shut down task, right now.
      */
     public void cancel(){
-        cancel(true);
+        isCancelled = true;
         if(mListener!=null)
             mListener.onCancel(this);
     }
@@ -202,6 +203,9 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
             reportProgress(state);
             if(isPaused)
                 throw new StopRequest(DownloadDB.STATUS_PAUSED, "paused by user");
+            if(isCancelled)
+                throw new StopRequest(DownloadDB.STATUS_CANCELED, "CANCELED by user");
+                
         }
         
     }

@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import static tv.avfun.util.download.DownloadDB.*;
 /**
  * 存储下载的数据
- * 
+ * TODO 将download.db放在下载跟目录，以便重装后也能管理下载
  * @author Yrom
  * 
  */

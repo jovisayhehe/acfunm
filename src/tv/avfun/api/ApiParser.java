@@ -207,7 +207,7 @@ public class ApiParser {
         // get info 
         JSONObject info = jsonObject.getJSONObject("info");
         video.title = StringUtil.getSource(info.getString("title"));
-        video.titleImage = info.getString("titleimge");
+        video.titleImage = info.getString("titleimage");
         video.description = info.getString("description");
         video.channelId = info.getJSONObject("channel").getInt("channelID");
         video.upman = info.getJSONObject("postuser").getString("name");
