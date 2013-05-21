@@ -1,7 +1,6 @@
 
 package tv.avfun;
 
-import static com.actionbarsherlock.app.ActionBar.NAVIGATION_MODE_TABS;
 
 import java.util.List;
 
@@ -13,7 +12,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -27,6 +26,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 import com.umeng.analytics.MobclickAgent;
+import com.viewpagerindicator.TabPageIndicator;
 
 public class ChannelActivity extends SherlockFragmentActivity implements OnPageChangeListener, TabListener {
 
@@ -60,23 +60,13 @@ public class ChannelActivity extends SherlockFragmentActivity implements OnPageC
         initTab(gdposition);
 
         mPager.setAdapter(new MyFragmentAdapter(getSupportFragmentManager()));
-
+        TabPageIndicator indicator = (TabPageIndicator)findViewById(R.id.indicator);
+        indicator.setViewPager(mPager);
     }
 
     private void initTab(int pos) {
 
         apis = ChannelApi.getApi(pos);
-        int len = apis.size();
-        for (int i = 0; len > 1 && i < apis.size(); i++) {
-            Channel channel = apis.get(i);
-            
-            ab.addTab(ab.newTab().setText(channel.getTitle()).setTabListener(this));
-        }
-        if (len <= 1) {
-            ab.removeAllTabs();
-        } else {
-            ab.setNavigationMode(NAVIGATION_MODE_TABS);
-        }
         // 标题栏
         getSupportActionBar().setTitle(apis.get(0).getTitle());
     }
@@ -194,7 +184,7 @@ public class ChannelActivity extends SherlockFragmentActivity implements OnPageC
         getSupportActionBar().setSelectedNavigationItem(arg0);
     }
 
-    private final class MyFragmentAdapter extends FragmentStatePagerAdapter {
+    private final class MyFragmentAdapter extends FragmentPagerAdapter {
 
         public MyFragmentAdapter(FragmentManager fm) {
             super(fm);
@@ -204,11 +194,13 @@ public class ChannelActivity extends SherlockFragmentActivity implements OnPageC
         public int getCount() {
             return apis.size();
         }
-
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return apis.get(position).title;
+        }
         @Override
         public Fragment getItem(int position) {
             return ChannelContentFragment.newInstance(apis.get(position), isarticle);
-//            return ChannelFragment.newInstance(apis.get(position));
 
         }
     }
