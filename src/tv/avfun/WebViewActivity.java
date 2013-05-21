@@ -13,10 +13,13 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 import com.actionbarsherlock.widget.ShareActionProvider;
+import com.umeng.analytics.MobclickAgent;
 
 
 import tv.avfun.api.ApiParser;
@@ -98,12 +101,10 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
 		tprobar = (ProgressBar) findViewById(R.id.web_time_progress);
 		reloadtext = (TextView) findViewById(R.id.web_time_out_text);
 		reloadtext.setOnClickListener(this);
-		
 	     mWebView = (SWebView) findViewById(R.id.web_webview);
 	     mWebView.getSettings().setDefaultTextEncodingName("utf-8");
 	     mWebView.getSettings().setSupportZoom(true);  
 	     mWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-	     
 	     
 	     mWebView.setWebChromeClient(new WebChromeClient()   
          {            
@@ -158,47 +159,6 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
 	     
 	}
 	
-//	@Override
-//	protected void onPause() {
-//		
-//		super.onPause();
-//		Log.i("st", "onPause");
-//	}
-//
-//	@Override
-//	protected void onStop() {
-//		
-//		super.onStop();
-//		Log.i("st", "onStop");
-//	}
-//
-//	@Override
-//	protected void onDestroy() {
-//		
-//		super.onDestroy();
-//		Log.i("st", "onDestroy");
-//	}
-//
-//	@Override
-//	protected void onStart() {
-//		
-//		super.onStart();
-//		Log.i("st", "onStart");
-//	}
-//
-//	@Override
-//	protected void onRestart() {
-//		
-//		super.onRestart();
-//		Log.i("st", "onRestart");
-//	}
-//
-//	@Override
-//	protected void onResume() {
-//		
-//		super.onResume();
-//		Log.i("st", "onResume");
-//	}
 
 	@Override
 	public boolean onOptionsItemSelected(
@@ -208,6 +168,9 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
 		case android.R.id.home:
 			this.finish();
 			break;
+		case R.id.menu_item_comment:
+	        gotoComment();
+		    break;
 		case R.id.menu_item_fov_action_provider_action_bar:
 			if(isfavorite){
 				new DBService(this).delFav(aid);
@@ -255,9 +218,7 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
 		
 		switch (v.getId()) {
 		case R.id.web_comment_btn:
-			Intent intent = new Intent(WebViewActivity.this, CommentsActivity.class);
-			intent.putExtra("aid", aid);
-			startActivity(intent);
+			gotoComment();
 			break;
 		case R.id.web_time_out_text:
 			loaddata();
@@ -266,6 +227,12 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
 			break;
 		}
 	}
+
+    private void gotoComment() {
+        Intent intent = new Intent(WebViewActivity.this, CommentsActivity.class);
+        intent.putExtra("aid", aid);
+        startActivity(intent);
+    }
 	
 	public void loaddata(){
 		tprobar.setVisibility(View.VISIBLE);
@@ -287,7 +254,7 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
 	        			
 	        			idiv.append("<p align=\"center\">"+"投稿: "+article.getName()+"</p>");
         				Date date = new Date(article.getPosttime());
-        				SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 hh:mm");
+        				SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
         				idiv.append("<p align=\"center\">"+sdf.format(date)+"</p>");
         				if(modecode == 2){
                             Intent intent = new Intent(WebViewActivity.this, ImagePagerActivity.class);
@@ -344,4 +311,13 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
 	        
 	}
 	
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
 }

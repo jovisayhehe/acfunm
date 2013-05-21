@@ -80,7 +80,6 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        //TODO 注册监听
         
         mDownloadManager = AcApp.instance().getDownloadManager();
         mIntent = getIntent();
@@ -222,7 +221,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         }
         getSupportActionBar().setTitle("ac" + aid);
         isFavorite = new DBService(this).isFaved(aid);
-        // TODO 向umeng发送 事件：查看aid
+        MobclickAgent.onEvent(this,"view_detail");
         if (from > 0) {
             ivTitleImg.setBackgroundResource(R.drawable.no_picture);
             tvUserName.setText(LOADING);
@@ -273,6 +272,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
             if (mData.isEmpty())
                 return;
             startPlay(mData.get(0));
+            MobclickAgent.onEvent(this,"play");
             break;
 
         // 重新加载
@@ -317,12 +317,14 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
                 isFavorite = true;
                 item.setIcon(R.drawable.rating_favorite_p);
                 Toast.makeText(this, "收藏成功", Toast.LENGTH_SHORT).show();
+                MobclickAgent.onEvent(DetailActivity.this,"add_favorite");
             }
             break;
         case R.id.menu_item_comment:
             Intent intent = new Intent(DetailActivity.this, CommentsActivity.class);
             intent.putExtra("aid", aid);
             startActivity(intent);
+            MobclickAgent.onEvent(DetailActivity.this,"view_comment");
             break;
         }
         return true;
@@ -347,6 +349,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
     }
 
     private Intent createShareIntent() {
+        MobclickAgent.onEvent(DetailActivity.this,"share");
         String shareurl = title + "http://www.acfun.tv/v/ac" + aid;
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
@@ -380,7 +383,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         @Override
         public void doStartDownload(final VideoPart item) {
             final DownloadEntry entry = new DownloadEntry(aid,title,item);
-            
+            MobclickAgent.onEvent(DetailActivity.this,"download");
             if (item.segments == null || item.segments.isEmpty()) {
                 new Thread() {
 

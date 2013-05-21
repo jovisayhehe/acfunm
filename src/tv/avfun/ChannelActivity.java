@@ -207,7 +207,7 @@ public class ChannelActivity extends SherlockFragmentActivity implements OnPageC
 
         @Override
         public Fragment getItem(int position) {
-            return ChannelContentFragment.newInstance(apis.get(position));
+            return ChannelContentFragment.newInstance(apis.get(position), isarticle);
 //            return ChannelFragment.newInstance(apis.get(position));
 
         }

@@ -20,6 +20,7 @@ import tv.avfun.util.DensityUtil;
 import tv.avfun.util.NetWorkUtil;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -56,6 +57,7 @@ public class ChannelContentFragment extends Fragment implements OnItemClickListe
     private ProgressBar              mProgress;
     private ChannelContentListAdaper mAdapter;
     private List<Contents>           data;
+    private boolean                  isarticle;
     private LayoutInflater           mInflater;
 
     @Override
@@ -87,11 +89,13 @@ public class ChannelContentFragment extends Fragment implements OnItemClickListe
 //        headTitle.setTextSize(DensityUtil.dip2px(AcApp.context(), 12));
         mListView.addHeaderView(header);
         mListView.setHeaderDividersEnabled(false);
-
-        mAdapter = new ChannelContentListAdaper(activity, data);
+        mAdapter = new ChannelContentListAdaper(activity, data,isarticle);
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(this);
         mListView.setOnScrollListener(this);
+        if (isarticle) {
+            mListView.setSelector(R.drawable.transparent_bg_selector);
+        }
         mFootView = mInflater.inflate(R.layout.list_footerview, mListView, false);
         mFootView.setVisibility(View.GONE);
         // mFootView.setOnClickListener(this);
@@ -104,6 +108,7 @@ public class ChannelContentFragment extends Fragment implements OnItemClickListe
         super.onActivityCreated(savedInstanceState);
         this.activity = getActivity();
         this.channel = (Channel) getArguments().getSerializable("channel");
+        this.isarticle = getArguments().getBoolean("isarticle");
         initView();
         indexpage = 1;
         loadData(indexpage, false);
@@ -119,10 +124,12 @@ public class ChannelContentFragment extends Fragment implements OnItemClickListe
         return mView.findViewById(id);
     }
 
-    public static Fragment newInstance(Channel channel) {
+    public static Fragment newInstance(Channel channel, boolean isarticle) {
+        
         ChannelContentFragment fragment = new ChannelContentFragment();
         Bundle args = new Bundle();
         args.putSerializable("channel", channel);
+        args.putBoolean("isarticle", isarticle);
         fragment.setArguments(args);
         return fragment;
     }
@@ -262,7 +269,6 @@ public class ChannelContentFragment extends Fragment implements OnItemClickListe
         } else {
             Contents c = data.get(position);
             if (ChannelActivity.isarticle) {
-
                 Intent intent = new Intent(activity, WebViewActivity.class);
                 intent.putExtra("modecode", ChannelActivity.modecode);
                 intent.putExtra("aid", c.getAid());

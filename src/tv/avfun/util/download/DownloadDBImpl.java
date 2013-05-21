@@ -51,8 +51,8 @@ public class DownloadDBImpl implements DownloadDB {
                     if(AcApp.isExternalStorageAvailable()){
                         if(!TextUtils.isEmpty(job.getEntry().destination)
                             && !TextUtils.isEmpty(s.fileName)){
-                        // TODO 设置segment的播放路径为本地文件uri
-                        // TODO 实现边下边播的功能 (未实测 = =)
+                        // 设置segment的播放路径为本地文件uri
+                        // 实现边下边播的功能 
                         
                             File file = new File(job.getEntry().destination, s.fileName);
                             if(file.exists()){

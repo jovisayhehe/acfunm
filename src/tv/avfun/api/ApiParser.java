@@ -73,7 +73,7 @@ public class ApiParser {
             // c.setChannelId(jobj.getInt("channelId"));
             c.setChannelId(channelId);
             c.setComments(jobj.getInt("comments"));
-
+            c.setReleaseDate(jobj.getLong("releaseDate"));
             contents.add(c);
         }
         return contents;
@@ -150,6 +150,7 @@ public class ApiParser {
                                 .replaceAll("\\[.*?]", "").replaceFirst("\\s+", ""));
                 map.put("userImg", contentobj.getString("userImg"));
                 map.put("totalPage", totalPage);
+                map.put("postDate", contentobj.getString("postDate"));
                 comments.add(map);
             }
 
@@ -364,10 +365,10 @@ public class ApiParser {
             c.setUsername(job.getString("author"));
             c.setViews(job.getLong("views"));
             c.setTitleImg(job.getString("titleImg"));
-            c.setDescription(job.getString("description").replace("&nbsp;", " ")
-                    .replace("&amp;", "&").replaceAll("\\<.*?>", ""));
+            c.setDescription(StringUtil.getSource(job.getString("description")));
             c.setChannelId(job.getInt("channelId"));
             c.setComments(job.getInt("comments"));
+            c.setReleaseDate(job.getLong("releaseDate"));
             cs.add(c);
         }
 

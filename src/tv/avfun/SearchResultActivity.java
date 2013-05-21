@@ -53,7 +53,7 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 		    ActionBar ab = getSupportActionBar();
 	        ab.setDisplayHomeAsUpEnabled(true);
 	        ab.setTitle("搜索结果");
-	        
+	        MobclickAgent.onEvent(this, "view_search");
 			 progressBar = (ProgressBar)findViewById(R.id.time_progress);
 			 time_outtext = (TextView)findViewById(R.id.time_out_text);
 			 time_outtext.setOnClickListener(this);
@@ -66,7 +66,7 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 			list.addFooterView(footview);
 			footview.setClickable(false);
 			list.setFooterDividersEnabled(false);
-			adaper = new ChannelContentListAdaper(this, data);
+			adaper = new ChannelContentListAdaper(this, data,false);
 			list.setAdapter(adaper);
 			list.setOnItemClickListener(this);
 			list.setOnScrollListener(this);
