@@ -16,6 +16,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -62,6 +65,7 @@ public class ChannelActivity extends SherlockFragmentActivity implements OnPageC
         mPager.setAdapter(new MyFragmentAdapter(getSupportFragmentManager()));
         TabPageIndicator indicator = (TabPageIndicator)findViewById(R.id.indicator);
         indicator.setViewPager(mPager);
+
     }
 
     private void initTab(int pos) {

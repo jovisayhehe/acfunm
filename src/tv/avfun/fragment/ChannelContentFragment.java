@@ -287,7 +287,9 @@ public class ChannelContentFragment extends Fragment implements OnItemClickListe
     }
 
     @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {}
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        
+    }
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
@@ -297,4 +299,5 @@ public class ChannelContentFragment extends Fragment implements OnItemClickListe
             loadData(++indexpage, true);
         }
     }
+
 }
