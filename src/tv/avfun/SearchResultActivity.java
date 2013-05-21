@@ -209,7 +209,7 @@ public class SearchResultActivity extends BaseListActivity  implements OnClickLi
 				intent.putExtra("modecode", ChannelActivity.modecode);
 				intent.putExtra("aid", c.getAid());
 				intent.putExtra("title", c.getTitle());
-				intent.putExtra("channelId", String.valueOf(channelId));
+				intent.putExtra("channelId", channelId);
 				startActivity(intent);
 			}
 

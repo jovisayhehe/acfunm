@@ -267,7 +267,7 @@ public class ChannelContentFragment extends Fragment implements OnItemClickListe
                 intent.putExtra("modecode", ChannelActivity.modecode);
                 intent.putExtra("aid", c.getAid());
                 intent.putExtra("title", c.getTitle());
-                intent.putExtra("channelId", c.getChannelId() + ""); // int?
+                intent.putExtra("channelId", c.getChannelId());
                 startActivity(intent);
 
             } else {

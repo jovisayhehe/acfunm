@@ -45,7 +45,7 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
 	private Document doc;
 	private String aid;
 	private String title;
-	private String channelid;
+	private int channelid;
 	private ProgressBar probar;
 	private ProgressBar tprobar;
 	private TextView reloadtext;
@@ -83,13 +83,13 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
 		setContentView(R.layout.web_view_layout);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
-		channelid = getIntent().getStringExtra("channelId");
+		channelid = getIntent().getIntExtra("channelId",0);
 		title = getIntent().getStringExtra("title");
 		modecode = getIntent().getIntExtra("modecode", 0);
 		aid = getIntent().getStringExtra("aid");
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 hh:mm");
-		new DBService(this).addtoHis(aid, title, sdf.format(new Date()),1,Integer.parseInt(channelid));
+		new DBService(this).addtoHis(aid, title, sdf.format(new Date()),1,channelid);
 		isfavorite = new DBService(this).isFaved(aid);
 		btn = (TextView) findViewById(R.id.web_comment_btn);
 		btn.setOnClickListener(this);
@@ -215,7 +215,7 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
 				item.setIcon(R.drawable.rating_favorite);
 				Toast.makeText(this, "取消成功", Toast.LENGTH_SHORT).show();
 			}else{
-				new DBService(this).addtoFav(aid, title, 1, Integer.parseInt(channelid));
+				new DBService(this).addtoFav(aid, title, 1, channelid);
 				isfavorite = true;
 				item.setIcon(R.drawable.rating_favorite_p);
 				Toast.makeText(this, "收藏成功", Toast.LENGTH_SHORT).show();
