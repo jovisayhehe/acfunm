@@ -91,8 +91,8 @@ public class ChannelApi {
         channels.put(id.GAME, new Channel("游戏", id.GAME));
         channels.put(id.BEST_GAME, new Channel("游戏集锦", id.BEST_GAME));
         channels.put(id.LIVE_OB, new Channel("实况解说", id.LIVE_OB));
-        channels.put(id.FLASH, new Channel("Flash", id.FLASH));
-        channels.put(id.MUGEN, new Channel("Mugen", id.MUGEN));
+        channels.put(id.FLASH, new Channel("FLASH", id.FLASH));
+        channels.put(id.MUGEN, new Channel("MUGEN", id.MUGEN));
         channels.put(id.LOL, new Channel("撸啊撸", id.LOL));
         
         
@@ -170,7 +170,7 @@ public class ChannelApi {
         case 4:
             return "游戏";
         case 5:
-            return "番剧";
+            return "文章";
         default:
             return null;
         }
