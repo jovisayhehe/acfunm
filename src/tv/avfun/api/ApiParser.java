@@ -86,9 +86,9 @@ public class ApiParser {
           new Channel("动画", id.ANIMATION, R.drawable.title_bg_anim),
           new Channel("音乐", id.MUSIC, R.drawable.title_bg_music),
           new Channel("娱乐", id.FUN, R.drawable.title_bg_fun),
-          new Channel("短影", id.MOVIE, R.drawable.title_bg_movie),
+          new Channel("短影", id.VIDEO, R.drawable.title_bg_movie),
           new Channel("游戏", id.GAME , R.drawable.title_bg_game),
-          new Channel("番剧", id.BANGUMI, R.drawable.title_bg_anim)
+//          new Channel("番剧", id.BANGUMI, R.drawable.title_bg_anim)
         };
     /**
      * 获取首页频道列表 推荐内容
