@@ -8,6 +8,7 @@ import tv.avfun.api.Channel;
 import tv.avfun.api.ChannelApi;
 import tv.avfun.app.AcApp;
 import tv.avfun.fragment.ChannelContentFragment;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,6 +17,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -31,7 +35,7 @@ import com.actionbarsherlock.view.SubMenu;
 import com.umeng.analytics.MobclickAgent;
 import com.viewpagerindicator.TabPageIndicator;
 
-public class ChannelActivity extends SherlockFragmentActivity implements OnPageChangeListener, TabListener {
+public class ChannelActivity extends SherlockFragmentActivity{
 
     private int               gdposition;
     private ActionBar         ab;
@@ -42,9 +46,9 @@ public class ChannelActivity extends SherlockFragmentActivity implements OnPageC
     private static final int  MIX      = 501;
     private static final int  PIC      = 502;
     private static final int  NOPIC    = 503;
+    private static final String TAG = "ChannelActivity";
     public static int         modecode = 0;
     private SubMenu           subMenu1;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -59,20 +63,19 @@ public class ChannelActivity extends SherlockFragmentActivity implements OnPageC
         ab.setDisplayHomeAsUpEnabled(true);
         mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setOffscreenPageLimit(5);
-        mPager.setOnPageChangeListener(this);
-        initTab(gdposition);
 
+        initTab(gdposition);
+        
         mPager.setAdapter(new MyFragmentAdapter(getSupportFragmentManager()));
         TabPageIndicator indicator = (TabPageIndicator)findViewById(R.id.indicator);
         indicator.setViewPager(mPager);
-
     }
 
     private void initTab(int pos) {
 
         apis = ChannelApi.getApi(pos);
         // 标题栏
-        getSupportActionBar().setTitle(apis.get(0).getTitle());
+        getSupportActionBar().setTitle(ChannelApi.getChannelTitle(pos));
     }
 
     public void onResume() {
@@ -154,38 +157,6 @@ public class ChannelActivity extends SherlockFragmentActivity implements OnPageC
             break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onTabSelected(Tab tab, FragmentTransaction ft) {
-        this.ab.setSelectedNavigationItem(tab.getPosition());
-        mPager.setCurrentItem(tab.getPosition(),true);
-    }
-
-    @Override
-    public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-
-    }
-
-    @Override
-    public void onTabReselected(Tab tab, FragmentTransaction ft) {
-
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int arg0) {
-
-    }
-
-    @Override
-    public void onPageScrolled(int arg0, float arg1, int arg2) {
-
-    }
-
-    @Override
-    public void onPageSelected(int arg0) {
-
-        getSupportActionBar().setSelectedNavigationItem(arg0);
     }
 
     private final class MyFragmentAdapter extends FragmentPagerAdapter {

@@ -84,8 +84,8 @@ public class ChannelContentFragment extends Fragment implements OnItemClickListe
         mListView.setDividerHeight(2);
 
         LinearLayout header = (LinearLayout) mInflater.inflate(R.layout.list_header, null, false);
-        TextView headTitle = (TextView) header.findViewById(R.id.listheader_text);
-        headTitle.setText("今日最热");
+//        TextView headTitle = (TextView) header.findViewById(R.id.listheader_text);
+//        headTitle.setText("今日最热");
 //        headTitle.setTextSize(DensityUtil.dip2px(AcApp.context(), 12));
         mListView.addHeaderView(header);
         mListView.setHeaderDividersEnabled(false);

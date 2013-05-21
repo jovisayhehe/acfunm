@@ -206,7 +206,8 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
         .setIcon(R.drawable.ic_action_settings).setIntent(new Intent(getApplicationContext(), SettingsActivity.class))
         .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER); 
         menu.add(Menu.NONE, android.R.id.button2, Menu.NONE, "用户中心")
-        .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER | MenuItem.SHOW_AS_ACTION_WITH_TEXT); 
+        .setIcon(R.drawable.ic_about)
+        .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER); 
         menu.add(Menu.NONE, android.R.id.button3, Menu.NONE, "下载管理")
         .setIcon(R.drawable.av_download).setIntent(new Intent(getApplicationContext(), DownloadManActivity.class))
         .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);

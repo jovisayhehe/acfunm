@@ -156,7 +156,25 @@ public class ChannelApi {
         }
         return apis;
     }
-
+    public static String getChannelTitle(int pos){
+    
+        switch (pos) {
+        case 0:
+            return "动画";
+        case 1:
+            return "音乐";
+        case 2:
+            return "娱乐";
+        case 3:
+            return "短影";
+        case 4:
+            return "游戏";
+        case 5:
+            return "番剧";
+        default:
+            return null;
+        }
+    }
     private static final int TYPE_DEFAULT      = 0;
     private static final int TYPE_HOT_LIST     = 7;
     private static final int TYPE_LATEST_REPLY = 22;
