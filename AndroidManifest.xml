@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="tv.avfun"
     
-    android:versionCode="85"
-    android:versionName="0.8.5" 
+    android:versionCode="87"
+    android:versionName="0.8.7" 
     >
     <uses-sdk
         android:minSdkVersion="8"
@@ -14,7 +14,6 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-	<instrumentation android:name="android.test.InstrumentationTestRunner" android:targetPackage="tv.avfun"></instrumentation>
     <application
         android:name="tv.avfun.app.AcApp"
         android:largeHeap="true"
@@ -24,7 +23,6 @@
         android:allowBackup='true'
         android:theme="@style/AcTheme"
         >
-        <uses-library android:name="android.test.runner"/> 
         <activity
             android:name="tv.avfun.SplashActivity"
             android:screenOrientation="portrait" 
