@@ -21,6 +21,7 @@ public class ChannelApi {
         public static final int MOVIE     = 68;
         public static final int SPORT     = 69;
         public static final int SCIENCE   = 70;
+        public static final int FLASH     = 71;
         public static final int MUGEN     = 72;
 
         public static final class ARTICLE {
@@ -30,9 +31,14 @@ public class ChannelApi {
             public static final int AN_CULTURE        = 74;
             public static final int COMIC_LIGHT_NOVEL = 75;
         }
-
-        public static final int[] CHANNEL_IDS = { ANIMATION, MUSIC, GAME, FUN, BANGUMI, MOVIE,
-                                                      SPORT, SCIENCE, MUGEN };
+        
+        public static final int VOCALOID    = 103;
+        public static final int MAD_AMV     = 107;
+        public static final int MMD_3D      = 108;
+        
+        
+//        public static final int[] CHANNEL_IDS = { ANIMATION, MUSIC, GAME, FUN, BANGUMI, MOVIE,
+//                                                      SPORT, SCIENCE, MUGEN };
     }
 
     public static final SparseArray<Channel> channels;
@@ -40,13 +46,15 @@ public class ChannelApi {
         channels = new SparseArray<Channel>();
         channels.put(id.ANIMATION, new Channel("动画", id.ANIMATION));
         channels.put(id.MUSIC, new Channel("音乐", id.MUSIC));
+        channels.put(id.VOCALOID, new Channel("Vocaloid", id.VOCALOID));
         channels.put(id.FUN, new Channel("娱乐", id.FUN));
         channels.put(id.SCIENCE, new Channel("科技", id.SCIENCE));
         channels.put(id.SPORT, new Channel("体育", id.SPORT));
-        channels.put(id.MOVIE, new Channel("短影", id.MOVIE));
+        channels.put(id.MOVIE, new Channel("影视", id.MOVIE));
         channels.put(id.GAME, new Channel("游戏", id.GAME));
+        channels.put(id.FLASH, new Channel("Flash", id.FLASH));
         channels.put(id.MUGEN, new Channel("Mugen", id.MUGEN));
-        channels.put(id.BANGUMI, new Channel("番剧", id.BANGUMI));
+        channels.put(id.BANGUMI, new Channel("新番", id.BANGUMI));
         channels.put(id.ARTICLE.COLLECTION, new Channel("综合", id.ARTICLE.COLLECTION));
         channels.put(id.ARTICLE.WORK_EMOTION, new Channel("工作·情感", id.ARTICLE.WORK_EMOTION));
         channels.put(id.ARTICLE.AN_CULTURE, new Channel("动漫文化", id.ARTICLE.AN_CULTURE));
@@ -59,31 +67,33 @@ public class ChannelApi {
         List<Channel> apis = new ArrayList<Channel>();
         switch (pos) {
         case 0:
-            apis.add(new Channel("动画", id.ANIMATION));
+            apis.add(channels.get(id.ANIMATION));
             break;
         case 1:
-            apis.add(new Channel("音乐", id.MUSIC));
+            apis.add(channels.get(id.MUSIC));
+            apis.add(channels.get(id.VOCALOID));
             break;
         case 2:
-            apis.add(new Channel("娱乐", id.FUN));
-            apis.add(new Channel("科技", id.SCIENCE));
-            apis.add(new Channel("体育", id.SPORT));
+            apis.add(channels.get(id.FUN));
+            apis.add(channels.get(id.SCIENCE));
+            apis.add(channels.get(id.SPORT));
             break;
         case 3:
-            apis.add(new Channel("短影", id.MOVIE));
+            apis.add(channels.get(id.MOVIE));
             break;
         case 4:
-            apis.add(new Channel("游戏", id.GAME));
-            apis.add(new Channel("Mugen", id.MUGEN));
+            apis.add(channels.get(id.GAME));
+            apis.add(channels.get(id.FLASH));
+            apis.add(channels.get(id.MUGEN));
             break;
         case 5:
-            apis.add(new Channel("番剧", id.BANGUMI));
+            apis.add(channels.get(id.BANGUMI));
             break;
         case 6:
-            apis.add(new Channel("综合", id.ARTICLE.COLLECTION));
-            apis.add(new Channel("工作·情感", id.ARTICLE.WORK_EMOTION));
-            apis.add(new Channel("动漫文化", id.ARTICLE.AN_CULTURE));
-            apis.add(new Channel("漫画·轻小说", id.ARTICLE.COMIC_LIGHT_NOVEL));
+            apis.add(channels.get(id.ARTICLE.COLLECTION));
+            apis.add(channels.get(id.ARTICLE.WORK_EMOTION));
+            apis.add(channels.get(id.ARTICLE.AN_CULTURE));
+            apis.add(channels.get(id.ARTICLE.COMIC_LIGHT_NOVEL));
             break;
         }
         return apis;
