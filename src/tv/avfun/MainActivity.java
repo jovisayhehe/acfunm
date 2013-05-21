@@ -40,6 +40,8 @@ import com.slidingmenu.lib.SlidingMenu.OnCloseListener;
 import com.slidingmenu.lib.SlidingMenu.OnOpenListener;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.fb.NotificationType;
+import com.umeng.fb.UMFeedbackService;
 import com.umeng.update.UmengUpdateAgent;
 
 public class MainActivity extends SlidingFragmentActivity implements OnOpenListener, OnCloseListener {
@@ -160,6 +162,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
         MobclickAgent.setAutoLocation(false);
         MobclickAgent.onError(this);
         UmengUpdateAgent.update(this);
+        UMFeedbackService.enableNewReplyNotification(this, NotificationType.AlertDialog);
     }
 
     private void initNav() {
@@ -322,7 +325,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
              * instances.put("play_time",nextContent); }
              */
             Intent intent = new Intent(getApplicationContext(), ChannelActivity.class);
-            intent.putExtra("position", 6);
+            intent.putExtra("position", 5);
             intent.putExtra("isarticle", true);
             startActivity(intent);
             toggle();

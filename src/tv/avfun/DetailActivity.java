@@ -132,6 +132,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
                 
                 if (NetWorkUtil.isNetworkAvailable(getApplicationContext())) {
                     mVideoInfo = ApiParser.getVideoInfoByAid(aid);
+                    if(mVideoInfo == null) return false;
                     mData.addAll(mVideoInfo.parts);
                 }
                 if(downloadParts != null){

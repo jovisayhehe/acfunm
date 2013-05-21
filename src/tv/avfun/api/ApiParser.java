@@ -200,6 +200,8 @@ public class ApiParser {
         String url = "http://www.acfun.tv/api/content.aspx?query=" + aid;
         JSONObject jsonObject = Connectivity.getJSONObject(url);
         // get tags
+        if(!jsonObject.getBoolean("success"))
+            return null;
         JSONArray tagsArray = jsonObject.getJSONArray("tags");
         video.tags = new String[tagsArray.length()];
         for(int i=0; i<tagsArray.length();i++){

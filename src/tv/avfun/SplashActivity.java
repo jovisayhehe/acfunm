@@ -2,6 +2,9 @@ package tv.avfun;
 
 import java.io.File;
 
+import com.umeng.fb.NotificationType;
+import com.umeng.fb.UMFeedbackService;
+
 import tv.avfun.app.AcApp;
 import tv.avfun.util.DataStore;
 import android.app.Activity;
@@ -34,11 +37,12 @@ public class SplashActivity extends Activity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
         setContentView(R.layout.activity_splash);
         // TODO　init data here
         Message msg = Message.obtain();
         msg.what = 0;
-        mHandler.sendMessageDelayed(msg, 2000L);
+        mHandler.sendMessageDelayed(msg, 1200L);
         //版本号更改后，清除原有缓存
         try {
             PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
