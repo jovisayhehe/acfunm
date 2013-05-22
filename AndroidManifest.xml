@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="tv.avfun"
     
-    android:versionCode="87"
-    android:versionName="0.8.7" 
+    android:versionCode="88"
+    android:versionName="0.8.8" 
     >
     <uses-sdk
         android:minSdkVersion="8"
@@ -102,6 +102,10 @@
         android:name="tv.avfun.SectionActivity"
         />
         <activity android:name="tv.avfun.DownloadManActivity" android:uiOptions="splitActionBarWhenNarrow"/>
+        
+        <activity 
+        android:name="tv.avfun.HelpActivity"
+        />
         <service
             android:name="com.umeng.common.net.DownloadingService"
             android:exported="true"

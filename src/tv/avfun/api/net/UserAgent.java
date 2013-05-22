@@ -15,7 +15,7 @@ public final class UserAgent {
     public static final String DEFAULT   = CHROME_26;
     /** Acfun ua */
     public static final String MY_UA     = "AcFun/1.0 (Linux; Android "+Build.VERSION.RELEASE+"; "+Build.MODEL+"; "
-                                                +Locale.getDefault().getLanguage()+"-"+Locale.getDefault().getCountry().toLowerCase()+")";
+                                                +Locale.getDefault().getLanguage()+"-"+Locale.getDefault().getCountry().toLowerCase()+") Version/4.0 Mobile Safari/534.30";
     private static Random random;
     static{
         random = new Random();

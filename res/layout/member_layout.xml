@@ -210,7 +210,7 @@
                 android:text="下载管理"
                 android:textSize="15sp"
                 android:textStyle="bold" />
-            <TextView
+<!--             <TextView
                 android:id="@+id/mem_btn_subs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -220,7 +220,7 @@
                 android:text="我的订阅"
                 android:visibility="gone"
                 android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textStyle="bold" /> -->
         </LinearLayout>
         <TextView
                 android:id="@+id/mem_set_btn"
@@ -229,6 +229,16 @@
                 android:background="@drawable/mem_item_background"
                 android:padding="12dip"
                 android:text="设置"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        <TextView
+            android:layout_marginTop="1dip"
+                android:id="@+id/mem_btn_help"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/mem_item_background"
+                android:padding="12dip"
+                android:text="帮助"
                 android:textSize="15sp"
                 android:textStyle="bold" />
     </LinearLayout>
