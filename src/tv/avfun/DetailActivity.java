@@ -213,9 +213,9 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
             tvViews.setText(String.valueOf(c.getViews()));
             tvComments.setText(String.valueOf(c.getComments()));
             description = c.getDescription();
-            if(description == null)
+            if(!StringUtil.validate(description))
                 tvDesc.setText(LOADING);
-//            setDescription(tvDesc);
+            else setDescription(tvDesc);
             tvBtnPlay.setText(LOADING);
             tvTitle.setText(c.getTitle());
 
@@ -258,7 +258,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
     }
 
     private void addToHistory() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 hh:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
         new DBService(this).addtoHis(aid, title, sdf.format(new Date()), 0, channelid);
     }
 
@@ -306,7 +306,9 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         case android.R.id.home:
             this.finish();
             break;
-
+        case R.id.menu_item_share_action_provider_action_bar:
+            MobclickAgent.onEvent(DetailActivity.this,"share");
+            break;
         case R.id.menu_item_fov_action_provider_action_bar:
             if (isFavorite) {
                 new DBService(this).delFav(aid);
@@ -350,7 +352,6 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
     }
 
     private Intent createShareIntent() {
-        MobclickAgent.onEvent(DetailActivity.this,"share");
         String shareurl = title + "http://www.acfun.tv/v/ac" + aid;
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");

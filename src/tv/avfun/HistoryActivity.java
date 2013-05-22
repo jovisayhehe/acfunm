@@ -5,7 +5,10 @@ import java.util.ArrayList;
 import tv.avfun.db.DBService;
 import tv.avfun.entity.Contents;
 import tv.avfun.entity.History;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -82,19 +85,37 @@ public class HistoryActivity extends SherlockActivity implements OnItemClickList
 			this.finish();
 			break;
 		case HistoryActivity.HISTORYID:
-			new DBService(this).cleanHis();
-			data.clear();
-			adaper.setData(data);
-			adaper.notifyDataSetChanged();
-			Toast.makeText(this, "清除完成", Toast.LENGTH_SHORT).show();
+		    showDialog();
 			break;
 		default:
 			break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	private void clear(){
+        new DBService(this).cleanHis();
+        data.clear();
+        adaper.setData(data);
+        adaper.notifyDataSetChanged();
+        Toast.makeText(this, "清除完成", Toast.LENGTH_SHORT).show();
+	}
+	private void showDialog(){
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("确认清空历史吗？")
+                .setNegativeButton("取消", new OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).setPositiveButton("清除", new OnClickListener() {
 
-
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        clear();
+                        dialog.dismiss();
+                    }
+                }).show();
+	}
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
