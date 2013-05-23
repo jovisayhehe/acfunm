@@ -114,7 +114,7 @@ public class HelpActivity extends SherlockPreferenceActivity {
         mFaqView.setWebViewClient(new WebViewClient());
         mFaqView.setWebChromeClient(new WebChromeClient());
         WebSettings settings = mFaqView.getSettings();
-        settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        settings.setCacheMode(WebSettings.LOAD_NORMAL);
         settings.setDefaultTextEncodingName("utf-8");
         settings.setUseWideViewPort(true);
         settings.setSupportZoom(true);

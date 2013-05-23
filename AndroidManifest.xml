@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="tv.avfun"
     
-    android:versionCode="88"
-    android:versionName="0.8.8" 
+    android:versionCode="89"
+    android:versionName="0.8.9" 
     >
     <uses-sdk
         android:minSdkVersion="8"
@@ -122,8 +122,9 @@
             android:name="com.umeng.fb.ui.FeedbackConversation"
             android:configChanges="keyboard" />
 
-         <meta-data android:value="50a79c105270152fbd00002f" android:name="UMENG_APPKEY"></meta-data>
-		<meta-data android:value="AndroidMarket" android:name="UMENG_CHANNEL"/>
+        <meta-data android:value="50a79c105270152fbd00002f" android:name="UMENG_APPKEY"></meta-data>
+		<meta-data android:value="XiaoMi" android:name="UMENG_CHANNEL"/>
+		<!-- <meta-data android:value="AndroidMarket" android:name="UMENG_CHANNEL"/> -->
     </application>
 
 </manifest>
