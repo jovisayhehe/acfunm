@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.StatFs;
 import android.text.TextUtils;
+import android.util.Log;
 
 public class FileUtil {
     public static Uri getLocalFileUri(File file){
@@ -76,6 +77,7 @@ public class FileUtil {
      * @return
      */
     public static String getUrlExt(String url){
+        
         if (!TextUtils.isEmpty(url)) {
 //            int start = url.lastIndexOf('.');
             int start = url.lastIndexOf('/');
@@ -83,12 +85,17 @@ public class FileUtil {
             end = end <= start ? url.length() : end;
             String ext = "";
             if (start > 0 && start < url.length() - 1) {
+                try{
                 ext = url.substring(start, end).toLowerCase();
+                
                 return ext.substring(ext.lastIndexOf('.'));
+                }catch (StringIndexOutOfBoundsException e) {
+                   Log.e("Util", "when get url ext : "+url,e);
+                }
             }
             
         }
-        return "";
+        return "flv";
     }
     
     public static String guessVideoMimetype(String ext){

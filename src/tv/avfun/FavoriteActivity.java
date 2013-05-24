@@ -24,7 +24,7 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 
-public class FavoriteActivity extends SherlockActivity implements OnItemClickListener{
+public class FavoriteActivity extends BaseListActivity implements OnItemClickListener{
 	private List<Favorite> data = new ArrayList<Favorite>();
 	private ListView list;
 	private ProgressBar progressBar;
@@ -36,7 +36,7 @@ public class FavoriteActivity extends SherlockActivity implements OnItemClickLis
 		setContentView(R.layout.list_layout);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		
-			getSupportActionBar().setTitle("我的收藏");
+			getSupportActionBar().setTitle("本地收藏夹");
 		
 		progressBar = (ProgressBar)findViewById(R.id.time_progress);
 		list = (ListView)findViewById(android.R.id.list);
@@ -66,20 +66,6 @@ public class FavoriteActivity extends SherlockActivity implements OnItemClickLis
 		
 	}
 	
-	
-	@Override
-	public boolean onOptionsItemSelected(
-			com.actionbarsherlock.view.MenuItem item) {
-		
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			this.finish();
-			break;
-		default:
-			break;
-		}
-		return super.onOptionsItemSelected(item);
-	}
 
 
 	@Override
@@ -145,7 +131,7 @@ public class FavoriteActivity extends SherlockActivity implements OnItemClickLis
 			
 			final ListViewHolder holder;
 			if(convertView==null){
-				convertView = mInflater.inflate(R.layout.favorites_list_item, null);
+				convertView = mInflater.inflate(R.layout.favorites_list_item, parent,false);
 				holder = new ListViewHolder();
 				holder.title = (TextView) convertView.findViewById(R.id.favrites_item_title);
 				holder.channel = (TextView) convertView.findViewById(R.id.favrites_item_chann);

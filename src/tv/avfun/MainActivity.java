@@ -40,6 +40,8 @@ import com.slidingmenu.lib.SlidingMenu.OnCloseListener;
 import com.slidingmenu.lib.SlidingMenu.OnOpenListener;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.fb.NotificationType;
+import com.umeng.fb.UMFeedbackService;
 import com.umeng.update.UmengUpdateAgent;
 
 public class MainActivity extends SlidingFragmentActivity implements OnOpenListener, OnCloseListener {
@@ -160,6 +162,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
         MobclickAgent.setAutoLocation(false);
         MobclickAgent.onError(this);
         UmengUpdateAgent.update(this);
+        UMFeedbackService.enableNewReplyNotification(this, NotificationType.AlertDialog);
     }
 
     private void initNav() {
@@ -203,7 +206,8 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
         .setIcon(R.drawable.ic_action_settings).setIntent(new Intent(getApplicationContext(), SettingsActivity.class))
         .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER); 
         menu.add(Menu.NONE, android.R.id.button2, Menu.NONE, "用户中心")
-        .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER | MenuItem.SHOW_AS_ACTION_WITH_TEXT); 
+        .setIcon(R.drawable.ic_about)
+        .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER); 
         menu.add(Menu.NONE, android.R.id.button3, Menu.NONE, "下载管理")
         .setIcon(R.drawable.av_download).setIntent(new Intent(getApplicationContext(), DownloadManActivity.class))
         .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
@@ -322,7 +326,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
              * instances.put("play_time",nextContent); }
              */
             Intent intent = new Intent(getApplicationContext(), ChannelActivity.class);
-            intent.putExtra("position", 6);
+            intent.putExtra("position", 5);
             intent.putExtra("isarticle", true);
             startActivity(intent);
             toggle();

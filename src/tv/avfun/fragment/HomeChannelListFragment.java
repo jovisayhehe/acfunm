@@ -258,6 +258,14 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
         loadView = findViewById(R.id.load_view);
         updateInfo = (TextView) findViewById(R.id.update_info);
         timeOutView = (TextView) findViewById(R.id.time_out_text);
+        
+        return mView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        activity = getActivity();
         initView();
         initFadeAnim();
         mPtr = (PullToRefreshScrollView) findViewById(R.id.pull_refresh_scrollview);
@@ -271,16 +279,9 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
 
         });
         mLoadingLayout = mPtr.getLoadingLayoutProxy();
-        mLoadingLayout.setRefreshingLabel(getString(R.string.refreshing));
-        mLoadingLayout.setPullLabel(getString(R.string.pull_refresh));
-        mLoadingLayout.setReleaseLabel(getString(R.string.release_refresh));
-        return mView;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        activity = getActivity();
+        mLoadingLayout.setRefreshingLabel(activity.getString(R.string.refreshing));
+        mLoadingLayout.setPullLabel(activity.getString(R.string.pull_refresh));
+        mLoadingLayout.setReleaseLabel(activity.getString(R.string.release_refresh));
         loadData();
     }
     

@@ -63,17 +63,16 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.list_layout);
+		aid = getIntent().getStringExtra("aid");
 		
 	    ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setTitle("评论");
-        aid = getIntent().getStringExtra("aid");
         
         relalay = (RelativeLayout) findViewById(R.id.list_relative);
         bottomline = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.comments_bottom, null);
         LayoutParams rlpar = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         rlpar.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        bottomline.setVisibility(View.GONE);
         relalay.addView(bottomline,rlpar);
         send_btn = (ImageButton) findViewById(R.id.comments_send_btn);
         comment_edit = (EditText) findViewById(R.id.comments_edit);
@@ -106,16 +105,16 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 	    super.onPause();
 	    MobclickAgent.onPause(this);
 	}
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-    	
-        menu.add(1, CommentsActivity.COMMENTID, 1,"评论")
-        .setIcon(R.drawable.social_chat)
-        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-        
-        return super.onCreateOptionsMenu(menu);
-    }
-	
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//    	
+//        menu.add(1, CommentsActivity.COMMENTID, 1,"评论")
+//        .setIcon(R.drawable.social_chat)
+//        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+//        
+//        return super.onCreateOptionsMenu(menu);
+//    }
+//	
 	public void bottomlinevisible(){
 		if(bottomline.getVisibility()==View.GONE){
 			bottomline.setVisibility(View.VISIBLE);
@@ -197,9 +196,9 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 		case android.R.id.home:
 			this.finish();
 			break;
-		case CommentsActivity.COMMENTID:
-			bottomlinevisible();
-			break;
+//		case CommentsActivity.COMMENTID:
+//			bottomlinevisible();
+//			break;
 		default:
 			break;
 		}

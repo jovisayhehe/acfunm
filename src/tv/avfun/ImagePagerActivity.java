@@ -37,14 +37,13 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.umeng.analytics.MobclickAgent;
 
 public class ImagePagerActivity extends SherlockActivity{
-	private String channelid;
+	private int channelid;
 	private boolean isfavorite = false;
 	private String title;
 	private String aid;
 	private ArrayList<String> imgUrls = new ArrayList<String>();
 	private boolean instanceStateSaved;
 	private ImageLoader imageLoader;
-	private DisplayImageOptions options;
 	private ViewPager pager;
 	private final static int COMMID = 500;
 	@SuppressLint("SimpleDateFormat")
@@ -54,38 +53,17 @@ public class ImagePagerActivity extends SherlockActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.ac_image_pager);
 		
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
-		.threadPriority(Thread.NORM_PRIORITY - 2)
-		.memoryCacheSize(2 * 1024 * 1024) // 2 Mb
-		.denyCacheImageMultipleSizesInMemory()
-		.discCacheFileNameGenerator(new Md5FileNameGenerator())
-		.imageDownloader(new ExtendedImageDownloader(getApplicationContext()))
-		.tasksProcessingOrder(QueueProcessingType.LIFO)
-		.enableLogging() // Not necessary in common
-		.build();
-		
-		ImageLoader.getInstance().init(config);
-		
 		imageLoader = ImageLoader.getInstance();
 		
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		title = getIntent().getStringExtra("title");
 		aid = getIntent().getStringExtra("aid");
-		channelid = getIntent().getStringExtra("channelId");
+		channelid = getIntent().getIntExtra(("channelId"),0);
 		imgUrls = getIntent().getStringArrayListExtra("imgs");
 		getSupportActionBar().setTitle(title);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 hh:mm");
-		new DBService(this).addtoHis(aid, title, sdf.format(new Date()),1,Integer.parseInt(channelid));
+		new DBService(this).addtoHis(aid, title, sdf.format(new Date()),1,channelid);
 		isfavorite = new DBService(this).isFaved(aid);
-		
-		options = new DisplayImageOptions.Builder()
-		.showImageForEmptyUri(R.drawable.no_picture)
-		.resetViewBeforeLoading()
-		.cacheOnDisc()
-		.imageScaleType(ImageScaleType.IN_SAMPLE_INT)
-		.bitmapConfig(Bitmap.Config.RGB_565)
-		.displayer(new FadeInBitmapDisplayer(300))
-		.build();
 		
 		if(imgUrls.isEmpty()||imgUrls.size()==0){
 			Toast.makeText(this, "尚未发现图片", Toast.LENGTH_SHORT).show();
@@ -111,9 +89,9 @@ public class ImagePagerActivity extends SherlockActivity{
         	 menu.findItem(R.id.menu_item_fov_action_provider_action_bar).setIcon(R.drawable.rating_favorite_p);
         }
         
-		 menu.add(1, ImagePagerActivity.COMMID, 1,"评论")
-	      .setIcon(R.drawable.social_chat)
-	      .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+//		 menu.add(1, ImagePagerActivity.COMMID, 1,"评论")
+//	      .setIcon(R.drawable.social_chat)
+//	      .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         
         return super.onCreateOptionsMenu(menu);
     }
@@ -157,14 +135,14 @@ public class ImagePagerActivity extends SherlockActivity{
 				item.setIcon(R.drawable.rating_favorite);
 				Toast.makeText(this, "取消成功", Toast.LENGTH_SHORT).show();
 			}else{
-				new DBService(this).addtoFav(aid, title, 0, Integer.parseInt(channelid));
+				new DBService(this).addtoFav(aid, title, 0, channelid);
 				isfavorite = true;
 				item.setIcon(R.drawable.rating_favorite_p);
 				Toast.makeText(this, "收藏成功", Toast.LENGTH_SHORT).show();
 			}
 
 			break;
-		case ImagePagerActivity.COMMID:
+		case R.id.menu_item_comment:
 			
 			Intent intent = new Intent(ImagePagerActivity.this, CommentsActivity.class);
 			intent.putExtra("aid", aid);
@@ -217,7 +195,7 @@ public class ImagePagerActivity extends SherlockActivity{
 			final View imageLayout = inflater.inflate(R.layout.item_pager_image, null);
 			final ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
 			final ProgressBar spinner = (ProgressBar) imageLayout.findViewById(R.id.loading);
-			imageLoader.displayImage(images.get(position), imageView, options, new SimpleImageLoadingListener() {
+			imageLoader.displayImage(images.get(position), imageView, new SimpleImageLoadingListener() {
 				@Override
 				public void onLoadingStarted() {
 					spinner.setVisibility(View.VISIBLE);

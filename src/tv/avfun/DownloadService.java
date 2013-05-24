@@ -114,17 +114,20 @@ public class DownloadService extends Service {
         
         @Override
         public void onDownloadFinished(int status, DownloadJob job) {
+            Log.i(TAG, "service: got finished");
             mDownloadProvider.complete(status, job);
             showDownloadedNoti(status,job);
         }
 
         @Override
         public void onDownloadPaused(DownloadJob job) {
+            Log.i(TAG, "service: got paused");
             showDownloadedNoti(DownloadDB.STATUS_PAUSED,job);
         }
 
         @Override
         public void onDownloadCancelled(DownloadJob job) {
+            Log.i(TAG, "service: got cancelled");
             showDownloadedNoti(DownloadDB.STATUS_CANCELED,job);
         }
     };

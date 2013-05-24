@@ -105,11 +105,20 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
     long UPDATE_INTERVAL = 500; // 500ms刷新一回，以免过快刷新导致崩溃
 
     @Override
-    public void onDownloadChanged(DownloadManager manager) {
-        if (System.currentTimeMillis() - lastUpdateTime > UPDATE_INTERVAL) {
-            runOnUiThread(mUpdateTask);
-            lastUpdateTime = System.currentTimeMillis();
+    public void onDownloadChanged(int what) {
+        // 是这里导致没有及时更新界面的。
+        switch (what) {
+        case DownloadManager.ON_PROGRESS: // 刷新进度，才控制速度
+            if (System.currentTimeMillis() - lastUpdateTime > UPDATE_INTERVAL) {
+                runOnUiThread(mUpdateTask);
+                lastUpdateTime = System.currentTimeMillis();
+            }
+            break;
+        default:
+            runOnUiThread(mUpdateTask); // 其他状态，及时刷新
+            break;
         }
+        
     }
 
     @Override
@@ -152,8 +161,6 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
 
     @Override
     public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-        Log.i(TAG, mStateArray[itemPosition] + "selected");
-
         updateListView(itemPosition);
         lastNavPosition = itemPosition;
         return true;
@@ -235,7 +242,6 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
                     i++;
                 }
                 AcApp.showToast("删除完毕 - 共" + i + "项");
-                mAdapter.notifyDataSetChanged();
                 break;
             case R.id.menu_download_resume:
                 AcApp.showToast("继续");

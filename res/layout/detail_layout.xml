@@ -86,7 +86,6 @@
         android:layout_height="90dip"
         android:layout_marginLeft="10dip"
         android:scaleType="fitXY"
-        android:src="@drawable/face"
         yoooo:BorderColor="#FFFFFF" />
 
     <TextView

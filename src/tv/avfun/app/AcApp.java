@@ -5,10 +5,22 @@ import java.io.File;
 
 import tv.avfun.DownloadManActivity;
 import tv.avfun.R;
+import tv.avfun.util.ExtendedImageDownloader;
 import tv.avfun.util.download.DownloadManager;
 
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
+import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
+import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.cache.memory.impl.LRULimitedMemoryCache;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.utils.StorageUtils;
 
 import android.app.Activity;
 import android.app.Application;
@@ -39,9 +51,9 @@ public class AcApp extends Application {
     private static String    mSDcardDir, mExternalFilesDir;
     private static AcApp     instance;
     private static SharedPreferences sp;
-    public static final String LOG = "/Logs"; 
-    public static final String IMAGE = "/Imgs";
-    public static final String VIDEO = "/Videos";
+    public static final String LOG = "Logs"; 
+    public static final String IMAGE = "images";
+    public static final String VIDEO = "Videos";
     
     private DownloadManager mDownloadManager;
     private static NotificationManager mNotiManager;
@@ -60,6 +72,27 @@ public class AcApp extends Application {
         sp = PreferenceManager.getDefaultSharedPreferences(mContext);
         mDownloadManager = new DownloadManager(this);
         mDownloadManager.getProvider().loadOldDownloads();
+        DisplayImageOptions options = new DisplayImageOptions.Builder()
+            .showImageForEmptyUri(R.drawable.no_picture)
+            .resetViewBeforeLoading()
+            .cacheOnDisc()
+            .imageScaleType(ImageScaleType.IN_SAMPLE_INT)
+            .displayer(new FadeInBitmapDisplayer(300))
+            .build();
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
+            .threadPriority(Thread.NORM_PRIORITY - 2)
+            .memoryCache(new LRULimitedMemoryCache((3 * 1024 * 1024)))
+            .denyCacheImageMultipleSizesInMemory()
+            //.discCache(new UnlimitedDiscCache(new File(StorageUtils.getCacheDirectory(mContext),"Imgs")))
+            .discCacheFileCount(200)
+            .discCacheSize(50 * 1024 * 1024)
+            .imageDownloader(new ExtendedImageDownloader(getApplicationContext()))
+            .tasksProcessingOrder(QueueProcessingType.LIFO)
+            .enableLogging() // Not necessary in common
+            .defaultDisplayImageOptions(options)
+            .build();
+        
+        ImageLoader.getInstance().init(config);
     }
     
     @Override
@@ -104,7 +137,7 @@ public class AcApp extends Application {
      * @return
      */
     public static File getDownloadPath(String aid, String vid){
-        File path = new File(sp.getString("download_path", getSDcardDir()+"/Download/AcFun"+VIDEO+"/"+aid+"/"+vid));
+        File path = new File(sp.getString("download_path", getSDcardDir()+"/Download/AcFun/"+VIDEO+"/"+aid+"/"+vid));
         //path.mkdirs();
         return path;
     }

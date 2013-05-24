@@ -12,7 +12,6 @@
    android:layout_height="60dip"
    android:layout_margin="12dip"
    yoooo:BorderColor="#FFFFFF"
-   android:src="@drawable/face"
    android:scaleType="fitXY"
    android:id="@+id/comments_user_img"
    />

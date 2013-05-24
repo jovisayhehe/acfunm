@@ -7,6 +7,7 @@
     android:orientation="horizontal" >
 
     <EditText
+        android:layout_marginLeft="8dip"
         android:layout_width="0dip"
         android:layout_height="wrap_content"
         android:layout_weight="1.0"
@@ -19,8 +20,6 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="8dip"
-        android:paddingRight="8dip"
         android:id="@+id/comments_send_btn"
         android:background="@drawable/selectable_background"
         android:src="@drawable/social_send_now" />

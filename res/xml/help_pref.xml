@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="帮助" >
+
+<!--     <Preference
+        android:key="about"
+        android:title="关于" /> -->
+    <Preference 
+        android:key="update"
+        android:title="检查新版本"
+        />
+    <Preference
+        android:key="share"
+        android:summary="不把好东西分享给好♂友？"
+        android:title="分享" />
+    <Preference
+        android:key="comment"
+        android:summary="不值得5星好评吗？"
+        android:title="点评" />
+	<Preference
+        android:key="faq"
+        android:title="FAQ" />
+    <Preference
+        android:key="feedback"
+        android:title="反(tu)馈(cao)" />
+    <Preference
+        android:key="hfun"
+        android:summary="一个充满A级爱情的地方"
+        android:title="A岛" />
+
+</PreferenceScreen>

@@ -38,23 +38,19 @@
     
     <TextView
         android:id="@+id/channelist_content_item_upman"
-        android:layout_weight="3"
-        android:layout_width="0dip"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/upman"
-        android:ellipsize="end"
-        
         android:singleLine="true"
         android:textSize="12sp" />
     <TextView
+        android:layout_marginLeft="4dip"
         android:id="@+id/channelist_content_item_views"
-        android:layout_weight="2"
-        android:layout_width="0dip"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/views"
         android:paddingRight="8dip"
         android:singleLine="true"
-        android:textColor="#C5C5C5"
         android:textSize="12sp" />
     </LinearLayout>
     <LinearLayout

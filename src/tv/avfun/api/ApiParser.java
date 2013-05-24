@@ -73,7 +73,7 @@ public class ApiParser {
             // c.setChannelId(jobj.getInt("channelId"));
             c.setChannelId(channelId);
             c.setComments(jobj.getInt("comments"));
-
+            c.setReleaseDate(jobj.getLong("releaseDate"));
             contents.add(c);
         }
         return contents;
@@ -86,9 +86,9 @@ public class ApiParser {
           new Channel("动画", id.ANIMATION, R.drawable.title_bg_anim),
           new Channel("音乐", id.MUSIC, R.drawable.title_bg_music),
           new Channel("娱乐", id.FUN, R.drawable.title_bg_fun),
-          new Channel("短影", id.MOVIE, R.drawable.title_bg_movie),
+          new Channel("短影", id.VIDEO, R.drawable.title_bg_movie),
           new Channel("游戏", id.GAME , R.drawable.title_bg_game),
-          new Channel("番剧", id.BANGUMI, R.drawable.title_bg_anim)
+//          new Channel("番剧", id.BANGUMI, R.drawable.title_bg_anim)
         };
     /**
      * 获取首页频道列表 推荐内容
@@ -150,6 +150,7 @@ public class ApiParser {
                                 .replaceAll("\\[.*?]", "").replaceFirst("\\s+", ""));
                 map.put("userImg", contentobj.getString("userImg"));
                 map.put("totalPage", totalPage);
+                map.put("postDate", contentobj.getString("postDate"));
                 comments.add(map);
             }
 
@@ -199,6 +200,8 @@ public class ApiParser {
         String url = "http://www.acfun.tv/api/content.aspx?query=" + aid;
         JSONObject jsonObject = Connectivity.getJSONObject(url);
         // get tags
+        if(!jsonObject.getBoolean("success"))
+            return null;
         JSONArray tagsArray = jsonObject.getJSONArray("tags");
         video.tags = new String[tagsArray.length()];
         for(int i=0; i<tagsArray.length();i++){
@@ -364,10 +367,10 @@ public class ApiParser {
             c.setUsername(job.getString("author"));
             c.setViews(job.getLong("views"));
             c.setTitleImg(job.getString("titleImg"));
-            c.setDescription(job.getString("description").replace("&nbsp;", " ")
-                    .replace("&amp;", "&").replaceAll("\\<.*?>", ""));
+            c.setDescription(StringUtil.getSource(job.getString("description")));
             c.setChannelId(job.getInt("channelId"));
             c.setComments(job.getInt("comments"));
+            c.setReleaseDate(job.getLong("releaseDate"));
             cs.add(c);
         }
 

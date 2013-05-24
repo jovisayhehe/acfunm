@@ -8,7 +8,7 @@
 		android:background="@drawable/umeng_fb_gray_frame">
 		<TextView android:id="@+id/umeng_fb_new_reply_alert_title"
 			android:layout_width="fill_parent" android:layout_height="40dip"
-			android:text="您的反馈收到了回复" android:textColor="#565656"
+			android:text="@string/UMNewReplyAlertTitle" android:textColor="#565656"
 			android:textSize="20dip" android:gravity="center"
 			android:background="@drawable/umeng_fb_bar_bg" />
 		<TextView android:id="@+id/umeng_fb_new_dev_reply_box"

@@ -89,6 +89,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
     }
     @Override
     protected Boolean doInBackground(Void... ps) {
+        android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND); 
         State state = new State();
         state.mRequestUri = mInfo.url;
         HttpParams params = new BasicHttpParams();

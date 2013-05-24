@@ -4,16 +4,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script type="text/javascript" src="usite.js"/></script>
-</head>
-<body >
-<div id="title" align="center"></div>
-<div id="info" align="center"></div>
-<div id="content"></div>
-</body>
-
 <style type="text/css">
 html {
-    font-family:Helvetica, "Hiragino Sans GB W3";
+    font-family:Helvetica, "Hiragino Sans GB W3",monospace;
     line-height: 120%;
     background: #f6f6f6;
     overflow-x: hidden;
@@ -29,9 +22,9 @@ body, div, a {
 
 #content {
     width:100%;
-    font-size: 1.1em;
+    font-size: 1.0em;
     line-height: 140%;
-    color:#666;
+    color:#333;
     }
 
 h1, h2, h3, h4 ,h5, h6 {
@@ -43,7 +36,7 @@ h1, h2, h3, h4 ,h5, h6 {
 #content a {
     color:#455767;
     text-decoration:underline;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-tap-highlight-color: rgba(243, 200, 10, 0);
 
     }
 
@@ -61,8 +54,8 @@ h1, h2, h3, h4 ,h5, h6 {
     }
 
 #content img {
-    margin:5px auto;
-    max-width:100%;
+    margin:auto;
+    
     display:block;
     clear:both;
     }
@@ -79,12 +72,16 @@ h1, h2, h3, h4 ,h5, h6 {
     float: left;
     clear: both;
     }
-    
+	
+#content hr{
+	border-top: 1px dashed #999999;
+
+}  
 
 #title {
     font-size:20px;
     line-height:30px;
-    color:#666;
+    color:#0187c5;
     font-weight:bold;
     padding-top: 20px;
     padding-bottom: 10px;
@@ -97,5 +94,10 @@ h1, h2, h3, h4 ,h5, h6 {
     width: 100%;
     }
 </style>
-
+</head>
+<body >
+<div id="title" align="center"></div>
+<div id="info" align="center"></div>
+<div id="content"></div>
+</body>
 </html>
