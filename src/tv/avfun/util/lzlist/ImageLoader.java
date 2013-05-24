@@ -75,12 +75,12 @@ public class ImageLoader {
             OutputStream os = new FileOutputStream(f);
             Utils.CopyStream(is, os);
             os.close();
-             conn.disconnect();
+            conn.disconnect();
             bitmap = decodeFile(f);
             return bitmap;
         } catch (Throwable ex){
            if(ex instanceof OutOfMemoryError)
-               memoryCache.clear();
+               clearMemoryCache();
            return null;
         }
     }
@@ -177,7 +177,9 @@ public class ImageLoader {
                 photoToLoad.imageView.setImageResource(stub_id);
         }
     }
-
+    public void clearMemoryCache(){
+        memoryCache.clear();
+    }
     public void clearCache() {
         memoryCache.clear();
         FileCache.clear();

@@ -77,7 +77,7 @@ public class DownloadJobAdapter extends ArrayListAdapter<DownloadJob> implements
 	    int downloadSize = job.getDownloadedSize();
 		if(job.getProgress() == 100){
 			holder.progressBar.setVisibility(View.GONE);
-			holder.progressText.setText(FileUtil.formetFileSize(totalSize)+"/已完成");
+			holder.progressText.setText(FileUtil.formatFileSize(totalSize)+"/已完成");
 		}else if(downloadSize== 0 && DownloadManager.isRunningStatus(job.getStatus())){
 		    holder.progressBar.setVisibility(View.VISIBLE);
 		    holder.progressBar.setIndeterminate(true);
@@ -94,7 +94,7 @@ public class DownloadJobAdapter extends ArrayListAdapter<DownloadJob> implements
 		        holder.progressBar.setIndeterminate(false);   
 		        holder.progressBar.setProgress(job.getProgress());
 		    }
-			holder.progressText.setText(FileUtil.formetFileSize(downloadSize)+"/" + FileUtil.formetFileSize(totalSize));
+			holder.progressText.setText(FileUtil.formatFileSize(downloadSize)+"/" + FileUtil.formatFileSize(totalSize));
 		} else{
 		    holder.progressBar.setVisibility(View.GONE);
 		    holder.progressText.setText("未知大小");

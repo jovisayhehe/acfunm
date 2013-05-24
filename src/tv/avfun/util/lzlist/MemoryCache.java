@@ -66,6 +66,13 @@ public class MemoryCache {
     public void clear() {
         try{
             //NullPointerException sometimes happen here http://code.google.com/p/osmdroid/issues/detail?id=78 
+            for(Map.Entry<String, Bitmap>  entry : cache.entrySet()){
+                Bitmap m = entry.getValue();
+                if(!m.isRecycled()){
+                    m.recycle();
+                    m = null;
+                }
+            }
             cache.clear();
             size=0;
         }catch(NullPointerException ex){

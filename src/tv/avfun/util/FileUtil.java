@@ -28,7 +28,7 @@ public class FileUtil {
     }
 
     /*** 格式化文件大小(xxx.xx B/KB/MB/GB) */
-    public static String formetFileSize(long size) {
+    public static String formatFileSize(long size) {
         if(size <=0) return "0B";
         DecimalFormat df = new DecimalFormat("#.00");
         String fileSizeString = "";
@@ -52,7 +52,7 @@ public class FileUtil {
     public static String showFileAvailable() {
         long availableSize = getExternalAvailable();
         if (availableSize > 0)
-            return formetFileSize(availableSize);
+            return formatFileSize(availableSize);
         return null;
     }
 
