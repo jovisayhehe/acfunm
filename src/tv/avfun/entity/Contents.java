@@ -12,7 +12,7 @@ public class Contents implements Serializable{
     private String aid;
     private int comments;
     private int channelId;
-    
+    private long releaseDate;
     public String getTitle() {
         return title;
     }
@@ -75,6 +75,16 @@ public class Contents implements Serializable{
     
     public void setComments(int comments) {
         this.comments = comments;
+    }
+
+    
+    public long getReleaseDate() {
+        return releaseDate;
+    }
+
+    
+    public void setReleaseDate(long releaseDate) {
+        this.releaseDate = releaseDate;
     }
     
     

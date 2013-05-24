@@ -16,12 +16,16 @@ import android.sax.StartElementListener;
 import android.text.TextUtils;
 
 /**
- * Manager(TODO)
+ * Manager
  * 
  * @author Yrom
  * 
  */
 public class DownloadManager {
+    
+    public static final int        ON_STARTED   = 0;
+    public static final int        ON_PROGRESS  = 1;
+    
     private Context mContext;
     private List<DownloadObserver> mObservers;
     private DownloadProvider mProvider;
@@ -106,10 +110,12 @@ public class DownloadManager {
             new File(path,fileName).delete();
         }
         File f = new File(path);
-        f.delete();
-        File p = f.getParentFile();
-        if(p.listFiles().length == 0)
-            p.delete();
+        if(f.exists()) {
+            f.delete();
+            File p = f.getParentFile();
+            if(p != null && p.listFiles().length == 0)
+                p.delete();
+        }
     }
 
 
@@ -130,9 +136,9 @@ public class DownloadManager {
     /**
      * Notifie all observers that the state of the downloads has changed.
      */
-    public synchronized void notifyAllObservers(){
+    public synchronized void notifyAllObservers(int what){
         for(DownloadObserver o : mObservers){
-            o.onDownloadChanged(this);
+            o.onDownloadChanged(what);
         }
     }
     /**
@@ -142,7 +148,7 @@ public class DownloadManager {
      */
     public interface DownloadObserver {
 
-        void onDownloadChanged(DownloadManager manager);
+        void onDownloadChanged(int what);
 
     }
 

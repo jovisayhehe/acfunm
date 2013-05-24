@@ -9,14 +9,14 @@
 	<string name="UMFbList_ListItem_State_Fail">Fail</string>
 	<string name="UMFb_Atom_State_Fail">Fail</string>
 	<string name="UMFb_Atom_State_Sending">Sending…</string>
-	<string name="UMFb_Atom_State_Resend">Fail,press to resend</string>
+	<string name="UMFb_Atom_State_Resending">Fail,press to resend</string>
 	<string name="UMFeedbackUmengTitle">Feedback</string>
 	<string name="UMFeedbackListTitle">My Feedback</string>
 	<string name="UMFeedbackConversationTitle">My Feedback</string>
 	<string name="UMFeedbackTitle">Every word you write will benefit us.</string>
 	<string name="UMFeedbackContent">Input your suggestions here</string>
 	<string name="UMFeedbackSummit">Submit</string>
-	<string name="UMFeedbackGoBack">Return</string>
+	<string name="UMFeedbackGoBack">Back</string>
 	
 	<string name="UMFeedbackGotIt">Got it</string>
 	<string name="UMFeedbackSeeDetail">See Detail</string>
@@ -24,13 +24,13 @@
 	<string-array name="UMageList">
 		<item>Age</item>
 		<item>&lt;18</item>
-		<item>18~24</item>
-		<item>25~30</item>
-		<item>31~35</item>
-		<item>36~40</item>
-		<item>41~50</item>
-		<item>51~59</item>
-		<item>>=60</item>
+		<item>18-24</item>
+		<item>25-30</item>
+		<item>31-35</item>
+		<item>36-40</item>
+		<item>41-50</item>
+		<item>51-59</item>
+		<item>&#8805;60</item>
 	</string-array>
 	<string-array name="UMgenderList">
 		<item>Gender</item>

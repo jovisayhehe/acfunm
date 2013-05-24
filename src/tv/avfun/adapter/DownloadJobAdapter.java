@@ -10,6 +10,7 @@ import java.util.Map;
 import tv.avfun.R;
 import tv.avfun.util.ArrayUtil;
 import tv.avfun.util.FileUtil;
+import tv.avfun.util.download.DownloadDB;
 import tv.avfun.util.download.DownloadEntry;
 import tv.avfun.util.download.DownloadJob;
 import tv.avfun.util.download.DownloadManager;
@@ -37,6 +38,11 @@ public class DownloadJobAdapter extends ArrayListAdapter<DownloadJob> implements
 	    super(activity);
 	    mList = list;
 	    checkedJobs = Collections.synchronizedList(new LinkedList<DownloadJob>());
+	}
+	public void removeJob(DownloadJob job){
+	    mList.remove(job);
+	    checkedJobs.remove(job);
+	    notifyDataSetChanged();
 	}
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
@@ -74,10 +80,13 @@ public class DownloadJobAdapter extends ArrayListAdapter<DownloadJob> implements
 			holder.progressText.setText(FileUtil.formetFileSize(totalSize)+"/已完成");
 		}else if(downloadSize== 0 && DownloadManager.isRunningStatus(job.getStatus())){
 		    holder.progressBar.setVisibility(View.VISIBLE);
-		    holder.progressBar.setIndeterminate(true);  
+		    holder.progressBar.setIndeterminate(true);
 		}else if(DownloadManager.isErrorStatus(job.getStatus())){
 		    holder.progressBar.setVisibility(View.GONE);
-            holder.progressText.setText("下载失败 - " + job.getStatus());
+		    if(job.getStatus() == DownloadDB.STATUS_CANCELED)
+		        holder.progressText.setText("下载取消 ");
+		    else
+		        holder.progressText.setText("下载失败 - " + job.getStatus());
             
 		}else if(totalSize >0 ){
 		    if(DownloadManager.isRunningStatus(job.getStatus())){

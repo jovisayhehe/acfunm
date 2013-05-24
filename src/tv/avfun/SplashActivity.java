@@ -2,6 +2,9 @@ package tv.avfun;
 
 import java.io.File;
 
+import com.umeng.fb.NotificationType;
+import com.umeng.fb.UMFeedbackService;
+
 import tv.avfun.app.AcApp;
 import tv.avfun.util.DataStore;
 import android.app.Activity;
@@ -11,6 +14,8 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.View;
+import android.view.View.OnClickListener;
 
 /**
  * splash.进行内容初始化操作
@@ -27,18 +32,16 @@ public class SplashActivity extends Activity{
                 overridePendingTransition(R.anim.fade_in, R.anim.slide_out);
                 finish();
             }
-            super.handleMessage(msg);
         }
     };
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
         setContentView(R.layout.activity_splash);
         // TODO　init data here
-        Message msg = Message.obtain();
-        msg.what = 0;
-        mHandler.sendMessageDelayed(msg, 2000L);
+        mHandler.sendEmptyMessageDelayed(0, 1200L); 
         //版本号更改后，清除原有缓存
         try {
             PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -51,6 +54,7 @@ public class SplashActivity extends Activity{
         } catch (NameNotFoundException e) {
             e.printStackTrace();
         }
+
     }
 
     private void clearCache() {

@@ -22,14 +22,14 @@
 	
 	<string-array name="UMageList">
 		<item>年龄</item>
-		<item>18岁以下</item>
-		<item>18-24岁</item>
-		<item>25-30岁</item>
-		<item>31-35岁</item>
-		<item>36-40岁</item>
-		<item>41-50岁</item>
-		<item>51-59岁</item>
-		<item>60岁及以上</item>
+		<item>&lt;18</item>
+		<item>18-24</item>
+		<item>25-30</item>
+		<item>31-35</item>
+		<item>36-40</item>
+		<item>41-50</item>
+		<item>51-59</item>
+		<item>&#8805;60</item>
 	</string-array>
 	<string-array name="UMgenderList">
 		<item>性别</item>

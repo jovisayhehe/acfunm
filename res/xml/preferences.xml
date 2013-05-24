@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen android:title="设置"
   xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="操作">
+   <!--  <PreferenceCategory android:title="操作"> -->
         <Preference 
             android:icon="@drawable/ic_discard"
             android:title="清空图片缓存" 
@@ -32,8 +32,8 @@
             android:defaultValue="0"
             android:dialogTitle="设置视频清晰度"
             />
-    </PreferenceCategory>
-    <PreferenceCategory android:title="其他">
+<!--     </PreferenceCategory> -->
+<!--     <PreferenceCategory android:title="其他">
         <Preference
             android:icon="@drawable/ic_about"
             android:title="关于"
@@ -60,6 +60,6 @@
             android:title="A岛"
             android:summary="一个充满A级爱情的地方"
             android:key="hfun" />
-    </PreferenceCategory>
+    </PreferenceCategory> -->
     
 </PreferenceScreen>

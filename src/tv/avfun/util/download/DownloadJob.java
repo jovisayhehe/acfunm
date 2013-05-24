@@ -81,6 +81,7 @@ public class DownloadJob {
         }
     }
     public void cancel() {
+        if(mTasks == null) initTask();  // 奇怪的地方，居然没初始化。。真是不上线不知道哪会有bug
         for (DownloadTask task : mTasks) {
             if (task.isCancelled)
                 continue;
@@ -200,12 +201,13 @@ public class DownloadJob {
         if (mListener != null) {
             if(status == DownloadDB.STATUS_PAUSED)
                 mListener.onDownloadPaused(this);
-            else if(status == DownloadDB.STATUS_CANCELED)
+            else if(status == DownloadDB.STATUS_CANCELED){
                 mListener.onDownloadCancelled(this);
+            }
             else 
                 mListener.onDownloadFinished(status, this);
         }
-        mDownloadMan.notifyAllObservers();
+        mDownloadMan.notifyAllObservers(2);
     }
 
     /**
@@ -269,7 +271,7 @@ public class DownloadJob {
             }
             if(bytesRead > 0){
                 addDownloadedSize(bytesRead);
-                mDownloadMan.notifyAllObservers();
+                mDownloadMan.notifyAllObservers(DownloadManager.ON_PROGRESS);
             }
         }
         

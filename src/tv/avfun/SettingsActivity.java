@@ -25,38 +25,9 @@ public class SettingsActivity  extends SherlockPreferenceActivity{
 		super.onCreate(savedInstanceState);
 		app = (AcApp) getApplicationContext();
 	    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+	    getListView().setFooterDividersEnabled(false);
 		addPreferencesFromResource(R.xml.preferences);
-		// share
-		findPreference("share").setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("text/plain");
-                intent.putExtra(Intent.EXTRA_SUBJECT, "分享~");  
-                intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_content)); 
-                startActivity(Intent.createChooser(intent, "分享给好友"));
-                return true;
-            }
-        });
-		// about
-		findPreference("about").setSummary("v"+app.getVersionName());
-		// comment
-		findPreference("comment").setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                try{
-                    Intent intent = new Intent();
-                    intent.setAction(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse("market://details?id="+getPackageName()));
-                    startActivity(intent);
-                }catch (android.content.ActivityNotFoundException e) {
-                    Toast.makeText(getApplicationContext(), "你的好意我已心领=。=", Toast.LENGTH_SHORT).show();
-                    feedBack();
-                }
-                return true;
-            }
-        });
+
 		// cache
 		final Preference imgCache = findPreference("clear_imgcache");
 		String size = FileCache.getCacheSize();
@@ -75,16 +46,7 @@ public class SettingsActivity  extends SherlockPreferenceActivity{
 				return true;
 			}
 		});
-		// mail
-		findPreference("feedback").setOnPreferenceClickListener(new OnPreferenceClickListener() {
-			
-			@Override
-			public boolean onPreferenceClick(Preference preference) {
-				
-				feedBack();
-				return false;
-			}
-		});
+
 		// ex play
 		cbpf = (CheckBoxPreference) findPreference("ex_palyer");
 		cbpf.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -101,38 +63,7 @@ public class SettingsActivity  extends SherlockPreferenceActivity{
 				return false;
 			}
 		});
-		// 匿名版
-		findPreference("hfun").setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                try{
-                    ComponentName cmp = new ComponentName("acfunh.yoooo.org", "acfunh.yoooo.org.MainActivity");
-                    if(getPackageManager().getActivityInfo(cmp, 0)!= null){
-                        Intent intent = new Intent("android.intent.action.MAIN");
-                        intent.addCategory("android.intent.category.LAUNCHER");
-                        intent.setComponent(cmp);
-                        startActivity(intent);
-                    }
-                    
-                } catch (Exception e) {
-                    if(BuildConfig.DEBUG) Log.e("Setting", "打开不能",e);
-                    try{
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse("market://details?id=acfunh.yoooo.org"));
-                        startActivity(intent);
-                    }
-                    catch (Exception ex) {
-                        Intent intent = new Intent();
-                        intent.setAction(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse(getString(R.string.acfunh)));
-                        startActivity(intent);
-                    
-                    }
-                }
-                return true;
-            }
-        });
+
 	}
 	
 	public void onResume() {

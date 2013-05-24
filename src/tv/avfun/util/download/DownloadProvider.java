@@ -53,7 +53,7 @@ public class DownloadProvider {
                 mQueuedJobs.add(j);
             }
         }
-        mDownloadManager.notifyAllObservers();
+        mDownloadManager.notifyAllObservers(0);
     }
 
     public List<DownloadJob> getAllDownloads() {
@@ -109,7 +109,7 @@ public class DownloadProvider {
 //        for(VideoSegment s :job.getEntry().part.segments){
 //            setStatus(job.getEntry().part.vid, s.num, status);
 //        }
-        mDownloadManager.notifyAllObservers();
+        mDownloadManager.notifyAllObservers(2);
     }
     public void resume(DownloadJob job){
         if(mQueuedJobs.contains(job)) return;
@@ -143,7 +143,7 @@ public class DownloadProvider {
             }            
             mDb.addDownload(job.getEntry());
             mQueuedJobs.add(job);
-            mDownloadManager.notifyAllObservers();
+            mDownloadManager.notifyAllObservers(DownloadManager.ON_STARTED);
             return true;
         } catch (IllegalEntryException e) {
             Log.e(TAG, "fail to enqueue",e);
@@ -162,7 +162,7 @@ public class DownloadProvider {
             mCompletedJobs.remove(job);
         }
         mDb.remove(job);
-        mDownloadManager.notifyAllObservers();
+        mDownloadManager.notifyAllObservers(2);
     }
     private boolean contains(List<DownloadJob> jobs, VideoPart part){
         for(DownloadJob j : jobs){
