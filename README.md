@@ -7,7 +7,7 @@
 * 登陆功能，评论功能
 * 番剧列表
 
-<a href="https://play.google.com/store/apps/details?id=tv.avfun"><img src="http://www.android.com/images/brand/get_it_on_play_logo_large.png"/></a>
+<a href="https://play.google.com/store/apps/details?id=tv.ac.fun"><img src="http://www.android.com/images/brand/get_it_on_play_logo_large.png"/></a>
 
 ---
 
