@@ -50,6 +50,6 @@
     <activity android:name="com.umeng.fb.ui.FeedbackConversations"/>  
     <activity android:name="com.umeng.fb.ui.FeedbackConversation" android:configChanges="keyboard"/>  
     <meta-data android:value="51a1964056240b7b21039d4c" android:name="UMENG_APPKEY"/>  
-    <meta-data android:value="XiaoMi" android:name="UMENG_CHANNEL"/>  
+    <meta-data android:value="GooglePlay" android:name="UMENG_CHANNEL"/> 
   </application> 
 </manifest>
