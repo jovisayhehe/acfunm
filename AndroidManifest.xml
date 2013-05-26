@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="tv.avfun" android:versionCode="89" android:versionName="0.8.9">  
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="tv.ac.fun" android:versionCode="1" android:versionName="1.0">  
   <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="17"/>  
   <uses-permission android:name="android.permission.INTERNET"/>  
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>  
@@ -15,17 +15,17 @@
         <category android:name="android.intent.category.LAUNCHER"/> 
       </intent-filter> 
     </activity>  
-    <activity android:name=".MainActivity" android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"> 
+    <activity android:name="tv.avfun.MainActivity" android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"> 
       <meta-data android:name="android.app.default_searchable" android:value=".SearchResultActivity"/> 
     </activity>  
-    <activity android:name=".SearchResultActivity" android:launchMode="singleTop" android:label="@string/title_activity_main"> 
+    <activity android:name="tv.avfun.SearchResultActivity" android:launchMode="singleTop" android:label="@string/title_activity_main"> 
       <intent-filter> 
         <action android:name="android.intent.action.SEARCH"/> 
       </intent-filter>  
       <meta-data android:name="android.app.searchable" android:resource="@xml/searchable"/> 
     </activity>  
-    <activity android:name=".ChannelActivity"/>  
-    <activity android:name=".DetailActivity" android:uiOptions="splitActionBarWhenNarrow"> 
+    <activity android:name="tv.avfun.ChannelActivity"/>  
+    <activity android:name="tv.avfun.DetailActivity" android:uiOptions="splitActionBarWhenNarrow"> 
       <meta-data android:name="android.app.default_searchable" android:value=".SearchResultActivity"/>  
       <intent-filter> 
         <action android:name="android.intent.action.VIEW"/>  
@@ -33,23 +33,23 @@
         <data android:scheme="av"/> 
       </intent-filter> 
     </activity>  
-    <activity android:name=".CommentsActivity"/>  
-    <activity android:name=".SettingsActivity"/>  
-    <activity android:name=".WebViewActivity"/>  
-    <activity android:name=".HistoryActivity"/>  
-    <activity android:name=".ImagePagerActivity"/>  
-    <activity android:name=".PlayActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:configChanges="orientation|keyboardHidden|screenSize|screenLayout" android:screenOrientation="landscape"/>  
+    <activity android:name="tv.avfun.CommentsActivity"/>  
+    <activity android:name="tv.avfun.SettingsActivity"/>  
+    <activity android:name="tv.avfun.WebViewActivity"/>  
+    <activity android:name="tv.avfun.HistoryActivity"/>  
+    <activity android:name="tv.avfun.ImagePagerActivity"/>  
+    <activity android:name="tv.avfun.PlayActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:configChanges="orientation|keyboardHidden|screenSize|screenLayout" android:screenOrientation="landscape"/>  
     <activity android:name="io.vov.vitamio.activity.InitActivity" android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation" android:launchMode="singleTop" android:theme="@android:style/Theme.NoTitleBar" android:windowSoftInputMode="stateAlwaysHidden"/>  
     <activity android:name="tv.avfun.FavoriteActivity"/>  
     <activity android:name="tv.avfun.SectionActivity"/>  
     <activity android:name="tv.avfun.DownloadManActivity" android:uiOptions="splitActionBarWhenNarrow"/>  
     <activity android:name="tv.avfun.HelpActivity"/>  
     <service android:name="com.umeng.common.net.DownloadingService" android:exported="true" android:process=":DownloadingService"/>  
-    <service android:name=".DownloadService"/>  
+    <service android:name="tv.avfun.DownloadService"/>  
     <activity android:name="com.umeng.fb.ui.SendFeedback" android:windowSoftInputMode="adjustResize"/>  
     <activity android:name="com.umeng.fb.ui.FeedbackConversations"/>  
     <activity android:name="com.umeng.fb.ui.FeedbackConversation" android:configChanges="keyboard"/>  
-    <meta-data android:value="50a79c105270152fbd00002f" android:name="UMENG_APPKEY"/>  
+    <meta-data android:value="51a1964056240b7b21039d4c" android:name="UMENG_APPKEY"/>  
     <meta-data android:value="XiaoMi" android:name="UMENG_CHANNEL"/>  
   </application> 
 </manifest>

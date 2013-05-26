@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import tv.avfun.R;
+import tv.ac.fun.R;
 import tv.avfun.util.ArrayUtil;
 import tv.avfun.util.FileUtil;
 import tv.avfun.util.download.DownloadDB;

@@ -1,6 +1,6 @@
 package tv.avfun.fragment;
 
-import tv.avfun.R;
+import tv.ac.fun.R;
 import tv.avfun.util.NetWorkUtil;
 
 import com.actionbarsherlock.app.SherlockListFragment;

@@ -17,7 +17,7 @@ import java.util.List;
 import org.json.external.JSONException;
 import org.json.external.JSONObject;
 
-import tv.avfun.BuildConfig;
+import tv.ac.fun.BuildConfig;
 import tv.avfun.api.Bangumi;
 import tv.avfun.api.BangumiList;
 import tv.avfun.api.Channel;

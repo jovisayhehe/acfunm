@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import tv.ac.fun.BuildConfig;
+import tv.ac.fun.R;
 import tv.avfun.adapter.DetailAdaper;
 import tv.avfun.adapter.DetailAdaper.OnStatusClickListener;
 import tv.avfun.api.ApiParser;

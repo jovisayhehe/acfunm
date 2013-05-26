@@ -4,7 +4,7 @@ package tv.avfun.adapter;
 import java.util.List;
 import java.util.Map;
 
-import tv.avfun.R;
+import tv.ac.fun.R;
 import tv.avfun.entity.VideoPart;
 import tv.avfun.util.Maps;
 import android.util.Log;

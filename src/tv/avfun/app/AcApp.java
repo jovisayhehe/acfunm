@@ -4,7 +4,7 @@ package tv.avfun.app;
 import java.io.File;
 
 import tv.avfun.DownloadManActivity;
-import tv.avfun.R;
+import tv.ac.fun.R;
 import tv.avfun.util.ExtendedImageDownloader;
 import tv.avfun.util.download.DownloadManager;
 

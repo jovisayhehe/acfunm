@@ -5,9 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import tv.avfun.R;
-import tv.avfun.R.id;
-import tv.avfun.R.layout;
+import tv.ac.fun.R;
 import tv.avfun.entity.Contents;
 import tv.avfun.util.lzlist.ImageLoader;
 import android.content.Context;

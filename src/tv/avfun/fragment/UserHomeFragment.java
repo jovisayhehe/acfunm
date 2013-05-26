@@ -11,7 +11,7 @@ import tv.avfun.DownloadManActivity;
 import tv.avfun.FavoriteActivity;
 import tv.avfun.HelpActivity;
 import tv.avfun.HistoryActivity;
-import tv.avfun.R;
+import tv.ac.fun.R;
 import tv.avfun.SettingsActivity;
 import tv.avfun.animation.ExpandAnimation;
 import tv.avfun.animation.ExpandCollapseAnimation;

@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
+import tv.ac.fun.BuildConfig;
+import tv.ac.fun.R;
 import tv.avfun.app.AcApp;
 import tv.avfun.fragment.HomeChannelListFragment;
 import tv.avfun.fragment.PlayTime;

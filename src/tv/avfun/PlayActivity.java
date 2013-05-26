@@ -10,6 +10,7 @@ import io.vov.vitamio.widget.VideoView;
 
 import java.util.ArrayList;
 
+import tv.ac.fun.R;
 import tv.avfun.app.AcApp;
 import tv.avfun.entity.VideoSegment;
 

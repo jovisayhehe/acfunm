@@ -5,6 +5,7 @@ import java.io.File;
 import com.umeng.fb.NotificationType;
 import com.umeng.fb.UMFeedbackService;
 
+import tv.ac.fun.R;
 import tv.avfun.app.AcApp;
 import tv.avfun.util.DataStore;
 import android.app.Activity;

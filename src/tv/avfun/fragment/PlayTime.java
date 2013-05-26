@@ -2,8 +2,8 @@ package tv.avfun.fragment;
 
 import java.util.List;
 
-import tv.avfun.BuildConfig;
-import tv.avfun.R;
+import tv.ac.fun.BuildConfig;
+import tv.ac.fun.R;
 import tv.avfun.adapter.TimeListAdaper;
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.Bangumi;
