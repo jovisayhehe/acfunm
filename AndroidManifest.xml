@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="tv.ac.fun" android:versionCode="1" android:versionName="1.0">  
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="tv.ac.fun" android:versionCode="2" android:versionName="1.0.1">  
   <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="17"/>  
   <uses-permission android:name="android.permission.INTERNET"/>  
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>  
@@ -16,7 +16,7 @@
       </intent-filter> 
     </activity>  
     <activity android:name="tv.avfun.MainActivity" android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"> 
-      <meta-data android:name="android.app.default_searchable" android:value=".SearchResultActivity"/> 
+      <meta-data android:name="android.app.default_searchable" android:value="tv.avfun.SearchResultActivity"/> 
     </activity>  
     <activity android:name="tv.avfun.SearchResultActivity" android:launchMode="singleTop" android:label="@string/title_activity_main"> 
       <intent-filter> 
@@ -26,7 +26,7 @@
     </activity>  
     <activity android:name="tv.avfun.ChannelActivity"/>  
     <activity android:name="tv.avfun.DetailActivity" android:uiOptions="splitActionBarWhenNarrow"> 
-      <meta-data android:name="android.app.default_searchable" android:value=".SearchResultActivity"/>  
+      <meta-data android:name="android.app.default_searchable" android:value="tv.avfun.SearchResultActivity"/>  
       <intent-filter> 
         <action android:name="android.intent.action.VIEW"/>  
         <category android:name="android.intent.category.DEFAULT"/>  
