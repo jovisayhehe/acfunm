@@ -36,6 +36,7 @@ import android.content.pm.PackageInfo;
 import android.content.res.Resources;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Toast;
@@ -104,13 +105,19 @@ public class AcApp extends Application {
     public DownloadManager getDownloadManager() {
         return mDownloadManager;
     }
-    public String getVersionName(){
-        PackageInfo info = null;
-        try {
-            info = getPackageManager().getPackageInfo(getPackageName(), 0);
-            return info.versionName;
-        }catch (Exception e) {}
-        return "";
+    private String versionName = "";
+
+    public String getVersionName() {
+        if (TextUtils.isEmpty(versionName)) {
+            PackageInfo info = null;
+            try {
+                info = getPackageManager().getPackageInfo(getPackageName(), 0);
+                versionName = info.versionName;
+                return versionName;
+            } catch (Exception e) {}
+            return "";
+        } else
+            return versionName;
     }
     
     // ====================================

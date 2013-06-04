@@ -159,7 +159,36 @@ public class ApiParser {
             return comments;
         }
     }
+    public static List<Bangumi[]> getBangumiTimeList(Document doc){
+        if(doc == null) return null;
+        Elements ems = doc.getElementsByAttributeValue("id", "bangumi-index");
+        if(ems.size() == 0) {
+            if(BuildConfig.DEBUG) Log.e("Parser", "获取失败！检查网页连接！"); 
+            return null;
+        }
+        ems = ems.get(0).getElementsByTag("ul");
+        int ulIndex = 0;
+        if (ems.size() >= 1)
+            ulIndex = 1;
+        ems = ems.get(ulIndex).getElementsByTag("li");
+        ems.remove(ems.size() - 1);
+        List<Bangumi[]> timelist = new ArrayList<Bangumi[]>();
 
+        for (Element element : ems) {
+            Elements videoems = element.getElementsByClass("title");
+            Bangumi[] bangumis = new Bangumi[videoems.size()];
+
+            for (int i = 0; i < videoems.size(); i++) {
+                bangumis[i] = new Bangumi();
+                bangumis[i].title = videoems.get(i).text();
+                bangumis[i].aid = videoems.get(i).attr("data-aid");
+            }
+            timelist.add(bangumis);
+
+        }
+        return timelist;
+    }
+    @Deprecated
     public static List<Bangumi[]> getBangumiTimeList(){
         Document doc;
         try {
