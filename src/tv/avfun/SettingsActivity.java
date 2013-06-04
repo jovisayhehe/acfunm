@@ -1,5 +1,6 @@
 package tv.avfun;
 
+import tv.ac.fun.R;
 import tv.avfun.app.AcApp;
 import tv.avfun.util.lzlist.FileCache;
 import android.content.ComponentName;

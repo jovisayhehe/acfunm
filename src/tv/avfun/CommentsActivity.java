@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpException;
 
+import tv.ac.fun.R;
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.Login_And_Comments;
 import tv.avfun.db.DBService;

@@ -29,7 +29,7 @@ public final class FileCache {
     public static String getCacheSize(){
         long size = FileUtil.getFolderSize(cacheDir);
         if(size == 0) return null;
-        return FileUtil.formetFileSize(size);
+        return FileUtil.formatFileSize(size);
     }
     public static boolean clear(){
         File[] files=cacheDir.listFiles();

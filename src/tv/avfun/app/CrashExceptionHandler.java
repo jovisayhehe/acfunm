@@ -7,7 +7,7 @@ import java.lang.reflect.Field;
 
 import com.umeng.analytics.MobclickAgent;
 
-import tv.avfun.BuildConfig;
+import tv.ac.fun.BuildConfig;
 import tv.avfun.MainActivity;
 import tv.avfun.util.DataStore;
 import android.os.Build;

@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import tv.ac.fun.R;
 import tv.avfun.db.DBService;
 import tv.avfun.util.ExtendedImageDownloader;
 import uk.co.senab.photoview.PhotoViewAttacher;

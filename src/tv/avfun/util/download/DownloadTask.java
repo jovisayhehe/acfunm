@@ -19,7 +19,7 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 
-import tv.avfun.BuildConfig;
+import tv.ac.fun.BuildConfig;
 import tv.avfun.api.net.UserAgent;
 import tv.avfun.app.AcApp;
 import tv.avfun.util.FileUtil;

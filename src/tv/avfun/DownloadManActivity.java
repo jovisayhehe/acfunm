@@ -4,6 +4,7 @@ package tv.avfun;
 import java.util.ArrayList;
 import java.util.List;
 
+import tv.ac.fun.R;
 import tv.avfun.DownloadService.IDownloadService;
 import tv.avfun.adapter.DownloadJobAdapter;
 import tv.avfun.adapter.DownloadJobAdapter.OnItemCheckedListener;

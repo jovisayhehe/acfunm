@@ -4,7 +4,7 @@ package tv.avfun.api;
 import java.io.Serializable;
 import java.util.List;
 
-import tv.avfun.R;
+import tv.ac.fun.R;
 import tv.avfun.entity.Contents;
 
 /**

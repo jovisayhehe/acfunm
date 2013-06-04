@@ -4,6 +4,7 @@ package tv.avfun;
 
 import java.util.List;
 
+import tv.ac.fun.R;
 import tv.avfun.api.Channel;
 import tv.avfun.api.ChannelApi;
 import tv.avfun.app.AcApp;

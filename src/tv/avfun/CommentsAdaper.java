@@ -3,6 +3,7 @@ package tv.avfun;
 import java.util.List;
 import java.util.Map;
 
+import tv.ac.fun.R;
 import tv.avfun.util.lzlist.ImageLoader;
 import android.content.Context;
 import android.view.LayoutInflater;

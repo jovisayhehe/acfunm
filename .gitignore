@@ -4,6 +4,7 @@ lib/*
 *.bak
 .DS_Store
 
+local.properties
 
 
 

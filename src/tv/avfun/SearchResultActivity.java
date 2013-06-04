@@ -5,6 +5,7 @@ package tv.avfun;
 import java.util.ArrayList;
 import java.util.List;
 
+import tv.ac.fun.R;
 import tv.avfun.adapter.ChannelContentListAdaper;
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.ChannelApi;
