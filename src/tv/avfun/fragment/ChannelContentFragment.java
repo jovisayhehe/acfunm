@@ -5,10 +5,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import tv.avfun.BuildConfig;
+import tv.ac.fun.BuildConfig;
 import tv.avfun.ChannelActivity;
 import tv.avfun.DetailActivity;
-import tv.avfun.R;
+import tv.ac.fun.R;
 import tv.avfun.WebViewActivity;
 import tv.avfun.adapter.ChannelContentListAdaper;
 import tv.avfun.api.ApiParser;

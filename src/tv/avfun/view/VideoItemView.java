@@ -1,6 +1,6 @@
 package tv.avfun.view;
 
-import tv.avfun.R;
+import tv.ac.fun.R;
 import tv.avfun.entity.Contents;
 import tv.avfun.util.lzlist.ImageLoader;
 import android.content.Context;

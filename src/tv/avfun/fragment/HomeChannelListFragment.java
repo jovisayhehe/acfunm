@@ -2,10 +2,10 @@ package tv.avfun.fragment;
 
 import java.text.DateFormat;
 
-import tv.avfun.BuildConfig;
+import tv.ac.fun.BuildConfig;
 import tv.avfun.ChannelActivity;
 import tv.avfun.DetailActivity;
-import tv.avfun.R;
+import tv.ac.fun.R;
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.Banner;
 import tv.avfun.api.Channel;

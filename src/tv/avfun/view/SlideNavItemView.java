@@ -1,6 +1,6 @@
 package tv.avfun.view;
 
-import tv.avfun.R;
+import tv.ac.fun.R;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;

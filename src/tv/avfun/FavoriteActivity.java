@@ -3,6 +3,7 @@ package tv.avfun;
 import java.util.ArrayList;
 import java.util.List;
 
+import tv.ac.fun.R;
 import tv.avfun.api.Channel;
 import tv.avfun.api.ChannelApi;
 import tv.avfun.db.DBService;

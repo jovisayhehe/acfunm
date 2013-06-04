@@ -1,5 +1,6 @@
 package tv.avfun;
 
+import tv.ac.fun.R;
 import tv.avfun.api.net.UserAgent;
 import tv.avfun.app.AcApp;
 import tv.avfun.util.download.DownloadDB;

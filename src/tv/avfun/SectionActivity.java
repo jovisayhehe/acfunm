@@ -4,6 +4,8 @@ package tv.avfun;
 import java.util.ArrayList;
 import java.util.List;
 
+import tv.ac.fun.BuildConfig;
+import tv.ac.fun.R;
 import tv.avfun.api.ApiParser;
 import tv.avfun.app.AcApp;
 import tv.avfun.entity.VideoPart;

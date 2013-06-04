@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import tv.avfun.DetailActivity;
-import tv.avfun.R;
+import tv.ac.fun.R;
 import tv.avfun.animation.ExpandAnimation;
 import tv.avfun.animation.ExpandCollapseAnimation;
 import tv.avfun.api.Bangumi;

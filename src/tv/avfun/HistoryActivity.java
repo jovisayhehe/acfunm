@@ -2,6 +2,7 @@ package tv.avfun;
 
 import java.util.ArrayList;
 
+import tv.ac.fun.R;
 import tv.avfun.db.DBService;
 import tv.avfun.entity.Contents;
 import tv.avfun.entity.History;

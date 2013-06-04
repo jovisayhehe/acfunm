@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import tv.ac.fun.BuildConfig;
+import tv.ac.fun.R;
 import tv.avfun.adapter.DetailAdaper;
 import tv.avfun.adapter.DetailAdaper.OnStatusClickListener;
 import tv.avfun.api.ApiParser;
@@ -91,7 +93,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
             from = mIntent.getIntExtra("from", 0);
         }
         mImgLoader = ImageLoader.getInstance();
-
+        MobclickAgent.onEvent(this, "view_detail");
         initBar();
         initview();
         loadData();
@@ -218,11 +220,9 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
             else setDescription(tvDesc);
             tvBtnPlay.setText(LOADING);
             tvTitle.setText(c.getTitle());
-
         }
         getSupportActionBar().setTitle("ac" + aid);
         isFavorite = new DBService(this).isFaved(aid);
-        MobclickAgent.onEvent(this,"view_detail");
         if (from > 0) {
             ivTitleImg.setBackgroundResource(R.drawable.no_picture);
             tvUserName.setText(LOADING);
@@ -241,7 +241,6 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         mListView.setOnItemClickListener(this);
         mLoadView = findViewById(R.id.load_view);
     }
-
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -281,6 +280,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
             v.setEnabled(false);
             loadData();
             break;
+            
         }
 
     }

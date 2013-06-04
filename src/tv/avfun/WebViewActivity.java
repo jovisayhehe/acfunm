@@ -22,6 +22,7 @@ import com.actionbarsherlock.view.Window;
 import com.actionbarsherlock.widget.ShareActionProvider;
 import com.umeng.analytics.MobclickAgent;
 
+import tv.ac.fun.R;
 import tv.avfun.api.ApiParser;
 import tv.avfun.db.DBService;
 import tv.avfun.entity.Article;
