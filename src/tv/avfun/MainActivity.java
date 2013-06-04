@@ -163,6 +163,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
         MobclickAgent.setDebugMode(BuildConfig.DEBUG);
         MobclickAgent.setAutoLocation(false);
         MobclickAgent.onError(this);
+        UmengUpdateAgent.setUpdateListener(null); 
         UmengUpdateAgent.update(this);
         UMFeedbackService.enableNewReplyNotification(this, NotificationType.AlertDialog);
     }
