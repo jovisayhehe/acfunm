@@ -2,6 +2,9 @@
 package tv.avfun;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -19,6 +22,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 
 /**
@@ -29,6 +33,8 @@ import android.os.Handler;
  */
 public class SplashActivity extends Activity {
     private boolean flag = false;
+    private static String appDb      = "/acfun.db";
+    private static String downloadDb = "/download.db";
     private Handler mHandler = new Handler() {
 
          public void handleMessage(android.os.Message msg) {
@@ -42,10 +48,16 @@ public class SplashActivity extends Activity {
              }
          }
      };
+    private String dbDir;
+    private String backup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        File filesDir = getFilesDir();
+        String dataDir = filesDir.getParent();
+        dbDir = dataDir + "/databases";
+        backup = Environment.getExternalStorageDirectory().getAbsolutePath()+"/Acfun";
         setContentView(R.layout.activity_splash);
         mHandler.sendEmptyMessageDelayed(0, 1200L);
         // 版本号更改后，清除原有缓存
@@ -58,6 +70,18 @@ public class SplashActivity extends Activity {
             }
         } catch (NameNotFoundException e) {
             e.printStackTrace();
+        }
+        File bak = new File(backup+appDb);
+        if(bak.exists()){
+            new Thread(){
+                public void run() {
+                    copy(backup+appDb,dbDir+appDb);
+                    copy(backup+downloadDb,dbDir+downloadDb);
+                    new File(backup+appDb).delete();
+                    new File(backup+downloadDb).delete();
+                }
+            }.start();
+            
         }
         if(!DataStore.getInstance().isBangumiListCached())
             init();
@@ -90,5 +114,36 @@ public class SplashActivity extends Activity {
         new File(getCacheDir(), DataStore.CHANNEL_LIST_CACHE).delete();
         new File(getCacheDir(), DataStore.TIME_LIST_CACHE).delete();
     }
+    private void copy(String source, String dest) {
+        FileInputStream in = null;
+        FileOutputStream out = null;
+        try {
+            in = new FileInputStream(source);
+            out = new FileOutputStream(dest);
+            int len = -1;
+            byte[] buffer = new byte[8096];
+            while ((len = in.read(buffer)) != -1) {
+                out.write(buffer, 0, len);
+            }
+            in.close();
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            try {
+                if (in != null)
+                    in.close();
+            } catch (IOException e) {}
+            try {
+                if (out != null)
+                    out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
+    }
 }
