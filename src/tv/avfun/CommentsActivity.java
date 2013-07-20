@@ -2,10 +2,10 @@ package tv.avfun;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpException;
@@ -14,8 +14,10 @@ import tv.ac.fun.R;
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.Login_And_Comments;
 import tv.avfun.db.DBService;
+import tv.avfun.entity.Comment;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -44,7 +46,6 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 	private ListView list;
 	private String aid;
 	private CommentsAdaper adaper;
-	private List<Map<String, Object>> data = new ArrayList<Map<String,Object>>();
 	private int indexpage = 1;
 	private int totalpage;
 	private boolean isload = false;
@@ -106,16 +107,6 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 	    super.onPause();
 	    MobclickAgent.onPause(this);
 	}
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//    	
-//        menu.add(1, CommentsActivity.COMMENTID, 1,"评论")
-//        .setIcon(R.drawable.social_chat)
-//        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-//        
-//        return super.onCreateOptionsMenu(menu);
-//    }
-//	
 	public void bottomlinevisible(){
 		if(bottomline.getVisibility()==View.GONE){
 			bottomline.setVisibility(View.VISIBLE);
@@ -123,7 +114,7 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 			bottomline.setVisibility(View.GONE);
 		}
 	}
-    
+	TreeMap<Integer, Comment> data = new TreeMap<Integer, Comment>();
 	public void getdatas(final int page, final boolean isadd) {
 		if(!isadd){
 			time_outtext.setVisibility(View.GONE);
@@ -133,13 +124,13 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 		new Thread() {
 			public void run() {
 				try {
-					final List<Map<String, Object>> tempdata = ApiParser.getComment(aid, page);
-
+					final TreeMap<Integer, Comment> tempdata = ApiParser.getComments(aid, page);
 					runOnUiThread(new Runnable() {
-						public void run() {
+
+                        public void run() {
 							
 							if (isadd) {
-								data.addAll(tempdata);
+							    data.putAll(tempdata);
 							} else {
 								data = tempdata;
 							}
@@ -150,8 +141,8 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 							} else{
 								
 							}
-							if(!data.isEmpty()&&data.size()>0){
-								totalpage = (Integer) data.get(0).get("totalPage");
+							if(data.size()>0){
+								totalpage = ApiParser.commentsTotalPage;
 								adaper.setData(data);
 								adaper.notifyDataSetChanged();
 								isload = false;
@@ -227,7 +218,6 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 			 }else{
 				 getdatas(indexpage, true);
 			 }
-			
 		 }
 	}
 
@@ -268,9 +258,12 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 				textview.setText(R.string.loading);
 				getdatas(indexpage, true);
 			}
+		}else{
+		    
+		    Comment c = (Comment) parent.getItemAtPosition(position);
+		    comment_edit.setText(">>"+c.cid+" ");
 		}
 	}
-	
 	public boolean islogin(){
 		if(umap==null){
 			return false;
@@ -280,12 +273,20 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 	}
 	
 	public void postcomment(){
-		final String comment = comment_edit.getEditableText().toString();
-		if(comment==""){
+		String comment = comment_edit.getEditableText().toString();
+		Matcher matcher = Pattern.compile(">>(\\d+)").matcher(comment);
+		int cid =  0;
+		if(matcher.find()){
+		    cid = Integer.parseInt(matcher.group(1));
+		    comment = comment.replace(">>"+cid, "");
+		}
+		final Comment quote = data.get(cid);
+		final String rComment = comment;
+		if(rComment==""){
 			Toast.makeText(this, "评论不能为空哦", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		if(comment.length()<5){
+		if(rComment.length()<5){
 			Toast.makeText(this, "要五个字以上哦", Toast.LENGTH_SHORT).show();
 			return;
 		}
@@ -294,26 +295,26 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 		new Thread(){
 			public void run(){
 				try {
-					final boolean suss = Login_And_Comments.postComments(comment, aid,(Cookie[])umap.get("cookies"));
+					final boolean suss = Login_And_Comments.postComments(rComment, quote, aid,(Cookie[])umap.get("cookies"));
 					runOnUiThread(new Runnable() {
 						public void run() {
 							if(suss){
 								Toast.makeText(CommentsActivity.this, "评论成功", Toast.LENGTH_SHORT).show();
 								send_btn.setEnabled(true);
 								bottomlinevisible();
-								Map<String, Object> cmap = new HashMap<String, Object>();
-								cmap.put("userName", umap.get("uname"));
-								cmap.put("content", comment);
-								cmap.put("userImg", cmap.get("avatar"));
-								data.add(0, cmap);
+//								Map<String, Object> cmap = new HashMap<String, Object>();
+//								cmap.put("userName", umap.get("uname"));
+//								cmap.put("content", comment);
+//								cmap.put("userImg", cmap.get("avatar"));
+//								data.add(0, cmap);
 								totalpage =1;
 								time_outtext.setVisibility(View.GONE);
 								list.setVisibility(View.VISIBLE);
 								footview.findViewById(R.id.list_footview_progress).setVisibility(View.GONE);
 								TextView textview = (TextView) footview.findViewById(R.id.list_footview_text);
 								textview.setText(R.string.nomorecomments);
-								adaper.setData(data);
-								adaper.notifyDataSetChanged();
+//								adaper.setData(data);
+//								adaper.notifyDataSetChanged();
 							}
 						}
 					});
@@ -325,7 +326,7 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 						public void run() {
 							
 							send_btn.setEnabled(true);
-							Toast.makeText(CommentsActivity.this, "(=ﾟωﾟ)= 服务器想应异常...", Toast.LENGTH_SHORT).show();
+							Toast.makeText(CommentsActivity.this, "(=ﾟωﾟ)= 服务器响应异常...", Toast.LENGTH_SHORT).show();
 						}
 					});
 					e.printStackTrace();

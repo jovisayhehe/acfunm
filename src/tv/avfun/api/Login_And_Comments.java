@@ -14,6 +14,8 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.json.external.JSONException;
 import org.json.external.JSONObject;
 
+import tv.avfun.entity.Comment;
+
 
 public class Login_And_Comments {
 	
@@ -70,16 +72,21 @@ public class Login_And_Comments {
 	}
 	
 	public static boolean postComments(String comment,String aid,Cookie[] cks) throws HttpException, IOException{
-		PostMethod postMethod = new PostMethod("/comment.aspx");
-	    NameValuePair np1 = new NameValuePair("text", comment);
-	    NameValuePair np2 = new NameValuePair("quoteId", "0");
-	    NameValuePair np3 = new NameValuePair("contentId", aid);
-	    NameValuePair[] nps = new NameValuePair[3];
-	    nps[0] = np1;
-	    nps[1] = np2;
-	    nps[2] = np3;
-	    postMethod.setRequestBody(nps);
-	    postMethod.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+	    return postComments(comment, null, aid, cks);
+	}
+	public static boolean postComments(String comment, Comment quote,String aid, Cookie[] cks) throws HttpException, IOException{
+	    PostMethod postMethod = new PostMethod("/comment.aspx");
+        NameValuePair np1 = new NameValuePair("text", comment);
+        NameValuePair np2 = new NameValuePair("quoteId", quote == null? "0": quote.cid+"");
+        NameValuePair np3 = new NameValuePair("contentId", aid);
+        NameValuePair np4 = new NameValuePair("quoteName",quote == null? "": quote.userName);
+        NameValuePair[] nps = new NameValuePair[4];
+        nps[0] = np1;
+        nps[1] = np2;
+        nps[2] = np3;
+        nps[3] = np4;
+        postMethod.setRequestBody(nps);
+        postMethod.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
         HttpClient localHttpClient = new HttpClient();
         localHttpClient.getParams().setParameter("http.protocol.single-cookie-header", true);
         localHttpClient.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
@@ -87,12 +94,12 @@ public class Login_And_Comments {
         HttpState localHttpState = new HttpState();
         localHttpState.addCookies(cks);
         localHttpClient.setState(localHttpState);
-        int state = localHttpClient.executeMethod(postMethod);
+        int state  = localHttpClient.executeMethod(postMethod);
         if(state>200){
-        	return false;
+            return false;
         }else{
-        	return true;
+            return true;
         }
-		
 	}
+	
 }
