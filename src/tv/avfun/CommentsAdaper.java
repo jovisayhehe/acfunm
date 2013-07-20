@@ -19,6 +19,7 @@ import android.text.Html;
 import android.text.Html.ImageGetter;
 import android.text.util.Linkify;
 import android.text.SpannedString;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,6 +74,7 @@ public class CommentsAdaper extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Comment c = getItem(position);
+        //Log.i("comments", "--------position="+position);
         RelativeLayout frame = (RelativeLayout) mInflater.inflate(R.layout.comment_frame, null);
         TextView username = (TextView) frame.findViewById(R.id.user_name);
         TextView floor = (TextView) frame.findViewById(R.id.floor);
@@ -86,7 +88,7 @@ public class CommentsAdaper extends BaseAdapter {
         Comment quote = data.get(quoteId);
         
         if (quote != null) {
-            handleQuote(quote,frame);
+            handleQuote(quote,frame,5);
             anchor = frameId;
         } else
             anchor = R.id.floor;
@@ -145,7 +147,7 @@ public class CommentsAdaper extends BaseAdapter {
         }
         return text;
     }
-    private void handleQuote(Comment quote, RelativeLayout frame){
+    private void handleQuote(Comment quote, RelativeLayout frame, int deep){
         RelativeLayout frame2 = (RelativeLayout) mInflater.inflate(R.layout.comment_frame, null);
         frame2.setBackgroundResource(R.drawable.comment_bg);
         RelativeLayout.LayoutParams params2 = new LayoutParams(-1, -2);
@@ -157,10 +159,10 @@ public class CommentsAdaper extends BaseAdapter {
         View content = genContent(quote);
         int quoteId = quote.quoteId;
         int anchor;
-        
+        deep -= 1;
         Comment quote2 = data.get(quoteId);
-        if (quote2 != null) {
-            handleQuote(quote2,frame2);
+        if (quote2 != null && deep >0) {
+            handleQuote(quote2,frame2,deep);
             anchor = frameId;
         } else
             anchor = R.id.floor;
