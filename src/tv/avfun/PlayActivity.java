@@ -1,5 +1,6 @@
 package tv.avfun;
 
+
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.MediaPlayer.OnBufferingUpdateListener;
 import io.vov.vitamio.MediaPlayer.OnCompletionListener;
@@ -11,11 +12,8 @@ import io.vov.vitamio.widget.VideoView;
 import java.util.ArrayList;
 
 import tv.ac.fun.R;
-import tv.avfun.app.AcApp;
+import tv.avfun.api.net.UserAgent;
 import tv.avfun.entity.VideoSegment;
-
-import com.umeng.analytics.MobclickAgent;
-
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -23,6 +21,8 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.umeng.analytics.MobclickAgent;
 
 public class PlayActivity extends Activity{
 	private VideoView mVideoView;
@@ -41,7 +41,7 @@ public class PlayActivity extends Activity{
 		displayName = getIntent().getStringExtra("displayName");
 		mVideoView = (VideoView) findViewById(R.id.surface_view);
 		mVideoView.setVideoPath(parts.get(index).url);
-		mVideoView.setMediaName(displayName);
+		mVideoView.setFileName(displayName);
 		textView = (TextView) findViewById(R.id.video_proess_text);
 		progress = (ProgressBar) findViewById(R.id.video_time_progress);
 		mVideoView.setOnBufferingUpdateListener(new OnBufferingUpdateListener() {

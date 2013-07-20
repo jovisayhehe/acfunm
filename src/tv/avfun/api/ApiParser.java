@@ -5,9 +5,12 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,6 +28,7 @@ import tv.avfun.api.net.Connectivity;
 import tv.avfun.api.net.UserAgent;
 import tv.avfun.app.AcApp;
 import tv.avfun.entity.Article;
+import tv.avfun.entity.Comment;
 import tv.avfun.entity.Contents;
 import tv.avfun.entity.VideoInfo;
 import tv.avfun.entity.VideoPart;
@@ -35,6 +39,7 @@ import tv.avfun.util.StringUtil;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.SparseArray;
 
 public class ApiParser {
     /**
@@ -131,6 +136,41 @@ public class ApiParser {
         String url = ChannelApi.getLatestRepliedUrl(channelId, count);
         return getChannelContents(channelId,url);
     }
+    public static TreeMap<Integer ,Comment> getComments(String aid, int page) throws Exception {
+        String url = "http://www.acfun.tv/comment_list_json.aspx?contentId=" + aid
+                + "&currentPage=" + page;
+        JSONObject jsonObject = Connectivity.getJSONObject(url);
+        JSONArray commentList = jsonObject.getJSONArray("commentList");
+        commentsTotalPage = jsonObject.getInt("totalPage");
+        TreeMap<Integer ,Comment> comments = null;
+        if (commentList.length() > 0) {
+            comments = new TreeMap<Integer ,Comment>(new Comparator<Integer>() {
+                @Override
+                public int compare(Integer lhs, Integer rhs) {
+                    return  rhs.intValue()-lhs.intValue();
+                }
+            });
+            JSONObject commentContentArr = jsonObject.getJSONObject("commentContentArr");
+            for(int i=0;i<commentList.length();i++){
+                JSONObject content = commentContentArr.getJSONObject("c"+commentList.get(i).toString());
+                Comment comment = new Comment();
+                comment.cid = content.getInt("cid");
+                comment.content = content.getString("content");
+                comment.userName = content.getString("userName");
+                comment.userID = content.getLong("userID");
+                comment.postDate = content.getString("postDate");
+                comment.userImgUrl = content.getString("userImg");
+                comment.quoteId = content.optInt("quoteId");
+                comment.count = content.optInt("count");
+                comments.put(comment.cid,comment);
+            }
+        }
+        return comments;
+    }
+    /**
+     * reset when getComments(String, int) invoke
+     */
+    public static int commentsTotalPage = 1;
     public static List<Map<String, Object>> getComment(String aid, int page) throws Exception {
         String url = "http://www.acfun.tv/comment_list_json.aspx?contentId=" + aid
                 + "&currentPage=" + page;
@@ -151,6 +191,8 @@ public class ApiParser {
                 map.put("userImg", contentobj.getString("userImg"));
                 map.put("totalPage", totalPage);
                 map.put("postDate", contentobj.getString("postDate"));
+                map.put("count", contentobj.optString("count"));
+                map.put("quoteId",contentobj.optInt("quoteId"));
                 comments.add(map);
             }
 
