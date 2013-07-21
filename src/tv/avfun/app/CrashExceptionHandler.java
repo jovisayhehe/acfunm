@@ -6,6 +6,7 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.Field;
 
 import com.umeng.analytics.MobclickAgent;
+import com.yixia.zi.utils.CPU;
 
 import tv.ac.fun.BuildConfig;
 import tv.avfun.MainActivity;
@@ -44,6 +45,7 @@ public class CrashExceptionHandler implements UncaughtExceptionHandler {
             // 获取手机的版本信息
             pw.append("VERSION = " + Build.VERSION.SDK_INT + "\n");
             pw.append("DENISTY = "+MainActivity.width +"x"+MainActivity.height+"\n");
+            pw.append("CPU :" + CPU.getFeatureString());
             Field[] fields = Build.class.getDeclaredFields();
             for (Field field : fields) {
                 field.setAccessible(true);
