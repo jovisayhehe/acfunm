@@ -84,8 +84,10 @@ public class CommentsAdaper2 extends BaseAdapter {
     		convertView.setTag(holder);
     	}else{
     		holder = (CommentViewHolder) convertView.getTag();
-    		if(holder.hasQuote){
+    		if(holder.hasQuote && holder.quoteFrame!=null){
+    		    holder.quoteFrame.removeAllViews();
     			((ViewGroup)convertView).removeView(holder.quoteFrame);
+    			holder.quoteFrame = null;
     		}
     		convertView.findViewById(R.id.requote).setVisibility(View.GONE);
     	}
