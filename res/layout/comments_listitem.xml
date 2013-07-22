@@ -1,42 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:yoooo="http://yoooo.org"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-   android:orientation="vertical"
-       android:padding="10dp"
     android:background="@drawable/selectable_background"
-    >
-    
-<!--    <tv.avfun.view.BorderImageViewL
+    android:orientation="vertical"
+    android:padding="4dp"
+     >
+
+    <!--
+   <tv.avfun.view.BorderImageViewL
    android:layout_width="30dip"
    android:layout_height="30dip"
    android:layout_margin="10dip"
    yoooo:BorderColor="#FFFFFF"
    android:scaleType="fitXY"
    android:id="@+id/comments_user_img"
-   /> -->
+   />
+    -->
+    <TextView 
+        android:background="@drawable/requote_bg"
+        android:id="@+id/requote"
+        android:text="重复引用已隐藏"
+        android:layout_margin="4dp"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        />
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_below="@id/requote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="#12 AAAAAAAAAAA"
+        android:textColor="#ABABAB" />
 
-   <TextView 
-   android:layout_height="wrap_content"
-   android:layout_width="match_parent"
-   android:textColor="#ABABAB"
-   android:id="@+id/comments_user_name"
-   android:text="AAAAAAAAAAA"
-   />
-   <TextView 
-   android:layout_height="wrap_content"
-   android:layout_width="match_parent"
-   android:textColor="@color/gray"
-   android:text=">> 123"
-   android:id="@+id/comments_quote"
-   />
-   <TextView 
-   android:layout_height="wrap_content"
-   android:layout_width="match_parent"
-   android:layout_marginTop="10dip"
-   android:textColor="#000000"
-   android:text="AAAAAAAAAAA"
-   android:id="@+id/comments_content"
-   />
-</LinearLayout>
+    <TextView
+        android:id="@+id/comments_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/user_name"
+        android:layout_marginTop="5dip"
+        android:text="AAAAAAAAAAA"
+        android:textColor="#000000" />
+
+</RelativeLayout>
