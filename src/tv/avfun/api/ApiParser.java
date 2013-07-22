@@ -1,6 +1,7 @@
 package tv.avfun.api;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
@@ -17,6 +18,7 @@ import java.util.regex.Pattern;
 import org.json.external.JSONArray;
 import org.json.external.JSONException;
 import org.json.external.JSONObject;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -235,35 +237,37 @@ public class ApiParser {
         Document doc;
         try {
             // http://www.acfun.tv/v/list67/index.htm
-            doc = Connectivity.getDoc("http://www.acfun.tv/v/list67/index.htm", UserAgent.getRandom());
+            doc = Jsoup.parse(new File(AcApp.instance().getCacheDir(), DataStore.HOME_CACHE),"utf-8");
+            
+//            doc = Connectivity.getDoc("http://www.acfun.tv/v/list67/index.htm", UserAgent.getRandom());
         } catch (IOException e) {
             if(BuildConfig.DEBUG)
                 Log.e("Parser", "get time list failed", e);
             return null;
         }
-        Elements ems = doc.getElementsByAttributeValue("id", "bangumi");
-        if(ems.size() == 0) {
-            if(BuildConfig.DEBUG) Log.e("Parser", "获取失败！检查网页连接！"); 
-            return null;
-        }
-        ems = ems.get(0).getElementsByTag("li");
-        ems.remove(ems.size() - 1);
-        List<Bangumi[]> timelist = new ArrayList<Bangumi[]>();
-
-        for (Element element : ems) {
-            Elements videoems = element.getElementsByClass("title");
-            Bangumi[] bangumis = new Bangumi[videoems.size()];
-
-            for (int i = 0; i < videoems.size(); i++) {
-                bangumis[i] = new Bangumi();
-                bangumis[i].title = videoems.get(i).text();
-                bangumis[i].aid = videoems.get(i).attr("data-aid");
-            }
-            timelist.add(bangumis);
-
-        }
-        return timelist;
-
+//        Elements ems = doc.getElementsByAttributeValue("id", "bangumi");
+//        if(ems.size() == 0) {
+//            if(BuildConfig.DEBUG) Log.e("Parser", "获取失败！检查网页连接！"); 
+//            return null;
+//        }
+//        ems = ems.get(0).getElementsByTag("li");
+//        ems.remove(ems.size() - 1);
+//        List<Bangumi[]> timelist = new ArrayList<Bangumi[]>();
+//
+//        for (Element element : ems) {
+//            Elements videoems = element.getElementsByClass("title");
+//            Bangumi[] bangumis = new Bangumi[videoems.size()];
+//
+//            for (int i = 0; i < videoems.size(); i++) {
+//                bangumis[i] = new Bangumi();
+//                bangumis[i].title = videoems.get(i).text();
+//                bangumis[i].aid = videoems.get(i).attr("data-aid");
+//            }
+//            timelist.add(bangumis);
+//
+//        }
+//        return timelist;
+        return getBangumiTimeList(doc);
     }
     public static VideoInfo getVideoInfoByAid(String aid) throws Exception{
         VideoInfo video = new VideoInfo();
