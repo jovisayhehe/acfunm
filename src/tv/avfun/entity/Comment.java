@@ -32,5 +32,6 @@ public class Comment implements Serializable {
     public int downs;
     public long userID;
     
-    
+    public boolean isQuoted;
+    public int beQuotedPosition;
 }
