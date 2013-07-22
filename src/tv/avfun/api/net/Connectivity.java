@@ -36,7 +36,7 @@ public class Connectivity {
      */
     public static String getJson(String url) {
         try {
-            HttpURLConnection conn = openConnection(new URL(url), UserAgent.getRandom());
+            HttpURLConnection conn = openConnection(new URL(url), UserAgent.DEFAULT);
             if (conn.getResponseCode() != 200)
                 return null;
             InputStream in = conn.getInputStream();
