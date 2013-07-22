@@ -45,7 +45,7 @@ import com.umeng.analytics.MobclickAgent;
 public class CommentsActivity extends SherlockActivity  implements OnClickListener,OnScrollListener,OnItemClickListener{
 	private ListView list;
 	private String aid;
-	private CommentsAdaper adaper;
+	private CommentsAdaper2 adaper;
 	private int indexpage = 1;
 	private int totalpage;
 	private boolean isload = false;
@@ -92,7 +92,7 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 		list.addFooterView(footview);
 		footview.setClickable(false);
 		list.setFooterDividersEnabled(false);
-		adaper = new CommentsAdaper(this, data);
+		adaper = new CommentsAdaper2(this, data);
 		list.setAdapter(adaper);
 		list.setOnScrollListener(this);
 		list.setOnItemClickListener(this);
@@ -141,7 +141,7 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 							} else{
 								
 							}
-							if(data.size()>0){
+							if(data!=null && data.size()>0){
 								totalpage = ApiParser.commentsTotalPage;
 								adaper.setData(data);
 								adaper.notifyDataSetChanged();
