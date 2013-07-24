@@ -82,19 +82,18 @@ public class PlayActivity extends Activity{
 	            return;
 	        }
 			Toast.makeText(PlayActivity.this, "开始缓冲下一段...稍后", 1).show();
-			mPlayer.getDuration();
 			mVideoView.setVideoPath(parts.get(index).url);
-			mVideoView.setOnCompletionListener(new MOnCompletionListener());
-			mVideoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_MEDIUM);
-			mVideoView.setMediaController(new MediaController(PlayActivity.this));
-			mVideoView.setOnPreparedListener(new OnPreparedListener() {
-				
-				@Override
-				public void onPrepared(MediaPlayer arg0) {
-					
-					
-				}
-			});
+//			mVideoView.setOnCompletionListener(new MOnCompletionListener());
+//			mVideoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_MEDIUM);
+//			mVideoView.setMediaController(new MediaController(PlayActivity.this));
+//			mVideoView.setOnPreparedListener(new OnPreparedListener() {
+//				
+//				@Override
+//				public void onPrepared(MediaPlayer arg0) {
+//					
+//					
+//				}
+//			});
 		}
 		
 	}

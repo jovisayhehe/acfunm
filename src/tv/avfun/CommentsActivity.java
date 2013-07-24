@@ -3,6 +3,7 @@ package tv.avfun;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,34 +13,29 @@ import org.apache.commons.httpclient.HttpException;
 
 import tv.ac.fun.R;
 import tv.avfun.api.ApiParser;
-import tv.avfun.api.Login_And_Comments;
+import tv.avfun.api.MemberUtils;
 import tv.avfun.db.DBService;
 import tv.avfun.entity.Comment;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.SparseArray;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
-import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
-import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.umeng.analytics.MobclickAgent;
 
 public class CommentsActivity extends SherlockActivity  implements OnClickListener,OnScrollListener,OnItemClickListener{
@@ -53,9 +49,7 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 	private boolean isreload = false;
 	private ProgressBar progressBar;
 	private TextView time_outtext;
-	private RelativeLayout relalay;
 	private static final int COMMENTID = 301;
-	private LinearLayout bottomline;
 	private ImageButton send_btn;
 	private EditText comment_edit;
 	private HashMap<String, Object> umap;
@@ -64,26 +58,21 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.list_layout);
+		setContentView(R.layout.activity_comments);
 		aid = getIntent().getStringExtra("aid");
 		
 	    ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setTitle("评论");
         
-        relalay = (RelativeLayout) findViewById(R.id.list_relative);
-        bottomline = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.comments_bottom, null);
-        LayoutParams rlpar = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        rlpar.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        relalay.addView(bottomline,rlpar);
         send_btn = (ImageButton) findViewById(R.id.comments_send_btn);
         comment_edit = (EditText) findViewById(R.id.comments_edit);
         send_btn.setOnClickListener(this);
         
         list = (ListView) findViewById(android.R.id.list);
         progressBar = (ProgressBar)findViewById(R.id.time_progress);
-		 time_outtext = (TextView)findViewById(R.id.time_out_text);
-		 time_outtext.setOnClickListener(this);
+        time_outtext = (TextView)findViewById(R.id.time_out_text);
+        time_outtext.setOnClickListener(this);
 		list.setVisibility(View.INVISIBLE);
 		list.setDivider(getResources().getDrawable(R.drawable.listview_divider));
 		list.setDividerHeight(2);
@@ -107,13 +96,7 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 	    super.onPause();
 	    MobclickAgent.onPause(this);
 	}
-	public void bottomlinevisible(){
-		if(bottomline.getVisibility()==View.GONE){
-			bottomline.setVisibility(View.VISIBLE);
-		}else if(bottomline.getVisibility()==View.VISIBLE){
-			bottomline.setVisibility(View.GONE);
-		}
-	}
+	
 	TreeMap<Integer, Comment> data = new TreeMap<Integer, Comment>();
 	public void getdatas(final int page, final boolean isadd) {
 		if(!isadd){
@@ -208,7 +191,6 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem,
 			int visibleItemCount, int totalItemCount) {
-		
 		 if (view.getLastVisiblePosition() == (view.getCount() - 1)&&!isload){
 			 indexpage+=1;
 			 if(indexpage>totalpage){
@@ -238,7 +220,6 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 			if(islogin()){
 				postcomment();
 			}else{
-				bottomlinevisible();
 				Toast.makeText(this, "ﾟ ∀ﾟ)ノ 还没有登陆无法发表评论", Toast.LENGTH_SHORT).show();
 			}
 			break;
@@ -261,7 +242,7 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 		}else{
 		    
 		    Comment c = (Comment) parent.getItemAtPosition(position);
-		    comment_edit.setText(">>"+c.cid+" ");
+		    comment_edit.setText("re: #"+c.count+" ");
 		}
 	}
 	public boolean islogin(){
@@ -273,16 +254,16 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 	}
 	
 	public void postcomment(){
-		String comment = comment_edit.getEditableText().toString();
-		Matcher matcher = Pattern.compile(">>(\\d+)").matcher(comment);
-		int cid =  0;
+		String comment = comment_edit.getText().toString();
+		Matcher matcher = Pattern.compile("re: #(\\d+)").matcher(comment);
+		int count = 0;
 		if(matcher.find()){
-		    cid = Integer.parseInt(matcher.group(1));
-		    comment = comment.replace(">>"+cid, "");
+		    count = Integer.parseInt(matcher.group(1));
+		    comment = matcher.replaceAll("");
 		}
-		final Comment quote = data.get(cid);
+		final Comment quote = data.get(findCid(count));
 		final String rComment = comment;
-		if(rComment==""){
+		if(TextUtils.isEmpty(rComment)){
 			Toast.makeText(this, "评论不能为空哦", Toast.LENGTH_SHORT).show();
 			return;
 		}
@@ -295,13 +276,13 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 		new Thread(){
 			public void run(){
 				try {
-					final boolean suss = Login_And_Comments.postComments(rComment, quote, aid,(Cookie[])umap.get("cookies"));
+					final boolean suss = MemberUtils.postComments(rComment, quote, aid,(Cookie[])umap.get("cookies"));
 					runOnUiThread(new Runnable() {
 						public void run() {
 							if(suss){
 								Toast.makeText(CommentsActivity.this, "评论成功", Toast.LENGTH_SHORT).show();
 								send_btn.setEnabled(true);
-								bottomlinevisible();
+								comment_edit.setText("");
 //								Map<String, Object> cmap = new HashMap<String, Object>();
 //								cmap.put("userName", umap.get("uname"));
 //								cmap.put("content", comment);
@@ -313,6 +294,7 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 								footview.findViewById(R.id.list_footview_progress).setVisibility(View.GONE);
 								TextView textview = (TextView) footview.findViewById(R.id.list_footview_text);
 								textview.setText(R.string.nomorecomments);
+								getdatas(1, false);
 //								adaper.setData(data);
 //								adaper.notifyDataSetChanged();
 							}
@@ -350,5 +332,11 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 			
 		}.start();
 	}
-	
+	int findCid(int floorCount){
+	    for(Map.Entry<Integer, Comment> e : data.entrySet()){
+	        if(e.getValue().count == floorCount)
+	            return e.getValue().cid;
+	    }
+	    return 0;
+	}
 }

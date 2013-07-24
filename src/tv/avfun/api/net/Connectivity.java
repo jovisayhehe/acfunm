@@ -11,6 +11,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.httpclient.Cookie;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpState;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.cookie.CookiePolicy;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.params.HttpClientParams;
 import org.json.external.JSONException;
 import org.json.external.JSONObject;
 import org.jsoup.Jsoup;
@@ -184,5 +192,44 @@ public class Connectivity {
         conn.setDoInput(false);
         conn.setUseCaches(false);
         return conn;
+    }
+    public static String CONTENT_TYPE_FORM = "application/x-www-form-urlencoded; charset=utf-8";
+    public static int doPost(PostMethod post, String host, int port, String protocal,Cookie[] cks) throws HttpException, IOException{
+        HttpClient client = new HttpClient();
+        client.getParams().setParameter("http.protocol.single-cookie-header", true);
+        client.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+        client.getHttpConnectionManager().getParams().setConnectionTimeout(4000);
+        client.getHostConfiguration().setHost(host, port ==0?80:port, protocal==null?"http":protocal);
+        HttpState state = new HttpState();
+        state.addCookies(cks);
+        client.setState(state);
+        return client.executeMethod(post);
+    }
+    public static int doPost(PostMethod post,Cookie[] cks) throws HttpException, IOException{
+        return doPost(post, "www.acfun.tv", 0, null, cks);
+    }
+    public static boolean postResultJson(String url, NameValuePair[] nps, Cookie[] cks){
+        if(TextUtils.isEmpty(url))
+            throw new NullPointerException("url cannot be null!");
+        PostMethod post = new PostMethod(url);
+        if(nps != null){
+            post.setRequestBody(nps);
+            post.setRequestHeader("Content-Type", CONTENT_TYPE_FORM);
+        }
+        try {
+            int state  = Connectivity.doPost(post, cks);
+            if(state == 200){
+                String json = post.getResponseBodyAsString();
+                JSONObject re = new JSONObject(json);
+                return re.getBoolean("success");
+            }
+        } catch (HttpException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

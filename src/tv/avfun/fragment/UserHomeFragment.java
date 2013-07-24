@@ -14,8 +14,7 @@ import tv.avfun.HistoryActivity;
 import tv.ac.fun.R;
 import tv.avfun.SettingsActivity;
 import tv.avfun.animation.ExpandAnimation;
-import tv.avfun.animation.ExpandCollapseAnimation;
-import tv.avfun.api.Login_And_Comments;
+import tv.avfun.api.MemberUtils;
 import tv.avfun.db.DBService;
 import tv.avfun.util.lzlist.ImageLoader;
 import android.app.Activity;
@@ -36,8 +35,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.actionbarsherlock.app.SherlockFragment;
 
 public class UserHomeFragment extends Fragment implements OnClickListener {
 
@@ -213,7 +210,7 @@ public class UserHomeFragment extends Fragment implements OnClickListener {
 
             public void run() {
                 try {
-                    map = Login_And_Comments.login(userstr, passstr);
+                    map = MemberUtils.login(userstr, passstr);
 
                     activity.runOnUiThread(new Runnable() {
 
