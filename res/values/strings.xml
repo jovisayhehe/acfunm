@@ -20,6 +20,7 @@
 	<string name="isboy">可爱的男孩子,还没有登陆</string>
 	<string name="boy">♂♂</string>
 	<string name="refresh">刷新</string>
+	<string name="sync">同步</string>
 	<string name="update_success">\\(^o^)/ 更新列表成功</string>
 	<string name="update_fail">(︶︿︶) 更新失败，请检查网络！</string>
 	<string name="update_lock">(-д-) 不要太在意更新...</string>
