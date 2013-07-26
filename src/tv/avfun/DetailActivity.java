@@ -13,6 +13,7 @@ import tv.ac.fun.R;
 import tv.avfun.adapter.DetailAdaper;
 import tv.avfun.adapter.DetailAdaper.OnStatusClickListener;
 import tv.avfun.api.ApiParser;
+import tv.avfun.api.MemberUtils;
 import tv.avfun.api.net.UserAgent;
 import tv.avfun.app.AcApp;
 import tv.avfun.db.DBService;
@@ -23,7 +24,6 @@ import tv.avfun.util.ArrayUtil;
 import tv.avfun.util.NetWorkUtil;
 import tv.avfun.util.StringUtil;
 import tv.avfun.util.download.DownloadEntry;
-import tv.avfun.util.download.DownloadJob;
 import tv.avfun.util.download.DownloadManager;
 import tv.avfun.util.lzlist.ImageLoader;
 import android.content.Intent;
@@ -310,18 +310,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
             MobclickAgent.onEvent(DetailActivity.this,"share");
             break;
         case R.id.menu_item_fov_action_provider_action_bar:
-            if (isFavorite) {
-                new DBService(this).delFav(aid);
-                isFavorite = false;
-                item.setIcon(R.drawable.rating_favorite);
-                Toast.makeText(this, "取消成功", Toast.LENGTH_SHORT).show();
-            } else {
-                new DBService(this).addtoFav(aid, title, 0, channelid);
-                isFavorite = true;
-                item.setIcon(R.drawable.rating_favorite_p);
-                Toast.makeText(this, "收藏成功", Toast.LENGTH_SHORT).show();
-                MobclickAgent.onEvent(DetailActivity.this,"add_favorite");
-            }
+            handleFavorite(item);
             break;
         case R.id.menu_item_comment:
             Intent intent = new Intent(DetailActivity.this, CommentsActivity.class);
@@ -331,6 +320,36 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
             break;
         }
         return true;
+    }
+
+    private void handleFavorite(MenuItem item) {
+        if (isFavorite) {
+            new DBService(this).delFav(aid);
+            isFavorite = false;
+            item.setIcon(R.drawable.rating_favorite);
+            Toast.makeText(this, "取消成功", Toast.LENGTH_SHORT).show();
+            if(AcApp.instance().isLogin()){
+                new Thread() {
+                    public void run() {
+                        MemberUtils.deleteFavourite(aid, AcApp.instance().getCookies());
+                    }
+                }.start();
+            }
+            MobclickAgent.onEvent(DetailActivity.this,"delete_favorite");
+        } else {
+            new DBService(this).addtoFav(aid, title, 0, channelid);
+            isFavorite = true;
+            item.setIcon(R.drawable.rating_favorite_p);
+            Toast.makeText(this, "收藏成功", Toast.LENGTH_SHORT).show();
+            if(AcApp.instance().isLogin()){
+                new Thread() {
+                    public void run() {
+                        MemberUtils.addFavourite(aid, AcApp.instance().getCookies());
+                    }
+                }.start();
+            }
+            MobclickAgent.onEvent(DetailActivity.this,"add_favorite");
+        }
     }
 
     public void setDescription(TextView text) {
@@ -370,11 +389,6 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         MobclickAgent.onPause(this);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-    
     private OnStatusClickListener slistener = new OnStatusClickListener() {
 
         @Override

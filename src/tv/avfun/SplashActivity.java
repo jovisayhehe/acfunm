@@ -88,6 +88,7 @@ public class SplashActivity extends Activity {
     }
 
     private void init() {
+        mHandler.removeMessages(0);
         new Thread() {
 
             @Override
@@ -97,13 +98,15 @@ public class SplashActivity extends Activity {
                     Document doc = Connectivity.getDoc("http://www.acfun.tv", UserAgent.MY_UA);
                     List<Bangumi[]> timeList = ApiParser.getBangumiTimeList(doc);
                     DataStore.getInstance().saveTimeList(timeList);
+                    mHandler.sendEmptyMessage(1);
                     DataStore.writeToFile(new File(getCacheDir(), DataStore.HOME_CACHE).getAbsolutePath(), doc.data());
                     doc.empty();
                     doc = null;
-                    mHandler.sendEmptyMessage(0);
-                } catch (IOException e1) {
+                } catch (Exception e1) {
                     e1.printStackTrace();
+                    mHandler.sendEmptyMessage(1);
                 }
+                
             }
         }.start();
         

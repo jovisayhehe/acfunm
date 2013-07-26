@@ -24,11 +24,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.util.Log;
-
+// FIXME: refactor
 public class DBService {
 
     private SQLiteDatabase db;
     private DBOpenHelper   dbHelper;
+    private boolean isTransactionMode;
 
     public DBService(Context context) {
         dbHelper = new DBOpenHelper(context);
@@ -42,7 +43,7 @@ public class DBService {
     /**
      * 添加方法
      * 
-     * @param videoid
+     * @param aid
      *            视频 文章id
      * @param title
      *            标题
@@ -51,12 +52,22 @@ public class DBService {
      * @param channelid
      *            频道id
      */
-    public void addtoFav(String videoid, String title, int type, int channelid) {
-        db.execSQL("INSERT INTO NFAVORITES(VIDEOID,TITLE,TPYE,CHANNELID)" + "VALUES(?,?,?,?)", new Object[] { videoid,
+    public void addtoFav(String aid, String title, int type, int channelid) {
+        if(!isFaved(aid)){
+            db.execSQL("INSERT INTO NFAVORITES(VIDEOID,TITLE,TPYE,CHANNELID)" + "VALUES(?,?,?,?)", new Object[] { aid,
                 title, type, channelid });
+            if(!isTransactionMode) db.close();
+        }
+    }
+    public void beginTransaction(){
+        db.beginTransaction();
+        isTransactionMode = true;
+    }
+    public void endTransaction(){
+        db.setTransactionSuccessful();
+        db.endTransaction();
         db.close();
     }
-
     /**
      * 
      * @param id
@@ -66,7 +77,10 @@ public class DBService {
         db.execSQL("DELETE FROM NFAVORITES WHERE VIDEOID = ?", new String[] { id });
         db.close();
     }
-
+    
+    public void addtoFav(Favorite fav){
+        addtoFav(fav.aid, fav.title, fav.type, fav.channelid);
+    }
     /**
      * 
      * @param id
@@ -77,7 +91,7 @@ public class DBService {
         Cursor cursor = db.rawQuery("SELECT VIDEOID FROM NFAVORITES WHERE VIDEOID = ?", new String[] { id });
         boolean isexist = cursor.moveToFirst();
         cursor.close();
-        db.close();
+        if(!isTransactionMode) db.close();
         return isexist;
     }
 

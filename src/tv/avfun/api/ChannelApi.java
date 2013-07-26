@@ -38,10 +38,12 @@ public class ChannelApi {
         public static final int FUNY        = 86;
         public static final int KICHIKU     = 87;
         public static final int PET         = 88;
+        public static final int EAT         = 89;
         public static final int MOVIE       = 96;
         public static final int TV          = 97;
         public static final int VARIETY     = 98;
         
+        public static final int PILI        = 99;
         public static final int DOCUMENTARY = 100;
         public static final int SING        = 101;
         public static final int DANCE       = 102;
@@ -78,6 +80,7 @@ public class ChannelApi {
         channels.put(id.FUNY, new Channel("生活娱乐", id.FUNY));
         channels.put(id.KICHIKU, new Channel("鬼畜调教", id.KICHIKU));
         channels.put(id.PET, new Channel("萌宠", id.PET));
+        channels.put(id.EAT, new Channel("美食", id.EAT));
         channels.put(id.SCIENCE, new Channel("科技", id.SCIENCE));
         channels.put(id.SPORT, new Channel("体育", id.SPORT));
         
@@ -86,6 +89,7 @@ public class ChannelApi {
         channels.put(id.TV, new Channel("剧集", id.TV));
         channels.put(id.VARIETY, new Channel("综艺", id.VARIETY));
         channels.put(id.DOCUMENTARY, new Channel("纪录片", id.DOCUMENTARY));
+        channels.put(id.PILI, new Channel("特摄·霹雳", id.PILI));
         
         
         channels.put(id.GAME, new Channel("游戏", id.GAME));
@@ -128,6 +132,7 @@ public class ChannelApi {
             apis.add(channels.get(id.FUNY));
             apis.add(channels.get(id.KICHIKU));
             apis.add(channels.get(id.PET));
+            apis.add(channels.get(id.EAT));
             apis.add(channels.get(id.SCIENCE));
             apis.add(channels.get(id.SPORT));
             break;
@@ -136,6 +141,7 @@ public class ChannelApi {
             apis.add(channels.get(id.TV));
             apis.add(channels.get(id.VARIETY));
             apis.add(channels.get(id.DOCUMENTARY));
+            apis.add(channels.get(id.PILI));
             break;
         case 4:
             apis.add(channels.get(id.BEST_GAME));
@@ -174,6 +180,12 @@ public class ChannelApi {
         default:
             return null;
         }
+    }
+    public static int getChannelType(int channelId){
+        boolean bArticle = channelId == id.ARTICLE.ARTICLE || channelId == id.ARTICLE.COLLECTION
+                || channelId == id.ARTICLE.AN_CULTURE || channelId == id.ARTICLE.COMIC_LIGHT_NOVEL
+                || channelId == id.ARTICLE.WORK_EMOTION;
+        return bArticle ? 1 : 0;
     }
     private static final int TYPE_DEFAULT      = 0;
     private static final int TYPE_HOT_LIST     = 7;

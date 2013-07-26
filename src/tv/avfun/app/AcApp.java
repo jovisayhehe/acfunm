@@ -2,26 +2,14 @@ package tv.avfun.app;
 
 
 import java.io.File;
+import java.util.Map;
 
-import tv.avfun.DownloadManActivity;
+import org.apache.commons.httpclient.Cookie;
+
 import tv.ac.fun.R;
+import tv.avfun.db.DBService;
 import tv.avfun.util.ExtendedImageDownloader;
 import tv.avfun.util.download.DownloadManager;
-
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.widget.SearchView;
-import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
-import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
-import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
-import com.nostra13.universalimageloader.cache.memory.impl.LRULimitedMemoryCache;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.nostra13.universalimageloader.utils.StorageUtils;
-
 import android.app.Activity;
 import android.app.Application;
 import android.app.Notification;
@@ -40,6 +28,16 @@ import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Toast;
+
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.SearchView;
+import com.nostra13.universalimageloader.cache.memory.impl.LRULimitedMemoryCache;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
 /**
  * 自定义Application
@@ -106,7 +104,7 @@ public class AcApp extends Application {
         return mDownloadManager;
     }
     private String versionName = "";
-
+    
     public String getVersionName() {
         if (TextUtils.isEmpty(versionName)) {
             PackageInfo info = null;
@@ -119,7 +117,19 @@ public class AcApp extends Application {
         } else
             return versionName;
     }
-    
+    private Cookie[] cookies;
+    public Cookie[] getCookies(){
+        if(cookies == null){
+            Map<String,Object> map = new DBService(mContext).getUser();
+            if(map != null && map.size()>0){
+                cookies = (Cookie[]) map.get("cookies");
+            }
+        }
+        return cookies;
+    }
+    public boolean isLogin(){
+        return getCookies() != null;
+    }
     // ====================================
     // config SharedPreferences
     // ====================================
@@ -277,5 +287,7 @@ public class AcApp extends Application {
             mNotiManager = (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
         mNotiManager.notify(notificationId, notification);
     }
+    
+    
     
 }
