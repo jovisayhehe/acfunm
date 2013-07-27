@@ -31,7 +31,9 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.renderscript.Program.TextureType;
 import android.text.Html;
+import android.text.TextUtils.TruncateAt;
 import android.text.util.Linkify;
 import android.text.util.Linkify.TransformFilter;
 import android.util.Log;
@@ -78,6 +80,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
     private boolean             isFavorite;
     private VideoInfo           mVideoInfo;
     private DownloadManager     mDownloadManager;
+    private TextView btnExpand;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -97,8 +100,21 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         initBar();
         initview();
         loadData();
+       
     }
-
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        tvDesc.post(new Runnable() {
+            
+            @Override
+            public void run() {
+                if (tvDesc.getLineCount()>=4) {
+                    btnExpand.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+    }
     private void initBar() {
         getSupportActionBar().setBackgroundDrawable(this.getResources().getDrawable(R.drawable.ab_transparent));
         Drawable bg = getResources().getDrawable(R.drawable.border_bg);
@@ -172,6 +188,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
                     }
                 }
                 setDescription(tvDesc);
+                tvDesc.getLineCount();
                 tvBtnPlay.setText("播放");
                 tvBtnPlay.setOnClickListener(DetailActivity.this);
                 mListView.setVisibility(View.VISIBLE);
@@ -200,6 +217,26 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         tvBtnPlay.setTag(TAG_PLAY);
         tvBtnPlay.setOnClickListener(this);
         tvDesc = (TextView) findViewById(R.id.detail_desc);
+        btnExpand = (TextView) findViewById(R.id.btn_expand);
+        btnExpand.setVisibility(View.GONE);
+        btnExpand.setOnClickListener(new OnClickListener() {
+            boolean isExpand;
+            @Override
+            public void onClick(View v) {
+                if(isExpand){
+                    tvDesc.setEllipsize(TruncateAt.END);
+                    tvDesc.setMaxLines(4);
+                    btnExpand.setText("↓展开");
+                    isExpand = false;
+                }else{
+                    tvDesc.setEllipsize(null);
+                    tvDesc.setSingleLine(false);
+                    btnExpand.setText("↑收缩");
+                    isExpand = true;
+                }
+                
+            }
+        });
         if (from == 2) {
             // av://ac000000
             aid = mIntent.getDataString().substring(7);
@@ -364,7 +401,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
                 return "http://wiki.acfun.tv/index.php/" + t;
             }
         });
-        Pattern http = Pattern.compile("(http://(?:[a-z0-9.-]+[.][a-z]{2,}+(?::[0-9]+)?)(?:/[^\\s\u3010\u4e00-\u9fa5]*)?)",
+        Pattern http = Pattern.compile("(http://(?:[a-z0-9.-]+[.][a-z]{2,}+(?::[0-9]+)?)(?:/[^\\s\u3000-\u9fe0]*)?)",
                 Pattern.CASE_INSENSITIVE);
         Linkify.addLinks(text, http, "http://");
         Linkify.addLinks(text, Pattern.compile("(ac\\d{5,})", Pattern.CASE_INSENSITIVE), "av://");
