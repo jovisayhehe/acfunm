@@ -56,7 +56,6 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_comments);
 		aid = getIntent().getStringExtra("aid");

@@ -5,14 +5,12 @@ import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.MediaPlayer.OnBufferingUpdateListener;
 import io.vov.vitamio.MediaPlayer.OnCompletionListener;
 import io.vov.vitamio.MediaPlayer.OnErrorListener;
-import io.vov.vitamio.MediaPlayer.OnPreparedListener;
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
 import java.util.ArrayList;
 
 import tv.ac.fun.R;
-import tv.avfun.api.net.UserAgent;
 import tv.avfun.entity.VideoSegment;
 import android.app.Activity;
 import android.content.res.Configuration;
@@ -83,17 +81,6 @@ public class PlayActivity extends Activity{
 	        }
 			Toast.makeText(PlayActivity.this, "开始缓冲下一段...稍后", 1).show();
 			mVideoView.setVideoPath(parts.get(index).url);
-//			mVideoView.setOnCompletionListener(new MOnCompletionListener());
-//			mVideoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_MEDIUM);
-//			mVideoView.setMediaController(new MediaController(PlayActivity.this));
-//			mVideoView.setOnPreparedListener(new OnPreparedListener() {
-//				
-//				@Override
-//				public void onPrepared(MediaPlayer arg0) {
-//					
-//					
-//				}
-//			});
 		}
 		
 	}

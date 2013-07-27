@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="tv.ac.fun" android:versionCode="9" android:versionName="1.0.8_beta">  
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="tv.ac.fun" android:versionCode="10" android:versionName="1.0.9_beta">  
   <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="17"/>  
   <uses-permission android:name="android.permission.INTERNET"/>  
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>  
@@ -50,6 +50,6 @@
     <activity android:name="com.umeng.fb.ui.FeedbackConversations"/>  
     <activity android:name="com.umeng.fb.ui.FeedbackConversation" android:configChanges="keyboard"/>  
     <meta-data android:value="51a1964056240b7b21039d4c" android:name="UMENG_APPKEY"/>  
-    <meta-data android:value="GooglePlay" android:name="UMENG_CHANNEL"/> 
+    <meta-data android:value="Test" android:name="UMENG_CHANNEL"/> 
   </application> 
 </manifest>

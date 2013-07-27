@@ -31,7 +31,6 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.renderscript.Program.TextureType;
 import android.text.Html;
 import android.text.TextUtils.TruncateAt;
 import android.text.util.Linkify;

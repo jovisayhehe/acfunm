@@ -3,19 +3,16 @@ package tv.avfun.view;
 import java.util.List;
 
 import tv.ac.fun.R;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 public class FloorsView extends LinearLayout {
 	private Drawable mBorder;
-	private LayoutInflater mInflater;
-
 	public FloorsView(Context context) {
 		this(context, null);
 	}
@@ -37,11 +34,18 @@ public class FloorsView extends LinearLayout {
 		int j = 0;
 		for(int i=quoteList.size()-1;i>=0;i--){
 			LinearLayout.LayoutParams params = generateDefaultLayoutParams();
-			int k = 4 * i;
+			int k = 5 * i;
+			if(quoteList.size()>20 && i>10){
+			    k = 5*10;
+			}
 			params.leftMargin = k;
 			params.rightMargin = k;
 			params.topMargin = j==0?k:0;
-			addViewInLayout(quoteList.get(i), j++, params);
+			View v = quoteList.get(i);
+			TextView floor = (TextView) v.findViewById(R.id.floor);
+			floor.setText(String.valueOf(j+1));
+			floor.setVisibility(View.VISIBLE);
+			addViewInLayout(v, j++, params);
 		}
 	}
 

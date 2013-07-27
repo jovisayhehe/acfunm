@@ -6,12 +6,10 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import tv.ac.fun.R;
-import tv.avfun.app.AcApp;
 import tv.avfun.entity.Comment;
 import tv.avfun.util.TextViewUtils;
 import tv.avfun.view.FloorsView;
 import android.content.Context;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +24,7 @@ public class CommentsAdaper3 extends BaseAdapter {
 	private TreeMap<Integer, Comment> data;
 	private List<Comment> comments = new ArrayList<Comment>();
 	private Context mContext;
-	private int maxNumOfFloor = 25;
+	private int maxNumOfFloor = 30;
 
 	public CommentsAdaper3(Context context, TreeMap<Integer, Comment> data) {
 		this.mInflater = LayoutInflater.from(context);
@@ -84,7 +82,7 @@ public class CommentsAdaper3 extends BaseAdapter {
 			convertView.findViewById(R.id.requote).setVisibility(View.GONE);
 		}
 		holder.user.setText("#" + c.count + " " + c.userName);
-
+		
 		TextViewUtils.setCommentContent(holder.content, c);
 		int quoteId = c.quoteId;
 		holder.hasQuote = quoteId > 0;
@@ -137,6 +135,7 @@ public class CommentsAdaper3 extends BaseAdapter {
 		TextView content = (TextView) quoteFrame
 				.findViewById(R.id.comments_content);
 		TextViewUtils.setCommentContent(content, quote);
+		
 		return quoteFrame;
 	}
 

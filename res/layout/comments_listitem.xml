@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@null"
-    android:padding="4dp"
+    android:padding="6dp"
      >
 
     <!--
@@ -34,7 +34,16 @@
         android:layout_height="wrap_content"
         android:text="#12 AAAAAAAAAAA"
         android:textColor="#ABABAB" />
-
+ 	<TextView 
+	    android:id="@+id/floor"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="11"
+	    android:textSize="12sp"
+	    android:textColor="#666"
+	    android:visibility="gone"
+	    android:layout_alignRight="@id/user_name"
+	    />
     <TextView
         android:id="@+id/comments_content"
         android:layout_width="match_parent"
