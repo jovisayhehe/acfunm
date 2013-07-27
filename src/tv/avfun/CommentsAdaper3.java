@@ -26,14 +26,12 @@ public class CommentsAdaper3 extends BaseAdapter {
 	private TreeMap<Integer, Comment> data;
 	private List<Comment> comments = new ArrayList<Comment>();
 	private Context mContext;
-	private int numOfFloor;
+	private int maxNumOfFloor = 25;
 
 	public CommentsAdaper3(Context context, TreeMap<Integer, Comment> data) {
 		this.mInflater = LayoutInflater.from(context);
 		this.mContext = context;
 		this.data = data;
-		this.numOfFloor = AcApp.getConfig().getInt("num_of_floor",
-				8);
 		for (Map.Entry<Integer, Comment> e : data.entrySet()) {
 			comments.add(e.getValue());
 		}
@@ -99,7 +97,7 @@ public class CommentsAdaper3 extends BaseAdapter {
 		
 		int num = 0;
 		for (Comment quote = data.get(quoteId); 
-				quote != null && num< numOfFloor; 
+				quote != null && num< maxNumOfFloor; 
 				num++, quoteId = quote.quoteId, quote = data.get(quoteId)) {
 
 			if (quote.isQuoted) {

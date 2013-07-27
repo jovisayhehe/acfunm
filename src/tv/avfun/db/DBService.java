@@ -236,7 +236,7 @@ public class DBService {
         return null;
     }
 
-    public void user_cancel() {
+    public void signOut() {
         db.execSQL("DELETE FROM USER");
         db.close();
     }

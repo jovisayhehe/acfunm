@@ -6,15 +6,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
-
-import org.jsoup.nodes.Document;
 
 import tv.ac.fun.R;
-import tv.avfun.api.ApiParser;
-import tv.avfun.api.Bangumi;
-import tv.avfun.api.net.Connectivity;
-import tv.avfun.api.net.UserAgent;
 import tv.avfun.app.AcApp;
 import tv.avfun.util.DataStore;
 import android.app.Activity;
@@ -83,34 +76,8 @@ public class SplashActivity extends Activity {
             }.start();
             
         }
-        if(!DataStore.getInstance().isBangumiListCached())
-            init();
     }
 
-    private void init() {
-        mHandler.removeMessages(0);
-        new Thread() {
-
-            @Override
-            public void run() {
-                try {
-                    
-                    Document doc = Connectivity.getDoc("http://www.acfun.tv", UserAgent.MY_UA);
-                    List<Bangumi[]> timeList = ApiParser.getBangumiTimeList(doc);
-                    DataStore.getInstance().saveTimeList(timeList);
-                    mHandler.sendEmptyMessage(1);
-                    DataStore.writeToFile(new File(getCacheDir(), DataStore.HOME_CACHE).getAbsolutePath(), doc.data());
-                    doc.empty();
-                    doc = null;
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                    mHandler.sendEmptyMessage(1);
-                }
-                
-            }
-        }.start();
-        
-    }
 
     private void clearCache() {
         

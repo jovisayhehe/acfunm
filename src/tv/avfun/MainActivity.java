@@ -12,9 +12,6 @@ import tv.avfun.fragment.HomeChannelListFragment;
 import tv.avfun.fragment.PlayTime;
 import tv.avfun.fragment.UserHomeFragment;
 import tv.avfun.view.SlideNavItemView;
-import android.app.SearchManager;
-import android.app.SearchableInfo;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -98,8 +95,8 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
         // TODO
         // bar.setDisplayUseLogoEnabled(true);
         forceShowActionBarOverflowMenu();
-    }
 
+    }
     @Override
     protected void onStart() {
         super.onStart();
@@ -108,37 +105,27 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
             showOverlays();
         }
     }
-
     private void showOverlays() {
         overlays = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.overlays, null);
         overlays.setOnClickListener(new View.OnClickListener() {
-
-            int count = overlays.getChildCount();
-            int i     = 2;
-
             @Override
             public void onClick(View v) {
-                if (i < count)
-                    overlays.getChildAt(i++).setVisibility(View.VISIBLE);
-                else {
-                    hideOverlays();
-                    AcApp.putBoolean("first_run", false);
-                }
+                hideOverlays();
+                AcApp.putBoolean("first_run", false);
             }
         });
+        overlays.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in));
+        ((FrameLayout) findViewById(R.id.content_frame)).addView(overlays);
         OnClickListener l = new View.OnClickListener() {
-
+            
             @Override
             public void onClick(View v) {
-
                 hideOverlays();
                 AcApp.putBoolean("first_run", false);
             }
         };
         overlays.findViewById(R.id.close).setOnClickListener(l);
         overlays.findViewById(R.id.ok).setOnClickListener(l);
-        ((FrameLayout) findViewById(R.id.content_frame)).addView(overlays);
-        overlays.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in));
     }
 
     private void hideOverlays() {

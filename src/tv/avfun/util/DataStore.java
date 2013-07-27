@@ -14,9 +14,6 @@ import java.io.Writer;
 import java.util.Calendar;
 import java.util.List;
 
-import org.json.external.JSONException;
-import org.json.external.JSONObject;
-
 import tv.ac.fun.BuildConfig;
 import tv.avfun.api.Bangumi;
 import tv.avfun.api.BangumiList;
@@ -43,9 +40,9 @@ public class DataStore {
     /** 30 min */
     public static final long       CHANNEL_EXPIRED      = 30 * 60000;
     /** 1 hour */
-    public static final long       CHANNEL_LIST_EXPIRED = 60 * 60 * 1000;
-    /** 2 days (XXX: 待定) */
-    public static final long       TIME_LIST_EXPIRED    = 3 * 12 * 60 * 60 * 1000;
+    public static final long       CHANNEL_LIST_EXPIRED = 2 * CHANNEL_EXPIRED;
+    /** 1 days */
+    public static final long       TIME_LIST_EXPIRED    = 24 * CHANNEL_LIST_EXPIRED;
     /** 首页频道列表缓存文件 */
     public static final String     CHANNEL_LIST_CACHE   = "channel_list.dat";
     /** 番组列表缓存文件 */
@@ -121,7 +118,7 @@ public class DataStore {
      * @return list为空或保存失败则返回false
      */
     public boolean saveTimeList(List<Bangumi[]> list) {
-        if (list != null) {
+        if (list != null && list.size()>0) {
             this.bangumiList.bangumiTimeList = list;
             this.bangumiList.cacheTime = System.currentTimeMillis();
             return writeObject(timeListCachedFile.getAbsolutePath(), this.bangumiList);

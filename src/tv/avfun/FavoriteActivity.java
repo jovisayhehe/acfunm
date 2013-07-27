@@ -14,7 +14,6 @@ import tv.avfun.app.AcApp;
 import tv.avfun.db.DBService;
 import tv.avfun.entity.Contents;
 import tv.avfun.entity.Favorite;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,7 +21,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +47,6 @@ public class FavoriteActivity extends BaseListActivity implements OnItemClickLis
     private ProgressBar    progressBar;
     private AssistAdaper   adaper;
     private Cookie[] cookies;
-    private View timeOut;
     private Handler handler;
     private int indexPage = 1;
     private View mFootView;
@@ -62,13 +59,11 @@ public class FavoriteActivity extends BaseListActivity implements OnItemClickLis
         getSupportActionBar().setTitle("收藏夹");
         progressBar = (ProgressBar)findViewById(R.id.time_progress);
         progressBar.setVisibility(View.VISIBLE);
-        timeOut = findViewById(R.id.time_out_text);
         list = (ListView) findViewById(android.R.id.list);
         list.setVisibility(View.GONE);
         list.setDivider(getResources().getDrawable(R.drawable.listview_divider));
         list.setDividerHeight(2);
         mFootView = getLayoutInflater().inflate(R.layout.list_footerview, list, false);
-//        mFootView.setVisibility(View.GONE);
         list.addFooterView(mFootView);
         adaper = new AssistAdaper(this, data);
         list.setAdapter(adaper);
@@ -79,15 +74,16 @@ public class FavoriteActivity extends BaseListActivity implements OnItemClickLis
         if(cookies == null){
             data = favouriteLocal;
             handler.sendEmptyMessage(GUEST);
-        }else
+        }else{
             loadData(indexPage);
+        }
 
     }
 
     List<Favorite> favouriteLocal;
     private boolean isLoading;
     private void loadData(final int pageNo) {
-
+        if(cookies == null) return;
         new Thread() {
 
             public void run() {
@@ -116,11 +112,11 @@ public class FavoriteActivity extends BaseListActivity implements OnItemClickLis
                             }
                         }
                     }.start();
-                    
-                    data.addAll(favouriteLocal);
+//                    data.addAll(favouriteLocal);
                     handler.sendEmptyMessage(USER);
                 }else
                     handler.sendEmptyMessage(MORE);
+                data.addAll(favouriteOnline);
             }
         }.start();
     }
@@ -249,22 +245,33 @@ public class FavoriteActivity extends BaseListActivity implements OnItemClickLis
     public boolean handleMessage(Message msg) {
         progressBar.setVisibility(View.GONE);
         list.setVisibility(View.VISIBLE);
-//        adaper.setData(data);
+        adaper.setData(data);
         adaper.notifyDataSetChanged();
         switch (msg.what) {
         case FAILED:
             Toast.makeText(getApplicationContext(),"连接失败！请检查网络后重试！",0).show();
+            if (mFootView!=null) {
+                ((TextView) mFootView.findViewById(R.id.list_footview_text)).setText(R.string.update_fail);
+                mFootView.findViewById(R.id.list_footview_progress).setVisibility(View.GONE);
+            }
             break;
         case GUEST:
             Toast.makeText(getApplicationContext(), "未登录！收藏夹为本地数据。请登录以同步收藏！", 1).show();
             isLoading = false;
+            if (mFootView!=null) {
+                ((TextView) mFootView.findViewById(R.id.list_footview_text)).setText(R.string.update_fail);
+                mFootView.findViewById(R.id.list_footview_progress).setVisibility(View.GONE);
+            }
             break;
         case USER:
-            isLoading = false;
             Toast.makeText(getApplicationContext(), "你已登录！收藏夹为网站数据。收藏操作将会同步到网络！", 1).show();
-            break;
         case MORE:
-            isLoading = false;
+            if(MemberUtils.totalPage >1 && indexPage<MemberUtils.totalPage){
+                isLoading = false;
+            } else if (mFootView!=null) {
+                ((TextView) mFootView.findViewById(R.id.list_footview_text)).setText(R.string.nomorecomments);
+                mFootView.findViewById(R.id.list_footview_progress).setVisibility(View.GONE);
+            }
             break;
         }
         return true;
@@ -278,15 +285,8 @@ public class FavoriteActivity extends BaseListActivity implements OnItemClickLis
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        
         if (view.getLastVisiblePosition() == (view.getCount() - 1) && !isLoading) {
-            if(indexPage+1 < MemberUtils.totalPage)
                 loadData(++indexPage);
-            else if (mFootView!=null) {
-                    ((TextView) mFootView.findViewById(R.id.list_footview_text)).setText(R.string.nomorecomments);
-                    mFootView.findViewById(R.id.list_footview_progress).setVisibility(View.GONE);
-            }
-                
         }
         
     }

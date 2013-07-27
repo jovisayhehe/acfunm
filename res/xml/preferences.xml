@@ -32,7 +32,7 @@
             android:defaultValue="0"
             android:dialogTitle="设置视频清晰度"
             />
-        <tv.avfun.view.SeekBarPreference
+<!--         <tv.avfun.view.SeekBarPreference
             android:key="num_of_floor"
             android:icon="@drawable/mode_article"
 	        android:title="评论最大楼层数"
@@ -41,7 +41,7 @@
 	        android:text="层"
 	        android:max="15"
 	        android:negativeButtonText="@null"
-            />
+            /> -->
             
             
             

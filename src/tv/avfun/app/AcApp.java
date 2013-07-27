@@ -130,6 +130,10 @@ public class AcApp extends Application {
     public boolean isLogin(){
         return getCookies() != null;
     }
+    public void signOut() {
+        new DBService(this).signOut();
+        cookies = null;
+    }
     // ====================================
     // config SharedPreferences
     // ====================================
@@ -287,7 +291,5 @@ public class AcApp extends Application {
             mNotiManager = (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
         mNotiManager.notify(notificationId, notification);
     }
-    
-    
-    
+
 }

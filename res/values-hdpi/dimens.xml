@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="mem_btn_width">80dip</dimen>
+    <dimen name="mem_btn_width">70dip</dimen>
     <dimen name="mem_btn_height">30dip</dimen>
    <dimen name="mem_marginLeft">206dip</dimen>
    <dimen name="img_w">85dip</dimen>

@@ -15,6 +15,7 @@ import tv.ac.fun.R;
 import tv.avfun.SettingsActivity;
 import tv.avfun.animation.ExpandAnimation;
 import tv.avfun.api.MemberUtils;
+import tv.avfun.app.AcApp;
 import tv.avfun.db.DBService;
 import tv.avfun.util.lzlist.ImageLoader;
 import android.app.Activity;
@@ -127,7 +128,7 @@ public class UserHomeFragment extends Fragment implements OnClickListener {
                 vlogin_btn.setText("登陆");
                 islogin = false;
                 unbuidview();
-                new DBService(activity).user_cancel();
+                AcApp.instance().signOut();
             } else {
                 animateLoginUI();
             }
@@ -197,7 +198,7 @@ public class UserHomeFragment extends Fragment implements OnClickListener {
             Toast.makeText(activity, "密码不能空", Toast.LENGTH_SHORT).show();
             return;
         }
-
+        animateLoginUI();
         vlogin_btn.setEnabled(false);
         vlogin_btn.setText("登陆中");
         InputMethodManager imm = (InputMethodManager) activity
@@ -216,7 +217,7 @@ public class UserHomeFragment extends Fragment implements OnClickListener {
 
                         public void run() {
                             boolean success = (Boolean) map.get("success");
-                            animateLoginUI();
+//                            animateLoginUI();
                             if (success) {
                                 Toast.makeText(activity, "登陆成功", Toast.LENGTH_SHORT).show();
                                 islogin = true;
@@ -243,7 +244,7 @@ public class UserHomeFragment extends Fragment implements OnClickListener {
                         @Override
                         public void run() {
 
-                            animateLoginUI();
+//                            animateLoginUI();
                             Toast.makeText(activity, "(=ﾟωﾟ)= AC娘不想理你...", Toast.LENGTH_SHORT)
                                     .show();
                             vlogin_btn.setEnabled(true);
@@ -258,7 +259,7 @@ public class UserHomeFragment extends Fragment implements OnClickListener {
                         @Override
                         public void run() {
 
-                            animateLoginUI();
+//                            animateLoginUI();
                             Toast.makeText(activity, "(=ﾟωﾟ)= 啊！连不上网...", Toast.LENGTH_SHORT)
                                     .show();
                             vlogin_btn.setEnabled(true);

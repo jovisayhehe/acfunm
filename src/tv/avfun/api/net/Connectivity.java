@@ -4,12 +4,7 @@ package tv.avfun.api.net;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpClient;
@@ -20,19 +15,14 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.params.HttpClientParams;
 import org.json.external.JSONException;
 import org.json.external.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import com.google.gson.JsonObject;
-
 import tv.ac.fun.BuildConfig;
-import tv.avfun.app.AcApp;
 import tv.avfun.util.DataStore;
-import tv.avfun.util.NetWorkUtil;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -41,23 +31,21 @@ public class Connectivity {
     private static final String TAG = Connectivity.class.getSimpleName();
 
     /**
-     * 获得原始Json数据
-     * 
      * @param url
      * @return 获取失败返回null
      */
-    public static String getJson(String url) {
+    public static String getResponseAsString(String url, String userAgent) {
         try {
-            HttpURLConnection conn = openConnection(new URL(url), UserAgent.DEFAULT);
+            HttpURLConnection conn = openConnection(new URL(url), userAgent);
             if (conn.getResponseCode() != 200)
                 return null;
             InputStream in = conn.getInputStream();
-            String json = DataStore.readData(in, "UTF8");
+            String res = DataStore.readData(in, "UTF8");
             conn.disconnect();
-            return json;
+            return res;
         } catch (Exception e) {
             if (BuildConfig.DEBUG)
-                Log.w(TAG, "获取Json失败" + "\n" + e.getMessage());
+                Log.w(TAG, "获取数据失败" + "\n" + e.getMessage());
         }
         return null;
     }
@@ -69,7 +57,7 @@ public class Connectivity {
      * @return 获取失败返回null
      */
     public static JSONObject getJSONObject(String url) throws JSONException {
-        String json = getJson(url);
+        String json = getResponseAsString(url,UserAgent.DEFAULT);
         if (json != null)
             return new JSONObject(json);
         else
@@ -92,8 +80,9 @@ public class Connectivity {
         return getDoc(url, userAgent).getElementsByTag(tag);
     }
 
-    public static Document getDoc(String url, String userAgent) throws IOException {
-        return Jsoup.connect(url).timeout(6000).userAgent(userAgent).get();
+    public static Document getDoc(String url, String userAgent){
+        String html = getResponseAsString(url,userAgent);
+        return Jsoup.parse(html);
     }
 
     /**
