@@ -1,7 +1,6 @@
 
 package tv.avfun.db;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,19 +10,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import tv.ac.fun.BuildConfig;
-import tv.avfun.app.AcApp;
 import tv.avfun.entity.Favorite;
 import tv.avfun.entity.History;
-import tv.avfun.entity.VideoPart;
-import tv.avfun.util.FileUtil;
-import tv.avfun.util.MD5Util;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.net.Uri;
-import android.util.Log;
 // FIXME: refactor
 public class DBService {
 
@@ -53,7 +45,7 @@ public class DBService {
      *            频道id
      */
     public void addtoFav(String aid, String title, int type, int channelid) {
-        if(!isFaved(aid)){
+        if(!isFaved(aid,false)){
             db.execSQL("INSERT INTO NFAVORITES(VIDEOID,TITLE,TPYE,CHANNELID)" + "VALUES(?,?,?,?)", new Object[] { aid,
                 title, type, channelid });
             if(!isTransactionMode) db.close();
@@ -88,13 +80,15 @@ public class DBService {
      * @return 是否存在收藏表中
      */
     public boolean isFaved(String id) {
+        return isFaved(id, !isTransactionMode);
+    }
+    private boolean isFaved(String id, boolean closeDb){
         Cursor cursor = db.rawQuery("SELECT VIDEOID FROM NFAVORITES WHERE VIDEOID = ?", new String[] { id });
         boolean isexist = cursor.moveToFirst();
         cursor.close();
-        if(!isTransactionMode) db.close();
+        if(closeDb) db.close();
         return isexist;
     }
-
     public void addtoHis(String id, String title, String time, int type, int channelid) {
         db.execSQL("INSERT INTO NHISTORY(VIDEOID,TITLE,TIME,TPYE,CHANNELID)" + "VALUES(?,?,?,?,?)", new Object[] { id,
                 title, time, type, channelid });
