@@ -251,7 +251,7 @@ public class FavoriteActivity extends BaseListActivity implements OnItemClickLis
         case FAILED:
             Toast.makeText(getApplicationContext(),"连接失败！请检查网络后重试！",0).show();
             if (mFootView!=null) {
-                ((TextView) mFootView.findViewById(R.id.list_footview_text)).setText(R.string.update_fail);
+                ((TextView) mFootView.findViewById(R.id.list_footview_text)).setText("请检查网络后重试！");
                 mFootView.findViewById(R.id.list_footview_progress).setVisibility(View.GONE);
             }
             break;
@@ -259,7 +259,7 @@ public class FavoriteActivity extends BaseListActivity implements OnItemClickLis
             Toast.makeText(getApplicationContext(), "未登录！收藏夹为本地数据。请登录以同步收藏！", 1).show();
             isLoading = false;
             if (mFootView!=null) {
-                ((TextView) mFootView.findViewById(R.id.list_footview_text)).setText(R.string.update_fail);
+                ((TextView) mFootView.findViewById(R.id.list_footview_text)).setText("请登录以同步收藏！");
                 mFootView.findViewById(R.id.list_footview_progress).setVisibility(View.GONE);
             }
             break;

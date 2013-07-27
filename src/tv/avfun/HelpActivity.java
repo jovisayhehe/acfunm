@@ -114,7 +114,14 @@ public class HelpActivity extends SherlockPreferenceActivity {
             }
         });
         mFaqView = new WebView(getApplicationContext());
-        mFaqView.setWebViewClient(new WebViewClient());
+        mFaqView.setWebViewClient(new WebViewClient(){
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(url));
+                startActivity(intent);
+                return true;
+            }});
         mFaqView.setWebChromeClient(new WebChromeClient());
         WebSettings settings = mFaqView.getSettings();
         settings.setCacheMode(WebSettings.LOAD_NORMAL);
