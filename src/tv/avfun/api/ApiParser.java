@@ -467,9 +467,9 @@ public class ApiParser {
         return vid;
     }
     public static void parseSinaVideoItem(VideoPart item, int parseMode){
-        if(item == null || TextUtils.isEmpty(item.vid))
-            throw new IllegalArgumentException("item or item's vid cannot be null");
         try {
+            if(item == null || TextUtils.isEmpty(item.vid))
+                throw new IllegalArgumentException("item or item's vid cannot be null");
             if(BuildConfig.DEBUG) Log.i(TAG, "尝试获取sina :"+item.vid);
 //            if(parseMode<2){
 //                item.vid = getSinaMp4Vid(item.vid); // 获取mp4 的vid
@@ -477,6 +477,8 @@ public class ApiParser {
 //            String url = "http://v.iask.com/v_play.php?vid=" + item.vid;
             String url = "http://sex.acfun.tv/Home/Sina?app_key=1917945218&vid="+item.vid +"&dtime="+System.currentTimeMillis();
             Document doc = Connectivity.getDoc(url, UserAgent.DEFAULT);
+            if(doc == null)
+                doc = Connectivity.getDoc("http://v.iask.com/v_play.php?vid=" + item.vid, UserAgent.DEFAULT);
             Elements result = doc.getElementsByTag("result");
             if(result!= null && result.size()>0) {
                 String r = result.get(0).text();

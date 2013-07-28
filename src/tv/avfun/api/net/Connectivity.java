@@ -82,6 +82,7 @@ public class Connectivity {
 
     public static Document getDoc(String url, String userAgent){
         String html = getResponseAsString(url,userAgent);
+        if(html == null) return null;
         return Jsoup.parse(html);
     }
 

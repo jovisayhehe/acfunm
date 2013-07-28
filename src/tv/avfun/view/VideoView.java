@@ -17,9 +17,6 @@ import io.vov.vitamio.widget.MediaController.MediaPlayerControl;
 import java.io.IOException;
 import java.util.List;
 
-import com.yixia.vitamio.library.R;
-import com.yixia.vitamio.pusher.BuildConfig;
-
 import tv.avfun.entity.VideoSegment;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -38,6 +35,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+
+import com.yixia.vitamio.library.R;
 
 public class VideoView extends SurfaceView implements SurfaceHolder.Callback, MediaPlayerControl {
 
@@ -202,7 +201,7 @@ public class VideoView extends SurfaceView implements SurfaceHolder.Callback, Me
                     if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START){
                         mMediaPlayer.pause();
                         if(loadingDialog == null)
-                            loadingDialog = new AlertDialog.Builder(mContext).setView(loadingView).show();
+                            loadingDialog = new AlertDialog.Builder(mContext).setView(loadingView).setCancelable(false).show();
                         else if(!loadingDialog.isShowing())
                             loadingDialog.show();
                     }
@@ -601,15 +600,15 @@ public class VideoView extends SurfaceView implements SurfaceHolder.Callback, Me
     }
     @Override
     public long getCurrentPosition() {
+        long playedPosition = 0;
+        for(int i=0;i<mCurrentIndex;i++){
+            playedPosition+= mParts.get(i).duration;
+        }
         if (isInPlaybackState()){
-            long playedPosition = 0;
-            for(int i=0;i<mCurrentIndex;i++){
-                playedPosition+= mParts.get(i).duration;
-            }
             long current = mMediaPlayer.getCurrentPosition();
             return playedPosition + current;
         }
-        return 0;
+        return playedPosition+mSeekWhenPrepared;
     }
 
     public void setMediaController(MediaController controller) {
