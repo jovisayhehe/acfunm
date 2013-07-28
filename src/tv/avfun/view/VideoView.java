@@ -201,7 +201,7 @@ public class VideoView extends SurfaceView implements SurfaceHolder.Callback, Me
                     if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START){
                         mMediaPlayer.pause();
                         if(loadingDialog == null)
-                            loadingDialog = new AlertDialog.Builder(mContext).setView(loadingView).setCancelable(false).show();
+                            loadingDialog = new AlertDialog.Builder(mContext).setView(loadingView).show();
                         else if(!loadingDialog.isShowing())
                             loadingDialog.show();
                     }
@@ -608,7 +608,7 @@ public class VideoView extends SurfaceView implements SurfaceHolder.Callback, Me
             long current = mMediaPlayer.getCurrentPosition();
             return playedPosition + current;
         }
-        return playedPosition+mSeekWhenPrepared;
+        return -1;
     }
 
     public void setMediaController(MediaController controller) {
