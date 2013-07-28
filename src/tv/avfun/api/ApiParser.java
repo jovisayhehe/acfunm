@@ -1,7 +1,6 @@
 package tv.avfun.api;
 
 
-import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
@@ -17,7 +16,6 @@ import java.util.regex.Pattern;
 import org.json.external.JSONArray;
 import org.json.external.JSONException;
 import org.json.external.JSONObject;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -242,7 +240,7 @@ public class ApiParser {
         String url = "http://www.acfun.tv/api/content.aspx?query=" + aid;
         JSONObject jsonObject = Connectivity.getJSONObject(url);
         // get tags
-        if(!jsonObject.getBoolean("success"))
+        if(!jsonObject.optBoolean("success"))
             return null;
         JSONArray tagsArray = jsonObject.getJSONArray("tags");
         video.tags = new String[tagsArray.length()];
@@ -472,22 +470,29 @@ public class ApiParser {
         if(item == null || TextUtils.isEmpty(item.vid))
             throw new IllegalArgumentException("item or item's vid cannot be null");
         try {
-            if(parseMode<2){
-                item.vid = getSinaMp4Vid(item.vid); // 获取mp4 的vid
-                if(BuildConfig.DEBUG) Log.i(TAG, "获取sina MP4");
+            if(BuildConfig.DEBUG) Log.i(TAG, "尝试获取sina :"+item.vid);
+//            if(parseMode<2){
+//                item.vid = getSinaMp4Vid(item.vid); // 获取mp4 的vid
+//            }
+//            String url = "http://v.iask.com/v_play.php?vid=" + item.vid;
+            String url = "http://sex.acfun.tv/Home/Sina?app_key=1917945218&vid="+item.vid +"&dtime="+System.currentTimeMillis();
+            Document doc = Connectivity.getDoc(url, UserAgent.DEFAULT);
+            Elements result = doc.getElementsByTag("result");
+            if(result!= null && result.size()>0) {
+                String r = result.get(0).text();
+                if("error".equals(r))
+                    throw new IllegalAccessException();
             }
-            String url = "http://v.iask.com/v_play.php?vid=" + item.vid;
-            Document doc = Connectivity.getDoc(url, UserAgent.IPAD);
             Elements durls = doc.getElementsByTag("durl");
             item.segments = new ArrayList<VideoSegment>();
             for(int i=0;i<durls.size();i++){
                 Element durl = durls.get(i);
-                String second = durl.getElementsByTag("length").get(0).text();
+                String duration = durl.getElementsByTag("length").get(0).text();
                 String text = durl.getElementsByTag("url").get(0).text();
                 if(BuildConfig.DEBUG)
-                    Log.i("parse sina", "url="+text+"，lenght="+second);
+                    Log.i("parse sina", "url="+text+"，duration="+duration);
                 VideoSegment s = new VideoSegment();
-                s.duration = Integer.parseInt(second);
+                s.duration = Long.parseLong(duration);
                 s.num = i;
                 s.url = text;
                 s.stream = s.url; // TODO: get download url 
@@ -504,6 +509,7 @@ public class ApiParser {
         //vid=84sHlkSh6bE
         //String url = "http://video.store.qq.com/"+item.vid+".flv?channel=web&rfc=v0";
         String url = "http://vv.video.qq.com/geturl?otype=json&vid="+item.vid;
+        if(BuildConfig.DEBUG) Log.i(TAG, "尝试获取QQ :"+item.vid);
         try {
             HttpURLConnection conn = Connectivity.openConnection(url);
             if(conn.getResponseCode() == 200){
@@ -517,7 +523,7 @@ public class ApiParser {
                 for(int i=0;i<viArray.length();i++){
                     JSONObject vi = viArray.getJSONObject(i);
                     VideoSegment s = new VideoSegment();
-                    s.duration = (int) Float.parseFloat(vi.getString("dur")); // "dur": "6022.36"
+                    s.duration = (long)(Float.parseFloat(vi.getString("dur"))*1000); // "dur": "6022.36"
                     s.size = vi.getLong("fs"); // "fs": 452279984
                     s.num = i;
                     s.url = vi.getString("url");// "url": "http://vhotwsh.video.qq.com/flv/76/54/84sHlkSh6bE.mp4?vkey=...
@@ -539,6 +545,7 @@ public class ApiParser {
         if(item == null || TextUtils.isEmpty(item.vid))
             throw new IllegalArgumentException("item or item's vid cannot be null");
         String url = "http://v2.tudou.com/v?it=" + item.vid;
+        if(BuildConfig.DEBUG) Log.i(TAG, "尝试获取tudou :"+item.vid);
         try {
             Elements ems = Connectivity.getElements(url, "f");
             item.segments = new ArrayList<VideoSegment>();
@@ -575,6 +582,7 @@ public class ApiParser {
         if(item == null || TextUtils.isEmpty(item.vid))
             throw new IllegalArgumentException("item or item's vid cannot be null");
         String url = "http://v.youku.com/player/getPlayList/VideoIDS/"+item.vid;
+        if(BuildConfig.DEBUG) Log.i(TAG, "尝试获取youku :"+item.vid);
         try {
             JSONObject jsonObject = Connectivity.getJSONObject(url);
             if(jsonObject == null) return;
@@ -608,7 +616,7 @@ public class ApiParser {
                 String k = part.getString("k");
                 String k2 = part.getString("k2");
                 VideoSegment s = new VideoSegment();
-                s.duration = (int) Float.parseFloat(part.getString("seconds"));
+                s.duration = (long) (Float.parseFloat(part.getString("seconds"))*1000);
                 s.num = i;
                 s.size = part.getLong("size");
                 String u = "http://f.youku.com/player/getFlvPath/sid/00_"+ String.format("%02d", i)+"/st/"+vPath+"/fileid/"+ realFileid.substring(0, 8)+ String.format("%02d", i) + realFileid.substring(10)+"?K="+k+",k2:"+k2;

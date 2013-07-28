@@ -4,21 +4,19 @@ package tv.avfun;
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.MediaPlayer.OnBufferingUpdateListener;
 import io.vov.vitamio.MediaPlayer.OnCompletionListener;
-import io.vov.vitamio.MediaPlayer.OnErrorListener;
 import io.vov.vitamio.widget.MediaController;
-import io.vov.vitamio.widget.VideoView;
 
 import java.util.ArrayList;
 
 import tv.ac.fun.R;
 import tv.avfun.entity.VideoSegment;
+import tv.avfun.view.VideoView;
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
 
@@ -28,17 +26,17 @@ public class PlayActivity extends Activity{
 	private ProgressBar progress;
 	private ArrayList<VideoSegment> parts;
 	private String displayName;
-	private int index =0;
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		if (!io.vov.vitamio.LibsChecker.checkVitamioLibs(this))
 			return;
 		setContentView(R.layout.videoview);
+		MobclickAgent.onEvent(this, "into_play");
 		parts = (ArrayList<VideoSegment>) getIntent().getSerializableExtra("parts");
 		displayName = getIntent().getStringExtra("displayName");
 		mVideoView = (VideoView) findViewById(R.id.surface_view);
-		mVideoView.setVideoPath(parts.get(index).url);
+		mVideoView.setVideoParts(parts);
 		mVideoView.setFileName(displayName);
 		textView = (TextView) findViewById(R.id.video_proess_text);
 		progress = (ProgressBar) findViewById(R.id.video_time_progress);
@@ -56,31 +54,22 @@ public class PlayActivity extends Activity{
 		});
 		
 		mVideoView.setOnCompletionListener(new MOnCompletionListener());
-		mVideoView.setOnErrorListener(errListener);
-		mVideoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_MEDIUM);
+//		mVideoView.setOnErrorListener(errListener);
+//		mVideoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_MEDIUM);
 		mVideoView.setMediaController(new MediaController(this));
 	}
 	
-	private OnErrorListener errListener = new OnErrorListener() {
-        
-        @Override
-        public boolean onError(MediaPlayer arg0, int arg1, int arg2) {
-            isError = true;
-            return false;
-        }
-    };
-    private boolean isError;
 	private final class MOnCompletionListener implements OnCompletionListener{
 
 		@Override
 		public void onCompletion(MediaPlayer mPlayer) {
 		    
-	        if(parts == null || ++index >= parts.size() || isError) {
+//	        if(parts == null || ++index >= parts.size() || isError) {
 	            finish();
-	            return;
-	        }
-			Toast.makeText(PlayActivity.this, "开始缓冲下一段...稍后", 1).show();
-			mVideoView.setVideoPath(parts.get(index).url);
+//	            return;
+//	        }
+//			Toast.makeText(PlayActivity.this, "开始缓冲下一段...稍后", 1).show();
+//			mVideoView.setVideoPath(parts.get(index).url);
 		}
 		
 	}

@@ -11,7 +11,7 @@
         android:id="@+id/video_centerlayout"
         >
 
-        <io.vov.vitamio.widget.VideoView
+        <tv.avfun.view.VideoView
             android:id="@+id/surface_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
