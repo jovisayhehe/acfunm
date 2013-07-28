@@ -8,13 +8,13 @@ import java.util.Map;
 import tv.ac.fun.BuildConfig;
 import tv.ac.fun.R;
 import tv.avfun.app.AcApp;
+import tv.avfun.fragment.BaseFragment;
 import tv.avfun.fragment.HomeChannelListFragment;
 import tv.avfun.fragment.PlayTime;
 import tv.avfun.fragment.UserHomeFragment;
 import tv.avfun.view.SlideNavItemView;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
@@ -33,7 +33,6 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.widget.SearchView;
 import com.slidingmenu.lib.SlidingMenu;
 import com.slidingmenu.lib.SlidingMenu.OnCloseListener;
 import com.slidingmenu.lib.SlidingMenu.OnOpenListener;
@@ -45,19 +44,17 @@ import com.umeng.update.UmengUpdateAgent;
 
 public class MainActivity extends SlidingFragmentActivity implements OnOpenListener, OnCloseListener {
 
-    private static final String   TAG   = MainActivity.class.getSimpleName();
     public static int             width;
     public static int             height;
     private SlidingMenu           menu;
-    private SearchView            mSearchView;
-    private Fragment              mContent;
+    private BaseFragment          mContent;
     private ActionBar             bar;
     private FragmentManager       mFragmentMan;
     private int                   navId = R.id.slide_nav_home;
-    private Fragment              nextContent;
+    private BaseFragment          nextContent;
     private SlideNavItemView      mNavItem;
     // 用于存放Fragment实例
-    private Map<String, Fragment> instances;
+    private Map<String, BaseFragment> instances;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,13 +67,13 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
         width = dm.widthPixels;
         height = dm.heightPixels;
 
-        instances = new HashMap<String, Fragment>();
+        instances = new HashMap<String, BaseFragment>();
         // 初始Fragment
         mContent = new HomeChannelListFragment();
 
         instances.put("home", mContent);
 
-        Fragment time = PlayTime.newInstance();
+        BaseFragment time = PlayTime.newInstance();
         instances.put("play_time", time);
 
         mFragmentMan = getSupportFragmentManager();
@@ -100,6 +97,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
     @Override
     protected void onStart() {
         super.onStart();
+        
         boolean isFirstRun = AcApp.getConfig().getBoolean("first_run", true);
         if (isFirstRun) {
             showOverlays();
@@ -230,18 +228,18 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
         return super.onOptionsItemSelected(item);
     }
 
-    @Deprecated
-    public void switchContent(Fragment fragment, int navId) {
-        if (mContent != fragment) {
-            mContent = fragment;
-            mFragmentMan.beginTransaction().setCustomAnimations(android.R.anim.fade_in, R.anim.slide_out)
-                    .replace(R.id.content_frame, fragment).commit();
-            setSlideNavHint(navId);
-        }
-        menu.showContent();
-    }
+//    @Deprecated
+//    public void switchContent(Fragment fragment, int navId) {
+//        if (mContent != fragment) {
+//            mContent = fragment;
+//            mFragmentMan.beginTransaction().setCustomAnimations(android.R.anim.fade_in, R.anim.slide_out)
+//                    .replace(R.id.content_frame, fragment).commit();
+//            setSlideNavHint(navId);
+//        }
+//        menu.showContent();
+//    }
 
-    public void switchContent(Fragment from, Fragment to, int navId) {
+    public void switchContent(BaseFragment from, BaseFragment to, int navId) {
         if (mContent != to) {
             mContent = to;
             FragmentTransaction transaction = mFragmentMan.beginTransaction().setCustomAnimations(
@@ -256,14 +254,14 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
         menu.showContent();
     }
 
-    public void switchContent(Fragment fragment) {
-        if (mContent != fragment) {
-            mContent = fragment;
-            mFragmentMan.beginTransaction().setCustomAnimations(android.R.anim.fade_in, R.anim.slide_out)
-                    .replace(R.id.content_frame, fragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    .addToBackStack("mContent").commit();
-        }
-    }
+//    public void switchContent(Fragment fragment) {
+//        if (mContent != fragment) {
+//            mContent = fragment;
+//            mFragmentMan.beginTransaction().setCustomAnimations(android.R.anim.fade_in, R.anim.slide_out)
+//                    .replace(R.id.content_frame, fragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+//                    .addToBackStack("mContent").commit();
+//        }
+//    }
 
     /*
      * 数组记录nav id

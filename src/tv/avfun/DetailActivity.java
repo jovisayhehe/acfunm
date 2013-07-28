@@ -108,7 +108,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
             
             @Override
             public void run() {
-                if (tvDesc.getLineCount()>=4) {
+                if (tvDesc.getLineCount()>=3) {
                     btnExpand.setVisibility(View.VISIBLE);
                 }
             }
@@ -224,13 +224,13 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
             public void onClick(View v) {
                 if(isExpand){
                     tvDesc.setEllipsize(TruncateAt.END);
-                    tvDesc.setMaxLines(4);
-                    btnExpand.setText("↓展开");
+                    tvDesc.setMaxLines(3);
+                    btnExpand.setText("↓详情");
                     isExpand = false;
                 }else{
                     tvDesc.setEllipsize(null);
                     tvDesc.setSingleLine(false);
-                    btnExpand.setText("↑收缩");
+                    btnExpand.setText("↑收起");
                     isExpand = true;
                 }
                 

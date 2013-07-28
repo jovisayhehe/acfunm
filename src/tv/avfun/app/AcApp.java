@@ -26,7 +26,6 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
-import android.view.View;
 import android.widget.Toast;
 
 import com.actionbarsherlock.view.MenuItem;
@@ -267,14 +266,14 @@ public class AcApp extends Application {
     
     public static void addSearchView(Activity activity, com.actionbarsherlock.view.Menu menu) {
         SearchView searchView = new SearchView(activity);
+        searchView.setSubmitButtonEnabled(true);
         SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         SearchableInfo info = searchManager.getSearchableInfo(activity.getComponentName());
         searchView.setSearchableInfo(info);
-        searchView.setQueryHint("搜索...");
         menu.add("Search").setIcon(R.drawable.action_search).setActionView(searchView)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
-        View v = searchView.findViewById(R.id.abs__search_plate);
-        v.setBackgroundResource(R.drawable.edit_text_holo_light);
+//        View v = searchView.findViewById(R.id.abs__search_plate);
+//        v.setBackgroundResource(R.drawable.edit_text_holo_light);
     }
     
     public static void showNotification(Intent mIntent, int notificationId, String text,int icon, CharSequence title){

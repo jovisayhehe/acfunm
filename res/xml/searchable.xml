@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <searchable android:label="@string/app_name"
     android:searchMode="queryRewriteFromText" 
+    android:hint="搜索..."
     android:searchSuggestIntentAction="android.intent.action.SEARCH" 
     android:imeOptions="actionSearch" 
     android:queryAfterZeroResults="true"

@@ -22,7 +22,7 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
-public class PlayTime extends SherlockFragment {
+public class PlayTime extends BaseFragment {
 
     private static final String TAG = PlayTime.class.getSimpleName();
     private View                main_v;
@@ -58,15 +58,10 @@ public class PlayTime extends SherlockFragment {
     }
 
     private boolean          isCached = DataStore.getInstance().isBangumiListCached();
-    private FragmentActivity activity;
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onShow(){
         initList();
-        activity = getActivity();
-        
     }
-    public void initList() {
+    private void initList() {
         new LoadTimeListTask().execute();
     }
 

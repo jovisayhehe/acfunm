@@ -3,9 +3,9 @@ package tv.avfun.fragment;
 import java.text.DateFormat;
 
 import tv.ac.fun.BuildConfig;
+import tv.ac.fun.R;
 import tv.avfun.ChannelActivity;
 import tv.avfun.DetailActivity;
-import tv.ac.fun.R;
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.Banner;
 import tv.avfun.api.Channel;
@@ -19,8 +19,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,7 +42,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
  * @author Yrom
  * 
  */
-public class HomeChannelListFragment extends Fragment implements VideoItemView.OnClickListener {
+public class HomeChannelListFragment extends BaseFragment implements VideoItemView.OnClickListener {
 
     private static final String     TAG       = HomeChannelListFragment.class.getSimpleName();
     private static final int        ADD       = 1;
@@ -113,8 +111,26 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
             this.bannerIndicator.setIndicatorNum(this.bannerCount);
             this.channelList.addView(this.headerView);
         }
-    }
+        mPtr = (PullToRefreshScrollView) findViewById(R.id.pull_refresh_scrollview);
+        
+        mPtr.setOnRefreshListener(new OnRefreshListener<ScrollView>() {
 
+            @Override
+            public void onRefresh(PullToRefreshBase<ScrollView> refreshView) {
+                new RefreshData().execute();
+            }
+
+        });
+        mLoadingLayout = mPtr.getLoadingLayoutProxy();
+    }
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+
+        super.onActivityCreated(savedInstanceState);
+        mLoadingLayout.setRefreshingLabel(activity.getString(R.string.refreshing));
+        mLoadingLayout.setPullLabel(activity.getString(R.string.pull_refresh));
+        mLoadingLayout.setReleaseLabel(activity.getString(R.string.release_refresh));
+    }
     private Animation fadeIn;
     private Animation fadeOut;
     private long showDuration = 2000;
@@ -258,33 +274,11 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
         loadView = findViewById(R.id.load_view);
         updateInfo = (TextView) findViewById(R.id.update_info);
         timeOutView = (TextView) findViewById(R.id.time_out_text);
-        
+        initView();
+        initFadeAnim();
         return mView;
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        activity = getActivity();
-        initView();
-        initFadeAnim();
-        mPtr = (PullToRefreshScrollView) findViewById(R.id.pull_refresh_scrollview);
-        
-        mPtr.setOnRefreshListener(new OnRefreshListener<ScrollView>() {
-
-            @Override
-            public void onRefresh(PullToRefreshBase<ScrollView> refreshView) {
-                new RefreshData().execute();
-            }
-
-        });
-        mLoadingLayout = mPtr.getLoadingLayoutProxy();
-        mLoadingLayout.setRefreshingLabel(activity.getString(R.string.refreshing));
-        mLoadingLayout.setPullLabel(activity.getString(R.string.pull_refresh));
-        mLoadingLayout.setReleaseLabel(activity.getString(R.string.release_refresh));
-        loadData();
-    }
-    
     private void showLoadingView() {
         if (loadView != null) {
             loadView.setVisibility(View.VISIBLE);
@@ -355,7 +349,6 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
         isUpdated = true;
     }
     private boolean isInfoShow;
-    private FragmentActivity activity;
     private void showUpdateInfo() {
         if(!isInfoShow){
             isInfoShow = true;
@@ -372,5 +365,10 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
     private void showTimeOutView() {
         timeOutView.setText(getString(R.string.update_fail));
         timeOutView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onShow() {
+        loadData();
     }
 }

@@ -76,7 +76,7 @@
             android:layout_below="@+id/detail_line"
             android:layout_marginTop="2dip"
             android:padding="4dip"
-            android:maxLines="4"
+            android:maxLines="3"
             android:ellipsize="end"
             android:textColorLink="@color/main_color"
             android:textSize="12sp" />
