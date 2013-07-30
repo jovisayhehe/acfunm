@@ -27,10 +27,13 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
 import com.handmark.pulltorefresh.library.ILoadingLayout;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
@@ -42,7 +45,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
  * @author Yrom
  * 
  */
-public class HomeChannelListFragment extends BaseFragment implements VideoItemView.OnClickListener {
+public class HomeChannelListFragment extends BaseFragment implements VideoItemView.OnClickListener, OnNavigationListener {
 
     private static final String     TAG       = HomeChannelListFragment.class.getSimpleName();
     private static final int        ADD       = 1;
@@ -66,12 +69,21 @@ public class HomeChannelListFragment extends BaseFragment implements VideoItemVi
     private ILoadingLayout          mLoadingLayout;
     private TextView                updateInfo, timeOutView;
     private PullToRefreshScrollView mPtr;
+    private ActionBar mBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dataStore = DataStore.getInstance();
         setHasOptionsMenu(false);
+        mBar  = getSherlockActivity().getSupportActionBar();
+        
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(mBar.getThemedContext(), R.array.pref_entries_home_display_mode,
+                android.R.layout.simple_spinner_item/*R.layout.sherlock_spinner_item*/);
+        adapter.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
+        mBar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
+        mBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        mBar.setListNavigationCallbacks(adapter, this);
     }
 
     private Handler handler = new Handler() {
@@ -175,8 +187,8 @@ public class HomeChannelListFragment extends BaseFragment implements VideoItemVi
                 this.cancel(true);
                 updateInfo.setText(activity.getString(R.string.update_lock));
                 showUpdateInfo();
-                mPtr.onRefreshComplete();
             }
+            mPtr.setRefreshing();
             timeOutView.setVisibility(View.GONE);
         }
 
@@ -203,11 +215,11 @@ public class HomeChannelListFragment extends BaseFragment implements VideoItemVi
             }
             else updateInfo.setText(activity.getString(R.string.update_fail));
             showUpdateInfo();
-            mPtr.onRefreshComplete();
         }
 
     }
     private void loadData() {
+        
         new LoadData().execute();
     }
     /**
@@ -219,6 +231,8 @@ public class HomeChannelListFragment extends BaseFragment implements VideoItemVi
         protected void onPreExecute() {
             long cachedTime = dataStore.getChannelListLastUpdateTime(); 
             isCached = cachedTime == -1? false: true;
+            mBar.setSelectedNavigationItem(Integer.parseInt(AcApp.getHomeDisplayMode())-1);
+            mPtr.setRefreshing();
             setLastUpdatedLabel(cachedTime);
             if(!isCached){
                 this.cancel(true);
@@ -346,6 +360,7 @@ public class HomeChannelListFragment extends BaseFragment implements VideoItemVi
             msg.arg1 = i;
             msg.sendToTarget();
         }
+        
         isUpdated = true;
     }
     private boolean isInfoShow;
@@ -354,6 +369,7 @@ public class HomeChannelListFragment extends BaseFragment implements VideoItemVi
             isInfoShow = true;
             updateInfo.setVisibility(View.VISIBLE);
             updateInfo.startAnimation(fadeIn);
+            mPtr.onRefreshComplete();
         }
     }
 
@@ -370,5 +386,16 @@ public class HomeChannelListFragment extends BaseFragment implements VideoItemVi
     @Override
     public void onShow() {
         loadData();
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+        Log.i(TAG, String.format("positoin = %d, item id = %d", itemPosition, itemId));
+        if(!AcApp.getHomeDisplayMode().equals(String.valueOf(itemPosition+1))){
+            AcApp.putString("home_display_mode",String.valueOf(itemPosition+1));
+            new RefreshData().execute();
+            return true;
+        }
+        return  false;
     }
 }

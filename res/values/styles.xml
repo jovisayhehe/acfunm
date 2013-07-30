@@ -20,7 +20,7 @@
         <item name="android:windowBackground">@color/main_win_bg</item>
         <item name="android:checkboxStyle">@style/ACCheckBox</item>
         <item name="android:radioButtonStyle">@style/ACRadioButton</item>
-        
+        <item name="spinnerItemStyle">@style/spinnerItemStyle</item>
         <item name="vpiTabPageIndicatorStyle">@style/AcTabPageIndicator</item>
     </style>
 
@@ -80,7 +80,11 @@
     <style name="ACRadioButton" parent="android:Widget.CompoundButton.RadioButton">
         <item name="android:button">@drawable/btn_radio_holo_light</item>
     </style>
-
+    
+    <style name="spinnerItemStyle" parent="@style/Widget.Sherlock.TextView.SpinnerItem">
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+    </style>
    
     
 </resources>

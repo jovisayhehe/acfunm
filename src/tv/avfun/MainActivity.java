@@ -297,10 +297,14 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
         case R.id.slide_nav_home:
             bar.setTitle("主页");
             nextContent = instances.get("home");
+            bar.setDisplayShowTitleEnabled(false);
+            bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
             break;
         case R.id.slide_nav_bangumi:
             nextContent = instances.get("play_time");
+            bar.setDisplayShowTitleEnabled(true);
             bar.setTitle("番组列表");
+            bar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
             if (nextContent == null) {
                 nextContent = PlayTime.newInstance();
                 instances.put("play_time", nextContent);
