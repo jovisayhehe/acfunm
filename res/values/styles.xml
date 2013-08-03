@@ -23,7 +23,6 @@
         <item name="spinnerItemStyle">@style/spinnerItemStyle</item>
         <item name="vpiTabPageIndicatorStyle">@style/AcTabPageIndicator</item>
     </style>
-
     <style name="AcTabBarStyle" parent="Widget.Sherlock.Light.ActionBar.TabBar">
         <item name="android:dividerPadding">0dp</item>
         <item name="android:showDividers">middle</item>

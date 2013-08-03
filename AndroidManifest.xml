@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="tv.ac.fun" android:versionCode="11" android:versionName="1.1.0">  
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="tv.ac.fun" android:versionCode="12" android:versionName="1.1.2">  
   <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="17"/>  
   <uses-permission android:name="android.permission.INTERNET"/>  
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>  
@@ -38,7 +38,7 @@
     <activity android:name="tv.avfun.WebViewActivity"/>  
     <activity android:name="tv.avfun.HistoryActivity"/>  
     <activity android:name="tv.avfun.ImagePagerActivity"/>  
-    <activity android:name="tv.avfun.PlayActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:configChanges="orientation|keyboardHidden|screenSize|screenLayout" android:screenOrientation="landscape"/>  
+    <activity android:name="tv.avfun.PlayActivity" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" android:configChanges="orientation|keyboardHidden|screenSize|screenLayout" android:screenOrientation="landscape"/>  
     <activity android:name="io.vov.vitamio.activity.InitActivity" android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation" android:launchMode="singleTop" android:theme="@android:style/Theme.NoTitleBar" android:windowSoftInputMode="stateAlwaysHidden"/>  
     <activity android:name="tv.avfun.FavoriteActivity"/>  
     <activity android:name="tv.avfun.SectionActivity"/>  

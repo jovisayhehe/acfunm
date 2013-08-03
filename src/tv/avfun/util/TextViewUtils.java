@@ -63,7 +63,7 @@ public class TextViewUtils {
         }
         text = text.replace("[/color]", "</font>");
         
-        text = text.replace("\\[size=.*?\\]", "<b>").replace("[/size]", "</b>");
+        text = text.replace("\\[size=[^\\]]+?\\]", "<b>").replace("[/size]", "</b>");
         
         reg = "\\[img=(.*?)\\]";
         m = Pattern.compile(reg).matcher(text);

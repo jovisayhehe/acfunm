@@ -19,6 +19,7 @@ import java.util.List;
 
 import tv.avfun.entity.VideoSegment;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -200,9 +201,9 @@ public class VideoView extends SurfaceView implements SurfaceHolder.Callback, Me
                 } else if (mMediaPlayer != null) {
                     if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START){
                         mMediaPlayer.pause();
-                        if(loadingDialog == null)
-                            loadingDialog = new AlertDialog.Builder(mContext).setView(loadingView).show();
-                        else if(!loadingDialog.isShowing())
+                        if(loadingDialog == null){
+                            loadingDialog = ProgressDialog.show(mContext, "缓冲...", null, true, true);
+                        }else if(!loadingDialog.isShowing())
                             loadingDialog.show();
                     }
                     else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END){
@@ -220,7 +221,7 @@ public class VideoView extends SurfaceView implements SurfaceHolder.Callback, Me
         mErrorListener = new OnErrorListener() {
 
             public boolean onError(MediaPlayer mp, int framework_err, int impl_err) {
-                if(tv.ac.fun.BuildConfig.DEBUG) Log.e(TAG, String.format("Error: %d, %d", framework_err, impl_err));
+                Log.e(TAG, String.format("Error: %d, %d", framework_err, impl_err));
                 mCurrentState = STATE_ERROR;
                 mTargetState = STATE_ERROR;
                 if (mMediaController != null)
@@ -234,7 +235,9 @@ public class VideoView extends SurfaceView implements SurfaceHolder.Callback, Me
                 if (getWindowToken() != null) {
                     int message = framework_err == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK ? R.string.VideoView_error_text_invalid_progressive_playback
                             : R.string.VideoView_error_text_unknown;
-
+                    if(impl_err == -5){
+                        message = R.string.VideoView_error_text_notfound;
+                    }
                     new AlertDialog.Builder(mContext).setTitle(R.string.VideoView_error_title).setMessage(message)
                             .setPositiveButton(R.string.VideoView_error_button, new DialogInterface.OnClickListener() {
 
@@ -624,7 +627,6 @@ public class VideoView extends SurfaceView implements SurfaceHolder.Callback, Me
             toggleMediaControlsVisiblity();
         return false;
     }
-
     @Override
     public boolean onTrackballEvent(MotionEvent ev) {
         if (isInPlaybackState() && mMediaController != null)

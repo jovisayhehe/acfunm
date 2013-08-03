@@ -44,9 +44,8 @@ public class PlayActivity extends Activity{
 			
 			@Override
 			public void onBufferingUpdate(MediaPlayer arg0, int arg1) {
-				
 				textView.setText(arg1+"");
-				if(arg0.isBuffering()){
+				if(arg0.isBuffering() || arg1 >= 90){
 					textView.setVisibility(View.GONE);
 					progress.setVisibility(View.GONE);
 				}
