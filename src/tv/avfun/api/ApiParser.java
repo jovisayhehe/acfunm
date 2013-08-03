@@ -5,12 +5,10 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -633,7 +631,7 @@ public class ApiParser {
                 s.duration = (long) (Float.parseFloat(part.getString("seconds"))*1000);
                 s.num = i;
                 s.size = part.getLong("size");
-                String u = "http://f.youku.com/player/getFlvPath/sid/00_"+ String.format("%02d", i)+"/st/"+vPath+"/fileid/"+ realFileid.substring(0, 8)+ String.format("%02d", i) + realFileid.substring(10)+"?K="+k+",k2:"+k2;
+                String u = "http://f.youku.com/player/getFlvPath/sid/"+System.currentTimeMillis()+"_"+ String.format("%02d", i)+"/st/"+vPath+"/fileid/"+ realFileid.substring(0, 8)+ String.format("%02X", i) + realFileid.substring(10)+"?K="+k+",k2:"+k2;
                 if(BuildConfig.DEBUG) Log.i(TAG, "url= "+u);
                 s.url = Connectivity.getRedirectLocation(u, UserAgent.DEFAULT);
                 s.stream = s.url;
