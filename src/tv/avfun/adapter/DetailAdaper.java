@@ -99,7 +99,7 @@ public class DetailAdaper extends BaseAdapter {
                 Integer status = (Integer) tag;
                 switch (status.intValue()) {
                 case STATUS_NONE:
-                    startDownload(item);
+                    startDownload(v, item);
                     v.setTag(STATUS_DOWNLOADING);
                     ((TextView)v).setText("下载中");
                     break;
@@ -175,9 +175,9 @@ public class DetailAdaper extends BaseAdapter {
         ProgressBar bar;
         TextView status;
     }
-    private void startDownload(VideoPart item) {
+    private void startDownload(View v, VideoPart item) {
         if (mListener != null)
-            mListener.doStartDownload(item);
+            mListener.doStartDownload(v, item);
         Log.i(TAG, "开始下载..."+item.vid);
     }
 
@@ -199,7 +199,7 @@ public class DetailAdaper extends BaseAdapter {
          * @param view
          * @param vid
          */
-        void doStartDownload(VideoPart item);
+        void doStartDownload(View v, VideoPart item);
 
         /**
          * 查看下载

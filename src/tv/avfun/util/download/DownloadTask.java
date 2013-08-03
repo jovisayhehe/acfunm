@@ -24,7 +24,6 @@ import tv.avfun.api.net.UserAgent;
 import tv.avfun.app.AcApp;
 import tv.avfun.util.FileUtil;
 import tv.avfun.util.NetWorkUtil;
-import tv.avfun.util.StringUtil;
 import android.content.ContentValues;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -45,6 +44,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
     private DownloadInfo mInfo;
     private DownloadTaskListener mListener;
     private String TAG = "DownloadTask - " + mId;
+    
     public boolean isCancelled;
     public DownloadTask(DownloadInfo info){
         this(0,info);
@@ -166,7 +166,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
                 Log.v(TAG, "skip already completed "+mInfo.vid +" - "+mInfo.snum);
             return ;
         }
-        if(!NetWorkUtil.isWifiConnected(AcApp.context()))
+        if(AcApp.instance().getDownloadManager().isRequestWifi && !NetWorkUtil.isWifiConnected(AcApp.context()))
             throw new StopRequest(DownloadDB.STATUS_QUEUED_FOR_WIFI, "WIFI unvailabe");
         HttpResponse response = sendRequest(state, client, request);
         handleExceptionalStatus(state, response);

@@ -44,4 +44,5 @@
 	<string name="faq_url">http://yrom.sinaapp.com/faq.html</string>
 	<string name="licence_url">http://yrom.sinaapp.com/ac_licence.html</string>
 	<string name="hide_requote">重复引用已隐藏</string>
+	<string name="download_tips">当前未连WIFI，下载视频文件非常耗流量，是否继续？</string>
 </resources>

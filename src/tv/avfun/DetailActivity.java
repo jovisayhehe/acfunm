@@ -26,6 +26,8 @@ import tv.avfun.util.StringUtil;
 import tv.avfun.util.download.DownloadEntry;
 import tv.avfun.util.download.DownloadManager;
 import tv.avfun.util.lzlist.ImageLoader;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -119,11 +121,18 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         Drawable bg = getResources().getDrawable(R.drawable.border_bg);
         getSupportActionBar().setSplitBackgroundDrawable(bg);
     }
-
+    private RequestDetailTask task;
     private void loadData() {
-        new RequestDetailTask().execute();
+        
+        task = new RequestDetailTask();
+        task.execute();
     }
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(task!=null)
+            task.cancel(true);
+    }
     private class RequestDetailTask extends AsyncTask<Void, Void, Boolean> {
 
         private View     progress;
@@ -431,9 +440,38 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         public void doViewDownloadInfo(String vid) {
             startActivity(new Intent(DetailActivity.this,DownloadManActivity.class));
         }
-
+        
         @Override
-        public void doStartDownload(final VideoPart item) {
+        public void doStartDownload(final View v, final VideoPart item) {
+            
+            if(!NetWorkUtil.isWifiConnected(DetailActivity.this)){
+                DialogInterface.OnClickListener listener =  new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(which == DialogInterface.BUTTON_POSITIVE){
+                            mDownloadManager.isRequestWifi = false;
+                            startDownload(item);
+                            dialog.dismiss();
+                        }else{
+                            ((TextView)v).setText("下载");
+                            v.setTag(0);
+                            mDownloadManager.isRequestWifi = true;
+                            dialog.dismiss();
+                        }
+                    }
+                };
+                new AlertDialog.Builder(DetailActivity.this)
+                    .setTitle("下载视频")
+                    .setMessage(R.string.download_tips)
+                    .setPositiveButton("是", listener)
+                    .setNegativeButton("否", listener)
+                    .show();
+            }
+            else
+                startDownload(item);
+        }
+
+        private void startDownload(final VideoPart item) {
             final DownloadEntry entry = new DownloadEntry(aid,title,item);
             MobclickAgent.onEvent(DetailActivity.this,"download");
             if (item.segments == null || item.segments.isEmpty()) {
@@ -449,7 +487,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
                     }
                 }.start();
             }else
-                mDownloadManager.download(entry);
+                mHanlder.obtainMessage(1, entry).sendToTarget();
         }
 
         private Handler mHanlder =  new Handler(){

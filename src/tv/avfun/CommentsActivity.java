@@ -64,7 +64,7 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 		
 	    ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
-        ab.setTitle("评论");
+        ab.setTitle("ac"+aid+" / 评论");
         
         send_btn = (ImageButton) findViewById(R.id.comments_send_btn);
         comment_edit = (EditText) findViewById(R.id.comments_edit);

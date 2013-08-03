@@ -19,15 +19,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewConfiguration;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -100,48 +93,8 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
         
         boolean isFirstRun = AcApp.getConfig().getBoolean("first_run", true);
         if (isFirstRun) {
-            showOverlays();
+            startActivity(new Intent(this, OverlayActivity.class));;
         }
-    }
-    private void showOverlays() {
-        overlays = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.overlays, null);
-        overlays.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideOverlays();
-                AcApp.putBoolean("first_run", false);
-            }
-        });
-        overlays.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in));
-        ((FrameLayout) findViewById(R.id.content_frame)).addView(overlays);
-        OnClickListener l = new View.OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                hideOverlays();
-                AcApp.putBoolean("first_run", false);
-            }
-        };
-        overlays.findViewById(R.id.close).setOnClickListener(l);
-        overlays.findViewById(R.id.ok).setOnClickListener(l);
-    }
-
-    private void hideOverlays() {
-        Animation anim = AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_out);
-        anim.setAnimationListener(new AnimationListener() {
-
-            @Override
-            public void onAnimationStart(Animation animation) {}
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {}
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                overlays.setVisibility(View.GONE);
-            }
-        });
-        overlays.startAnimation(anim);
     }
 
     private void initUmeng() {
@@ -268,7 +221,6 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
      */
     private int[]                         navIds = { R.id.slide_nav_home, R.id.slide_nav_bangumi };
     private SparseArray<SlideNavItemView> mNavItems;
-    private ViewGroup                     overlays;
 
     private void initNavItems() {
 

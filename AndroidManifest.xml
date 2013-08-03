@@ -17,7 +17,10 @@
     </activity>  
     <activity android:name="tv.avfun.MainActivity" android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"> 
       <meta-data android:name="android.app.default_searchable" android:value="tv.avfun.SearchResultActivity"/> 
-    </activity>  
+    </activity>
+    <activity android:name="tv.avfun.OverlayActivity" android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden|screenSize|screenLayout" 
+        android:theme="@style/Transparent"
+        />  
     <activity android:name="tv.avfun.SearchResultActivity" android:launchMode="singleTop" android:label="@string/title_activity_main"> 
       <intent-filter> 
         <action android:name="android.intent.action.SEARCH"/> 

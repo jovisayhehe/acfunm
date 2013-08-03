@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tv.ac.fun.R;
+import tv.avfun.app.AcApp;
 import tv.avfun.entity.Comment;
 import tv.avfun.util.TextViewUtils;
 import tv.avfun.view.FloorsView;
@@ -23,13 +24,16 @@ public class CommentsAdaper3 extends BaseAdapter {
 	private SparseArray<Comment> data;
 	private List<Integer> commentIdList;
 	private Context mContext;
-	private int maxNumOfFloor = 100;
+	private int maxNumOfFloor;
 
 	public CommentsAdaper3(Context context, SparseArray<Comment> data, List<Integer> commentIdList) {
 		this.mInflater = LayoutInflater.from(context);
 		this.mContext = context;
 		this.data = data;
 		this.commentIdList = commentIdList;
+		maxNumOfFloor = AcApp.getConfig().getInt("num_of_floor", 40);
+		if(maxNumOfFloor == 0)
+		    maxNumOfFloor = 10;
 	}
 
 	public void setData(SparseArray<Comment> data, List<Integer> commentIdList) {

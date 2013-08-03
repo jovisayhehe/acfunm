@@ -14,7 +14,7 @@
             android:summaryOff="不使用外部播放器"
             android:key="ex_palyer" 
             />
-        <ListPreference
+<!--         <ListPreference
             android:icon="@drawable/ic_grid"
             android:title="主页内容显示模式"
             android:key="home_display_mode"
@@ -22,7 +22,7 @@
             android:entryValues="@array/pref_values_home_display_mode"
             android:defaultValue="1"
             android:dialogTitle="设置主页显示内容"
-            />
+            /> -->
         <ListPreference
             android:icon="@drawable/ic_video"
             android:title="视频清晰度"
@@ -32,16 +32,16 @@
             android:defaultValue="0"
             android:dialogTitle="设置视频清晰度"
             />
-<!--         <tv.avfun.view.SeekBarPreference
+        <tv.avfun.view.SeekBarPreference
             android:key="num_of_floor"
             android:icon="@drawable/mode_article"
 	        android:title="评论最大楼层数"
-	        android:dialogMessage="请量力而行....建议小于10"
-	        android:defaultValue="8"
+	        android:dialogMessage="按手机性能设置为滑动最流畅的一档"
+	        android:defaultValue="40"
 	        android:text="层"
-	        android:max="15"
+	        android:max="100"
 	        android:negativeButtonText="@null"
-            /> -->
+            />
             
             
             

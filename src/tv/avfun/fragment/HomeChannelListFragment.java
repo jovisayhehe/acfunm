@@ -232,7 +232,6 @@ public class HomeChannelListFragment extends BaseFragment implements VideoItemVi
             long cachedTime = dataStore.getChannelListLastUpdateTime(); 
             isCached = cachedTime == -1? false: true;
             mBar.setSelectedNavigationItem(Integer.parseInt(AcApp.getHomeDisplayMode())-1);
-            mPtr.setRefreshing();
             setLastUpdatedLabel(cachedTime);
             if(!isCached){
                 this.cancel(true);
