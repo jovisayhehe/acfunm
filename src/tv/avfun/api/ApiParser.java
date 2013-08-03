@@ -7,6 +7,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -38,6 +39,7 @@ import tv.avfun.util.StringUtil;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.SparseArray;
 
 public class ApiParser {
     /**
@@ -134,23 +136,28 @@ public class ApiParser {
         String url = ChannelApi.getLatestRepliedUrl(channelId, count);
         return getChannelContents(channelId,url);
     }
-    public static TreeMap<Integer ,Comment> getComments(String aid, int page) throws Exception {
+    /**
+     * reset when getComments(String, int) invoke
+     */
+    public static List<Integer> commentIdList;
+    public static SparseArray<Comment> getComments(String aid, int page) throws Exception {
         String url = "http://www.acfun.tv/comment_list_json.aspx?contentId=" + aid
                 + "&currentPage=" + page;
         JSONObject jsonObject = Connectivity.getJSONObject(url);
         JSONArray commentList = jsonObject.getJSONArray("commentList");
         commentsTotalPage = jsonObject.getInt("totalPage");
-        TreeMap<Integer ,Comment> comments = null;
+        SparseArray<Comment> comments = null;
         if (commentList.length() > 0) {
-            comments = new TreeMap<Integer ,Comment>(new Comparator<Integer>() {
-                @Override
-                public int compare(Integer lhs, Integer rhs) {
-                    return  rhs.intValue()-lhs.intValue();
-                }
-            });
+            commentIdList = new ArrayList<Integer>(commentList.length());
+            for(int i=0 ;i < commentList.length();i++){
+                commentIdList.add(commentList.getInt(i));
+            }
+            comments = new SparseArray<Comment>();
             JSONObject commentContentArr = jsonObject.getJSONObject("commentContentArr");
-            for(int i=0;i<commentList.length();i++){
-                JSONObject content = commentContentArr.getJSONObject("c"+commentList.get(i).toString());
+            
+            for(Iterator<String> keysIterator = commentContentArr.keys();keysIterator.hasNext();){
+                String key = keysIterator.next();
+                JSONObject content = commentContentArr.getJSONObject(key);
                 Comment comment = new Comment();
                 comment.cid = content.getInt("cid");
                 comment.content = content.getString("content");
@@ -161,6 +168,11 @@ public class ApiParser {
                 comment.quoteId = content.optInt("quoteId");
                 comment.count = content.optInt("count");
                 comments.put(comment.cid,comment);
+            }
+        }else{
+            if(commentIdList != null){
+                commentIdList.clear();
+                commentIdList = null;
             }
         }
         return comments;

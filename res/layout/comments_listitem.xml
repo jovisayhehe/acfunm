@@ -19,7 +19,7 @@
     <TextView 
         android:background="@drawable/requote_bg"
         android:id="@+id/requote"
-        android:text="重复引用已隐藏"
+        android:text="@string/hide_requote"
         android:layout_margin="4dp"
         android:gravity="center"
         android:textSize="12sp"
@@ -32,13 +32,11 @@
         android:layout_below="@id/requote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="#12 AAAAAAAAAAA"
         android:textColor="#ABABAB" />
  	<TextView 
 	    android:id="@+id/floor"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-	    android:text="11"
 	    android:textSize="12sp"
 	    android:textColor="#666"
 	    android:visibility="gone"
@@ -50,7 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/user_name"
         android:layout_marginTop="5dip"
-        android:text="AAAAAAAAAAA"
+        android:textColorLink="@color/main_color"
         android:textColor="#000000" />
 
 </RelativeLayout>

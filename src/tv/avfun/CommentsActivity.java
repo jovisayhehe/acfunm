@@ -2,9 +2,9 @@ package tv.avfun;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,9 +16,11 @@ import tv.avfun.api.ApiParser;
 import tv.avfun.api.MemberUtils;
 import tv.avfun.db.DBService;
 import tv.avfun.entity.Comment;
+import tv.avfun.util.ArrayUtil;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -80,7 +82,7 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 		list.addFooterView(footview);
 		footview.setClickable(false);
 		list.setFooterDividersEnabled(false);
-		adaper = new CommentsAdaper3(this, data);
+		adaper = new CommentsAdaper3(this, data,commentIdList);
 		list.setAdapter(adaper);
 		list.setOnScrollListener(this);
 		list.setOnItemClickListener(this);
@@ -96,7 +98,8 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 	    MobclickAgent.onPause(this);
 	}
 	
-	TreeMap<Integer, Comment> data = new TreeMap<Integer, Comment>();
+	SparseArray<Comment> data = new SparseArray<Comment>();
+	List<Integer> commentIdList = new ArrayList<Integer>();
 	public void getdatas(final int page, final boolean isadd) {
 		if(!isadd){
 			time_outtext.setVisibility(View.GONE);
@@ -106,16 +109,17 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 		new Thread() {
 			public void run() {
 				try {
-					final TreeMap<Integer, Comment> tempdata = ApiParser.getComments(aid, page);
+					final SparseArray<Comment> tempdata = ApiParser.getComments(aid, page);
 					runOnUiThread(new Runnable() {
 
                         public void run() {
 							
 							if (isadd) {
-							    data.putAll(tempdata);
+							    ArrayUtil.putAll(tempdata, data);
 							} else {
 								data = tempdata;
 							}
+							commentIdList.addAll(ApiParser.commentIdList);
 							
 							if (!isadd) {
 								progressBar.setVisibility(View.GONE);
@@ -125,7 +129,7 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 							}
 							if(data!=null && data.size()>0){
 								totalpage = ApiParser.commentsTotalPage;
-								adaper.setData(data);
+								adaper.setData(data,commentIdList);
 								adaper.notifyDataSetChanged();
 								isload = false;
 								isreload = false;
@@ -332,9 +336,11 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 		}.start();
 	}
 	int findCid(int floorCount){
-	    for(Map.Entry<Integer, Comment> e : data.entrySet()){
-	        if(e.getValue().count == floorCount)
-	            return e.getValue().cid;
+	    for(int i=0;i<commentIdList.size();i++){
+	        int key = commentIdList.get(i);
+	        Comment c = data.get(key);
+	        if(c.count == floorCount)
+	            return c.cid;
 	    }
 	    return 0;
 	}

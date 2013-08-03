@@ -35,7 +35,7 @@ public class FloorsView extends LinearLayout {
 		for(int i=quoteList.size()-1;i>=0;i--){
 			LinearLayout.LayoutParams params = generateDefaultLayoutParams();
 			int k = 5 * i;
-			if(quoteList.size()>20 && i>10){
+			if(quoteList.size()>15 && i>10){
 			    k = 5*10;
 			}
 			params.leftMargin = k;

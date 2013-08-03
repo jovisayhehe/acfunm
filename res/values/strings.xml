@@ -43,4 +43,5 @@
 	<string name="nosdcard">没有找到外部存储卡！</string>
 	<string name="faq_url">http://yrom.sinaapp.com/faq.html</string>
 	<string name="licence_url">http://yrom.sinaapp.com/ac_licence.html</string>
+	<string name="hide_requote">重复引用已隐藏</string>
 </resources>

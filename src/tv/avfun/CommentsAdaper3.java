@@ -2,14 +2,13 @@ package tv.avfun;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import tv.ac.fun.R;
 import tv.avfun.entity.Comment;
 import tv.avfun.util.TextViewUtils;
 import tv.avfun.view.FloorsView;
 import android.content.Context;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,37 +20,38 @@ import android.widget.TextView;
 public class CommentsAdaper3 extends BaseAdapter {
 
 	private LayoutInflater mInflater;
-	private TreeMap<Integer, Comment> data;
-	private List<Comment> comments = new ArrayList<Comment>();
+	private SparseArray<Comment> data;
+	private List<Integer> commentIdList;
 	private Context mContext;
-	private int maxNumOfFloor = 30;
+	private int maxNumOfFloor = 100;
 
-	public CommentsAdaper3(Context context, TreeMap<Integer, Comment> data) {
+	public CommentsAdaper3(Context context, SparseArray<Comment> data, List<Integer> commentIdList) {
 		this.mInflater = LayoutInflater.from(context);
 		this.mContext = context;
 		this.data = data;
-		for (Map.Entry<Integer, Comment> e : data.entrySet()) {
-			comments.add(e.getValue());
-		}
+		this.commentIdList = commentIdList;
 	}
 
-	public void setData(TreeMap<Integer, Comment> data) {
+	public void setData(SparseArray<Comment> data, List<Integer> commentIdList) {
 		this.data = data;
-		comments.clear();
-		for (Map.Entry<Integer, Comment> e : data.entrySet()) {
-			comments.add(e.getValue());
-		}
+		this.commentIdList = commentIdList;
 	}
 
 	@Override
 	public int getCount() {
 
-		return data.size();
+		return commentIdList.size();
 	}
 
 	@Override
 	public Comment getItem(int position) {
-		return comments.get(position);
+		try {
+            Integer id = commentIdList.get(position);
+            if(id != null)
+                return data.get(id);
+        } catch (IndexOutOfBoundsException e) {
+        }
+		return null;
 	}
 
 	@Override
