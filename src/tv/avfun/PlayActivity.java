@@ -9,6 +9,7 @@ import io.vov.vitamio.widget.MediaController;
 import java.util.ArrayList;
 
 import tv.ac.fun.R;
+import tv.avfun.api.net.UserAgent;
 import tv.avfun.entity.VideoSegment;
 import tv.avfun.view.VideoView;
 import android.app.Activity;
@@ -38,6 +39,7 @@ public class PlayActivity extends Activity{
 		mVideoView = (VideoView) findViewById(R.id.surface_view);
 		mVideoView.setVideoParts(parts);
 		mVideoView.setFileName(displayName);
+		mVideoView.setUserAgent(UserAgent.DEFAULT);
 		textView = (TextView) findViewById(R.id.video_proess_text);
 		progress = (ProgressBar) findViewById(R.id.video_time_progress);
 		mVideoView.setOnBufferingUpdateListener(new OnBufferingUpdateListener() {

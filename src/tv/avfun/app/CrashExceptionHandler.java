@@ -1,12 +1,13 @@
 package tv.avfun.app;
 
+import io.vov.vitamio.utils.CPU;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.Field;
 
 import com.umeng.analytics.MobclickAgent;
-import com.yixia.zi.utils.CPU;
 
 import tv.ac.fun.BuildConfig;
 import tv.avfun.MainActivity;

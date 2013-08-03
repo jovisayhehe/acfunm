@@ -181,6 +181,7 @@ public class HomeChannelListFragment extends BaseFragment implements VideoItemVi
 
         @Override
         public void onPreExecute() {
+            mPtr.setRefreshing();
             mode = AcApp.getHomeDisplayMode();
             if (!DataStore.getInstance().isDisplayModeChanged())            // 显示模式没有改变
             if (System.currentTimeMillis() - updatedTime < LOCK_TIME) {     // 刷新间隔小于锁定时间
@@ -188,7 +189,6 @@ public class HomeChannelListFragment extends BaseFragment implements VideoItemVi
                 updateInfo.setText(activity.getString(R.string.update_lock));
                 showUpdateInfo();
             }
-            mPtr.setRefreshing();
             timeOutView.setVisibility(View.GONE);
         }
 
@@ -369,8 +369,8 @@ public class HomeChannelListFragment extends BaseFragment implements VideoItemVi
             isInfoShow = true;
             updateInfo.setVisibility(View.VISIBLE);
             updateInfo.startAnimation(fadeIn);
-            mPtr.onRefreshComplete();
         }
+        mPtr.onRefreshComplete();
     }
 
     private void hideUpdateInfo() {

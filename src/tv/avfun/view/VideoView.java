@@ -484,8 +484,13 @@ public class VideoView extends SurfaceView implements SurfaceHolder.Callback, Me
     private void openVideo() {
         openVideo(0);
     }
-    
-    
+    public void setHeader(String header){
+        mHeader = header;
+    }
+    public void setUserAgent(String userAgent){
+        String header = "User-Agent: "+userAgent +"\r\n";
+        mHeader = mHeader==null?header:mHeader+header;
+    }
     private void attachMediaController() {
         if (mMediaPlayer != null && mMediaController != null) {
             mMediaController.setMediaPlayer(this);
