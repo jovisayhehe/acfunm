@@ -62,19 +62,19 @@
         android:visibility="gone" >
 
         <TextView
+            android:drawableLeft="@drawable/square"
             android:id="@+id/listheader_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="12dip"
             android:layout_marginTop="3dip"
             android:textSize="14sp"
             android:text="最近更新"
-            android:textColor="@color/main_color" />
-
+            android:textColor="@android:color/black" />
+<!-- 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dip"
-            android:background="@color/main_color" />
+            android:background="@color/main_color" /> -->
     </LinearLayout>
 
 </RelativeLayout>
