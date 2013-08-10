@@ -4,11 +4,18 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.xml.sax.XMLReader;
+
 import tv.avfun.entity.Comment;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.text.Editable;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.Html.ImageGetter;
+import android.text.style.StrikethroughSpan;
 import android.text.util.Linkify;
 import android.widget.TextView;
 
@@ -32,14 +39,55 @@ public class TextViewUtils {
                 }
                 
             }
-        },null));
+        },new Html.TagHandler() {
+            
+            @Override
+            public void handleTag(boolean opening, String tag, Editable output, XMLReader xmlReader) {
+                int len = output.length();
+                if(opening){
+                    if(tag.equalsIgnoreCase("strike")){
+                        output.setSpan(new StrikethroughSpan(), len, len, Spannable.SPAN_MARK_MARK);
+                    }
+                }else{
+                    if(tag.equalsIgnoreCase("strike")){
+                        end((SpannableStringBuilder) output,StrikethroughSpan.class,new StrikethroughSpan());
+                    }
+                }
+            }
+        }));
         comment.setTextColor(Color.BLACK);
         Pattern http = Pattern.compile("(http://(?:[a-z0-9.-]+[.][a-z]{2,}+(?::[0-9]+)?)(?:/[^\\s\u3000-\u9fe0]*)?)",
                 Pattern.CASE_INSENSITIVE);
         Linkify.addLinks(comment, http, "http://");
         Linkify.addLinks(comment, Pattern.compile("(ac\\d{5,})", Pattern.CASE_INSENSITIVE), "av://");
     }
+	static void end(SpannableStringBuilder text, Class kind,
+                Object repl) {
+        int len = text.length();
+        Object obj = getLast(text, kind);
+        int where = text.getSpanStart(obj);
+        
+        text.removeSpan(obj);
+        
+        if (where != len) {
+        text.setSpan(repl, where < 0?0:where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        
+        return;
+    }
+    static Object getLast(Spanned text, Class kind) {
+        /*
+         * This knows that the last returned object from getSpans()
+         * will be the most recently added.
+         */
+        Object[] objs = text.getSpans(0, text.length(), kind);
 
+        if (objs.length == 0) {
+            return null;
+        } else {
+            return objs[objs.length - 1];
+        }
+    }
     private static String replace(String text) {
         String reg = "\\[emot=(.*?),(.*?)\\/\\]";
         Pattern p = Pattern.compile(reg);
@@ -54,7 +102,7 @@ public class TextViewUtils {
         reg = "\\[at\\](.*?)\\[\\/at\\]";
         m = Pattern.compile(reg).matcher(text);
         while(m.find()){
-            text = text.replace(m.group(), "@" + m.group(1));
+            text = text.replace(m.group(), "<font color=\"#FF9A03\" >@" + m.group(1)+"</font> ");
         }
         reg = "\\[color=(.*?)\\]";
         m = Pattern.compile(reg).matcher(text);
@@ -62,13 +110,7 @@ public class TextViewUtils {
             text = text.replace(m.group(), "<font color=\"" + m.group(1) + "\" >");
         }
         text = text.replace("[/color]", "</font>");
-        reg = "\\[size=(.*?)\\]";
-        m = Pattern.compile(reg).matcher(text);
-        while (m.find()){
-            text = text.replace(m.group(), "<span style=\"font-size:" + m.group(1) + ";\" >");
-        }
-        text = text.replace("[/size]", "</span>");
-//        text = text.replace("\\[size=\\s+\\]", "").replace("[/size]", "");
+        text = text.replaceAll("\\[size=(.*?)\\]","").replace("[/size]", "");
         
         reg = "\\[img=(.*?)\\]";
         m = Pattern.compile(reg).matcher(text);
@@ -78,7 +120,8 @@ public class TextViewUtils {
         text = text.replace("[/img]", "");
         
         text = text.replaceAll("\\[ac=\\d{5,}\\]", "").replace("[/ac]", "");
-        text = text.replace("[b]", "<strong>").replace("[/b]", "</strong>");
+        text = text.replace("[s]", "<strike>").replace("[/s]", "</strike>");
+        text = text.replace("[b]", "<b>").replace("[/b]", "</b>");
         return text;
     }
 }
