@@ -282,10 +282,10 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
 
                     tdiv.html(title);
 
-                    idiv.append("<p align=\"center\">" + "投稿: " + article.getName() + "</p>");
+                    idiv.append(/*"<p align=\"center\">" +*/ "投稿: " + article.getName() + "<br>");
                     Date date = new Date(article.getPosttime());
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
-                    idiv.append("<p align=\"center\">" + sdf.format(date) + "</p>");
+                    idiv.append(/*"<p align=\"center\">"+*/  sdf.format(date) /*+"</p>"*/);
 
                     List<HashMap<String, String>> contents = article.getContents();
                     for (int i = 0; i < contents.size(); i++) {

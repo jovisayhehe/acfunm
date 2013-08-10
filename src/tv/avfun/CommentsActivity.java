@@ -51,7 +51,6 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 	private boolean isreload = false;
 	private ProgressBar progressBar;
 	private TextView time_outtext;
-	private static final int COMMENTID = 301;
 	private ImageButton send_btn;
 	private EditText comment_edit;
 	private HashMap<String, Object> umap;
@@ -247,7 +246,9 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 		}else{
 		    
 		    Comment c = (Comment) parent.getItemAtPosition(position);
-		    comment_edit.setText("re: #"+c.count+" ");
+		    String pre = "re: #"+c.count+" ";
+		    comment_edit.setText(pre);
+		    comment_edit.setSelection(pre.length());
 		}
 	}
 	public boolean islogin(){
