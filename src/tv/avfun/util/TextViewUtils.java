@@ -62,8 +62,13 @@ public class TextViewUtils {
             text = text.replace(m.group(), "<font color=\"" + m.group(1) + "\" >");
         }
         text = text.replace("[/color]", "</font>");
-        
-        text = text.replace("\\[size=[^\\]]+?\\]", "<b>").replace("[/size]", "</b>");
+        reg = "\\[size=(.*?)\\]";
+        m = Pattern.compile(reg).matcher(text);
+        while (m.find()){
+            text = text.replace(m.group(), "<span style=\"font-size:" + m.group(1) + ";\" >");
+        }
+        text = text.replace("[/size]", "</span>");
+//        text = text.replace("\\[size=\\s+\\]", "").replace("[/size]", "");
         
         reg = "\\[img=(.*?)\\]";
         m = Pattern.compile(reg).matcher(text);

@@ -224,6 +224,7 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 			if(islogin()){
 				postcomment();
 			}else{
+			    //FIXME: 到登录页
 				Toast.makeText(this, "ﾟ ∀ﾟ)ノ 还没有登陆无法发表评论", Toast.LENGTH_SHORT).show();
 			}
 			break;
@@ -299,7 +300,7 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 								TextView textview = (TextView) footview.findViewById(R.id.list_footview_text);
 								textview.setText(R.string.nomorecomments);
 								getdatas(1, false);
-//								adaper.setData(data);
+//								adaper.setData(data,commentIdList);
 //								adaper.notifyDataSetChanged();
 							}
 						}
