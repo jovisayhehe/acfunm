@@ -119,7 +119,8 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 							} else {
 								data = tempdata;
 							}
-							commentIdList.addAll(ApiParser.commentIdList);
+							if(ApiParser.commentIdList != null ) 
+							    commentIdList.addAll(ApiParser.commentIdList);
 							
 							if (!isadd) {
 								progressBar.setVisibility(View.GONE);
