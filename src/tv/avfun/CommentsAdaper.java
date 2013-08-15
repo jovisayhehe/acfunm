@@ -27,7 +27,7 @@ import android.widget.BaseAdapter;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
-
+@Deprecated
 public class CommentsAdaper extends BaseAdapter {
 
     private LayoutInflater       mInflater;

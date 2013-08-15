@@ -3,6 +3,7 @@ package tv.avfun.view;
 import java.util.List;
 
 import tv.ac.fun.R;
+import tv.avfun.util.DensityUtil;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 public class FloorsView extends LinearLayout {
 	private Drawable mBorder;
+	
 	public FloorsView(Context context) {
 		this(context, null);
 	}
@@ -31,12 +33,13 @@ public class FloorsView extends LinearLayout {
 			removeAllViewsInLayout();
 			return;
 		}
+		int spacing = DensityUtil.dip2px(getContext(), 4);
 		int j = 0;
 		for(int i=quoteList.size()-1;i>=0;i--){
 			LinearLayout.LayoutParams params = generateDefaultLayoutParams();
-			int k = 5 * i;
+			int k = spacing * i;
 			if(quoteList.size()>15 && i>10){
-			    k = 5*10;
+			    k = spacing*10;
 			}
 			params.leftMargin = k;
 			params.rightMargin = k;
@@ -44,7 +47,6 @@ public class FloorsView extends LinearLayout {
 			View v = quoteList.get(i);
 			TextView floor = (TextView) v.findViewById(R.id.floor);
 			floor.setText(String.valueOf(j+1));
-			floor.setVisibility(View.VISIBLE);
 			addViewInLayout(v, j++, params);
 		}
 	}

@@ -12,6 +12,7 @@ import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpException;
 
 import tv.ac.fun.R;
+import tv.avfun.CommentsAdaper3.OnQuoteClickListener;
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.MemberUtils;
 import tv.avfun.db.DBService;
@@ -60,7 +61,8 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_comments);
 		aid = getIntent().getStringExtra("aid");
-		
+		keyboard = (InputMethodManager)
+                getSystemService(Context.INPUT_METHOD_SERVICE);
 	    ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setTitle("ac"+aid+" / 评论");
@@ -82,6 +84,18 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 		footview.setClickable(false);
 		list.setFooterDividersEnabled(false);
 		adaper = new CommentsAdaper3(this, data,commentIdList);
+		adaper.setOnClickListener(new OnQuoteClickListener() {
+            
+            @Override
+            public void onClick(View v, int position) {
+                
+//                String pre = "re: #"+c.count+" ";
+//                comment_edit.setText(pre);
+//                comment_edit.setSelection(pre.length());
+//                comment_edit.requestFocus();
+                list.performItemClick(v, position, adaper.getItemId(position));
+            }
+        });
 		list.setAdapter(adaper);
 		list.setOnScrollListener(this);
 		list.setOnItemClickListener(this);
@@ -99,6 +113,7 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 	
 	SparseArray<Comment> data = new SparseArray<Comment>();
 	List<Integer> commentIdList = new ArrayList<Integer>();
+    private InputMethodManager keyboard;
 	public void getdatas(final int page, final boolean isadd) {
 		if(!isadd){
 			time_outtext.setVisibility(View.GONE);
@@ -243,12 +258,21 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 				textview.setText(R.string.loading);
 				getdatas(indexpage, true);
 			}
-		}else{
+		}
+			else{
 		    
 		    Comment c = (Comment) parent.getItemAtPosition(position);
 		    String pre = "re: #"+c.count+" ";
 		    comment_edit.setText(pre);
 		    comment_edit.setSelection(pre.length());
+		    view.postDelayed(new Runnable() {
+                
+                @Override
+                public void run() {
+                    keyboard.showSoftInput(comment_edit, 0);                    
+                }
+            }, 200);
+		    
 		}
 	}
 	public boolean islogin(){

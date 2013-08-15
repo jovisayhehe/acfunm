@@ -65,6 +65,18 @@ public class CommentsAdaper3 extends BaseAdapter {
 	}
 
 	private int frameId = R.id.floor;
+    private View.OnClickListener mListener = new View.OnClickListener(){
+
+        @Override
+        public void onClick(View v) {
+           
+            if(mOnClickListener != null){
+                int position = (Integer) v.getTag();
+                mOnClickListener.onClick(v, position);
+            }
+        }
+        
+    };
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
@@ -77,6 +89,7 @@ public class CommentsAdaper3 extends BaseAdapter {
 			holder.user = (TextView) convertView.findViewById(R.id.user_name);
 			holder.content = (TextView) convertView
 					.findViewById(R.id.comments_content);
+			holder.quoteImage = convertView.findViewById(R.id.quote_img);
 			convertView.setTag(holder);
 		} else {
 			holder = (CommentViewHolder) convertView.getTag();
@@ -86,12 +99,33 @@ public class CommentsAdaper3 extends BaseAdapter {
 			convertView.findViewById(R.id.requote).setVisibility(View.GONE);
 		}
 		holder.user.setText("#" + c.count + " " + c.userName);
-		
+		holder.quoteImage.setTag(position);
+		holder.quoteImage.setOnClickListener(mListener);
 		TextViewUtils.setCommentContent(holder.content, c);
 		int quoteId = c.quoteId;
 		holder.hasQuote = quoteId > 0;
 		List<View> quoteList = new ArrayList<View>();
-		if (holder.hasQuote || holder.quoteFrame == null) {
+		handleQuoteList(position, convertView, holder, quoteId, quoteList);
+		holder.quoteFrame.setQuoteList(quoteList);
+		if(holder.quoteFrame.getChildCount()>0){
+			RelativeLayout.LayoutParams floorsLayoutParams = new LayoutParams(
+					-1, -2);
+			floorsLayoutParams.setMargins(4, 4, 4, 4);
+			((ViewGroup) convertView).addView(holder.quoteFrame,
+					floorsLayoutParams);
+		}
+		RelativeLayout.LayoutParams userLayoutParams = (LayoutParams) holder.user
+				.getLayoutParams();
+		userLayoutParams.addRule(RelativeLayout.BELOW,holder.quoteFrame.getChildCount()>0?frameId:R.id.requote);
+		holder.user.setLayoutParams(userLayoutParams);
+//		convertView.setOnClickListener(mListener );
+//		convertView.setBackgroundResource(R.drawable.clickable_item_bg);
+		return convertView;
+	}
+
+    private void handleQuoteList(int position, View convertView,
+            CommentViewHolder holder, int quoteId, List<View> quoteList) {
+        if (holder.hasQuote || holder.quoteFrame == null) {
 			FloorsView floors = new FloorsView(mContext);
 			floors.setId(frameId);
 			holder.quoteFrame = floors;
@@ -115,25 +149,11 @@ public class CommentsAdaper3 extends BaseAdapter {
 				quoteList.add(generateQuoteFrame(quote));
 			}
 		}
-		
-		holder.quoteFrame.setQuoteList(quoteList);
-		if(holder.quoteFrame.getChildCount()>0){
-			RelativeLayout.LayoutParams floorsLayoutParams = new LayoutParams(
-					-1, -2);
-			floorsLayoutParams.setMargins(4, 4, 4, 4);
-			((ViewGroup) convertView).addView(holder.quoteFrame,
-					floorsLayoutParams);
-		}
-		RelativeLayout.LayoutParams userLayoutParams = (LayoutParams) holder.user
-				.getLayoutParams();
-		userLayoutParams.addRule(RelativeLayout.BELOW,holder.quoteFrame.getChildCount()>0?frameId:R.id.requote);
-		holder.user.setLayoutParams(userLayoutParams);
-		return convertView;
-	}
+    }
 
 	private RelativeLayout generateQuoteFrame(Comment quote) {
 		RelativeLayout quoteFrame = (RelativeLayout) mInflater.inflate(
-				R.layout.comments_listitem, null);
+				R.layout.comments_quote_item, null);
 		TextView username = (TextView) quoteFrame.findViewById(R.id.user_name);
 		username.setText("#" + quote.count + " " + quote.userName);
 		TextView content = (TextView) quoteFrame
@@ -142,10 +162,18 @@ public class CommentsAdaper3 extends BaseAdapter {
 		
 		return quoteFrame;
 	}
-
+	private OnQuoteClickListener mOnClickListener;
+	public void setOnClickListener(OnQuoteClickListener l){
+	    mOnClickListener = l;
+	}
+	
+	public interface OnQuoteClickListener{
+	    void onClick(View v,int position);
+	}
 	static class CommentViewHolder {
 		TextView user;
 		TextView content;
+		View quoteImage;
 		boolean hasQuote;
 		FloorsView quoteFrame;
 
