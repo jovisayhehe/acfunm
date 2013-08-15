@@ -141,6 +141,8 @@ public class FavoriteActivity extends BaseListActivity implements OnItemClickLis
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if(position >=data.size())
+            return;
         Favorite favorite = data.get(position);
         if (data.get(position).getTpye() == 0) {
             Intent intent = new Intent(FavoriteActivity.this, DetailActivity.class);

@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- sliding menu -->
+    <dimen name="slidingmenu_offset">170dp</dimen>
+    <dimen name="slidingmenu_offset_2">65dp</dimen>
+    <dimen name="shadow_width">20dp</dimen>
     <dimen name="mem_btn_width">70dip</dimen>
     <dimen name="mem_btn_height">30dip</dimen>
-   <dimen name="mem_marginLeft">206dip</dimen>
-   <dimen name="img_w">85dip</dimen>
-   <dimen name="img_h">80dip</dimen>
-   <dimen name="gdviewitemtext_size">20sp</dimen>
+    <dimen name="mem_marginLeft">206dip</dimen>
+    <dimen name="img_w">85dip</dimen>
+    <dimen name="img_h">80dip</dimen>
+    <dimen name="gdviewitemtext_size">20sp</dimen>
+    <dimen name="video_item_width">98dip</dimen>
+    <dimen name="video_item_height">116dip</dimen>
+	<dimen name="channel_title_padding_left">40dip</dimen>
+	<dimen name="preview_image_height">75dp</dimen>
 </resources>

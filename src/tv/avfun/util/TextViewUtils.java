@@ -6,15 +6,16 @@ import java.util.regex.Pattern;
 
 import org.xml.sax.XMLReader;
 
+import tv.avfun.app.AcApp;
 import tv.avfun.entity.Comment;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.Html;
+import android.text.Html.ImageGetter;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.Html.ImageGetter;
 import android.text.style.StrikethroughSpan;
 import android.text.util.Linkify;
 import android.widget.TextView;
@@ -31,7 +32,7 @@ public class TextViewUtils {
                 try {
                     Drawable drawable = Drawable.createFromStream(comment.getContext().getAssets().open(source),source);
                     if(drawable!=null)
-                        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+                        drawable.setBounds(0, 0, drawable.getIntrinsicWidth()*(int)AcApp.density, drawable.getIntrinsicHeight()*(int)AcApp.density);
                     return drawable;
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -56,12 +57,12 @@ public class TextViewUtils {
             }
         }));
         comment.setTextColor(Color.BLACK);
-        Pattern http = Pattern.compile("(http://(?:[a-z0-9.-]+[.][a-z]{2,}+(?::[0-9]+)?)(?:/[^\\s\u3000-\u9fe0]*)?)",
+        Pattern http = Pattern.compile("http://[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?",
                 Pattern.CASE_INSENSITIVE);
         Linkify.addLinks(comment, http, "http://");
         Linkify.addLinks(comment, Pattern.compile("(ac\\d{5,})", Pattern.CASE_INSENSITIVE), "av://");
     }
-	static void end(SpannableStringBuilder text, Class kind,
+	static void end(SpannableStringBuilder text, Class<?> kind,
                 Object repl) {
         int len = text.length();
         Object obj = getLast(text, kind);
@@ -75,7 +76,7 @@ public class TextViewUtils {
         
         return;
     }
-    static Object getLast(Spanned text, Class kind) {
+    static Object getLast(Spanned text, Class<?> kind) {
         /*
          * This knows that the last returned object from getSpans()
          * will be the most recently added.
@@ -117,9 +118,10 @@ public class TextViewUtils {
         while (m.find()){
             text = text.replace(m.group(), m.group(1));
         }
-        text = text.replace("[/img]", "");
-        
+        text = text.replace("[img]","").replace("[/img]", "");
         text = text.replaceAll("\\[ac=\\d{5,}\\]", "").replace("[/ac]", "");
+        text = text.replaceAll("\\[font[^\\]]*?\\]", "").replace("[/font]", "");
+        text = text.replaceAll("\\[back[^\\]]*?\\]", "").replace("[/back]", "");
         text = text.replace("[s]", "<strike>").replace("[/s]", "</strike>");
         text = text.replace("[b]", "<b>").replace("[/b]", "</b>");
         return text;

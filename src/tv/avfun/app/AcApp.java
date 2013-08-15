@@ -52,7 +52,7 @@ public class AcApp extends Application {
     public static final String LOG = "Logs"; 
     public static final String IMAGE = "images";
     public static final String VIDEO = "Videos";
-    
+    public static float density = 1f;
     private DownloadManager mDownloadManager;
     private static NotificationManager mNotiManager;
     /**
@@ -67,6 +67,7 @@ public class AcApp extends Application {
         Thread.currentThread().setUncaughtExceptionHandler(CrashExceptionHandler.instance());
         mContext = instance = this;
         mResources = getResources();
+        density = mResources.getDisplayMetrics().density;
         sp = PreferenceManager.getDefaultSharedPreferences(mContext);
         mDownloadManager = new DownloadManager(this);
         mDownloadManager.getProvider().loadOldDownloads();
