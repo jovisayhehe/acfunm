@@ -14,14 +14,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
-import com.actionbarsherlock.widget.ShareActionProvider;
-import com.umeng.analytics.MobclickAgent;
-
 import tv.ac.fun.R;
 import tv.avfun.api.ApiParser;
 import tv.avfun.db.DBService;
@@ -29,23 +21,27 @@ import tv.avfun.entity.Article;
 import tv.avfun.view.SWebView;
 import tv.avfun.view.SWebView.ScrollInterface;
 import tv.avfun.view.SWebView.WContentHeight;
-import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnKeyListener;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.ShareActionProvider;
+import com.umeng.analytics.MobclickAgent;
 
 public class WebViewActivity extends SherlockActivity implements OnClickListener {
 
@@ -128,11 +124,11 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                Pattern regex = Pattern.compile("(ac\\d{5,})");
+                Pattern regex = Pattern.compile("v/(ac\\d{5,})");
                 Matcher matcher = regex.matcher(url);
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 if (matcher.find()) {
-                    String ac = matcher.group();
+                    String ac = matcher.group(1);
                     try {
                         intent.setData(Uri.parse("av://" + ac));
                         startActivity(intent);
@@ -166,7 +162,6 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
 
             }
         });
-
         mWebView.setFisrtOndrawOverListener(new WContentHeight() {
 
             @Override
@@ -209,7 +204,10 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
         }
         return super.onOptionsItemSelected(item);
     }
-
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getSupportMenuInflater().inflate(R.menu.share_action_provider, menu);
@@ -282,7 +280,7 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
 
                     tdiv.html(title);
 
-                    idiv.append(/*"<p align=\"center\">" +*/ "投稿: " + article.getName() + "<br>");
+                    idiv.append(/*"<p align=\"center\">" +*/ "投稿: " + article.getName() + "<br><br>");
                     Date date = new Date(article.getPosttime());
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
                     idiv.append(/*"<p align=\"center\">"+*/  sdf.format(date) /*+"</p>"*/);
@@ -300,6 +298,10 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
                         switch (modecode) {
                         case 0:
                             cdiv.append(content);
+                            if(cdiv.select("img").hasAttr("usemap")){
+                                mWebView.getSettings().setLayoutAlgorithm(LayoutAlgorithm.NARROW_COLUMNS);
+                            }else
+                                mWebView.getSettings().setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
                             break;
                         case 1:
                             // Whitelist wl = new Whitelist();//过滤图片
