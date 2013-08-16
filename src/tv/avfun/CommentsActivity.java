@@ -133,8 +133,11 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 							} else {
 								data = tempdata;
 							}
-							if(ApiParser.commentIdList != null ) 
+							if(ApiParser.commentIdList != null )
+							{
+							    if(!isadd) commentIdList.clear();
 							    commentIdList.addAll(ApiParser.commentIdList);
+							}
 							
 							if (!isadd) {
 								progressBar.setVisibility(View.GONE);
@@ -230,9 +233,8 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 			getdatas(1, false);
 			break;
 		case R.id.comments_send_btn:
-	        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-	        if(imm.isActive()){
-	            imm.hideSoftInputFromWindow(send_btn.getApplicationWindowToken(),0);
+	        if(keyboard.isActive()){
+	            keyboard.hideSoftInputFromWindow(send_btn.getApplicationWindowToken(),0);
 	        }
 			umap = new DBService(this).getUser();
 			if(islogin()){

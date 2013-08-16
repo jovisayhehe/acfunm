@@ -13,6 +13,7 @@ import tv.ac.fun.R;
 import tv.avfun.adapter.DetailAdaper;
 import tv.avfun.adapter.DetailAdaper.OnStatusClickListener;
 import tv.avfun.api.ApiParser;
+import tv.avfun.api.ChannelApi;
 import tv.avfun.api.MemberUtils;
 import tv.avfun.api.net.UserAgent;
 import tv.avfun.app.AcApp;
@@ -153,14 +154,17 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                DownloadManager man = AcApp.instance().getDownloadManager();
-                List<VideoPart> downloadParts = man.getVideoParts(aid);
-                
                 if (NetWorkUtil.isNetworkAvailable(getApplicationContext())) {
                     mVideoInfo = ApiParser.getVideoInfoByAid(aid);
                     if(mVideoInfo == null) return false;
+                    if(ChannelApi.getChannelType(mVideoInfo.channelId) == 1){
+                        return null;
+                    }
                     mData.addAll(mVideoInfo.parts);
                 }
+                DownloadManager man = AcApp.instance().getDownloadManager();
+                List<VideoPart> downloadParts = man.getVideoParts(aid);
+                
                 if(downloadParts != null){
                     for(VideoPart part: downloadParts){
                         mData.remove(part); // 过滤
@@ -179,7 +183,14 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
 
         @Override
         protected void onPostExecute(Boolean result) {
-            if (result) {
+            if(result == null){
+                Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
+                intent.putExtra("aid", aid);
+                intent.putExtra("channelId", mVideoInfo.channelId);
+                intent.putExtra("title", mVideoInfo.title);
+                startActivity(intent);
+                finish();
+            } else if (result) {
                 if (from > 0) {
                     tvUserName.setText(mVideoInfo.upman == null ? "无名氏" : mVideoInfo.upman);
                     tvViews.setText(mVideoInfo.views + "");

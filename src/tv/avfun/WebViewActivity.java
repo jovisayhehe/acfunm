@@ -90,7 +90,7 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         channelid = getIntent().getIntExtra("channelId", 0);
         title = getIntent().getStringExtra("title");
-        modecode = getIntent().getIntExtra("modecode", 0);
+        modecode = getIntent().getIntExtra("modecode", ChannelActivity.modecode);
         aid = getIntent().getStringExtra("aid");
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 hh:mm");
@@ -124,11 +124,11 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                Pattern regex = Pattern.compile("v/(ac\\d{5,})");
+                Pattern regex = Pattern.compile("(ac\\d{5,})");
                 Matcher matcher = regex.matcher(url);
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 if (matcher.find()) {
-                    String ac = matcher.group(1);
+                    String ac = matcher.group();
                     try {
                         intent.setData(Uri.parse("av://" + ac));
                         startActivity(intent);
