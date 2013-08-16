@@ -27,8 +27,8 @@
       </intent-filter>  
       <meta-data android:name="android.app.searchable" android:resource="@xml/searchable"/> 
     </activity>  
-    <activity android:name="tv.avfun.ChannelActivity"/>  
-    <activity android:name="tv.avfun.DetailActivity" android:uiOptions="splitActionBarWhenNarrow"> 
+    <activity android:name="tv.avfun.ChannelActivity" android:configChanges="orientation|screenSize"/>  
+    <activity android:name="tv.avfun.DetailActivity" android:configChanges="orientation|screenSize" android:uiOptions="splitActionBarWhenNarrow"> 
       <meta-data android:name="android.app.default_searchable" android:value="tv.avfun.SearchResultActivity"/>  
       <intent-filter> 
         <action android:name="android.intent.action.VIEW"/>  
@@ -36,9 +36,9 @@
         <data android:scheme="av"/> 
       </intent-filter> 
     </activity>  
-    <activity android:name="tv.avfun.CommentsActivity"/>  
+    <activity android:name="tv.avfun.CommentsActivity" android:configChanges="orientation|screenSize"/>  
     <activity android:name="tv.avfun.SettingsActivity"/>  
-    <activity android:name="tv.avfun.WebViewActivity"/>  
+    <activity android:name="tv.avfun.WebViewActivity" android:configChanges="orientation|screenSize"/>  
     <activity android:name="tv.avfun.HistoryActivity"/>  
     <activity android:name="tv.avfun.ImagePagerActivity"/>  
     <activity android:name="tv.avfun.PlayActivity" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" android:configChanges="orientation|keyboardHidden|screenSize|screenLayout" android:screenOrientation="landscape"/>  
