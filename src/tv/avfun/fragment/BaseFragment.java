@@ -3,6 +3,7 @@ package tv.avfun.fragment;
 import android.app.Activity;
 import android.os.Bundle;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
 
 
@@ -22,4 +23,7 @@ public abstract class BaseFragment extends SherlockFragment {
         activity = getActivity();
         show();
     }
+    
+    
+    public abstract void onSwitch(ActionBar bar);
 }

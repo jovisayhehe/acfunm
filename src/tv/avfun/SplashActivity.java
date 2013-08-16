@@ -82,7 +82,8 @@ public class SplashActivity extends Activity {
     private void clearCache() {
         
         new File(getCacheDir(), DataStore.CHANNEL_LIST_CACHE).delete();
-        new File(getCacheDir(), DataStore.TIME_LIST_CACHE).delete();
+        new File(getCacheDir(), DataStore.TIME_LIST_CACHE_0).delete();
+        new File(getCacheDir(), DataStore.TIME_LIST_CACHE_1).delete();
     }
     private void copy(String source, String dest) {
         FileInputStream in = null;

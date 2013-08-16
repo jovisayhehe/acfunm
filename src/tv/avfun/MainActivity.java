@@ -219,7 +219,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
     /*
      * 数组记录nav id
      */
-    private int[]                         navIds = { R.id.slide_nav_home, R.id.slide_nav_bangumi };
+    private int[] navIds = { R.id.slide_nav_home, R.id.slide_nav_bangumi };
     private SparseArray<SlideNavItemView> mNavItems;
 
     private void initNavItems() {
@@ -247,20 +247,17 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
         int id = navItem.getId();
         switch (id) {
         case R.id.slide_nav_home:
-            bar.setTitle("主页");
+//            bar.setTitle("主页");
             nextContent = instances.get("home");
-            bar.setDisplayShowTitleEnabled(false);
-            bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+            nextContent.onSwitch(bar);
             break;
         case R.id.slide_nav_bangumi:
             nextContent = instances.get("play_time");
-            bar.setDisplayShowTitleEnabled(true);
-            bar.setTitle("番组列表");
-            bar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
             if (nextContent == null) {
                 nextContent = PlayTime.newInstance();
                 instances.put("play_time", nextContent);
-            }
+            }else
+                nextContent.onSwitch(bar);
             break;
         case R.id.slide_nav_article:
             // TODO 做成Fragment
@@ -286,7 +283,8 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
     public void onBackPressed() {
         if (this.navId != R.id.slide_nav_home) {
             nextContent = instances.get("home");
-            bar.setTitle("主页");
+//            bar.setTitle("主页");
+            bar.setDisplayShowTitleEnabled(false);
             switchContent(mContent, nextContent, R.id.slide_nav_home);
             return;
         } else if (this.navId == R.id.slide_nav_home) {

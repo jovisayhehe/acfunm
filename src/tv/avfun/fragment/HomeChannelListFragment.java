@@ -76,14 +76,8 @@ public class HomeChannelListFragment extends BaseFragment implements VideoItemVi
         super.onCreate(savedInstanceState);
         dataStore = DataStore.getInstance();
         setHasOptionsMenu(false);
-        mBar  = getSherlockActivity().getSupportActionBar();
-        
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(mBar.getThemedContext(), R.array.pref_entries_home_display_mode,
-                android.R.layout.simple_spinner_item/*R.layout.sherlock_spinner_item*/);
-        adapter.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
-        mBar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
-        mBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        mBar.setListNavigationCallbacks(adapter, this);
+        mBar = getSherlockActivity().getSupportActionBar();
+        onSwitch(mBar);
     }
 
     private Handler handler = new Handler() {
@@ -108,7 +102,7 @@ public class HomeChannelListFragment extends BaseFragment implements VideoItemVi
         String update = DateFormat.getDateTimeInstance().format(updatedTime);
         mLoadingLayout.setLastUpdatedLabel("上次更新:" + update);
     }
-
+    
     private void initView() {
         
         // header (banner)
@@ -396,5 +390,15 @@ public class HomeChannelListFragment extends BaseFragment implements VideoItemVi
             return true;
         }
         return  false;
+    }
+
+    @Override
+    public void onSwitch(ActionBar bar) {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(bar.getThemedContext(), R.array.pref_entries_home_display_mode,
+                android.R.layout.simple_spinner_item/*R.layout.sherlock_spinner_item*/);
+        adapter.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
+        bar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
+        bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        bar.setListNavigationCallbacks(adapter, this);
     }
 }

@@ -209,12 +209,17 @@ public class ApiParser {
             return comments;
         }
     }
-    public static List<Bangumi[]> getBangumiTimeList(){
-        Document doc = Connectivity.getDoc("http://www.acfun.tv", UserAgent.MY_UA);
-        return getBangumiTimeList(doc);
+    public static List<Bangumi[]> getBangumiTimeList(int ulIndex){
+        Document doc =DataStore.getInstance().getHomeCache();
+        if(doc == null){
+            doc =Connectivity.getDoc("http://www.acfun.tv", UserAgent.MY_UA);
+            DataStore.getInstance().saveHomeCache(doc);
+        }
+        Log.i(TAG, String.format("get %d list",ulIndex));
+        return getBangumiTimeList(doc,ulIndex);
     }
     
-    public static List<Bangumi[]> getBangumiTimeList(Document doc){
+    public static List<Bangumi[]> getBangumiTimeList(Document doc, int ulIndex){
         if(doc == null) return null;
         Elements ems = doc.getElementsByAttributeValue("id", "bangumi-index");
         if(ems == null || ems.size() == 0) {
@@ -222,9 +227,8 @@ public class ApiParser {
             return null;
         }
         ems = ems.get(0).getElementsByTag("ul");
-        int ulIndex = 0;
-        if (ems.size() >= 1)
-            ulIndex = 1;
+        if (ulIndex >ems.size())
+            ulIndex = ems.size();
         ems = ems.get(ulIndex).getElementsByTag("li");
         ems.remove(ems.size() - 1);
         List<Bangumi[]> timelist = new ArrayList<Bangumi[]>();
