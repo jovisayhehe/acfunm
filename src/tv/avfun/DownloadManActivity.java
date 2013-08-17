@@ -282,7 +282,7 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
     }
 
     protected void startToPlay(DownloadEntry entry) {
-        Intent intent = new Intent(this, SectionActivity.class);
+        Intent intent = new Intent(this, PlayActivity.class);
         intent.putExtra("item", entry.part);
         startActivity(intent);
     }
