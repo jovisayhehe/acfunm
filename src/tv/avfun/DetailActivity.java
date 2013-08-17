@@ -1,6 +1,7 @@
 
 package tv.avfun;
 
+import java.net.Authenticator.RequestorType;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -307,7 +308,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
 
     private void startPlay(VideoPart item) {
         addToHistory();
-        Intent intent = new Intent(DetailActivity.this, SectionActivity.class);
+        Intent intent = new Intent(DetailActivity.this, PlayActivity.class);
         intent.putExtra("item", item);
         startActivity(intent);
     }
