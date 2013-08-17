@@ -303,6 +303,9 @@ public class DataStore {
             throw new IllegalArgumentException("path 或 str 不能为null、空白或空字符串！");
         File file = new File(path);
         try {
+            if(!file.getParentFile().exists()){
+                file.getParentFile().mkdirs();
+            }
             if(file.exists()) file.delete();                // 确保是一个
             file.createNewFile();                           // 全新的文件
             Writer writer = new FileWriter(file);
