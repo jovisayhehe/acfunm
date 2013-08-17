@@ -14,8 +14,8 @@ import java.io.Writer;
 import java.util.Calendar;
 import java.util.List;
 
-import org.json.external.JSONException;
-import org.json.external.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import tv.ac.fun.BuildConfig;
 import tv.avfun.api.Bangumi;
@@ -34,7 +34,7 @@ import android.util.Log;
  */
 public class DataStore {
 
-    private File                   timeListCachedFile, channelListCachedFile;
+    private File                   timeListCachedFile_0,timeListCachedFile_1, channelListCachedFile,homeCachedFile;
     private static final String    TAG                  = DataStore.class.getSimpleName();
     private static final DataStore instance             = new DataStore();
 
@@ -43,21 +43,24 @@ public class DataStore {
     /** 30 min */
     public static final long       CHANNEL_EXPIRED      = 30 * 60000;
     /** 1 hour */
-    public static final long       CHANNEL_LIST_EXPIRED = 60 * 60 * 1000;
-    /** 2 days (XXX: 待定) */
-    public static final long       TIME_LIST_EXPIRED    = 3 * 12 * 60 * 60 * 1000;
+    public static final long       CHANNEL_LIST_EXPIRED = 2 * CHANNEL_EXPIRED;
+    /** 1 days */
+    public static final long       TIME_LIST_EXPIRED    = 24 * CHANNEL_LIST_EXPIRED;
     /** 首页频道列表缓存文件 */
     public static final String     CHANNEL_LIST_CACHE   = "channel_list.dat";
     /** 番组列表缓存文件 */
-    public static final String     TIME_LIST_CACHE      = "time_date.dat";
+    public static final String     TIME_LIST_CACHE_0      = "time_date_0.dat";
+    public static final String     TIME_LIST_CACHE_1      = "time_date_1.dat";
     public static final String     HOME_CACHE           = "home.dat";
     private DataStore() {
         initCache();
     }
 
     private void initCache() {
-        timeListCachedFile = new File(AcApp.context().getCacheDir(), TIME_LIST_CACHE);
+        timeListCachedFile_0 = new File(AcApp.context().getCacheDir(), TIME_LIST_CACHE_0);
+        timeListCachedFile_1 = new File(AcApp.context().getCacheDir(), TIME_LIST_CACHE_1);
         channelListCachedFile = new File(AcApp.context().getCacheDir(), CHANNEL_LIST_CACHE);
+        homeCachedFile = new File(AcApp.context().getCacheDir(), HOME_CACHE);
     }
 
     public static DataStore getInstance() {
@@ -71,40 +74,38 @@ public class DataStore {
      * @return 没有缓存文件，或当前为星期天且缓存不是今天缓存的<br>
      *         或者缓存时间超过 {@link #TIME_LIST_EXPIRED}，返回false
      */
-    public boolean isBangumiListCached() {
-        synchronized (this.bangumiList) {
-            if (this.bangumiList.bangumiTimeList == null) {
-                if (!readTimeListCache())
-                    return false; // no cache
-            }
-            Calendar calendar = Calendar.getInstance();
-            int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-            long cache = calendar.getTimeInMillis() - bangumiList.cacheTime;
-            if( cache >= TIME_LIST_EXPIRED )
-                // 缓存超过TIME_LIST_EXPIRED
-                return false;
-            else if(dayOfWeek == 1){
-                int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
-                calendar.setTimeInMillis(bangumiList.cacheTime);
-                int cacheDay = calendar.get(Calendar.DAY_OF_MONTH);
-                return currentDay >= cacheDay;
-            }
-            else return true;
+    public boolean isBangumiListCached(int ulIndex) {
+        if (!readTimeListCache(ulIndex))
+            return false; // no cache
+        Calendar calendar = Calendar.getInstance();
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        long cache = calendar.getTimeInMillis() - bangumiList.cacheTime;
+        if( cache >= TIME_LIST_EXPIRED )
+            // 缓存超过TIME_LIST_EXPIRED
+            return false;
+        else if(dayOfWeek == 1){
+            int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+            calendar.setTimeInMillis(bangumiList.cacheTime);
+            int cacheDay = calendar.get(Calendar.DAY_OF_MONTH);
+            return currentDay >= cacheDay;
         }
+        else return true;
     }
 
     /** 加载缓存的番组列表 */
-    public List<Bangumi[]> loadTimeList() {
+    public List<Bangumi[]> loadTimeList(int ulIndex) {
         synchronized (this.bangumiList) {
-            if (this.bangumiList.bangumiTimeList == null) {
-                if(!readTimeListCache()) return null;
-            }
+            if(!readTimeListCache(ulIndex)) return null;
             return this.bangumiList.bangumiTimeList;
         }
     }
 
-    private boolean readTimeListCache() {
-        Object obj = readObject(timeListCachedFile.getAbsolutePath());
+    private boolean readTimeListCache(int ulIndex) {
+        Object obj = null;
+        if(ulIndex >0)
+            obj = readObject(timeListCachedFile_1.getAbsolutePath());
+        else
+            obj = readObject(timeListCachedFile_0.getAbsolutePath());
         if (obj != null && obj instanceof BangumiList) {
             this.bangumiList.bangumiTimeList = ((BangumiList) obj).bangumiTimeList;
             this.bangumiList.cacheTime = ((BangumiList) obj).cacheTime;
@@ -120,15 +121,30 @@ public class DataStore {
      *            - 当天的番组列表
      * @return list为空或保存失败则返回false
      */
-    public boolean saveTimeList(List<Bangumi[]> list) {
-        if (list != null) {
+    public boolean saveTimeList(List<Bangumi[]> list, int ulIndxe) {
+        if (list != null && list.size()>0) {
             this.bangumiList.bangumiTimeList = list;
             this.bangumiList.cacheTime = System.currentTimeMillis();
-            return writeObject(timeListCachedFile.getAbsolutePath(), this.bangumiList);
+            if(ulIndxe>0)
+                return writeObject(timeListCachedFile_1.getAbsolutePath(), this.bangumiList);
+            else 
+                return writeObject(timeListCachedFile_0.getAbsolutePath(), this.bangumiList);
         }
         return false;
     }
-
+    public Document getHomeCache(){
+        if(homeCachedFile.lastModified() + TIME_LIST_EXPIRED > System.currentTimeMillis()){
+            String str = readFromFile(homeCachedFile.getAbsolutePath());
+            if(!TextUtils.isEmpty(str)){
+                return Jsoup.parse(str);
+            }
+        }
+        return null;
+    }
+    public boolean saveHomeCache(Document doc){
+        return writeToFile(homeCachedFile.getAbsolutePath(), doc.toString());
+    }
+    
     // =======================================================
     // 首页频道列表
     // =======================================================

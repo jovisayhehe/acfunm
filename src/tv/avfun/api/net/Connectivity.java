@@ -4,13 +4,17 @@ package tv.avfun.api.net;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
+import org.apache.commons.httpclient.Cookie;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.HttpState;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.cookie.CookiePolicy;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.json.external.JSONException;
 import org.json.external.JSONObject;
 import org.jsoup.Jsoup;
@@ -18,9 +22,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import tv.ac.fun.BuildConfig;
-import tv.avfun.app.AcApp;
 import tv.avfun.util.DataStore;
-import tv.avfun.util.NetWorkUtil;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -29,23 +31,21 @@ public class Connectivity {
     private static final String TAG = Connectivity.class.getSimpleName();
 
     /**
-     * 获得原始Json数据
-     * 
      * @param url
      * @return 获取失败返回null
      */
-    public static String getJson(String url) {
+    public static String getResponseAsString(String url, String userAgent) {
         try {
-            HttpURLConnection conn = openConnection(new URL(url), UserAgent.DEFAULT);
+            HttpURLConnection conn = openConnection(new URL(url), userAgent);
             if (conn.getResponseCode() != 200)
                 return null;
             InputStream in = conn.getInputStream();
-            String json = DataStore.readData(in, "UTF8");
+            String res = DataStore.readData(in, "UTF8");
             conn.disconnect();
-            return json;
+            return res;
         } catch (Exception e) {
             if (BuildConfig.DEBUG)
-                Log.w(TAG, "获取Json失败" + "\n" + e.getMessage());
+                Log.w(TAG, "获取数据失败" + "\n" + e.getMessage());
         }
         return null;
     }
@@ -57,7 +57,7 @@ public class Connectivity {
      * @return 获取失败返回null
      */
     public static JSONObject getJSONObject(String url) throws JSONException {
-        String json = getJson(url);
+        String json = getResponseAsString(url,UserAgent.DEFAULT);
         if (json != null)
             return new JSONObject(json);
         else
@@ -80,13 +80,15 @@ public class Connectivity {
         return getDoc(url, userAgent).getElementsByTag(tag);
     }
 
-    public static Document getDoc(String url, String userAgent) throws IOException {
-        return Jsoup.connect(url).timeout(6000).userAgent(userAgent).get();
+    public static Document getDoc(String url, String userAgent){
+        String html = getResponseAsString(url,userAgent);
+        if(html == null) return null;
+        return Jsoup.parse(html);
     }
 
     /**
-     * 打开一个新的Http连接
-     * TODO 引入重试机制！
+     * 打开一个新的Http连接 TODO 引入重试机制！
+     * 
      * @param httpUrl
      * @param userAgent
      * @throws IOException
@@ -109,8 +111,8 @@ public class Connectivity {
     }
 
     /**
-     * 获得重定向路径（一次重定向）
-     * 如果没有重定向，则返回传入的url
+     * 获得重定向路径（一次重定向） 如果没有重定向，则返回传入的url
+     * 
      * @param httpUrl
      * @param userAgent
      * @return
@@ -134,8 +136,8 @@ public class Connectivity {
     }
 
     /**
-     * 获得重定向路径（二次重定向）
-     * 无重定向，则返回源地址
+     * 获得重定向路径（二次重定向） 无重定向，则返回源地址
+     * 
      * @param httpUrl
      * @param userAgent
      * @return
@@ -143,8 +145,10 @@ public class Connectivity {
      */
     public static String getDuplicateRedirectLocation(String httpUrl, String userAgent) throws IOException {
         String url = getRedirectLocation(httpUrl, userAgent);
-        if(httpUrl.equals(url)) return url;
-        else return getRedirectLocation(url, userAgent);
+        if (httpUrl.equals(url))
+            return url;
+        else
+            return getRedirectLocation(url, userAgent);
     }
 
     /**
@@ -166,8 +170,8 @@ public class Connectivity {
                 return conn.getContentLength();
             }
         } catch (Exception e) {
-            if(BuildConfig.DEBUG)
-            Log.e(TAG, "failed to get content length of " + url, e);
+            if (BuildConfig.DEBUG)
+                Log.e(TAG, "failed to get content length of " + url, e);
         }
         return -1;
 
@@ -184,5 +188,89 @@ public class Connectivity {
         conn.setDoInput(false);
         conn.setUseCaches(false);
         return conn;
+    }
+
+    public static int request(HttpMethodBase httpMethod, String host, int port, String protocal, Cookie[] cookies)
+            throws HttpException, IOException {
+        HttpClient client = new HttpClient();
+        client.getParams().setParameter("http.protocol.single-cookie-header", true);
+        client.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+        client.getHttpConnectionManager().getParams().setConnectionTimeout(4000);
+        client.getHostConfiguration().setHost(host, port == 0 ? 80 : port, protocal == null ? "http" : protocal);
+        if(cookies != null){
+            HttpState state = new HttpState();
+            state.addCookies(cookies);
+            client.setState(state);
+        }
+        return client.executeMethod(httpMethod);
+    }
+
+    public static String CONTENT_TYPE_FORM = "application/x-www-form-urlencoded; charset=utf-8";
+
+    public static int doPost(PostMethod post, String host, int port, String protocal, Cookie[] cks)
+            throws HttpException, IOException {
+        return request(post, host, port, protocal, cks);
+    }
+
+    public static int doPost(PostMethod post, Cookie[] cks) throws HttpException, IOException {
+        return doPost(post, "www.acfun.tv", 0, null, cks);
+    }
+
+    public static boolean postResultJson(String url, NameValuePair[] nps, Cookie[] cks) {
+        if (TextUtils.isEmpty(url))
+            throw new NullPointerException("url cannot be null!");
+        PostMethod post = new PostMethod(url);
+        if (nps != null) {
+            post.setRequestBody(nps);
+            post.setRequestHeader("Content-Type", CONTENT_TYPE_FORM);
+        }
+        try {
+            int state = Connectivity.doPost(post, cks);
+            if (state == 200) {
+                String json = post.getResponseBodyAsString();
+                JSONObject re = new JSONObject(json);
+                return re.getBoolean("success");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "try to post Result Json :"+url ,e);
+        }
+        return false;
+    }
+
+    public static int doGet(GetMethod get, String host, int port, String protocal, Cookie[] cookies)
+            throws HttpException, IOException {
+        return request(get, host, port == 0 ? 80 : port, protocal == null ? "http" : protocal, cookies);
+    }
+
+    public static int doGet(GetMethod get, Cookie[] cookies) throws HttpException, IOException {
+        return doGet(get, "www.acfun.tv", 0, null, cookies);
+    }
+
+    public static String doGet(String url, String queryString, Cookie[] cookies) {
+        if (TextUtils.isEmpty(url))
+            throw new NullPointerException("url cannot be null!");
+        GetMethod get = new GetMethod(url);
+        get.setRequestHeader("User-Agent", UserAgent.MY_UA);
+        if(queryString != null)
+            get.setQueryString(queryString);
+        try {
+            int state = doGet(get, cookies);
+            if (state == 200) {
+                return DataStore.readData(get.getResponseBodyAsStream(),"utf-8");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "try to get :"+url ,e);
+        }
+        return null;
+    }
+
+    public static JSONObject getResultJson(String url, String queryString, Cookie[] cookies) {
+        String result = doGet(url, queryString, cookies);
+        try {
+            return TextUtils.isEmpty(result) ? null : new JSONObject(result);
+        } catch (JSONException e) {
+            Log.e(TAG, "try to get Result Json :"+url ,e);
+            return null;
+        }
     }
 }

@@ -2,9 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/selectable_background"
-    android:orientation="vertical"
-    android:padding="4dp"
+    android:background="@null"
+    android:padding="6dp"
+    android:descendantFocusability="blocksDescendants"
      >
 
     <!--
@@ -20,7 +20,7 @@
     <TextView 
         android:background="@drawable/requote_bg"
         android:id="@+id/requote"
-        android:text="重复引用已隐藏"
+        android:text="@string/hide_requote"
         android:layout_margin="4dp"
         android:gravity="center"
         android:textSize="12sp"
@@ -28,21 +28,30 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         />
+
     <TextView
         android:id="@+id/user_name"
         android:layout_below="@id/requote"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="#12 AAAAAAAAAAA"
         android:textColor="#ABABAB" />
-
+  	<ImageView 
+        android:id="@+id/quote_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/user_name"
+        android:layout_alignBottom="@id/user_name"
+        android:src="@drawable/forward"
+        />
+    
     <TextView
         android:id="@+id/comments_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/user_name"
         android:layout_marginTop="5dip"
-        android:text="AAAAAAAAAAA"
+        android:textColorLink="@color/main_color"
+            android:focusable="false"
         android:textColor="#000000" />
 
 </RelativeLayout>

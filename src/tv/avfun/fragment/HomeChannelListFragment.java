@@ -3,9 +3,9 @@ package tv.avfun.fragment;
 import java.text.DateFormat;
 
 import tv.ac.fun.BuildConfig;
+import tv.ac.fun.R;
 import tv.avfun.ChannelActivity;
 import tv.avfun.DetailActivity;
-import tv.ac.fun.R;
 import tv.avfun.api.ApiParser;
 import tv.avfun.api.Banner;
 import tv.avfun.api.Channel;
@@ -19,8 +19,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,10 +27,13 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
 import com.handmark.pulltorefresh.library.ILoadingLayout;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
@@ -44,7 +45,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
  * @author Yrom
  * 
  */
-public class HomeChannelListFragment extends Fragment implements VideoItemView.OnClickListener {
+public class HomeChannelListFragment extends BaseFragment implements VideoItemView.OnClickListener, OnNavigationListener {
 
     private static final String     TAG       = HomeChannelListFragment.class.getSimpleName();
     private static final int        ADD       = 1;
@@ -68,12 +69,15 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
     private ILoadingLayout          mLoadingLayout;
     private TextView                updateInfo, timeOutView;
     private PullToRefreshScrollView mPtr;
+    private ActionBar mBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dataStore = DataStore.getInstance();
         setHasOptionsMenu(false);
+        mBar = getSherlockActivity().getSupportActionBar();
+        onSwitch(mBar);
     }
 
     private Handler handler = new Handler() {
@@ -98,7 +102,7 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
         String update = DateFormat.getDateTimeInstance().format(updatedTime);
         mLoadingLayout.setLastUpdatedLabel("上次更新:" + update);
     }
-
+    
     private void initView() {
         
         // header (banner)
@@ -113,8 +117,26 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
             this.bannerIndicator.setIndicatorNum(this.bannerCount);
             this.channelList.addView(this.headerView);
         }
-    }
+        mPtr = (PullToRefreshScrollView) findViewById(R.id.pull_refresh_scrollview);
+        
+        mPtr.setOnRefreshListener(new OnRefreshListener<ScrollView>() {
 
+            @Override
+            public void onRefresh(PullToRefreshBase<ScrollView> refreshView) {
+                new RefreshData().execute();
+            }
+
+        });
+        mLoadingLayout = mPtr.getLoadingLayoutProxy();
+    }
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+
+        super.onActivityCreated(savedInstanceState);
+        mLoadingLayout.setRefreshingLabel(activity.getString(R.string.refreshing));
+        mLoadingLayout.setPullLabel(activity.getString(R.string.pull_refresh));
+        mLoadingLayout.setReleaseLabel(activity.getString(R.string.release_refresh));
+    }
     private Animation fadeIn;
     private Animation fadeOut;
     private long showDuration = 2000;
@@ -153,13 +175,13 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
 
         @Override
         public void onPreExecute() {
+            mPtr.setRefreshing();
             mode = AcApp.getHomeDisplayMode();
             if (!DataStore.getInstance().isDisplayModeChanged())            // 显示模式没有改变
             if (System.currentTimeMillis() - updatedTime < LOCK_TIME) {     // 刷新间隔小于锁定时间
                 this.cancel(true);
                 updateInfo.setText(activity.getString(R.string.update_lock));
                 showUpdateInfo();
-                mPtr.onRefreshComplete();
             }
             timeOutView.setVisibility(View.GONE);
         }
@@ -187,11 +209,11 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
             }
             else updateInfo.setText(activity.getString(R.string.update_fail));
             showUpdateInfo();
-            mPtr.onRefreshComplete();
         }
 
     }
     private void loadData() {
+        
         new LoadData().execute();
     }
     /**
@@ -203,6 +225,7 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
         protected void onPreExecute() {
             long cachedTime = dataStore.getChannelListLastUpdateTime(); 
             isCached = cachedTime == -1? false: true;
+            mBar.setSelectedNavigationItem(Integer.parseInt(AcApp.getHomeDisplayMode())-1);
             setLastUpdatedLabel(cachedTime);
             if(!isCached){
                 this.cancel(true);
@@ -258,33 +281,11 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
         loadView = findViewById(R.id.load_view);
         updateInfo = (TextView) findViewById(R.id.update_info);
         timeOutView = (TextView) findViewById(R.id.time_out_text);
-        
+        initView();
+        initFadeAnim();
         return mView;
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        activity = getActivity();
-        initView();
-        initFadeAnim();
-        mPtr = (PullToRefreshScrollView) findViewById(R.id.pull_refresh_scrollview);
-        
-        mPtr.setOnRefreshListener(new OnRefreshListener<ScrollView>() {
-
-            @Override
-            public void onRefresh(PullToRefreshBase<ScrollView> refreshView) {
-                new RefreshData().execute();
-            }
-
-        });
-        mLoadingLayout = mPtr.getLoadingLayoutProxy();
-        mLoadingLayout.setRefreshingLabel(activity.getString(R.string.refreshing));
-        mLoadingLayout.setPullLabel(activity.getString(R.string.pull_refresh));
-        mLoadingLayout.setReleaseLabel(activity.getString(R.string.release_refresh));
-        loadData();
-    }
-    
     private void showLoadingView() {
         if (loadView != null) {
             loadView.setVisibility(View.VISIBLE);
@@ -352,16 +353,17 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
             msg.arg1 = i;
             msg.sendToTarget();
         }
+        
         isUpdated = true;
     }
     private boolean isInfoShow;
-    private FragmentActivity activity;
     private void showUpdateInfo() {
         if(!isInfoShow){
             isInfoShow = true;
             updateInfo.setVisibility(View.VISIBLE);
             updateInfo.startAnimation(fadeIn);
         }
+        mPtr.onRefreshComplete();
     }
 
     private void hideUpdateInfo() {
@@ -372,5 +374,31 @@ public class HomeChannelListFragment extends Fragment implements VideoItemView.O
     private void showTimeOutView() {
         timeOutView.setText(getString(R.string.update_fail));
         timeOutView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onShow() {
+        loadData();
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+        Log.i(TAG, String.format("positoin = %d, item id = %d", itemPosition, itemId));
+        if(!AcApp.getHomeDisplayMode().equals(String.valueOf(itemPosition+1))){
+            AcApp.putString("home_display_mode",String.valueOf(itemPosition+1));
+            new RefreshData().execute();
+            return true;
+        }
+        return  false;
+    }
+
+    @Override
+    public void onSwitch(ActionBar bar) {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(bar.getThemedContext(), R.array.pref_entries_home_display_mode,
+                android.R.layout.simple_spinner_item/*R.layout.sherlock_spinner_item*/);
+        adapter.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
+        bar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
+        bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        bar.setListNavigationCallbacks(adapter, this);
     }
 }

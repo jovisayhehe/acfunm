@@ -20,10 +20,9 @@
         <item name="android:windowBackground">@color/main_win_bg</item>
         <item name="android:checkboxStyle">@style/ACCheckBox</item>
         <item name="android:radioButtonStyle">@style/ACRadioButton</item>
-        
+        <item name="spinnerItemStyle">@style/spinnerItemStyle</item>
         <item name="vpiTabPageIndicatorStyle">@style/AcTabPageIndicator</item>
     </style>
-
     <style name="AcTabBarStyle" parent="Widget.Sherlock.Light.ActionBar.TabBar">
         <item name="android:dividerPadding">0dp</item>
         <item name="android:showDividers">middle</item>
@@ -80,7 +79,16 @@
     <style name="ACRadioButton" parent="android:Widget.CompoundButton.RadioButton">
         <item name="android:button">@drawable/btn_radio_holo_light</item>
     </style>
-
+    
+    <style name="spinnerItemStyle" parent="@style/Widget.Sherlock.TextView.SpinnerItem">
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+    </style>
+    <style name="Transparent" parent="@style/Theme.Sherlock.Light.NoActionBar">
+        <item name="android:windowBackground">@color/half_transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>   
+    </style>
    
     
 </resources>

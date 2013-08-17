@@ -1,24 +1,20 @@
 package tv.avfun.api;
 
 
-import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.json.external.JSONArray;
 import org.json.external.JSONException;
 import org.json.external.JSONObject;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -138,23 +134,28 @@ public class ApiParser {
         String url = ChannelApi.getLatestRepliedUrl(channelId, count);
         return getChannelContents(channelId,url);
     }
-    public static TreeMap<Integer ,Comment> getComments(String aid, int page) throws Exception {
+    /**
+     * reset when getComments(String, int) invoke
+     */
+    public static List<Integer> commentIdList;
+    public static SparseArray<Comment> getComments(String aid, int page) throws Exception {
         String url = "http://www.acfun.tv/comment_list_json.aspx?contentId=" + aid
                 + "&currentPage=" + page;
         JSONObject jsonObject = Connectivity.getJSONObject(url);
         JSONArray commentList = jsonObject.getJSONArray("commentList");
         commentsTotalPage = jsonObject.getInt("totalPage");
-        TreeMap<Integer ,Comment> comments = null;
+        SparseArray<Comment> comments = null;
         if (commentList.length() > 0) {
-            comments = new TreeMap<Integer ,Comment>(new Comparator<Integer>() {
-                @Override
-                public int compare(Integer lhs, Integer rhs) {
-                    return  rhs.intValue()-lhs.intValue();
-                }
-            });
+            commentIdList = new ArrayList<Integer>(commentList.length());
+            for(int i=0 ;i < commentList.length();i++){
+                commentIdList.add(commentList.getInt(i));
+            }
+            comments = new SparseArray<Comment>();
             JSONObject commentContentArr = jsonObject.getJSONObject("commentContentArr");
-            for(int i=0;i<commentList.length();i++){
-                JSONObject content = commentContentArr.getJSONObject("c"+commentList.get(i).toString());
+            
+            for(Iterator<String> keysIterator = commentContentArr.keys();keysIterator.hasNext();){
+                String key = keysIterator.next();
+                JSONObject content = commentContentArr.getJSONObject(key);
                 Comment comment = new Comment();
                 comment.cid = content.getInt("cid");
                 comment.content = content.getString("content");
@@ -165,6 +166,11 @@ public class ApiParser {
                 comment.quoteId = content.optInt("quoteId");
                 comment.count = content.optInt("count");
                 comments.put(comment.cid,comment);
+            }
+        }else{
+            if(commentIdList != null){
+                commentIdList.clear();
+                commentIdList = null;
             }
         }
         return comments;
@@ -203,17 +209,26 @@ public class ApiParser {
             return comments;
         }
     }
-    public static List<Bangumi[]> getBangumiTimeList(Document doc){
+    public static List<Bangumi[]> getBangumiTimeList(int ulIndex){
+        Document doc =DataStore.getInstance().getHomeCache();
+        if(doc == null){
+            doc =Connectivity.getDoc("http://www.acfun.tv", UserAgent.MY_UA);
+            DataStore.getInstance().saveHomeCache(doc);
+        }
+        Log.i(TAG, String.format("get %d list",ulIndex));
+        return getBangumiTimeList(doc,ulIndex);
+    }
+    
+    public static List<Bangumi[]> getBangumiTimeList(Document doc, int ulIndex){
         if(doc == null) return null;
         Elements ems = doc.getElementsByAttributeValue("id", "bangumi-index");
-        if(ems.size() == 0) {
+        if(ems == null || ems.size() == 0) {
             if(BuildConfig.DEBUG) Log.e("Parser", "获取失败！检查网页连接！"); 
             return null;
         }
         ems = ems.get(0).getElementsByTag("ul");
-        int ulIndex = 0;
-        if (ems.size() >= 1)
-            ulIndex = 1;
+        if (ulIndex >ems.size())
+            ulIndex = ems.size();
         ems = ems.get(ulIndex).getElementsByTag("li");
         ems.remove(ems.size() - 1);
         List<Bangumi[]> timelist = new ArrayList<Bangumi[]>();
@@ -232,50 +247,14 @@ public class ApiParser {
         }
         return timelist;
     }
-    @Deprecated
-    public static List<Bangumi[]> getBangumiTimeList(){
-        Document doc;
-        try {
-            // http://www.acfun.tv/v/list67/index.htm
-            doc = Jsoup.parse(new File(AcApp.instance().getCacheDir(), DataStore.HOME_CACHE),"utf-8");
-            
-//            doc = Connectivity.getDoc("http://www.acfun.tv/v/list67/index.htm", UserAgent.getRandom());
-        } catch (IOException e) {
-            if(BuildConfig.DEBUG)
-                Log.e("Parser", "get time list failed", e);
-            return null;
-        }
-//        Elements ems = doc.getElementsByAttributeValue("id", "bangumi");
-//        if(ems.size() == 0) {
-//            if(BuildConfig.DEBUG) Log.e("Parser", "获取失败！检查网页连接！"); 
-//            return null;
-//        }
-//        ems = ems.get(0).getElementsByTag("li");
-//        ems.remove(ems.size() - 1);
-//        List<Bangumi[]> timelist = new ArrayList<Bangumi[]>();
-//
-//        for (Element element : ems) {
-//            Elements videoems = element.getElementsByClass("title");
-//            Bangumi[] bangumis = new Bangumi[videoems.size()];
-//
-//            for (int i = 0; i < videoems.size(); i++) {
-//                bangumis[i] = new Bangumi();
-//                bangumis[i].title = videoems.get(i).text();
-//                bangumis[i].aid = videoems.get(i).attr("data-aid");
-//            }
-//            timelist.add(bangumis);
-//
-//        }
-//        return timelist;
-        return getBangumiTimeList(doc);
-    }
+    
     public static VideoInfo getVideoInfoByAid(String aid) throws Exception{
         VideoInfo video = new VideoInfo();
         video.parts = new ArrayList<VideoPart>();
         String url = "http://www.acfun.tv/api/content.aspx?query=" + aid;
         JSONObject jsonObject = Connectivity.getJSONObject(url);
         // get tags
-        if(!jsonObject.getBoolean("success"))
+        if(!jsonObject.optBoolean("success"))
             return null;
         JSONArray tagsArray = jsonObject.getJSONArray("tags");
         video.tags = new String[tagsArray.length()];
@@ -502,25 +481,34 @@ public class ApiParser {
         return vid;
     }
     public static void parseSinaVideoItem(VideoPart item, int parseMode){
-        if(item == null || TextUtils.isEmpty(item.vid))
-            throw new IllegalArgumentException("item or item's vid cannot be null");
         try {
-            if(parseMode<2){
-                item.vid = getSinaMp4Vid(item.vid); // 获取mp4 的vid
-                if(BuildConfig.DEBUG) Log.i(TAG, "获取sina MP4");
+            if(item == null || TextUtils.isEmpty(item.vid))
+                throw new IllegalArgumentException("item or item's vid cannot be null");
+            if(BuildConfig.DEBUG) Log.i(TAG, "尝试获取sina :"+item.vid);
+//            if(parseMode<2){
+//                item.vid = getSinaMp4Vid(item.vid); // 获取mp4 的vid
+//            }
+//            String url = "http://v.iask.com/v_play.php?vid=" + item.vid;
+            String url = "http://sex.acfun.tv/Home/Sina?app_key=1917945218&vid="+item.vid +"&dtime="+System.currentTimeMillis();
+            Document doc = Connectivity.getDoc(url, UserAgent.DEFAULT);
+            if(doc == null)
+                doc = Connectivity.getDoc("http://v.iask.com/v_play.php?vid=" + item.vid, UserAgent.DEFAULT);
+            Elements result = doc.getElementsByTag("result");
+            if(result!= null && result.size()>0) {
+                String r = result.get(0).text();
+                if("error".equals(r))
+                    throw new IllegalAccessException();
             }
-            String url = "http://v.iask.com/v_play.php?vid=" + item.vid;
-            Document doc = Connectivity.getDoc(url, UserAgent.IPAD);
             Elements durls = doc.getElementsByTag("durl");
             item.segments = new ArrayList<VideoSegment>();
             for(int i=0;i<durls.size();i++){
                 Element durl = durls.get(i);
-                String second = durl.getElementsByTag("length").get(0).text();
+                String duration = durl.getElementsByTag("length").get(0).text();
                 String text = durl.getElementsByTag("url").get(0).text();
                 if(BuildConfig.DEBUG)
-                    Log.i("parse sina", "url="+text+"，lenght="+second);
+                    Log.i("parse sina", "url="+text+"，duration="+duration);
                 VideoSegment s = new VideoSegment();
-                s.duration = Integer.parseInt(second);
+                s.duration = Long.parseLong(duration);
                 s.num = i;
                 s.url = text;
                 s.stream = s.url; // TODO: get download url 
@@ -537,6 +525,7 @@ public class ApiParser {
         //vid=84sHlkSh6bE
         //String url = "http://video.store.qq.com/"+item.vid+".flv?channel=web&rfc=v0";
         String url = "http://vv.video.qq.com/geturl?otype=json&vid="+item.vid;
+        if(BuildConfig.DEBUG) Log.i(TAG, "尝试获取QQ :"+item.vid);
         try {
             HttpURLConnection conn = Connectivity.openConnection(url);
             if(conn.getResponseCode() == 200){
@@ -550,7 +539,7 @@ public class ApiParser {
                 for(int i=0;i<viArray.length();i++){
                     JSONObject vi = viArray.getJSONObject(i);
                     VideoSegment s = new VideoSegment();
-                    s.duration = (int) Float.parseFloat(vi.getString("dur")); // "dur": "6022.36"
+                    s.duration = (long)(Float.parseFloat(vi.getString("dur"))*1000); // "dur": "6022.36"
                     s.size = vi.getLong("fs"); // "fs": 452279984
                     s.num = i;
                     s.url = vi.getString("url");// "url": "http://vhotwsh.video.qq.com/flv/76/54/84sHlkSh6bE.mp4?vkey=...
@@ -572,6 +561,7 @@ public class ApiParser {
         if(item == null || TextUtils.isEmpty(item.vid))
             throw new IllegalArgumentException("item or item's vid cannot be null");
         String url = "http://v2.tudou.com/v?it=" + item.vid;
+        if(BuildConfig.DEBUG) Log.i(TAG, "尝试获取tudou :"+item.vid);
         try {
             Elements ems = Connectivity.getElements(url, "f");
             item.segments = new ArrayList<VideoSegment>();
@@ -608,6 +598,7 @@ public class ApiParser {
         if(item == null || TextUtils.isEmpty(item.vid))
             throw new IllegalArgumentException("item or item's vid cannot be null");
         String url = "http://v.youku.com/player/getPlayList/VideoIDS/"+item.vid;
+        if(BuildConfig.DEBUG) Log.i(TAG, "尝试获取youku :"+item.vid);
         try {
             JSONObject jsonObject = Connectivity.getJSONObject(url);
             if(jsonObject == null) return;
@@ -641,10 +632,10 @@ public class ApiParser {
                 String k = part.getString("k");
                 String k2 = part.getString("k2");
                 VideoSegment s = new VideoSegment();
-                s.duration = (int) Float.parseFloat(part.getString("seconds"));
+                s.duration = (long) (Float.parseFloat(part.getString("seconds"))*1000);
                 s.num = i;
                 s.size = part.getLong("size");
-                String u = "http://f.youku.com/player/getFlvPath/sid/00_"+ String.format("%02d", i)+"/st/"+vPath+"/fileid/"+ realFileid.substring(0, 8)+ String.format("%02d", i) + realFileid.substring(10)+"?K="+k+",k2:"+k2;
+                String u = "http://f.youku.com/player/getFlvPath/sid/"+System.currentTimeMillis()+"_"+ String.format("%02d", i)+"/st/"+vPath+"/fileid/"+ realFileid.substring(0, 8)+ String.format("%02X", i) + realFileid.substring(10)+"?K="+k+",k2:"+k2;
                 if(BuildConfig.DEBUG) Log.i(TAG, "url= "+u);
                 s.url = Connectivity.getRedirectLocation(u, UserAgent.DEFAULT);
                 s.stream = s.url;

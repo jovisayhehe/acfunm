@@ -2,18 +2,14 @@ package tv.avfun;
 
 
 import io.vov.vitamio.MediaPlayer;
-import io.vov.vitamio.MediaPlayer.OnBufferingUpdateListener;
-import io.vov.vitamio.MediaPlayer.OnCompletionListener;
-import io.vov.vitamio.MediaPlayer.OnErrorListener;
-import io.vov.vitamio.MediaPlayer.OnPreparedListener;
 import io.vov.vitamio.widget.MediaController;
-import io.vov.vitamio.widget.VideoView;
-
-import java.util.ArrayList;
-
 import tv.ac.fun.R;
-import tv.avfun.api.net.UserAgent;
-import tv.avfun.entity.VideoSegment;
+import tv.avfun.entity.VideoPart;
+import tv.danmaku.media.AbsMediaPlayer;
+import tv.danmaku.media.AbsMediaPlayer.OnBufferingUpdateListener;
+import tv.danmaku.media.AbsMediaPlayer.OnCompletionListener;
+import tv.danmaku.media.AbsMediaPlayer.OnInfoListener;
+import tv.danmaku.media.list.VideoView;
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -28,73 +24,60 @@ public class PlayActivity extends Activity{
 	private VideoView mVideoView;
 	private TextView textView;
 	private ProgressBar progress;
-	private ArrayList<VideoSegment> parts;
-	private String displayName;
-	private int index =0;
+	private VideoPart parts;
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		if (!io.vov.vitamio.LibsChecker.checkVitamioLibs(this))
 			return;
 		setContentView(R.layout.videoview);
-		parts = (ArrayList<VideoSegment>) getIntent().getSerializableExtra("parts");
-		displayName = getIntent().getStringExtra("displayName");
+		MobclickAgent.onEvent(this, "into_play");
+		Object obj = getIntent().getExtras().getSerializable("item");
+        if(obj == null) throw new IllegalArgumentException("what does the video item you want to play?");
+        parts = (VideoPart) obj;
 		mVideoView = (VideoView) findViewById(R.id.surface_view);
-		mVideoView.setVideoPath(parts.get(index).url);
-		mVideoView.setFileName(displayName);
+		
 		textView = (TextView) findViewById(R.id.video_proess_text);
 		progress = (ProgressBar) findViewById(R.id.video_time_progress);
-		mVideoView.setOnBufferingUpdateListener(new OnBufferingUpdateListener() {
-			
-			@Override
-			public void onBufferingUpdate(MediaPlayer arg0, int arg1) {
-				
-				textView.setText(arg1+"");
-				if(arg0.isBuffering()){
-					textView.setVisibility(View.GONE);
-					progress.setVisibility(View.GONE);
-				}
-			}
-		});
-		
 		mVideoView.setOnCompletionListener(new MOnCompletionListener());
-		mVideoView.setOnErrorListener(errListener);
-		mVideoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_MEDIUM);
 		mVideoView.setMediaController(new MediaController(this));
+		mVideoView.setOnInfoListener(new OnInfoListener() {
+            
+            @Override
+            public boolean onInfo(AbsMediaPlayer mp, int what, int extra) {
+                if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START){
+                    mp.pause();
+                    textView.setVisibility(View.VISIBLE);
+                    progress.setVisibility(View.VISIBLE);
+                }
+                else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END){
+                    mp.start();
+                    progress.setVisibility(View.GONE);
+                } //else if(what == MediaPlayer.MEDIA_INFO_DOWNLOAD_RATE_CHANGED) {
+                    // TODO 
+                //}
+                return true;
+            }
+        });
+		mVideoView.setOnBufferingUpdateListener(new OnBufferingUpdateListener() {
+            
+            @Override
+            public void onBufferingUpdate(AbsMediaPlayer arg0, int arg1) {
+                textView.setText(arg1+"");
+                if(arg0.isBuffering() || arg1 >= 90){
+                    textView.setVisibility(View.GONE);
+                    progress.setVisibility(View.GONE);
+                }
+            }
+        });
+		mVideoView.setVideoPart(parts);
 	}
 	
-	private OnErrorListener errListener = new OnErrorListener() {
-        
-        @Override
-        public boolean onError(MediaPlayer arg0, int arg1, int arg2) {
-            isError = true;
-            return false;
-        }
-    };
-    private boolean isError;
-	private final class MOnCompletionListener implements OnCompletionListener{
+	private final class MOnCompletionListener implements  OnCompletionListener{
 
 		@Override
-		public void onCompletion(MediaPlayer mPlayer) {
-		    
-	        if(parts == null || ++index >= parts.size() || isError) {
-	            finish();
-	            return;
-	        }
-			Toast.makeText(PlayActivity.this, "开始缓冲下一段...稍后", 1).show();
-			mPlayer.getDuration();
-			mVideoView.setVideoPath(parts.get(index).url);
-			mVideoView.setOnCompletionListener(new MOnCompletionListener());
-			mVideoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_MEDIUM);
-			mVideoView.setMediaController(new MediaController(PlayActivity.this));
-			mVideoView.setOnPreparedListener(new OnPreparedListener() {
-				
-				@Override
-				public void onPrepared(MediaPlayer arg0) {
-					
-					
-				}
-			});
+		public void onCompletion(AbsMediaPlayer mPlayer) {
+		    finish();
 		}
 		
 	}

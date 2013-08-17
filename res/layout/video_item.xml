@@ -6,31 +6,33 @@
 <LinearLayout 
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/card_bg"
+    android:padding="1.5dp"
     android:orientation="vertical" >
 
-    <FrameLayout
+<!--     <FrameLayout
         android:layout_gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="75dip" >
+        android:layout_height="75dip" > -->
 
         <ImageView
             android:gravity="center"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/preview_image_height"
             android:id="@+id/item_video_preview_image"
             android:scaleType="fitXY"
             android:src="@drawable/no_picture" />
 
-        <ImageView
+        <!-- <ImageView
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="fitXY"
-            android:src="@drawable/cover" />
-    </FrameLayout>
+            android:src="@drawable/cover" /> -->
+ <!--    </FrameLayout> -->
 
     <TextView
-        android:layout_marginTop="2dip"
+        android:padding="2dp"
         android:id="@+id/item_video_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -42,6 +44,7 @@
 
     <LinearLayout
         android:layout_marginTop="2dip"
+        android:padding="2dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 

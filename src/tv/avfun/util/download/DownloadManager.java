@@ -12,7 +12,6 @@ import tv.avfun.entity.VideoSegment;
 import tv.avfun.util.FileUtil;
 import android.content.Context;
 import android.content.Intent;
-import android.sax.StartElementListener;
 import android.text.TextUtils;
 
 /**
@@ -34,8 +33,7 @@ public class DownloadManager {
         mObservers = new ArrayList<DownloadObserver>();
         mProvider = new DownloadProvider(context, this);
     }
-    
-    
+    public boolean isRequestWifi = true;
     public DownloadProvider getProvider() {
         return mProvider;
     }

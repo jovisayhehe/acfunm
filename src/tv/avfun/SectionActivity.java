@@ -2,7 +2,6 @@
 package tv.avfun;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import tv.ac.fun.BuildConfig;
 import tv.ac.fun.R;
@@ -11,19 +10,13 @@ import tv.avfun.app.AcApp;
 import tv.avfun.entity.VideoPart;
 import tv.avfun.entity.VideoSegment;
 import tv.avfun.util.FileUtil;
-import android.app.ActivityOptions;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -33,13 +26,13 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.umeng.analytics.MobclickAgent;
 
-public class SectionActivity extends SherlockActivity implements OnClickListener {
+public class SectionActivity extends SherlockActivity/* implements OnClickListener */{
 
     private String            vid;
     private ProgressBar       progressBar;
     private TextView          time_outtext;
     private ListView          list;
-    private SectionAdapter    adapter;
+//    private SectionAdapter    adapter;
     private ArrayList<VideoSegment> data = new ArrayList<VideoSegment>();
     private int               playmode    = 0;
     private static final int  PARSE_OK    = 1;
@@ -72,11 +65,11 @@ public class SectionActivity extends SherlockActivity implements OnClickListener
                 getdatas();
             }
         });
-        list.setVisibility(View.INVISIBLE);
-        list.setDivider(getResources().getDrawable(R.drawable.listview_divider));
-        list.setDividerHeight(2);
-        adapter = new SectionAdapter(this, data);
-        list.setAdapter(adapter);
+//        list.setVisibility(View.INVISIBLE);
+//        list.setDivider(getResources().getDrawable(R.drawable.listview_divider));
+//        list.setDividerHeight(2);
+//        adapter = new SectionAdapter(this, data);
+//        list.setAdapter(adapter);
         getdatas();
     }
 
@@ -98,7 +91,7 @@ public class SectionActivity extends SherlockActivity implements OnClickListener
                 case PARSE_OK:
                     list.setVisibility(View.VISIBLE);
                     Intent intent = new Intent();
-                    intent.putExtra("displayName", item.subtitle+"(共"+item.segments.size()+"段)");
+                    intent.putExtra("displayName", item.subtitle/*+"(共"+item.segments.size()+"段)"*/);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     if (playmode != 0) {
                             intent.setAction(Intent.ACTION_VIEW);
@@ -177,73 +170,73 @@ public class SectionActivity extends SherlockActivity implements OnClickListener
         return super.onOptionsItemSelected(item);
     }
 
-    private final class SectionAdapter extends BaseAdapter {
-
-        private List<VideoSegment> data;
-
-        public SectionAdapter(Context context, List<VideoSegment> data) {
-            this.data = data;
-        }
-
-        public void setData(List<VideoSegment> data) {
-            this.data = data;
-        }
-
-        @Override
-        public int getCount() {
-
-            return this.data.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-
-            return this.data.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            TextView textView = new TextView(SectionActivity.this);
-
-            textView.setText(String.valueOf(position + 1));
-            textView.setTextSize(24);
-            textView.setTypeface(null, Typeface.BOLD);
-            textView.setPadding(12, 12, 12, 12);
-            textView.setTextColor(Color.BLACK);
-            textView.setTag(data.get(position).url);
-            textView.setOnClickListener(SectionActivity.this);
-            textView.setBackgroundResource(R.drawable.selectable_background);
-            convertView = textView;
-            return convertView;
-        }
-
-    }
-
-    @Override
-    public void onClick(View v) {
-
-        String flvpath = (String) v.getTag();
-
-        if (playmode != 0) {
-            try {
-                Intent it = new Intent(Intent.ACTION_VIEW);
-                Uri uri = Uri.parse(flvpath);
-                it.setDataAndType(uri, "video/flv");
-                startActivity(it);
-                return;
-            } catch (Exception e) {
-                Toast.makeText(getApplicationContext(), "没有可用的外部播放器！", 0).show();
-            }
-        }
-        Intent intent = new Intent(SectionActivity.this, PlayActivity.class);
-        intent.putExtra("path", flvpath);
-        startActivity(intent);
-    }
+//    private final class SectionAdapter extends BaseAdapter {
+//
+//        private List<VideoSegment> data;
+//
+//        public SectionAdapter(Context context, List<VideoSegment> data) {
+//            this.data = data;
+//        }
+//
+//        public void setData(List<VideoSegment> data) {
+//            this.data = data;
+//        }
+//
+//        @Override
+//        public int getCount() {
+//
+//            return this.data.size();
+//        }
+//
+//        @Override
+//        public Object getItem(int position) {
+//
+//            return this.data.get(position);
+//        }
+//
+//        @Override
+//        public long getItemId(int position) {
+//
+//            return position;
+//        }
+//
+//        @Override
+//        public View getView(int position, View convertView, ViewGroup parent) {
+//
+//            TextView textView = new TextView(SectionActivity.this);
+//
+//            textView.setText(String.valueOf(position + 1));
+//            textView.setTextSize(24);
+//            textView.setTypeface(null, Typeface.BOLD);
+//            textView.setPadding(12, 12, 12, 12);
+//            textView.setTextColor(Color.BLACK);
+//            textView.setTag(data.get(position).url);
+//            textView.setOnClickListener(SectionActivity.this);
+//            textView.setBackgroundResource(R.drawable.selectable_background);
+//            convertView = textView;
+//            return convertView;
+//        }
+//
+//    }
+//
+//    @Override
+//    public void onClick(View v) {
+//
+//        String flvpath = (String) v.getTag();
+//
+//        if (playmode != 0) {
+//            try {
+//                Intent it = new Intent(Intent.ACTION_VIEW);
+//                Uri uri = Uri.parse(flvpath);
+//                it.setDataAndType(uri, "video/*");
+//                startActivity(it);
+//                return;
+//            } catch (Exception e) {
+//                Toast.makeText(getApplicationContext(), "没有可用的外部播放器！", 0).show();
+//            }
+//        }
+//        Intent intent = new Intent(SectionActivity.this, PlayActivity.class);
+//        intent.putExtra("path", flvpath);
+//        startActivity(intent);
+//    }
 }

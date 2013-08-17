@@ -6,15 +6,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
-
-import org.jsoup.nodes.Document;
 
 import tv.ac.fun.R;
-import tv.avfun.api.ApiParser;
-import tv.avfun.api.Bangumi;
-import tv.avfun.api.net.Connectivity;
-import tv.avfun.api.net.UserAgent;
 import tv.avfun.app.AcApp;
 import tv.avfun.util.DataStore;
 import android.app.Activity;
@@ -83,36 +76,14 @@ public class SplashActivity extends Activity {
             }.start();
             
         }
-        if(!DataStore.getInstance().isBangumiListCached())
-            init();
     }
 
-    private void init() {
-        new Thread() {
-
-            @Override
-            public void run() {
-                try {
-                    
-                    Document doc = Connectivity.getDoc("http://www.acfun.tv", UserAgent.MY_UA);
-                    List<Bangumi[]> timeList = ApiParser.getBangumiTimeList(doc);
-                    DataStore.getInstance().saveTimeList(timeList);
-                    DataStore.writeToFile(new File(getCacheDir(), DataStore.HOME_CACHE).getAbsolutePath(), doc.data());
-                    doc.empty();
-                    doc = null;
-                    mHandler.sendEmptyMessage(0);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }.start();
-        
-    }
 
     private void clearCache() {
         
         new File(getCacheDir(), DataStore.CHANNEL_LIST_CACHE).delete();
-        new File(getCacheDir(), DataStore.TIME_LIST_CACHE).delete();
+        new File(getCacheDir(), DataStore.TIME_LIST_CACHE_0).delete();
+        new File(getCacheDir(), DataStore.TIME_LIST_CACHE_1).delete();
     }
     private void copy(String source, String dest) {
         FileInputStream in = null;

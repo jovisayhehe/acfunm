@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/title_bg_fun"
-            android:paddingLeft="40dip"
+            android:paddingLeft="@dimen/channel_title_padding_left"
             android:text="娱乐"
             android:textColor="@android:color/black"
             android:textSize="18sp" />

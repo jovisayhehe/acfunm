@@ -1,0 +1,3 @@
+[submodule "danmaku"]
+	path = danmaku
+	url = https://github.com/ctiao/DanmakuFlameMaster.git

@@ -6,4 +6,6 @@
    <dimen name="img_w">175dip</dimen>
    <dimen name="img_h">164dip</dimen>
    <dimen name="gdviewitemtext_size">30sp</dimen>
+   <dimen name="channel_title_padding_left">100dip</dimen>
+   <dimen name="preview_image_height">85dp</dimen>
 </resources>
