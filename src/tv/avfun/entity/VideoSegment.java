@@ -17,9 +17,9 @@ public class VideoSegment implements Serializable {
      */
     public int    num      = 0;
     /**
-     * 分段持续时间 second
+     * 分段持续时间 ms
      */
-    public int    duration = 0;
+    public long    duration = 0;
     /**
      * 播放的url，可能是远程的，或者本地的
      */

@@ -612,7 +612,7 @@ public class JSONObject {
      * undefined. The order of the keys is undefined.
      */
     /* Return a raw type for API compatibility */
-    public Iterator keys() {
+    public Iterator<String> keys() {
         return nameValuePairs.keySet().iterator();
     }
 

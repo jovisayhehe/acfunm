@@ -10,7 +10,7 @@
 	<string name="net_work_error">(つд⊂) 暂无网络连接！ </string>
 	<string name="loading">(`・ω・´) 努力地加载中...</string>
 	<string name="reloading">(つд⊂)  oops！点我重新加载...</string>
-	<string name="nocomments">(=ﾟωﾟ)= 暂时没有发现评论...</string>
+	<string name="nocomments">(`・ω・´) 快抢沙发！！!</string>
 	<string name="nomorecomments">(=ﾟωﾟ)= 已经没有啦...</string>
 	<string name="noparser">(=ﾟωﾟ)= 没有解析到视频...</string>
 	<string name="noresult">(=ﾟωﾟ)= 什么也没有搜索到...</string>
@@ -20,6 +20,7 @@
 	<string name="isboy">可爱的男孩子,还没有登陆</string>
 	<string name="boy">♂♂</string>
 	<string name="refresh">刷新</string>
+	<string name="sync">同步</string>
 	<string name="update_success">\\(^o^)/ 更新列表成功</string>
 	<string name="update_fail">(︶︿︶) 更新失败，请检查网络！</string>
 	<string name="update_lock">(-д-) 不要太在意更新...</string>
@@ -42,4 +43,7 @@
 	<string name="nosdcard">没有找到外部存储卡！</string>
 	<string name="faq_url">http://yrom.sinaapp.com/faq.html</string>
 	<string name="licence_url">http://yrom.sinaapp.com/ac_licence.html</string>
+	<string name="hide_requote">重复引用已隐藏</string>
+	<string name="download_tips">当前未连WIFI，下载视频文件非常耗流量，是否继续？</string>
+	<string name="splash">splash</string>
 </resources>

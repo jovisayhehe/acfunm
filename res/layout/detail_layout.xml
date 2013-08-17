@@ -76,8 +76,20 @@
             android:layout_below="@+id/detail_line"
             android:layout_marginTop="2dip"
             android:padding="4dip"
+            android:maxLines="3"
+            android:ellipsize="end"
             android:textColorLink="@color/main_color"
             android:textSize="12sp" />
+        <TextView 
+            android:id="@+id/btn_expand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/detail_desc"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/text_selectable_item_color"
+            android:text="↓展开"
+            android:padding="4dp"
+            />
     </RelativeLayout>
 
     <tv.avfun.view.BorderImageViewL

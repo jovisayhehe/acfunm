@@ -1,6 +1,7 @@
 
 package tv.avfun;
 
+import java.net.Authenticator.RequestorType;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,6 +14,8 @@ import tv.ac.fun.R;
 import tv.avfun.adapter.DetailAdaper;
 import tv.avfun.adapter.DetailAdaper.OnStatusClickListener;
 import tv.avfun.api.ApiParser;
+import tv.avfun.api.ChannelApi;
+import tv.avfun.api.MemberUtils;
 import tv.avfun.api.net.UserAgent;
 import tv.avfun.app.AcApp;
 import tv.avfun.db.DBService;
@@ -23,15 +26,17 @@ import tv.avfun.util.ArrayUtil;
 import tv.avfun.util.NetWorkUtil;
 import tv.avfun.util.StringUtil;
 import tv.avfun.util.download.DownloadEntry;
-import tv.avfun.util.download.DownloadJob;
 import tv.avfun.util.download.DownloadManager;
 import tv.avfun.util.lzlist.ImageLoader;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
+import android.text.TextUtils.TruncateAt;
 import android.text.util.Linkify;
 import android.text.util.Linkify.TransformFilter;
 import android.util.Log;
@@ -78,6 +83,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
     private boolean             isFavorite;
     private VideoInfo           mVideoInfo;
     private DownloadManager     mDownloadManager;
+    private TextView btnExpand;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -97,18 +103,38 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         initBar();
         initview();
         loadData();
+       
     }
-
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        tvDesc.post(new Runnable() {
+            
+            @Override
+            public void run() {
+                if (tvDesc.getLineCount()>=3) {
+                    btnExpand.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+    }
     private void initBar() {
         getSupportActionBar().setBackgroundDrawable(this.getResources().getDrawable(R.drawable.ab_transparent));
         Drawable bg = getResources().getDrawable(R.drawable.border_bg);
         getSupportActionBar().setSplitBackgroundDrawable(bg);
     }
-
+    private RequestDetailTask task;
     private void loadData() {
-        new RequestDetailTask().execute();
+        
+        task = new RequestDetailTask();
+        task.execute();
     }
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(task!=null)
+            task.cancel(true);
+    }
     private class RequestDetailTask extends AsyncTask<Void, Void, Boolean> {
 
         private View     progress;
@@ -129,14 +155,17 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                DownloadManager man = AcApp.instance().getDownloadManager();
-                List<VideoPart> downloadParts = man.getVideoParts(aid);
-                
                 if (NetWorkUtil.isNetworkAvailable(getApplicationContext())) {
                     mVideoInfo = ApiParser.getVideoInfoByAid(aid);
                     if(mVideoInfo == null) return false;
+                    if(ChannelApi.getChannelType(mVideoInfo.channelId) == 1){
+                        return null;
+                    }
                     mData.addAll(mVideoInfo.parts);
                 }
+                DownloadManager man = AcApp.instance().getDownloadManager();
+                List<VideoPart> downloadParts = man.getVideoParts(aid);
+                
                 if(downloadParts != null){
                     for(VideoPart part: downloadParts){
                         mData.remove(part); // 过滤
@@ -155,7 +184,14 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
 
         @Override
         protected void onPostExecute(Boolean result) {
-            if (result) {
+            if(result == null){
+                Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
+                intent.putExtra("aid", aid);
+                intent.putExtra("channelId", mVideoInfo.channelId);
+                intent.putExtra("title", mVideoInfo.title);
+                startActivity(intent);
+                finish();
+            } else if (result) {
                 if (from > 0) {
                     tvUserName.setText(mVideoInfo.upman == null ? "无名氏" : mVideoInfo.upman);
                     tvViews.setText(mVideoInfo.views + "");
@@ -172,6 +208,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
                     }
                 }
                 setDescription(tvDesc);
+                tvDesc.getLineCount();
                 tvBtnPlay.setText("播放");
                 tvBtnPlay.setOnClickListener(DetailActivity.this);
                 mListView.setVisibility(View.VISIBLE);
@@ -200,6 +237,26 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         tvBtnPlay.setTag(TAG_PLAY);
         tvBtnPlay.setOnClickListener(this);
         tvDesc = (TextView) findViewById(R.id.detail_desc);
+        btnExpand = (TextView) findViewById(R.id.btn_expand);
+        btnExpand.setVisibility(View.GONE);
+        btnExpand.setOnClickListener(new OnClickListener() {
+            boolean isExpand;
+            @Override
+            public void onClick(View v) {
+                if(isExpand){
+                    tvDesc.setEllipsize(TruncateAt.END);
+                    tvDesc.setMaxLines(3);
+                    btnExpand.setText("↓详情");
+                    isExpand = false;
+                }else{
+                    tvDesc.setEllipsize(null);
+                    tvDesc.setSingleLine(false);
+                    btnExpand.setText("↑收起");
+                    isExpand = true;
+                }
+                
+            }
+        });
         if (from == 2) {
             // av://ac000000
             aid = mIntent.getDataString().substring(7);
@@ -251,7 +308,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
 
     private void startPlay(VideoPart item) {
         addToHistory();
-        Intent intent = new Intent(DetailActivity.this, SectionActivity.class);
+        Intent intent = new Intent(DetailActivity.this, PlayActivity.class);
         intent.putExtra("item", item);
         startActivity(intent);
     }
@@ -310,18 +367,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
             MobclickAgent.onEvent(DetailActivity.this,"share");
             break;
         case R.id.menu_item_fov_action_provider_action_bar:
-            if (isFavorite) {
-                new DBService(this).delFav(aid);
-                isFavorite = false;
-                item.setIcon(R.drawable.rating_favorite);
-                Toast.makeText(this, "取消成功", Toast.LENGTH_SHORT).show();
-            } else {
-                new DBService(this).addtoFav(aid, title, 0, channelid);
-                isFavorite = true;
-                item.setIcon(R.drawable.rating_favorite_p);
-                Toast.makeText(this, "收藏成功", Toast.LENGTH_SHORT).show();
-                MobclickAgent.onEvent(DetailActivity.this,"add_favorite");
-            }
+            handleFavorite(item);
             break;
         case R.id.menu_item_comment:
             Intent intent = new Intent(DetailActivity.this, CommentsActivity.class);
@@ -331,6 +377,36 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
             break;
         }
         return true;
+    }
+
+    private void handleFavorite(MenuItem item) {
+        if (isFavorite) {
+            new DBService(this).delFav(aid);
+            isFavorite = false;
+            item.setIcon(R.drawable.rating_favorite);
+            Toast.makeText(this, "取消成功", Toast.LENGTH_SHORT).show();
+            if(AcApp.instance().isLogin()){
+                new Thread() {
+                    public void run() {
+                        MemberUtils.deleteFavourite(aid, AcApp.instance().getCookies());
+                    }
+                }.start();
+            }
+            MobclickAgent.onEvent(DetailActivity.this,"delete_favorite");
+        } else {
+            new DBService(this).addtoFav(aid, title, 0, channelid);
+            isFavorite = true;
+            item.setIcon(R.drawable.rating_favorite_p);
+            Toast.makeText(this, "收藏成功", Toast.LENGTH_SHORT).show();
+            if(AcApp.instance().isLogin()){
+                new Thread() {
+                    public void run() {
+                        MemberUtils.addFavourite(aid, AcApp.instance().getCookies());
+                    }
+                }.start();
+            }
+            MobclickAgent.onEvent(DetailActivity.this,"add_favorite");
+        }
     }
 
     public void setDescription(TextView text) {
@@ -345,7 +421,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
                 return "http://wiki.acfun.tv/index.php/" + t;
             }
         });
-        Pattern http = Pattern.compile("(http://(?:[a-z0-9.-]+[.][a-z]{2,}+(?::[0-9]+)?)(?:/[^\\s\u3010\u4e00-\u9fa5]*)?)",
+        Pattern http = Pattern.compile("(http://(?:[a-z0-9.-]+[.][a-z]{2,}+(?::[0-9]+)?)(?:/[^\\s\u3000-\u9fe0]*)?)",
                 Pattern.CASE_INSENSITIVE);
         Linkify.addLinks(text, http, "http://");
         Linkify.addLinks(text, Pattern.compile("(ac\\d{5,})", Pattern.CASE_INSENSITIVE), "av://");
@@ -370,20 +446,44 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         MobclickAgent.onPause(this);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-    
     private OnStatusClickListener slistener = new OnStatusClickListener() {
 
         @Override
         public void doViewDownloadInfo(String vid) {
             startActivity(new Intent(DetailActivity.this,DownloadManActivity.class));
         }
-
+        
         @Override
-        public void doStartDownload(final VideoPart item) {
+        public void doStartDownload(final View v, final VideoPart item) {
+            
+            if(!NetWorkUtil.isWifiConnected(DetailActivity.this)){
+                DialogInterface.OnClickListener listener =  new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(which == DialogInterface.BUTTON_POSITIVE){
+                            mDownloadManager.isRequestWifi = false;
+                            startDownload(item);
+                            dialog.dismiss();
+                        }else{
+                            ((TextView)v).setText("下载");
+                            v.setTag(0);
+                            mDownloadManager.isRequestWifi = true;
+                            dialog.dismiss();
+                        }
+                    }
+                };
+                new AlertDialog.Builder(DetailActivity.this)
+                    .setTitle("下载视频")
+                    .setMessage(R.string.download_tips)
+                    .setPositiveButton("是", listener)
+                    .setNegativeButton("否", listener)
+                    .show();
+            }
+            else
+                startDownload(item);
+        }
+
+        private void startDownload(final VideoPart item) {
             final DownloadEntry entry = new DownloadEntry(aid,title,item);
             MobclickAgent.onEvent(DetailActivity.this,"download");
             if (item.segments == null || item.segments.isEmpty()) {
@@ -399,7 +499,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
                     }
                 }.start();
             }else
-                mDownloadManager.download(entry);
+                mHanlder.obtainMessage(1, entry).sendToTarget();
         }
 
         private Handler mHanlder =  new Handler(){

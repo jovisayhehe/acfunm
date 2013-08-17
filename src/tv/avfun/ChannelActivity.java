@@ -9,26 +9,15 @@ import tv.avfun.api.Channel;
 import tv.avfun.api.ChannelApi;
 import tv.avfun.app.AcApp;
 import tv.avfun.fragment.ChannelContentFragment;
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.util.Log;
-import android.view.GestureDetector;
-import android.view.GestureDetector.OnGestureListener;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnTouchListener;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
-import com.actionbarsherlock.app.ActionBar.TabListener;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -63,7 +52,7 @@ public class ChannelActivity extends SherlockFragmentActivity{
         ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         mPager = (ViewPager) findViewById(R.id.pager);
-        mPager.setOffscreenPageLimit(5);
+        mPager.setOffscreenPageLimit(3);
 
         initTab(gdposition);
         

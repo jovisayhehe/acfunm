@@ -6,6 +6,6 @@
     android:background="@color/update_info_bg"
     android:gravity="center"
     android:text="@string/update_fail"
-    android:textColor="@android:color/black"
+    android:textColor="@android:color/white"
     android:textSize="14sp"
     android:visibility="gone" />

@@ -12,10 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1.0"
         android:id="@+id/comments_edit"
-        android:hint="输入评论" >
-
-        <requestFocus />
-    </EditText>
+        android:hint="输入评论" />
 
     <ImageButton
         android:layout_width="wrap_content"

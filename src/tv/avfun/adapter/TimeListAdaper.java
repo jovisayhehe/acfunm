@@ -166,7 +166,6 @@ public class TimeListAdaper extends BaseAdapter{
 		
 		return convertView;
 	}
-	
 	private final class ButtonListener implements OnClickListener{
 		private int position;
 		private int i;

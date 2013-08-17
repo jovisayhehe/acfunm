@@ -8,17 +8,12 @@
     <TextView 
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:textColor="@color/main_color"
+    android:textColor="@android:color/black"
     android:textSize="14sp"
-    android:padding="8dip"
     android:text="今日最热"
     android:id="@+id/listheader_text"
+    android:drawableLeft="@drawable/square"
     />
     
-    <View 
-     android:background="@drawable/listview_divider"
-     android:layout_width="match_parent"
-     android:layout_height="1dip"
-     />
 
 </LinearLayout>
