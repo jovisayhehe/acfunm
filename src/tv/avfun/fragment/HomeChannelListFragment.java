@@ -228,8 +228,8 @@ public class HomeChannelListFragment extends BaseFragment implements VideoItemVi
             mBar.setSelectedNavigationItem(Integer.parseInt(AcApp.getHomeDisplayMode())-1);
             setLastUpdatedLabel(cachedTime);
             if(!isCached){
-                this.cancel(true);
                 new RefreshData().execute();
+                this.cancel(true);
             }
         }
         @Override
@@ -245,7 +245,6 @@ public class HomeChannelListFragment extends BaseFragment implements VideoItemVi
         }
         @Override
         protected Boolean doInBackground(Void... params) {
-            
             if (BuildConfig.DEBUG)
                 Log.i(TAG, "try to read channel list cache ");
             if (readCache()) {
