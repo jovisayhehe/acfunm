@@ -92,7 +92,10 @@ public class DefMediaListPlayer extends AbsMediaPlayer implements MediaPlayer.On
     public int getDuration() {
         if (mPlayIndex == null)
             return 0;
-
+        if(mTotalDuration <= mSegmentPlayer.getDuration()){
+            mPlayIndex.mSegmentList.get(mSegmentPlayer.getOrder()).duration = mSegmentPlayer.getDuration();
+            mTotalDuration = mPlayIndex.getTotalDuration();
+        }
         return (int) mTotalDuration;
     }
 
@@ -164,7 +167,7 @@ public class DefMediaListPlayer extends AbsMediaPlayer implements MediaPlayer.On
             if (player == null)
                 return null;
 
-            if (!player.mListLoader.loadIndex(true))
+            if (!player.mListLoader.loadIndex(false))
                 return null;
 
             return player.mListLoader.getPlayIndex();
@@ -343,6 +346,7 @@ public class DefMediaListPlayer extends AbsMediaPlayer implements MediaPlayer.On
                     if (nextSegment != null) {
                         mSegmentPlayer = createItemPlayer();
                         int startTime = mPlayIndex.getStartTime(nextOrder);
+
                         mSegmentPlayer.setSegment(nextOrder, startTime, nextSegment,mHeaders);
                         mSegmentPlayer.prepareAsync();
                     }

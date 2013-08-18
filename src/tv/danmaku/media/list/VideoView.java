@@ -456,7 +456,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
     mOnInfoListener = l;
   }
 
-  private void release(boolean cleartargetstate) {
+  public void release(boolean cleartargetstate) {
     if (mMediaPlayer != null) {
       mMediaPlayer.reset();
       mMediaPlayer.release();

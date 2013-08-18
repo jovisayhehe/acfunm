@@ -95,4 +95,10 @@ public class PlayActivity extends Activity{
         super.onPause();
         MobclickAgent.onPause(this);
     }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mVideoView.release(true);
+    }
+    
 }
