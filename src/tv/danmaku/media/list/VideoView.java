@@ -218,14 +218,25 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
       }
 
       if (getWindowToken() != null) {
-        int message = framework_err == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK ? R.string.VideoView_error_text_invalid_progressive_playback : R.string.VideoView_error_text_unknown;
+          int message = 0;
+          switch (framework_err) {
+            case 1:
+                message = R.string.VideoView_error_text_notfound;
+                break;
+            case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
+                message = R.string.VideoView_error_text_invalid_progressive_playback ;
+                break;
+            default:
+                message = R.string.VideoView_error_text_unknown;
+                break;
+        }
+          new AlertDialog.Builder(mContext).setTitle(R.string.VideoView_error_title).setMessage(message).setPositiveButton(R.string.VideoView_error_button, new DialogInterface.OnClickListener() {
+              public void onClick(DialogInterface dialog, int whichButton) {
+                  if (mOnCompletionListener != null)
+                      mOnCompletionListener.onCompletion(mMediaPlayer);
+              }
+          }).setCancelable(false).show();
 
-        new AlertDialog.Builder(mContext).setTitle(R.string.VideoView_error_title).setMessage(message).setPositiveButton(R.string.VideoView_error_button, new DialogInterface.OnClickListener() {
-          public void onClick(DialogInterface dialog, int whichButton) {
-            if (mOnCompletionListener != null)
-              mOnCompletionListener.onCompletion(mMediaPlayer);
-          }
-        }).setCancelable(false).show();
       }
       return true;
     }

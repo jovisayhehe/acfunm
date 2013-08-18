@@ -490,7 +490,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
 
                     public void run() {
                         
-                        ApiParser.parseVideoParts(item, AcApp.getParseMode());
+                        ApiParser.parseVideoParts(item, /*AcApp.getParseMode()*/2);
                         if (item.segments == null || item.segments.isEmpty())
                             mHanlder.sendEmptyMessage(0);
                         else 
