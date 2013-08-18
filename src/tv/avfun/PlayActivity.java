@@ -98,7 +98,8 @@ public class PlayActivity extends Activity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mVideoView.release(true);
+        if (mVideoView != null)
+            mVideoView.release(true);
     }
     
 }
