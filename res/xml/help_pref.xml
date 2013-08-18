@@ -36,7 +36,7 @@
         android:title="反(tu)馈(cao)" />
     <Preference
         android:key="hfun"
-        android:summary="一个充满A级爱情的地方"
+        android:summary="Hello，绅士！"
         android:title="A岛" />
 	</PreferenceCategory>
 </PreferenceScreen>
