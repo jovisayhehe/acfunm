@@ -305,6 +305,7 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 		}
 		send_btn.setEnabled(false);
 		Toast.makeText(CommentsActivity.this, "发送中...", Toast.LENGTH_SHORT).show();
+		MobclickAgent.onEvent(this, "post_comment");
 		new Thread(){
 			public void run(){
 				try {

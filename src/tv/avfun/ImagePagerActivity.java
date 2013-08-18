@@ -55,7 +55,7 @@ public class ImagePagerActivity extends SherlockActivity{
 		setContentView(R.layout.ac_image_pager);
 		
 		imageLoader = ImageLoader.getInstance();
-		
+		MobclickAgent.onEvent(this,"view_comic");
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		title = getIntent().getStringExtra("title");
 		aid = getIntent().getStringExtra("aid");

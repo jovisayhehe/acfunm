@@ -58,33 +58,35 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
     private boolean     isfavorite = false;
     private boolean     isbottom   = false;
     private int         modecode;
-    Handler             handler    = new Handler() {
-
-           @Override
-           public void handleMessage(Message msg) {
-
-               super.handleMessage(msg);
-               switch (msg.what) {
-               case 1:
-                   tprobar.setVisibility(View.GONE);
-                   mWebView.loadData(URLEncoder.encode(doc.html()).replaceAll("\\+", " "),
-                           "text/html; charset=UTF-8", null);
-                   break;
-               case 2:
-                   tprobar.setVisibility(View.GONE);
-                   reloadtext.setVisibility(View.VISIBLE);
-                   break;
-
-               default:
-                   break;
-               }
-           }
-
-       };
+    Handler  handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        handler = new Handler(new Handler.Callback() {
+            
+            @Override
+            public boolean handleMessage(Message msg) {
+
+                switch (msg.what) {
+                case 1:
+                    tprobar.setVisibility(View.GONE);
+                    mWebView.loadData(URLEncoder.encode(doc.html()).replaceAll("\\+", " "),
+                            "text/html; charset=UTF-8", null);
+                    MobclickAgent.onEvent(WebViewActivity.this,"view_article");
+                    break;
+                case 2:
+                    tprobar.setVisibility(View.GONE);
+                    reloadtext.setVisibility(View.VISIBLE);
+                    break;
+
+                default:
+                    break;
+                }
+                return true;
+            }
+
+        });
         setContentView(R.layout.web_view_layout);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);

@@ -1,7 +1,6 @@
 
 package tv.avfun;
 
-import java.net.Authenticator.RequestorType;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
