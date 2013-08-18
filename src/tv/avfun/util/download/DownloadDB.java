@@ -18,7 +18,7 @@ public interface DownloadDB {
     // =============================
     // constants
     // =============================
-    int    VERSION         = 1;
+    int    VERSION         = 2;
     String DOWNLOAD_DB     = "download.db";
     String DOWNLOAD_TABLE  = "downloads";
     /** download job's id*/
@@ -46,6 +46,8 @@ public interface DownloadDB {
     String COLUMN_TOTAL    = "total_bytes";
     /** downloaded bytes */
     String COLUMN_CURRENT  = "current_bytes";
+    /** media durationo */
+    String COLUMN_DURATION = "duration";
     /** file name */
     String COLUMN_DATA     = "_data"; 
     
