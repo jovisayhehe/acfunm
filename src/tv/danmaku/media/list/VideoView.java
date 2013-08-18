@@ -558,8 +558,6 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 
   public long getDuration() {
     if (isInPlaybackState()) {
-      if (mDuration > 0)
-        return mDuration;
       mDuration = mMediaPlayer.getDuration();
       return mDuration;
     }
