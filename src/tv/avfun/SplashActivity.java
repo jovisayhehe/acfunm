@@ -77,7 +77,14 @@ public class SplashActivity extends Activity {
             
         }
     }
-
+    @Override
+    public void onBackPressed() {
+        if(mHandler != null){
+            mHandler.removeMessages(0);
+            mHandler = null;
+        }
+        super.onBackPressed();
+    }
 
     private void clearCache() {
         

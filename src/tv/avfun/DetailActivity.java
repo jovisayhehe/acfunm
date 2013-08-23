@@ -409,7 +409,6 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
             Intent intent = new Intent(DetailActivity.this, CommentsActivity.class);
             intent.putExtra("aid", aid);
             startActivity(intent);
-            MobclickAgent.onEvent(DetailActivity.this,"view_comment");
             break;
         }
         return true;
@@ -527,11 +526,15 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
 
                     public void run() {
                         
-                        ApiParser.parseVideoParts(item, /*AcApp.getParseMode()*/2);
-                        if (item.segments == null || item.segments.isEmpty())
-                            mHanlder.sendEmptyMessage(0);
-                        else 
-                            mHanlder.obtainMessage(1, entry).sendToTarget();
+                        try{
+                            ApiParser.parseVideoParts(item, /*AcApp.getParseMode()*/2);
+                            if (item.segments != null && !item.segments.isEmpty()){
+                                mHanlder.obtainMessage(1, entry).sendToTarget();
+                                return;
+                            }
+                        }catch(Exception e){
+                        }
+                        mHanlder.sendEmptyMessage(0);
                     }
                 }.start();
             }else

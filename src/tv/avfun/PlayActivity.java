@@ -34,6 +34,7 @@ public class PlayActivity extends Activity{
 			return;
 		boolean showDanmaku = getIntent().getBooleanExtra("danmaku_mode", false);
 		if(showDanmaku){
+	        MobclickAgent.onEvent(this,"view_danmaku");
 		    setContentView(R.layout.activity_play);
 		}else
 		    setContentView(R.layout.videoview);
