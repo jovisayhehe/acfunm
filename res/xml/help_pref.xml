@@ -14,6 +14,7 @@
         />
     <Preference
         android:key="faq"
+        android:summary="QQ群:286721238"
         android:title="FAQ" />
     <Preference 
         android:key="licence"
