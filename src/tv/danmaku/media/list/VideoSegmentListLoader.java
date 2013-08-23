@@ -22,7 +22,11 @@ public class VideoSegmentListLoader{
         if(!part.isDownloading && !part.isDownloaded || b){
             if(BuildConfig.DEBUG)
                 Log.i(TAG, "parsing parts for " + part.vtype + part.vid);
-            ApiParser.parseVideoParts(part,AcApp.getParseMode());
+            try {
+                ApiParser.parseVideoParts(part,AcApp.getParseMode());
+            } catch (Exception e) {
+                return false;
+            }
         }
         
         return part.segments != null && !part.segments.isEmpty();

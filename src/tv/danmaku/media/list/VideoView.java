@@ -218,14 +218,25 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
       }
 
       if (getWindowToken() != null) {
-        int message = framework_err == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK ? R.string.VideoView_error_text_invalid_progressive_playback : R.string.VideoView_error_text_unknown;
+          int message = 0;
+          switch (framework_err) {
+            case 1:
+                message = R.string.VideoView_error_text_notfound;
+                break;
+            case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
+                message = R.string.VideoView_error_text_invalid_progressive_playback ;
+                break;
+            default:
+                message = R.string.VideoView_error_text_unknown;
+                break;
+        }
+          new AlertDialog.Builder(mContext).setTitle(R.string.VideoView_error_title).setMessage(message).setPositiveButton(R.string.VideoView_error_button, new DialogInterface.OnClickListener() {
+              public void onClick(DialogInterface dialog, int whichButton) {
+                  if (mOnCompletionListener != null)
+                      mOnCompletionListener.onCompletion(mMediaPlayer);
+              }
+          }).setCancelable(false).show();
 
-        new AlertDialog.Builder(mContext).setTitle(R.string.VideoView_error_title).setMessage(message).setPositiveButton(R.string.VideoView_error_button, new DialogInterface.OnClickListener() {
-          public void onClick(DialogInterface dialog, int whichButton) {
-            if (mOnCompletionListener != null)
-              mOnCompletionListener.onCompletion(mMediaPlayer);
-          }
-        }).setCancelable(false).show();
       }
       return true;
     }
@@ -445,7 +456,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
     mOnInfoListener = l;
   }
 
-  private void release(boolean cleartargetstate) {
+  public void release(boolean cleartargetstate) {
     if (mMediaPlayer != null) {
       mMediaPlayer.reset();
       mMediaPlayer.release();
@@ -515,6 +526,8 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
     if (isInPlaybackState()) {
       mMediaPlayer.start();
       mCurrentState = STATE_PLAYING;
+      if(mOnStartListener != null)
+          mOnStartListener.onStart(this);
     }
     mTargetState = STATE_PLAYING;
   }
@@ -524,6 +537,8 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
       if (mMediaPlayer.isPlaying()) {
         mMediaPlayer.pause();
         mCurrentState = STATE_PAUSED;
+        if(mOnPauseListener!=null)
+            mOnPauseListener.onPause(this);
       }
     }
     mTargetState = STATE_PAUSED;
@@ -547,8 +562,6 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 
   public long getDuration() {
     if (isInPlaybackState()) {
-      if (mDuration > 0)
-        return mDuration;
       mDuration = mMediaPlayer.getDuration();
       return mDuration;
     }
@@ -662,5 +675,19 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 
   public boolean canSeekForward() {
     return mCanSeekForward;
+  }
+  private OnStartListener mOnStartListener;
+  public void setOnStartListner(OnStartListener l){
+      mOnStartListener = l;
+  }
+  public interface OnStartListener{
+      void onStart(VideoView player);
+  }
+  private OnPauseListener mOnPauseListener;
+  public void setOnPauseListener(OnPauseListener l){
+      mOnPauseListener = l;
+  }
+  public interface OnPauseListener{
+      void onPause(VideoView player);
   }
 }

@@ -66,7 +66,7 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 	    ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setTitle("ac"+aid+" / 评论");
-        
+        MobclickAgent.onEventBegin(this,"view_comment",aid);
         send_btn = (ImageButton) findViewById(R.id.comments_send_btn);
         comment_edit = (EditText) findViewById(R.id.comments_edit);
         send_btn.setOnClickListener(this);
@@ -293,7 +293,7 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 		    count = Integer.parseInt(matcher.group(1));
 		    comment = matcher.replaceAll("");
 		}
-		final Comment quote = data.get(findCid(count));
+        final Comment quote = data == null? null:data.get(findCid(count));
 		final String rComment = comment;
 		if(TextUtils.isEmpty(rComment)){
 			Toast.makeText(this, "评论不能为空哦", Toast.LENGTH_SHORT).show();
@@ -305,9 +305,12 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 		}
 		send_btn.setEnabled(false);
 		Toast.makeText(CommentsActivity.this, "发送中...", Toast.LENGTH_SHORT).show();
+		MobclickAgent.onEvent(this, "post_comment");
+		
 		new Thread(){
 			public void run(){
 				try {
+				    
 					final boolean suss = MemberUtils.postComments(rComment, quote, aid,(Cookie[])umap.get("cookies"));
 					runOnUiThread(new Runnable() {
 						public void run() {
@@ -372,5 +375,10 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 	            return c.cid;
 	    }
 	    return 0;
+	}
+	@Override
+	protected void onDestroy() {
+	    super.onDestroy();
+        MobclickAgent.onEventEnd(this,"view_comment",aid);
 	}
 }

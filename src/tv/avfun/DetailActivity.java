@@ -1,7 +1,6 @@
 
 package tv.avfun;
 
-import java.net.Authenticator.RequestorType;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,6 +44,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -306,11 +308,45 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
         startPlay(item);
     }
 
-    private void startPlay(VideoPart item) {
+    private void startPlay(final VideoPart item) {
         addToHistory();
-        Intent intent = new Intent(DetailActivity.this, PlayActivity.class);
-        intent.putExtra("item", item);
-        startActivity(intent);
+        boolean showDanmaku = AcApp.getConfig().getBoolean("danmaku_mode",false);
+        if(AcApp.getConfig().getBoolean("show_tips_no_more", false)){
+            Intent intent = new Intent(DetailActivity.this, PlayActivity.class);
+            intent.putExtra("item", item);
+            intent.putExtra("danmaku_mode", showDanmaku);
+            startActivity(intent);
+            return;
+        }
+        DialogInterface.OnClickListener click = new DialogInterface.OnClickListener() {
+            
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(DetailActivity.this, PlayActivity.class);
+                intent.putExtra("item", item);
+                
+                if(which == DialogInterface.BUTTON_POSITIVE){
+                    intent.putExtra("danmaku_mode", true);
+                }else{
+                    intent.putExtra("danmaku_mode", false);
+                }
+                AcApp.putBoolean("danmaku_mode", which == DialogInterface.BUTTON_POSITIVE);
+                dialog.dismiss();
+                startActivity(intent);
+                
+            }
+        };
+        View tips = getLayoutInflater().inflate(R.layout.dialog_danmaku, null);
+        CheckBox check = (CheckBox) tips.findViewById(R.id.check);
+        check.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                AcApp.putBoolean("show_tips_no_more", isChecked);
+            }
+        });
+        new AlertDialog.Builder(this).setTitle("是否开启弹幕？").setView(tips).setPositiveButton("开启", click).setNegativeButton("取消", click).show();
+        
     }
 
     private void addToHistory() {
@@ -373,7 +409,6 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
             Intent intent = new Intent(DetailActivity.this, CommentsActivity.class);
             intent.putExtra("aid", aid);
             startActivity(intent);
-            MobclickAgent.onEvent(DetailActivity.this,"view_comment");
             break;
         }
         return true;
@@ -421,7 +456,7 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
                 return "http://wiki.acfun.tv/index.php/" + t;
             }
         });
-        Pattern http = Pattern.compile("(http://(?:[a-z0-9.-]+[.][a-z]{2,}+(?::[0-9]+)?)(?:/[^\\s\u3000-\u9fe0]*)?)",
+        Pattern http = Pattern.compile("http://[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?",
                 Pattern.CASE_INSENSITIVE);
         Linkify.addLinks(text, http, "http://");
         Linkify.addLinks(text, Pattern.compile("(ac\\d{5,})", Pattern.CASE_INSENSITIVE), "av://");
@@ -491,11 +526,15 @@ public class DetailActivity extends SherlockActivity implements OnItemClickListe
 
                     public void run() {
                         
-                        ApiParser.parseVideoParts(item, AcApp.getParseMode());
-                        if (item.segments == null || item.segments.isEmpty())
-                            mHanlder.sendEmptyMessage(0);
-                        else 
-                            mHanlder.obtainMessage(1, entry).sendToTarget();
+                        try{
+                            ApiParser.parseVideoParts(item, /*AcApp.getParseMode()*/2);
+                            if (item.segments != null && !item.segments.isEmpty()){
+                                mHanlder.obtainMessage(1, entry).sendToTarget();
+                                return;
+                            }
+                        }catch(Exception e){
+                        }
+                        mHanlder.sendEmptyMessage(0);
                     }
                 }.start();
             }else

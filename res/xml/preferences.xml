@@ -46,8 +46,14 @@
             
             
 <!--     </PreferenceCategory> -->
-<!--     <PreferenceCategory android:title="其他">
-        <Preference
+     <PreferenceCategory android:title="测试功能">
+         <CheckBoxPreference 
+            android:title="弹幕开关"
+            android:summaryOn="开启弹幕"
+            android:summaryOff="关闭弹幕"
+            android:key="danmaku_mode" 
+            />
+ <!--         <Preference
             android:icon="@drawable/ic_about"
             android:title="关于"
             android:key="about"
@@ -72,7 +78,7 @@
             android:icon="@drawable/ic_a"
             android:title="A岛"
             android:summary="一个充满A级爱情的地方"
-            android:key="hfun" />
-    </PreferenceCategory> -->
+            android:key="hfun" />-->
+    </PreferenceCategory> 
     
 </PreferenceScreen>
