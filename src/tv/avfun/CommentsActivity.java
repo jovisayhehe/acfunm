@@ -66,7 +66,7 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 	    ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setTitle("ac"+aid+" / 评论");
-        
+        MobclickAgent.onEventBegin(this,"view_comment",aid);
         send_btn = (ImageButton) findViewById(R.id.comments_send_btn);
         comment_edit = (EditText) findViewById(R.id.comments_edit);
         send_btn.setOnClickListener(this);
@@ -375,5 +375,10 @@ public class CommentsActivity extends SherlockActivity  implements OnClickListen
 	            return c.cid;
 	    }
 	    return 0;
+	}
+	@Override
+	protected void onDestroy() {
+	    super.onDestroy();
+        MobclickAgent.onEventEnd(this,"view_comment",aid);
 	}
 }
