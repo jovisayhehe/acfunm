@@ -526,6 +526,8 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
     if (isInPlaybackState()) {
       mMediaPlayer.start();
       mCurrentState = STATE_PLAYING;
+      if(mOnStartListener != null)
+          mOnStartListener.onStart(this);
     }
     mTargetState = STATE_PLAYING;
   }
@@ -535,6 +537,8 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
       if (mMediaPlayer.isPlaying()) {
         mMediaPlayer.pause();
         mCurrentState = STATE_PAUSED;
+        if(mOnPauseListener!=null)
+            mOnPauseListener.onPause(this);
       }
     }
     mTargetState = STATE_PAUSED;
@@ -671,5 +675,19 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 
   public boolean canSeekForward() {
     return mCanSeekForward;
+  }
+  private OnStartListener mOnStartListener;
+  public void setOnStartListner(OnStartListener l){
+      mOnStartListener = l;
+  }
+  public interface OnStartListener{
+      void onStart(VideoView player);
+  }
+  private OnPauseListener mOnPauseListener;
+  public void setOnPauseListener(OnPauseListener l){
+      mOnPauseListener = l;
+  }
+  public interface OnPauseListener{
+      void onPause(VideoView player);
   }
 }

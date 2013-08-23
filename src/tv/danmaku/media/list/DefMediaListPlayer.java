@@ -148,7 +148,7 @@ public class DefMediaListPlayer extends AbsMediaPlayer implements MediaPlayer.On
 
     @Override
     public void prepareAsync() throws IllegalStateException {
-        AsyncLoader loader = new AsyncLoader(this);
+        loader = new AsyncLoader(this);
         loader.execute(mMetaListUrl);
     }
 
@@ -171,7 +171,6 @@ public class DefMediaListPlayer extends AbsMediaPlayer implements MediaPlayer.On
 
             if (!player.mListLoader.loadIndex(false))
                 return null;
-
             return player.mListLoader.getPlayIndex();
         }
 
@@ -222,9 +221,10 @@ public class DefMediaListPlayer extends AbsMediaPlayer implements MediaPlayer.On
 
     @Override
     public void release() {
-        if (mSegmentPlayer == null)
-            return;
-        mSegmentPlayer.release();
+        if (mSegmentPlayer != null)
+            mSegmentPlayer.release();
+        if(loader != null && !loader.isCancelled())
+            loader.cancel(true);
     }
 
     @Override
@@ -289,6 +289,8 @@ public class DefMediaListPlayer extends AbsMediaPlayer implements MediaPlayer.On
     private Context  mContext;
 
     private long mSeekWhenPrepared;
+
+    private AsyncLoader loader;
 
     @Override
     public void setScreenOnWhilePlaying(boolean screenOn) {

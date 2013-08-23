@@ -284,6 +284,7 @@ public class DownloadManActivity extends BaseListActivity implements OnNavigatio
     protected void startToPlay(DownloadEntry entry) {
         Intent intent = new Intent(this, PlayActivity.class);
         intent.putExtra("item", entry.part);
+        intent.putExtra("danmaku_mode", false); // FIXME: 下载弹幕
         startActivity(intent);
     }
 }
