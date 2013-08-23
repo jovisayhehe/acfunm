@@ -41,6 +41,7 @@
     <activity android:name="tv.avfun.WebViewActivity" android:configChanges="orientation|screenSize"/>  
     <activity android:name="tv.avfun.HistoryActivity"/>  
     <activity android:name="tv.avfun.ImagePagerActivity"/>  
+    <activity android:name="tv.avfun.WebImageActivity" android:theme="@style/Theme.Sherlock.Light.DarkActionBar"/>  
     <activity android:name="tv.avfun.PlayActivity" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" android:configChanges="orientation|keyboardHidden|screenSize|screenLayout" android:screenOrientation="landscape"/>  
     <activity android:name="io.vov.vitamio.activity.InitActivity" android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation" android:launchMode="singleTop" android:theme="@android:style/Theme.NoTitleBar" android:windowSoftInputMode="stateAlwaysHidden"/>  
     <activity android:name="tv.avfun.FavoriteActivity"/>  

@@ -32,7 +32,7 @@ public class TextViewUtils {
                 try {
                     Drawable drawable = Drawable.createFromStream(comment.getContext().getAssets().open(source),source);
                     if(drawable!=null)
-                        drawable.setBounds(0, 0, drawable.getIntrinsicWidth()*(int)AcApp.density, drawable.getIntrinsicHeight()*(int)AcApp.density);
+                        drawable.setBounds(0, 0, (int)(1.5*drawable.getIntrinsicWidth()*AcApp.density), (int)(1.5*drawable.getIntrinsicHeight()*(int)AcApp.density));
                     return drawable;
                 } catch (IOException e) {
                     e.printStackTrace();

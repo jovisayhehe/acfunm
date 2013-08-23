@@ -20,13 +20,13 @@
     </string-array>
     
     <string-array name="pref_entries_home_display_mode">
-        <item>最新发布</item>
         <item>人气最旺</item>
+        <item>最新发布</item>
         <item>最近回复</item>
     </string-array>
      <string-array name="pref_values_home_display_mode">
-        <item>1</item>
         <item>2</item>
+        <item>1</item>
         <item>3</item>
     </string-array>
     <string-array name="pref_entries_parse_mode">

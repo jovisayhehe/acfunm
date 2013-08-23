@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import tv.ac.fun.R;
 import tv.avfun.api.ApiParser;
@@ -21,12 +22,13 @@ import tv.avfun.entity.Article;
 import tv.avfun.view.SWebView;
 import tv.avfun.view.SWebView.ScrollInterface;
 import tv.avfun.view.SWebView.WContentHeight;
+import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebChromeClient;
@@ -45,6 +47,7 @@ import com.umeng.analytics.MobclickAgent;
 
 public class WebViewActivity extends SherlockActivity implements OnClickListener {
 
+    public static final String TAG = "WebViewActivity";
     private SWebView    mWebView;
     private TextView    btn;
     private Document    doc;
@@ -108,7 +111,8 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
         mWebView = (SWebView) findViewById(R.id.web_webview);
         mWebView.getSettings().setDefaultTextEncodingName("utf-8");
         mWebView.getSettings().setSupportZoom(true);
-
+        mWebView.getSettings().setJavaScriptEnabled(true);
+        mWebView.addJavascriptInterface(new ImageLoaderJS(this), "ImageLoader");  
         mWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
 
         mWebView.setWebChromeClient(new WebChromeClient() {
@@ -143,10 +147,15 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
                 startActivity(intent);
                 return true;
             }
-
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                if(!hasMap)
+                    addImageClickListner();
+            }
         });
         loaddata();
-
+        
         mWebView.setOnCustomScroolChangeListener(new ScrollInterface() {
 
             @Override
@@ -175,6 +184,27 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
             }
         });
 
+    }
+
+    private void addImageClickListner() {
+        mWebView.getSettings().setJavaScriptEnabled(true);
+        mWebView.loadUrl(
+                "javascript:(" +
+        		"function(){" + 
+            		"var images = document.getElementsByTagName(\"img\"); " +   
+                    "for(var i=0;i<images.length;i++) {"+
+                    "if(images[i].parentNode && images[i].parentNode.tagName == \"a\") {"+
+                        "images[i].parentNode.setAttribute(\"href\", 'javascript:void(0);');"+
+                        "images[i].parentNode.onclick=function(){" +
+                        "window.ImageLoader.onImageClick(images[i].src);" +
+                        "};"+
+                    "}else{"+
+                        "images[i].onclick=function(){" +
+                        "window.ImageLoader.onImageClick(this.src);}" +
+                        "}" +
+                    "}" +
+                    "})()");  
+        
     }
 
     @Override
@@ -206,9 +236,22 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
         }
         return super.onOptionsItemSelected(item);
     }
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
+    class ImageLoaderJS{
+        Context context;  
+        
+        public ImageLoaderJS(Context context) {  
+            this.context = context;  
+        }  
+  
+        public void onImageClick(String url) {  
+            Intent intent = new Intent();  
+            intent.putStringArrayListExtra("images", article.getImgUrls());
+            int index = article.getImgUrls().indexOf(url);
+            intent.putExtra("index", index);
+            intent.putExtra("title", article.title);
+            intent.setClass(context, WebImageActivity.class);  
+            context.startActivity(intent);  
+        }  
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -253,11 +296,13 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
         startActivity(intent);
     }
 
+    private boolean hasMap;
     public void loaddata() {
         tprobar.setVisibility(View.VISIBLE);
         reloadtext.setVisibility(View.GONE);
 
         new Thread() {
+
 
             public void run() {
 
@@ -300,10 +345,19 @@ public class WebViewActivity extends SherlockActivity implements OnClickListener
                         switch (modecode) {
                         case 0:
                             cdiv.append(content);
-                            if(cdiv.select("img").hasAttr("usemap")){
+                            Elements images = cdiv.select("img");
+                            if(images.hasAttr("usemap")){
+                                hasMap = true;
                                 mWebView.getSettings().setLayoutAlgorithm(LayoutAlgorithm.NARROW_COLUMNS);
-                            }else
+                            }else{
+                                for(int j=0;j<images.size();j++){
+                                    Element img = images.get(j);
+                                    String src = img.attr("src");
+                                    if(src!=null && !src.contains(".gif"))
+                                        img.after("<p>(点击图片放大)</p>");
+                                }
                                 mWebView.getSettings().setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
+                            }
                             break;
                         case 1:
                             // Whitelist wl = new Whitelist();//过滤图片
