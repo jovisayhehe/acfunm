@@ -69,5 +69,5 @@ public class VideoPart implements Serializable {
             return false;
         return true;
     }
-    // TODO danmu info
+    public String danmakuId;
 }

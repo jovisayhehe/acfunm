@@ -35,7 +35,8 @@ public class DownloadDBHelper extends SQLiteOpenHelper {
                 + COLUMN_TITLE + " VARCHAR," 
                 + COLUMN_SUBTITLE + " VARCHAR," 
                 + COLUMN_UA + " TEXT,"
-                + COLUMN_MIME + " VARCHAR(20)"
+                + COLUMN_MIME + " VARCHAR(20),"
+                + COLUMN_DURATION + " INTEGER"
                 + ");");
 
     }
@@ -43,6 +44,9 @@ public class DownloadDBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // TODO
+        if(oldVersion <2){
+            db.execSQL("ALTER TABLE " + DOWNLOAD_TABLE + " ADD " + COLUMN_DURATION +" INTEGER;"); 
+        }
 
     }
 

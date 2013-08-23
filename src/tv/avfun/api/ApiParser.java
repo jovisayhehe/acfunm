@@ -320,6 +320,7 @@ public class ApiParser {
         JSONObject jsonObject = Connectivity.getJSONObject(url);
         item.vtype = jsonObject.getString("vtype");
         item.vid = jsonObject.get("vid").toString();
+        item.danmakuId = jsonObject.getString("cid");
         if(AcApp.getParseMode() < 2 && "sina".equals(parseVideoType(item.vtype))){
             item.vid = getSinaMp4Vid(item.vid);
         }

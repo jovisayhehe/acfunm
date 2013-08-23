@@ -285,6 +285,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnOpenListe
             nextContent = instances.get("home");
 //            bar.setTitle("主页");
             bar.setDisplayShowTitleEnabled(false);
+            nextContent.onSwitch(bar);
             switchContent(mContent, nextContent, R.id.slide_nav_home);
             return;
         } else if (this.navId == R.id.slide_nav_home) {

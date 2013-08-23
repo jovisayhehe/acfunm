@@ -47,6 +47,7 @@ public class DownloadDBImpl implements DownloadDB {
                     s.stream = query.getString(query.getColumnIndex(COLUMN_URL));
                     s.etag = query.getString(query.getColumnIndex(COLUMN_ETAG));
                     s.fileName = query.getString(query.getColumnIndex(COLUMN_DATA));
+                    s.duration = query.getLong(query.getColumnIndex(COLUMN_DURATION));
                     job.getEntry().part.segments.add(s);
                     if(AcApp.isExternalStorageAvailable()){
                         if(!TextUtils.isEmpty(job.getEntry().destination)
@@ -139,6 +140,7 @@ public class DownloadDBImpl implements DownloadDB {
             values.put(COLUMN_NUM, s.num);
             values.put(COLUMN_URL, s.stream);
             values.put(COLUMN_DATA, s.num+FileUtil.getUrlExt(s.stream));
+            values.put(COLUMN_DURATION, s.duration);
             int rowCount = mDb.update(DOWNLOAD_TABLE, values, whereClause, new String[]{entry.aid,entry.part.vid,String.valueOf(s.num)});
             if(rowCount == 0) mDb.insert(DOWNLOAD_TABLE, null, values);
         }

@@ -188,7 +188,7 @@ public class ChannelApi {
         return bArticle ? 1 : 0;
     }
     private static final int TYPE_DEFAULT      = 0;
-    private static final int TYPE_HOT_LIST     = 7;
+    private static final int TYPE_HOT_LIST     = 6;
     private static final int TYPE_LATEST_REPLY = 22;
     private static String    baseUrl           = "http://www.acfun.tv/api/getlistbyorder.aspx?orderby=";
 

@@ -87,12 +87,17 @@ public class DefMediaListPlayer extends AbsMediaPlayer implements MediaPlayer.On
             return 0;
         }
     }
-
+    private int mOrder;
     @Override
     public int getDuration() {
         if (mPlayIndex == null)
             return 0;
-
+        
+        if(mTotalDuration == 0 || (mOrder < mSegmentPlayer.getOrder() && mTotalDuration <= mPlayIndex.getTotalDuration())){
+            mPlayIndex.mSegmentList.get(mSegmentPlayer.getOrder()).duration = mSegmentPlayer.getDuration();
+            mTotalDuration = mPlayIndex.getTotalDuration();
+            mOrder = mSegmentPlayer.getOrder();
+        }
         return (int) mTotalDuration;
     }
 
@@ -143,7 +148,7 @@ public class DefMediaListPlayer extends AbsMediaPlayer implements MediaPlayer.On
 
     @Override
     public void prepareAsync() throws IllegalStateException {
-        AsyncLoader loader = new AsyncLoader(this);
+        loader = new AsyncLoader(this);
         loader.execute(mMetaListUrl);
     }
 
@@ -164,9 +169,8 @@ public class DefMediaListPlayer extends AbsMediaPlayer implements MediaPlayer.On
             if (player == null)
                 return null;
 
-            if (!player.mListLoader.loadIndex(true))
+            if (!player.mListLoader.loadIndex(false))
                 return null;
-
             return player.mListLoader.getPlayIndex();
         }
 
@@ -192,7 +196,8 @@ public class DefMediaListPlayer extends AbsMediaPlayer implements MediaPlayer.On
 
             try {
                 DefMediaSegmentPlayer itemPlayer = player.createItemPlayer();
-                itemPlayer.setSegment(0, 0, result.mSegmentList.get(0),mHeaders);
+                mOrder = 0 ;
+                itemPlayer.setSegment(mOrder, 0, result.mSegmentList.get(mOrder),mHeaders);
 
                 player.mSegmentPlayer = itemPlayer;
                 player.mPlayIndex = result;
@@ -216,9 +221,10 @@ public class DefMediaListPlayer extends AbsMediaPlayer implements MediaPlayer.On
 
     @Override
     public void release() {
-        if (mSegmentPlayer == null)
-            return;
-        mSegmentPlayer.release();
+        if (mSegmentPlayer != null)
+            mSegmentPlayer.release();
+        if(loader != null && !loader.isCancelled())
+            loader.cancel(true);
     }
 
     @Override
@@ -284,6 +290,8 @@ public class DefMediaListPlayer extends AbsMediaPlayer implements MediaPlayer.On
 
     private long mSeekWhenPrepared;
 
+    private AsyncLoader loader;
+
     @Override
     public void setScreenOnWhilePlaying(boolean screenOn) {
         if (mSegmentPlayer == null)
@@ -333,7 +341,6 @@ public class DefMediaListPlayer extends AbsMediaPlayer implements MediaPlayer.On
                 int nextOrder = mSegmentPlayer.getOrder() + 1;
                 if (nextOrder < count) {
                     mSegmentPlayer.release();
-
                     mIsMediaSwitchEnd = false;
 //                    if (mOnInfoListener != null) {
 //                        mOnInfoListener.onInfo(this, MediaPlayer.MEDIA_INFO_BUFFERING_START, 0);
@@ -343,6 +350,7 @@ public class DefMediaListPlayer extends AbsMediaPlayer implements MediaPlayer.On
                     if (nextSegment != null) {
                         mSegmentPlayer = createItemPlayer();
                         int startTime = mPlayIndex.getStartTime(nextOrder);
+
                         mSegmentPlayer.setSegment(nextOrder, startTime, nextSegment,mHeaders);
                         mSegmentPlayer.prepareAsync();
                     }
@@ -399,6 +407,7 @@ public class DefMediaListPlayer extends AbsMediaPlayer implements MediaPlayer.On
             long seekToPosition = mSeekWhenPrepared;
             if (seekToPosition != 0)
                 mp.seekTo(seekToPosition);
+            mSeekWhenPrepared = 0;
             mp.start();
         } else {
             if (mOnPreparedListener != null) {

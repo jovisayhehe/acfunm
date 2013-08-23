@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import java.util.Locale;
 
 import tv.avfun.app.AcApp;
+
 import android.net.Uri;
 import android.os.Environment;
 import android.os.StatFs;
@@ -131,5 +132,22 @@ public class FileUtil {
             type = type.substring(0, semicolonIndex);
         }
         return type;
+    }
+    public static String getName(String url) {
+        if (!TextUtils.isEmpty(url)) {
+          int start = url.lastIndexOf('/');
+          int end = url.lastIndexOf('?');
+          end = end <= start ? url.length() : end;
+          String name = "";
+          if (start > 0 && start < url.length() - 1) {
+              try{
+              name = url.substring(start, end).toLowerCase();
+              return name;
+              }catch (StringIndexOutOfBoundsException e) {
+                 Log.e("Util", "when get url name : "+url,e);
+              }
+          }
+        }
+        return String.valueOf(url.hashCode())+".jpg";
     }
 }

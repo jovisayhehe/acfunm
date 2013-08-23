@@ -9,6 +9,8 @@ import org.apache.commons.httpclient.Cookie;
 import tv.ac.fun.R;
 import tv.avfun.db.DBService;
 import tv.avfun.util.ExtendedImageDownloader;
+import tv.avfun.util.FileUtil;
+import tv.avfun.util.StringUtil;
 import tv.avfun.util.download.DownloadManager;
 import android.app.Activity;
 import android.app.Application;
@@ -22,6 +24,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.res.Resources;
+import android.graphics.Bitmap.CompressFormat;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -37,6 +40,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.utils.FileUtils;
 
 /**
  * 自定义Application
@@ -50,7 +54,7 @@ public class AcApp extends Application {
     private static AcApp     instance;
     private static SharedPreferences sp;
     public static final String LOG = "Logs"; 
-    public static final String IMAGE = "images";
+    public static final String IMAGE = "Images";
     public static final String VIDEO = "Videos";
     public static float density = 1f;
     private DownloadManager mDownloadManager;
@@ -161,6 +165,9 @@ public class AcApp extends Application {
         File path = new File(sp.getString("download_path", getSDcardDir()+"/Download/AcFun/"+VIDEO+"/"+aid+"/"+vid));
         //path.mkdirs();
         return path;
+    }
+    public static File getDownloadImagePath(){
+        return new File(sp.getString("download_path", getSDcardDir()+"/Download/AcFun/"+IMAGE));
     }
     /**
      * 获得首页展示模式
