@@ -40,22 +40,22 @@ public class DefMediaListPlayer extends AbsMediaPlayer implements MediaPlayer.On
         mListLoader = new VideoSegmentListLoader(part);
         mContext = context;
     }
-    private String mHeaders;
+    private Map<String, String> mHeaders;
     
-    public void setHeaders(String headers){
+    public void setHeaders(Map<String, String> headers){
         mHeaders = headers;
     }
     
-    public void setHeaders(Map<String, String> headers){
-        StringBuffer headerBuffer = null;
-        if (headers != null) {
-            headerBuffer = new StringBuffer();
-            for (Map.Entry<String, String> entry : headers.entrySet()) {
-                headerBuffer.append(entry.getKey()).append(":").append(entry.getValue()).append("\r\n");
-            }
-        }
-        setHeaders(headerBuffer == null? null : headerBuffer.toString());
-    }
+//    public void setHeaders(Map<String, String> headers){
+//        StringBuffer headerBuffer = null;
+//        if (headers != null) {
+//            headerBuffer = new StringBuffer();
+//            for (Map.Entry<String, String> entry : headers.entrySet()) {
+//                headerBuffer.append(entry.getKey()).append(":").append(entry.getValue()).append("\r\n");
+//            }
+//        }
+//        setHeaders(headerBuffer == null? null : headerBuffer.toString());
+//    }
     private DefMediaSegmentPlayer createItemPlayer() {
         DefMediaSegmentPlayer itemPlayer = new DefMediaSegmentPlayer(mContext);
         itemPlayer.setOnBufferingUpdateListener(this);

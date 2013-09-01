@@ -1,7 +1,9 @@
 package tv.avfun.api.net;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 
 import android.os.Build;
@@ -20,6 +22,11 @@ public final class UserAgent {
     private static Random random;
     static{
         random = new Random();
+    }
+    public static final Map<String,String> UA_MAP;
+    static{
+        UA_MAP = new HashMap<String, String>(1);
+        UA_MAP.put("User-Agent", DEFAULT);
     }
     public static String getRandom(){
         Field[] fields = UserAgent.class.getFields();

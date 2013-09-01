@@ -3,6 +3,7 @@ package tv.danmaku.media.list;
 import io.vov.vitamio.MediaPlayer;
 
 import java.io.IOException;
+import java.util.Map;
 
 import tv.avfun.entity.VideoSegment;
 import tv.danmaku.media.DebugLog;
@@ -31,7 +32,7 @@ public class DefMediaSegmentPlayer extends MediaPlayer {
         return mSegment;
     }
 
-    final public void setSegment(int order, int startTime, VideoSegment segment, String headers)
+    final public void setSegment(int order, int startTime, VideoSegment segment, Map<String, String> headers)
             throws IllegalArgumentException, IllegalStateException, IOException {
         mOrder = order;
         mStartTime = startTime;
@@ -39,7 +40,7 @@ public class DefMediaSegmentPlayer extends MediaPlayer {
 
         DebugLog.dfmt(TAG, "set item [%d] %d(%d) %s", order, startTime,
                 segment.duration, segment.url);
-        super._setDataSource(segment.url, headers);
+        super.setDataSource(segment.url, headers);
     }
 
     final public boolean hasSegment() {

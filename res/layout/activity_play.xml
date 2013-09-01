@@ -2,41 +2,45 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
+
     <io.vov.vitamio.widget.CenterLayout
+        android:id="@+id/video_centerlayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:id="@+id/video_centerlayout"
-        >
+        android:orientation="vertical" >
 
-        <tv.danmaku.media.list.VideoView
+        <tv.avfun.view.VideoView
             android:id="@+id/surface_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true" 
-            />
+            android:layout_centerVertical="true" />
     </io.vov.vitamio.widget.CenterLayout>
-      
-    <tv.avfun.view.DanmakuView
+
+    <master.flame.danmaku.ui.widget.DanmakuView
         android:id="@+id/danmaku"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-         />
-     <TextView 
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:textColor="@android:color/white"
-      android:textSize="20sp"
-      android:layout_gravity="bottom"
-      android:text="视频加载中..."
-      android:id="@+id/video_proess_text"
-      />
-         <ProgressBar
+        android:layout_height="match_parent" />
+
+    <tv.avfun.view.MediaController
+        android:id="@+id/media_controller"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/video_proess_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:text="视频加载中..."
+        android:textColor="@android:color/white"
+        android:textSize="20sp" />
+
+    <ProgressBar
         android:id="@+id/video_time_progress"
         android:layout_width="100dip"
         android:layout_height="100dip"
-		android:layout_gravity="center"
+        android:layout_gravity="center"
         android:indeterminateDrawable="@drawable/loading_animation" />
 
 </FrameLayout>

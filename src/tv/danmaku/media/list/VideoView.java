@@ -394,7 +394,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 //      mMediaPlayer.setOnTimedTextListener(mOnTimedTextListener);
 //      mMediaPlayer.setDataSource(mContext, mUri);
       mMediaPlayer.setDisplay(mSurfaceHolder);
-      mMediaPlayer.setHeaders("User-Agent:"+UserAgent.DEFAULT+"\r\n");
+      mMediaPlayer.setHeaders(UserAgent.UA_MAP);
       mMediaPlayer.setScreenOnWhilePlaying(true);
       mMediaPlayer.prepareAsync();
       mCurrentState = STATE_PREPARING;
