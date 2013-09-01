@@ -110,6 +110,7 @@ public class PlayActivity extends Activity {
                 if (arg0.isBuffering() || arg1 >= 90) {
                     textView.setVisibility(View.GONE);
                     progress.setVisibility(View.GONE);
+                    mController.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -165,9 +166,9 @@ public class PlayActivity extends Activity {
         @Override
         protected void onPostExecute(Boolean result) {
             if (result) {
+                textView.setText(textView.getText() + "\n视频地址解析完毕...\n开始缓冲...");
                 mVideoView.setVideoSegments(parts.segments, getExternalCacheDir().getAbsolutePath());
                 mVideoView.setVideoName(parts.subtitle);
-                mController.setVisibility(View.VISIBLE);
                 mController.attachDanmakuView(danmaku);
             } else {
                 AcApp.showToast("解析视频地址失败");
