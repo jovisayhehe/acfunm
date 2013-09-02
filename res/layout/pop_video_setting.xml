@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="8dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+	<TextView 
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:textSize="20sp"
+	    android:padding="8dp"
+	    android:gravity="center"
+	    android:text="弹幕设置"
+	    android:id="@+id/title"
+	    />
+    <RadioGroup
+        android:layout_below="@+id/title"
+        android:id="@+id/danmaku_type"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <RadioButton
+            android:id="@+id/type_shadow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="阴影" />
+        <RadioButton
+            android:id="@+id/type_stroke"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="描边" />
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/font_size"
+        android:padding="2dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/danmaku_type"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
+        android:text="字号缩放" />
+
+    <TextView
+        android:id="@+id/alpha"
+        android:padding="2dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/font_size_bar"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
+        android:text="评论透明" />
+
+    <SeekBar
+        android:id="@+id/alpha_bar"
+        android:max="100"
+        android:progress="100"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/font_size_bar"
+        android:layout_toRightOf="@+id/alpha"
+        android:gravity="center_vertical" />
+
+    <TextView
+        android:padding="2dp"
+        android:id="@+id/speed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/alpha_bar"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
+        android:text="飞行时间" />
+
+    <SeekBar
+        android:id="@+id/speed_bar"
+        android:max="5000"
+        android:progress="3500"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/alpha_bar"
+        android:layout_toRightOf="@+id/speed"
+        android:gravity="center_vertical" />
+
+    <SeekBar
+        android:id="@+id/font_size_bar"
+        android:max="5"
+        android:progress="2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/danmaku_type"
+        android:layout_toRightOf="@id/font_size"
+        android:gravity="center_vertical" />
+
+</RelativeLayout>

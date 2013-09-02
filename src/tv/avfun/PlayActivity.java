@@ -1,13 +1,13 @@
 
 package tv.avfun;
 
-import master.flame.danmaku.controller.AcDanmakuPlayer;
-import master.flame.danmaku.controller.AcDanmakuPlayer.OnPreparedListener;
-import master.flame.danmaku.ui.widget.DanmakuView;
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.MediaPlayer.OnBufferingUpdateListener;
 import io.vov.vitamio.MediaPlayer.OnCompletionListener;
 import io.vov.vitamio.MediaPlayer.OnInfoListener;
+import master.flame.danmaku.controller.AcDanmakuPlayer;
+import master.flame.danmaku.controller.AcDanmakuPlayer.OnPreparedListener;
+import master.flame.danmaku.ui.widget.DanmakuView;
 import tv.ac.fun.R;
 import tv.avfun.api.ApiParser;
 import tv.avfun.app.AcApp;
@@ -15,13 +15,16 @@ import tv.avfun.entity.VideoPart;
 import tv.avfun.view.MediaController;
 import tv.avfun.view.VideoView;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.umeng.analytics.MobclickAgent;
@@ -62,15 +65,44 @@ public class PlayActivity extends Activity {
         mController = (MediaController) findViewById(R.id.media_controller);
         mController.setVisibility(View.GONE);
         // TODO OnMenuClickListener
-        // mController.setOnMenuClickListener(new
-        // MediaController.OnMenuClickListener() {
-        //
-        // @Override
-        // public void onClick(View v) {
-        // // TODO Auto-generated method stub
-        // // show settings
-        // }
-        // });
+        mController.setOnMenuClickListener(new MediaController.OnMenuClickListener() {
+            DialogInterface.OnClickListener dialogListener = new DialogInterface.OnClickListener() {
+                
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if(group.getCheckedRadioButtonId() == R.id.type_shadow){
+//                        TODO:danmaku.setDanmakuType(TYPE_SHADOW);
+                    }else{
+//                        TODO:danmaku.setDanmakuType(TYPE_STROKE);
+                    }
+                    /*TODO:
+                    danmaku.setDanmakuFontSizeDensity(fontSize.getProgress());
+                    danmaku.setDanmakuAlpha(alpha.getProgress());
+                    danmaku.setDanmakuSpeed(speed.getProgress());*/
+                    dialog.dismiss();
+                }
+            };
+
+            Dialog dialog;
+
+            private RadioGroup group;
+
+            private SeekBar fontSize,alpha,speed;
+
+            @Override
+            public void onClick(View v) {
+                if (dialog == null) {
+                    View view = getLayoutInflater().inflate(R.layout.pop_video_setting, null);
+                    group = (RadioGroup) view.findViewById(R.id.danmaku_type);
+                    fontSize = (SeekBar) view.findViewById(R.id.font_size_bar);
+                    alpha = (SeekBar) view.findViewById(R.id.alpha_bar);
+                    speed = (SeekBar) view.findViewById(R.id.speed_bar);
+                    dialog = new AlertDialog.Builder(PlayActivity.this).setView(view).setPositiveButton("OK", dialogListener).setCancelable(true).show();
+                }
+                dialog.show();
+            }
+        });
+       
         mVideoView.setMediaController(mController);
         // mVideoView.setOnTouchListener(new View.OnTouchListener() {
         //
@@ -166,7 +198,7 @@ public class PlayActivity extends Activity {
         @Override
         protected void onPostExecute(Boolean result) {
             if (result) {
-                textView.setText(textView.getText() + "\n视频地址解析完毕...\n开始缓冲...");
+                textView.setText(textView.getText() + "\n视频地址解析完毕...[共"+parts.segments.size()+"分段]\n开始缓冲，耐心等候...");
                 mVideoView.setVideoSegments(parts.segments, getExternalCacheDir().getAbsolutePath());
                 mVideoView.setVideoName(parts.subtitle);
                 mController.attachDanmakuView(danmaku);

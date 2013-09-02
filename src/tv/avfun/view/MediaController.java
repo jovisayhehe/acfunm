@@ -119,6 +119,8 @@ public class MediaController extends FrameLayout {
             if(mOnMenuClickListener != null){
                 mOnMenuClickListener.onClick(v);
                 mPlayer.pause();
+                if(mDanmaku!= null)
+                    mDanmaku.pause();
             }
         }
     };
@@ -200,7 +202,7 @@ public class MediaController extends FrameLayout {
             String time = StringUtils.generateTime(newposition);
             if (mInstantSeeking){
                 mPlayer.seekTo(newposition);
-                mDanmaku.seekTo(newposition);
+                if(mDanmaku!= null)mDanmaku.seekTo(newposition);
             }
             if (mInfoView != null)
                 mInfoView.setText(time);
@@ -212,7 +214,7 @@ public class MediaController extends FrameLayout {
             if (!mInstantSeeking){
                 long pos = (mDuration * bar.getProgress()) / 1000;
                 mPlayer.seekTo(pos);
-                mDanmaku.seekTo(pos);
+                if(mDanmaku!= null)mDanmaku.seekTo(pos);
             }
             if (mInfoView != null) {
                 mInfoView.setText("");
@@ -547,7 +549,7 @@ public class MediaController extends FrameLayout {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            if(Math.abs(distanceY) < 20 || Math.abs(distanceX)> 100) return true;
+            if(Math.abs(distanceY) < 10 || Math.abs(distanceX)> 100) return true;
             if (!mEnableBrightnessGesture || e1.getRawX() > (mWidth / 2)) {
                 vol = mAM.getStreamVolume(AudioManager.STREAM_MUSIC);
                 setVolume(vol + (int) ((distanceY / mSurfaceYDisplayRange) * mMaxVolume));
@@ -706,10 +708,10 @@ public class MediaController extends FrameLayout {
     private void doPauseResume() {
         if (mPlayer.isPlaying()){
             mPlayer.pause();
-            mDanmaku.pause();
+            if(mDanmaku!= null)mDanmaku.pause();
         }else{
             mPlayer.start();
-            mDanmaku.start();
+            if(mDanmaku!= null)mDanmaku.start();
         }
         updatePausePlay();
     }

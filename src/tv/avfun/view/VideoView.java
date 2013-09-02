@@ -369,6 +369,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
         mContext = ctx;
         mVideoWidth = 0;
         mVideoHeight = 0;
+        setZOrderMediaOverlay(true);
         getHolder().setFormat(PixelFormat.RGBA_8888); // PixelFormat.RGB_565
         getHolder().addCallback(mSHCallback);
         setFocusable(true);
@@ -451,6 +452,8 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
                 mMediaPlayer.setDataSource(mContext, mUri);
             mMediaPlayer.setDisplay(mSurfaceHolder);
             mMediaPlayer.setScreenOnWhilePlaying(true);
+            mMediaPlayer.setVideoQuality(MediaPlayer.VIDEOQUALITY_MEDIUM);
+            mMediaPlayer.setVideoChroma(MediaPlayer.VIDEOCHROMA_RGBA);
             mMediaPlayer.prepareAsync();
             mCurrentState = STATE_PREPARING;
             attachMediaController();
