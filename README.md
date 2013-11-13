@@ -17,4 +17,4 @@ Dependencies
 - Android Support v7 Appcompat
 - Volley 
 - VitamioBundle <https://github.com/yixia/VitamioBundle>
-
+- StickyGridHeaders <https://github.com/TonicArtos/StickyGridHeaders>
