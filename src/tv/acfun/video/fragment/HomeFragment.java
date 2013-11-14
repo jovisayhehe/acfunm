@@ -142,7 +142,8 @@ public class HomeFragment extends Fragment implements OnItemClickListener, OnHea
 
     @Override
     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-        // TODO Auto-generated method stub
+        // FIXME: position bug
+        if(arg2<0) return;
         Toast.makeText(getActivity(), "onItemClick::" + mAdapter.getItemId(arg2), 0).show();
     }
 
@@ -261,7 +262,13 @@ public class HomeFragment extends Fragment implements OnItemClickListener, OnHea
                 name = TextViewUtils.getSource(item.name);
             }
             holder.textView.setText(name);
-            AcApp.getGloableLoader().get(
+            /*
+             * 滚动时取消上次指定的请求，可能会有流量的浪费...
+             */
+            if(holder.imageContainer != null){
+                holder.imageContainer.cancelRequest();
+            }
+            holder.imageContainer = AcApp.getGloableLoader().get(
                     item.previewurl,
                     ImageLoader.getImageListener(holder.imageView, R.drawable.cover_night,
                             R.drawable.cover_night));
@@ -325,5 +332,6 @@ public class HomeFragment extends Fragment implements OnItemClickListener, OnHea
     private static class ViewHolder {
         TextView textView;
         ImageView imageView;
+        ImageLoader.ImageContainer imageContainer;
     }
 }
