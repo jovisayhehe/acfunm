@@ -20,13 +20,15 @@ import java.io.File;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 
 /**
  * @author Yrom
  * 
  */
 public class CommonUtil {
-
+    public static final int INVALID_POSITION = -1;
     private static String sExternalFilesDir;
 
     public static boolean isExternalStorageAvailable() {
@@ -43,5 +45,9 @@ public class CommonUtil {
         File cacheDir = new File(context.getExternalCacheDir(), type);
         cacheDir.mkdirs();
         return cacheDir;
+    }
+    
+    public static int calculatePixelsFromDips(int dip, DisplayMetrics metrics){
+        return TypedValue.complexToDimensionPixelOffset(dip, metrics);
     }
 }

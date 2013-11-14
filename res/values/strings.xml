@@ -4,5 +4,8 @@
     <string name="app_name">AcFun Video</string>
     <string name="action_settings">Settings</string>
     <string name="action_refresh">Refresh</string>
+    <string name="title_home">HOME</string>
+    <string name="title_user_center">USER</string>
+    <string name="title_categories">CATEGORIES</string>
 
 </resources>

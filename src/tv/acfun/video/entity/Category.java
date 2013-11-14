@@ -14,15 +14,43 @@
  * limitations under the License.
  */
 
-package tv.acfun.video.api;
+package tv.acfun.video.entity;
+
+import java.util.List;
+
 
 /**
+ * {
+    "id": 1,
+    "name": "动画",
+    "subclasse": [
+      {
+        "id": 67,
+        "name": "新番连载"
+      },
+      {
+        "id": 109,
+        "name": "动画合集"
+      },
+      {
+        "id": 107,
+        "name": "MAD·AMV"
+      },
+      {
+        "id": 108,
+        "name": "MMD·3D"
+      },
+      {
+        "id": 106,
+        "name": "动画短片"
+      }
+    ]
+  }
  * @author Yrom
  *
  */
-public class API {
-    public static final String BASE_URL = "http://api.acfun.tv";
-    public static final String HOME_CATS = BASE_URL+"/home/categories";
-    public static final String VIDEO_DETAIL = BASE_URL+"/videos/%d";
-    public static final String CHANNEL_CATS = BASE_URL+"/videocategories";
+public class Category {
+    public int id;
+    public String name;
+    public List<Category> subclasse;
 }

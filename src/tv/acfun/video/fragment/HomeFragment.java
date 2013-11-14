@@ -31,7 +31,6 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,16 +38,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
-import com.android.volley.Cache;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
@@ -59,17 +54,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.ImageLoader;
 import com.tonicartos.widget.stickygridheaders.StickyGridHeadersBaseAdapter;
-import com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView;
-import com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView.OnHeaderClickListener;
 
 /**
  * @author Yrom
  * 
  */
-public class HomeFragment extends Fragment implements OnItemClickListener, OnHeaderClickListener {
-    private GridView mGridView;
-    private ListAdapter mAdapter;
-    private View mLoadingView;
+public class HomeFragment extends GridFragment{
 
     public HomeFragment() {
     }
@@ -78,22 +68,6 @@ public class HomeFragment extends Fragment implements OnItemClickListener, OnHea
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_item_grid, container, false);
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        mGridView = (GridView) view.findViewById(R.id.asset_grid);
-        mGridView.setOnItemClickListener(this);
-        mLoadingView = view.findViewById(R.id.loading);
-        loadData();
-        ((StickyGridHeadersGridView) mGridView).setOnHeaderClickListener(this);
     }
 
     private Listener<List<HomeCat>> listener = new Listener<List<HomeCat>>() {
@@ -106,7 +80,7 @@ public class HomeFragment extends Fragment implements OnItemClickListener, OnHea
             }else{
                 ((HomeAdapter)mAdapter).setData(response);
             }
-            mGridView.setAdapter(mAdapter);
+            setAdapter(mAdapter);
         }
     };
 
@@ -127,18 +101,6 @@ public class HomeFragment extends Fragment implements OnItemClickListener, OnHea
         }
     };
     private MenuItem refreshItem;
-
-    private void loadData() {
-        mLoadingView.setVisibility(View.VISIBLE);
-        mGridView.setVisibility(View.GONE);
-        Request<?> request = new HomeCatsRequest(listener, errorListner);
-        String key = request.getCacheKey();
-        Cache.Entry entry = Connectivity.getGloadbleCache(getActivity()).get(key);
-        if(entry != null && !entry.isExpired()){
-            Connectivity.getGloadbleCache(getActivity()).invalidate(key, true);
-        }
-        AcApp.addRequest(request);
-    }
 
     @Override
     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
@@ -333,5 +295,15 @@ public class HomeFragment extends Fragment implements OnItemClickListener, OnHea
         TextView textView;
         ImageView imageView;
         ImageLoader.ImageContainer imageContainer;
+    }
+
+    @Override
+    protected Request<?> newRequest() {
+        return new HomeCatsRequest(listener, errorListner);
+    }
+    
+    @Override
+    protected boolean shouldRefreshCache() {
+        return true;
     }
 }
