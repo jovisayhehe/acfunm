@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- File created by the Android Action Bar Style Generator
+
+     Copyright (C) 2011 The Android Open Source Project
+     Copyright (C) 2012 readyState Software Ltd
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="Theme.Styled" parent="@style/Theme.AppCompat">
+        <item name="selectableItemBackground">@drawable/selectable_background_styled</item>
+        <item name="actionBarItemBackground">?attr/selectableItemBackground</item>
+        <item name="popupMenuStyle">@style/PopupMenu.Styled</item>
+        <item name="dropDownListViewStyle">@style/DropDownListView.Styled</item>
+        <item name="actionBarTabBarStyle">@style/ActionBarTabBarStyle.Styled</item>
+        <item name="actionBarTabStyle">@style/ActionBarTabStyle.Styled</item>
+        <item name="actionDropDownStyle">@style/DropDownNav.Styled</item>
+        <item name="actionBarStyle">@style/ActionBar.Solid.Styled</item>
+        <item name="actionModeBackground">@drawable/cab_background_top_styled</item>
+        <item name="actionModeSplitBackground">@drawable/cab_background_bottom_styled</item>
+        <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Styled</item>
+	
+        
+    </style>
+
+    <style name="ActionBar.Solid.Styled" parent="@style/Widget.AppCompat.ActionBar.Solid">
+        <item name="background">@drawable/ab_solid_styled</item>
+        <item name="backgroundStacked">@drawable/ab_stacked_solid_styled</item>
+        <item name="backgroundSplit">@drawable/ab_bottom_solid_styled</item>
+        <item name="progressBarStyle">@style/ProgressBar.Styled</item>
+    </style>
+
+    <style name="ActionBar.Transparent.Styled" parent="@style/Widget.AppCompat.ActionBar">
+        <item name="background">@drawable/ab_transparent_styled</item>
+        <item name="progressBarStyle">@style/ProgressBar.Styled</item>
+    </style>
+	
+    <style name="PopupMenu.Styled" parent="@style/Widget.AppCompat.PopupMenu">	
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_styled</item>	
+    </style>
+	
+    <style name="DropDownListView.Styled" parent="@style/Widget.AppCompat.ListView.DropDown">
+        <item name="android:listSelector">@drawable/selectable_background_styled</item>
+    </style>
+
+    <style name="ActionBarTabStyle.Styled" parent="@style/Widget.AppCompat.ActionBar.TabView">
+        <item name="android:background">@drawable/tab_indicator_ab_styled</item>
+    </style>
+	<style name="ActionBarTabBarStyle.Styled" parent="@style/Widget.AppCompat.ActionBar.TabBar">
+	    <item name="divider">@null</item>
+	    <item name="showDividers">none</item>
+	</style>
+    <style name="DropDownNav.Styled" parent="@style/Widget.AppCompat.Spinner.DropDown.ActionBar">
+        <item name="android:background">@drawable/spinner_background_ab_styled</item>
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_styled</item>
+        <item name="android:dropDownSelector">@drawable/selectable_background_styled</item>
+    </style>
+    
+    <style name="ProgressBar.Styled" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progress_horizontal_styled</item>
+    </style>
+    
+    <style name="ActionButton.CloseMode.Styled" parent="@style/Widget.AppCompat.ActionButton.CloseMode">
+        <item name="android:background">@drawable/btn_cab_done_styled</item>
+    </style>
+    
+    <style name="ActionBarTextStyle.Styled" parent="@style/Widget.AppCompat.ActionBar.TabText">
+	    <item name="android:textSize">14sp</item>
+	</style>
+    <!-- this style is only referenced in a Light.DarkActionBar based theme -->
+    <style name="Theme.Styled.Widget" parent="@style/Theme.AppCompat">
+        <item name="popupMenuStyle">@style/PopupMenu.Styled</item>
+        <item name="dropDownListViewStyle">@style/DropDownListView.Styled</item>
+    </style>
+
+</resources>

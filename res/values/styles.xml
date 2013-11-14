@@ -4,9 +4,7 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="AppBaseTheme" parent="Theme.AppCompat">
-        <item name="actionBarStyle">@style/Widget.AppCompat.ActionBar.Solid</item>
-        <item name="android:actionBarStyle">@style/Widget.AppCompat.ActionBar.Solid</item>
+    <style name="AppBaseTheme" parent="Theme.Styled">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
