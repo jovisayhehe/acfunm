@@ -19,6 +19,7 @@ package tv.acfun.video.fragment;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import tv.acfun.video.AcApp;
 import tv.acfun.video.R;
 import tv.acfun.video.api.API;
 import tv.acfun.video.entity.Category;
@@ -27,6 +28,7 @@ import tv.acfun.video.util.net.Connectivity;
 import tv.acfun.video.util.net.CustomUARequest;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -118,8 +120,14 @@ public class CategoriesFragment extends GridFragment{
 
         @Override
         public void onErrorResponse(VolleyError error) {
-            // TODO Auto-generated method stub
-            
+            Log.e("Cats","error::"+error.getMessage());
+            List<Category> cats = AcApp.getCategories();
+            if(cats != null){
+                mLoadingView.setVisibility(View.GONE);
+                mGridView.setVisibility(View.VISIBLE);
+                mAdapter = new CategoriesAdapter(getActivity().getApplicationContext(),cats);
+                setAdapter(mAdapter);
+            }
         }};
         
     private class CategoriesAdapter extends BaseAdapter implements StickyGridHeadersBaseAdapter {
