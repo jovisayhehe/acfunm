@@ -18,14 +18,13 @@
 -->
 
 <resources>
-
+	
     <style name="Theme.Styled" parent="@style/Theme.AppCompat">
         <item name="android:selectableItemBackground">@drawable/selectable_background_styled</item>
         <item name="android:actionBarItemBackground">?android:attr/selectableItemBackground</item>
         <item name="android:popupMenuStyle">@style/PopupMenu.Styled</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListView.Styled</item>
         <item name="android:actionBarTabBarStyle">@style/ActionBarTabBarStyle.Styled</item>
-        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Styled</item>
         <item name="android:actionBarTabTextStyle">@style/ActionBarTextStyle.Styled</item>
         <item name="android:actionDropDownStyle">@style/DropDownNav.Styled</item>
         <item name="android:actionBarStyle">@style/ActionBar.Solid.Styled</item>
@@ -33,7 +32,9 @@
         <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_styled</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Styled</item>
     </style>
-
+	<style name="Theme.Styled.TabStyled" parent="@style/Theme.Styled">
+	    <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Styled</item>
+	</style>
     <style name="ActionBar.Solid.Styled" parent="@style/Widget.AppCompat.ActionBar.Solid">
         <item name="android:background">@drawable/ab_solid_styled</item>
         <item name="android:backgroundStacked">@drawable/ab_stacked_solid_styled</item>

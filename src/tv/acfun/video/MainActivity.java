@@ -3,6 +3,7 @@ package tv.acfun.video;
 import tv.acfun.video.fragment.CategoriesFragment;
 import tv.acfun.video.fragment.HomeFragment;
 import tv.acfun.video.util.CommonUtil;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -24,6 +25,10 @@ public class MainActivity extends ActionBarActivity implements TabListener {
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        boolean isXiaomi = "Xiaomi".equalsIgnoreCase(Build.MANUFACTURER);
+        if(!isXiaomi){
+            setTheme(R.style.Theme_Styled_TabStyled);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final ActionBar actionBar = getSupportActionBar();
