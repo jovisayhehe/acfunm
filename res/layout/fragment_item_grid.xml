@@ -21,9 +21,9 @@
 
     <ProgressBar
         android:id="@+id/loading"
+        style="?android:attr/progressBarStyleLarge"
         android:layout_width="100dip"
         android:layout_height="100dip"
-        android:layout_gravity="center"
-        android:indeterminateDrawable="@drawable/loading_animation" />
+        android:layout_gravity="center" />
 
 </FrameLayout>
