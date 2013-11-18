@@ -25,4 +25,9 @@ public class API {
     public static final String HOME_CATS = BASE_URL+"/home/categories";
     public static final String VIDEO_DETAIL = BASE_URL+"/videos/%d";
     public static final String CHANNEL_CATS = BASE_URL+"/videocategories";
+    
+    public static final String EXRAS_CHANNEL_ID = "extras_channel_id";
+    public static final String EXRAS_CHANNEL_NAME = "extras_channel_name";
+    public static final String EXRAS_CATEGORY_ID = "extras_category_id";
+    
 }

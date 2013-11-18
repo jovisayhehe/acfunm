@@ -73,7 +73,7 @@ public class CategoriesFragment extends GridFragment{
         
     }
     
-    private static class CategoriesRequest extends CustomUARequest<List<Category>> {
+    public static class CategoriesRequest extends CustomUARequest<List<Category>> {
 
         public CategoriesRequest(Listener<List<Category>> listener, ErrorListener errorListner) {
             super(API.CHANNEL_CATS, null, listener, errorListner);

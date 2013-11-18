@@ -76,7 +76,14 @@ public class AcApp extends Application {
         }
         return null;
     }
-    
+    public static void setCategories(List<Category> categories){
+        if (sCategories == null || sCategories.isEmpty()) {
+            sCategories = categories;
+        }else{
+            sCategories.clear();
+            sCategories.addAll(categories);
+        }
+    }
     public static List<Category> getCategories(){
         if(sCategories == null){
             byte[] data = getDataInDiskCache(API.CHANNEL_CATS);
@@ -87,4 +94,5 @@ public class AcApp extends Application {
         }
         return sCategories;
     }
+    
 }

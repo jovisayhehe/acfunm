@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import tv.acfun.video.AcApp;
+import tv.acfun.video.ChannelActivity;
 import tv.acfun.video.R;
 import tv.acfun.video.api.API;
 import tv.acfun.video.entity.HomeCat;
@@ -29,6 +30,7 @@ import tv.acfun.video.util.net.Connectivity;
 import tv.acfun.video.util.net.CustomUARequest;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -59,7 +61,7 @@ import com.tonicartos.widget.stickygridheaders.StickyGridHeadersBaseAdapter;
  * @author Yrom
  * 
  */
-public class HomeFragment extends GridFragment{
+public class HomeFragment extends GridFragment {
 
     public HomeFragment() {
     }
@@ -75,10 +77,10 @@ public class HomeFragment extends GridFragment{
         @Override
         public void onResponse(List<HomeCat> response) {
             hideRefreshAnimation();
-            if(mAdapter == null){
+            if (mAdapter == null) {
                 mAdapter = new HomeAdapter(getActivity().getApplicationContext(), response);
-            }else{
-                ((HomeAdapter)mAdapter).setData(response);
+            } else {
+                ((HomeAdapter) mAdapter).setData(response);
             }
             setAdapter(mAdapter);
         }
@@ -89,7 +91,7 @@ public class HomeFragment extends GridFragment{
         @Override
         public void onErrorResponse(VolleyError error) {
             hideRefreshAnimation();
-            if(mAdapter == null || mAdapter.isEmpty()){
+            if (mAdapter == null || mAdapter.isEmpty()) {
                 byte[] data = AcApp.getDataInDiskCache(API.HOME_CATS);
                 if (data != null && data.length > 0) {
                     String json = new String(data);
@@ -105,7 +107,8 @@ public class HomeFragment extends GridFragment{
     @Override
     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
         // FIXME: position bug
-        if(arg2<0) return;
+        if (arg2 < 0)
+            return;
         Toast.makeText(getActivity(), "onItemClick::" + mAdapter.getItemId(arg2), 0).show();
     }
 
@@ -114,7 +117,9 @@ public class HomeFragment extends GridFragment{
         // TODO Auto-generated method stub
         Toast.makeText(getActivity(),
                 "onHeaderClick::" + ((HomeCat) mAdapter.getItem((int) id)).name, 0).show();
-
+        HomeCat c = (HomeCat) mAdapter.getItem((int) id);
+        int channelId = c.id;
+        ChannelActivity.start(getActivity(), channelId, c.name);
     }
 
     @Override
@@ -184,12 +189,14 @@ public class HomeFragment extends GridFragment{
             mItems = items;
             mInflater = LayoutInflater.from(context);
         }
-        public void setData(List<HomeCat> data){
-            if(mItems != null){
+
+        public void setData(List<HomeCat> data) {
+            if (mItems != null) {
                 mItems.clear();
             }
             mItems.addAll(data);
         }
+
         @Override
         public int getCount() {
             int headers = getNumHeaders();
@@ -227,7 +234,7 @@ public class HomeFragment extends GridFragment{
             /*
              * 滚动时取消上次指定的请求，可能会有流量的浪费...
              */
-            if(holder.imageContainer != null){
+            if (holder.imageContainer != null) {
                 holder.imageContainer.cancelRequest();
             }
             holder.imageContainer = AcApp.getGloableLoader().get(
@@ -301,7 +308,7 @@ public class HomeFragment extends GridFragment{
     protected Request<?> newRequest() {
         return new HomeCatsRequest(listener, errorListner);
     }
-    
+
     @Override
     protected boolean shouldRefreshCache() {
         return true;
