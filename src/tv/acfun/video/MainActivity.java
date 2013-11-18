@@ -26,11 +26,11 @@ public class MainActivity extends ActionBarActivity implements TabListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         boolean isXiaomi = "Xiaomi".equalsIgnoreCase(Build.MANUFACTURER);
-        if(!isXiaomi){
+        if(!(isXiaomi && Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)){
             setTheme(R.style.Theme_Styled_TabStyled);
         }
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.viewpager);
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
