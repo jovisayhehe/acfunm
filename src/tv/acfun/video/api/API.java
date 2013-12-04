@@ -17,6 +17,8 @@
 package tv.acfun.video.api;
 
 /**
+ * 
+ * @see <a href="http://wiki.acfun.tv/index.php/APIDoc4APP">APIDoc4APP</a>
  * @author Yrom
  *
  */

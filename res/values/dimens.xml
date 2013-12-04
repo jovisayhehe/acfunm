@@ -8,4 +8,5 @@
     <dimen name="item_width">130dp</dimen>
 	<dimen name="item_height">100dp</dimen>
 	<dimen name="item_cat_width">90dp</dimen>
+	<dimen name="drawer_width">200dp</dimen>
 </resources>

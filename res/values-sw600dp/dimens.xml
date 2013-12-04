@@ -4,5 +4,5 @@
 	<dimen name="item_verticalSpacing">8dp</dimen>
 	<dimen name="item_width">150dp</dimen>
 	<dimen name="item_height">130dp</dimen>
-
+	<dimen name="drawer_width">300dp</dimen>
 </resources>
