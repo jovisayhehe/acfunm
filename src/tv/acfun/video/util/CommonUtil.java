@@ -16,7 +16,10 @@
 
 package tv.acfun.video.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 import android.content.Context;
 import android.os.Environment;
@@ -49,5 +52,24 @@ public class CommonUtil {
     
     public static int calculatePixelsFromDips(int dip, DisplayMetrics metrics){
         return TypedValue.complexToDimensionPixelOffset(dip, metrics);
+    }
+    
+    public static String getString(InputStream in){
+        byte[] data = getBytes(in);
+        return data == null? null:new String(data);
+    }
+    public static byte[] getBytes(InputStream in){
+
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            byte[] buffer = new byte[8192];
+            int len = 0;
+            while ((len = in.read(buffer)) != -1)
+                baos.write(buffer, 0, len);
+            in.close();
+            return baos.toByteArray();
+        } catch (IOException e) {
+            return null;
+        }
     }
 }

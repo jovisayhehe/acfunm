@@ -15,8 +15,11 @@
  */
 package tv.acfun.video;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
+import com.alibaba.fastjson.JSON;
 import com.android.volley.Request;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
@@ -25,6 +28,7 @@ import com.android.volley.VolleyError;
 import tv.acfun.video.adapter.MenuAdapter;
 import tv.acfun.video.entity.Category;
 import tv.acfun.video.fragment.CategoriesFragment.CategoriesRequest;
+import tv.acfun.video.util.CommonUtil;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -96,8 +100,14 @@ public class HomeActivity extends ActionBarActivity {
 
         @Override
         public void onErrorResponse(VolleyError error) {
-            // TODO : default cats
             Log.e("HOme", "error",error);
+            try {
+                InputStream stream = getAssets().open("cats.json");
+                List<Category> array = JSON.parseArray(CommonUtil.getString(stream), Category.class);
+                listener.onResponse(array);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }};
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
