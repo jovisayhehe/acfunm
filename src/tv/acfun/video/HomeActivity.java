@@ -32,25 +32,30 @@ import tv.acfun.video.util.CommonUtil;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 
 /**
  * @author Yrom
  *
  */
-public class HomeActivity extends ActionBarActivity {
+public class HomeActivity extends ActionBarActivity implements OnItemClickListener {
     
     private DrawerLayout mDrawer;
     private ListView mMenuList;
     private ActionBarDrawerToggle mDrawerToggle;
-    
+    public static String[] sTitles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +65,7 @@ public class HomeActivity extends ActionBarActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mMenuList = (ListView) findViewById(R.id.left_drawer);
+        mMenuList.setOnItemClickListener(this);
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,                  
                 mDrawer,         
@@ -69,7 +75,7 @@ public class HomeActivity extends ActionBarActivity {
                 ) {
 
             public void onDrawerClosed(View view) {
-                getSupportActionBar().setTitle(R.string.drawer_close);
+                getSupportActionBar().setTitle(getTitle());
             }
 
             public void onDrawerOpened(View drawerView) {
@@ -77,20 +83,34 @@ public class HomeActivity extends ActionBarActivity {
             }
         };
         mDrawer.setDrawerListener(mDrawerToggle);
-
+        if(sTitles == null)
+            sTitles = getResources().getStringArray(R.array.titles);
+        
+        if (savedInstanceState == null && sCategories != null) {
+            select(0);
+        }
     }
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        
-        Request<?> request = new CategoriesRequest(listener, errorListener);
-        AcApp.addRequest(request);
+        if(sCategories == null || sCategories.isEmpty()){
+            Request<?> request = new CategoriesRequest(listener, errorListener);
+            AcApp.addRequest(request);
+        }
     }
+    private static List<Category> sCategories;
+    
     Listener<List<Category>> listener = new Listener<List<Category>>() {
 
         @Override
         public void onResponse(List<Category> response) {
-            ListAdapter adapter = new MenuAdapter(HomeActivity.this, response);
+            for(int i=sTitles.length-1; i>=0 ;i--){
+                String title = sTitles[i];
+                Category cat = new Category(10086+i, title);
+                response.add(0, cat);
+            }
+            sCategories = response;
+            ListAdapter adapter = new MenuAdapter(HomeActivity.this, sCategories);
             mMenuList.setAdapter(adapter);
         }
         
@@ -100,7 +120,6 @@ public class HomeActivity extends ActionBarActivity {
 
         @Override
         public void onErrorResponse(VolleyError error) {
-            Log.e("HOme", "error",error);
             try {
                 InputStream stream = getAssets().open("cats.json");
                 List<Category> array = JSON.parseArray(CommonUtil.getString(stream), Category.class);
@@ -131,5 +150,30 @@ public class HomeActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
     
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        select(position);
+    }
+    
+    @Override
+    public void setTitle(CharSequence title) {
+        super.setTitle(title);
+        getSupportActionBar().setTitle(title);
+    }
+    
+    private void select(int position){
+        Category cat = sCategories.get(position);
+        setTitle(cat.name);
+        mMenuList.setItemChecked(position, true);
+        Fragment f = new CategoryFragment();
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, f).commit();
+        mDrawer.closeDrawer(mMenuList);
+    }
+    
+    public static class CategoryFragment extends ListFragment{
+        public CategoryFragment() {
+        }
+        
+    }
     
 }

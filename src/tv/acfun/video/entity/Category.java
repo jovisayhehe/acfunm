@@ -53,6 +53,12 @@ public class Category {
     public int id;
     public String name;
     public List<Category> subclasse;
+    
+    public Category(){}
+    public Category(int id, String name){
+        this.id = id;
+        this.name = name;
+    }
     @Override
     public String toString() {
         return name;

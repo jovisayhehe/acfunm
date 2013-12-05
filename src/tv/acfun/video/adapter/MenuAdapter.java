@@ -18,6 +18,7 @@ package tv.acfun.video.adapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import tv.acfun.video.HomeActivity;
 import tv.acfun.video.R;
 import tv.acfun.video.entity.Category;
 import android.content.Context;
@@ -37,31 +38,26 @@ public class MenuAdapter extends BaseAdapter {
     private Context mContext;
     private List<Category> mItems;
     
-    private String[] mTitles;
     private LayoutInflater inflater;
     public MenuAdapter(Context context, List<Category> categories) {
         mContext = context;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mItems = categories;
-        mTitles = context.getResources().getStringArray(R.array.titles);
     }
 
     @Override
     public int getCount() {
-        return mTitles.length + mItems.size();
+        return mItems.size();
     }
 
     @Override
-    public Object getItem(int position) {
-        if(position<mTitles.length){
-            return mTitles[position];
-        }else
-            return mItems.get(position-mTitles.length);
+    public Category getItem(int position) {
+        return mItems.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return position;
+        return getItem(position).id;
     }
 
     @Override
@@ -74,7 +70,7 @@ public class MenuAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.text = (TextView) convertView.findViewById(android.R.id.text1);
         }else if(convertView == null){
-            convertView = inflater.inflate(R.layout.item_categories, parent,false);
+            convertView = inflater.inflate(R.layout.item_menus, parent,false);
             holder = new ViewHolder();
             holder.text = (TextView) convertView;
             convertView.setTag(holder);
@@ -82,7 +78,7 @@ public class MenuAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         
-        Object o = getItem(position);
+        Category o = getItem(position);
         
         holder.text.setText(o.toString());
         return convertView;
@@ -94,7 +90,7 @@ public class MenuAdapter extends BaseAdapter {
     }
     @Override
     public int getItemViewType(int position) {
-        if(position == mTitles.length -1){
+        if(position == HomeActivity.sTitles.length -1){
             return 1;
         }
         return 0;
