@@ -1,24 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    >
-<ImageView 
-    android:id="@+id/image"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/item_height"
-    android:scaleType="fitXY"
-    android:src="@drawable/ic_launcher"
-    />
+    android:layout_height="wrap_content" >
 
-<TextView 
-    android:layout_below="@+id/image"
-    android:id="@android:id/text1"
-    style="@android:style/TextAppearance.Medium"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:lines="3"
-    android:padding="4dp"
-    android:background="#99000000"
-    android:gravity="center" />
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_height"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_launcher" />
+
+    <TextView
+        android:id="@android:id/text1"
+        style="@android:style/TextAppearance.Medium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/image"
+        android:background="#333"
+        android:paddingBottom="4dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp" />
+
+    <TextView
+        android:id="@android:id/text2"
+        style="@android:style/TextAppearance.Small"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@android:id/text1"
+        android:background="#333"
+        android:paddingBottom="8dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="4dp"
+        android:singleLine="true"
+        android:typeface="monospace" />
+
 </RelativeLayout>

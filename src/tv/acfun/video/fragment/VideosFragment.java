@@ -3,6 +3,7 @@ package tv.acfun.video.fragment;
 import java.util.List;
 
 import tv.acfun.video.AcApp;
+import tv.acfun.video.HomeActivity;
 import tv.acfun.video.R;
 import tv.acfun.video.adapter.BaseArrayAdapter;
 import tv.acfun.video.api.API;
@@ -13,11 +14,14 @@ import tv.acfun.video.util.TextViewUtils;
 import tv.acfun.video.util.net.FastJsonRequest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
@@ -43,11 +47,13 @@ public class VideosFragment extends GridFragment{
     public static Fragment newInstance(Category cat) {
         VideosFragment f = new VideosFragment();
         Bundle args = new Bundle();
-        if(cat.id == 10086)
-        args.putInt(API.EXRAS_CATEGORY_ID, 1024);
-        else args.putInt(API.EXRAS_CATEGORY_ID,cat.id);
+        if(cat.id > 1024)
+            args.putInt(API.EXRAS_CATEGORY_ID, 1024);
+        else
+            args.putInt(API.EXRAS_CATEGORY_ID,cat.id);
         // TODO 
         f.setArguments(args);
+        f.setRetainInstance(true);
         return f;
     }
     @Override
@@ -63,6 +69,7 @@ public class VideosFragment extends GridFragment{
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        isLandScape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
 //        mGridView.setColumnWidth(400);
     }
     Listener<Videos> listener = new Listener<Videos>() {
@@ -94,13 +101,11 @@ public class VideosFragment extends GridFragment{
     }
     @Override
     public void onHeaderClick(AdapterView<?> parent, View view, long id) {
-        // TODO Auto-generated method stub
-        
     }
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         // TODO Auto-generated method stub
-        
+        parent.getItemAtPosition(position);
     }
     
     public static class VideosRequest extends FastJsonRequest<Videos> {
@@ -122,7 +127,8 @@ public class VideosFragment extends GridFragment{
             if (convertView == null) {
                 convertView = mInflater.inflate(R.layout.item_videos, parent, false);
                 holder = new ViewHolder();
-                holder.textView = (TextView) convertView.findViewById(android.R.id.text1);
+                holder.titleView = (TextView) convertView.findViewById(android.R.id.text1);
+                holder.descView = (TextView) convertView.findViewById(android.R.id.text2);
                 holder.imageView = (ImageView) convertView.findViewById(R.id.image);
                 convertView.setTag(holder);
             } else {
@@ -130,25 +136,56 @@ public class VideosFragment extends GridFragment{
             }
 
             Video item = getItem(position);
+            setItemText(holder,item);
+            handleImageRequest(holder, item);
+            return convertView;
+        }
+
+        private void handleImageRequest(ViewHolder holder, Video item) {
+            if (holder.imageContainer != null) {
+                holder.imageContainer.cancelRequest();
+            }
+            ImageListener imageListener =
+                    ImageLoader.getImageListener(holder.imageView, R.drawable.cover_night,R.drawable.cover_night);
+            holder.imageContainer =
+                    AcApp.getGloableLoader().get(item.previewurl,imageListener);
+        }
+
+        private void setItemText(ViewHolder holder, Video item) {
             String name = "无题";
             if (item.name != null) {
                 name = TextViewUtils.getSource(item.name);
             }
-            holder.textView.setText(name);
-            if (holder.imageContainer != null) {
-                holder.imageContainer.cancelRequest();
-            }
-            ImageListener imageListener = ImageLoader.getImageListener(holder.imageView, R.drawable.cover_night,R.drawable.cover_night);
-            holder.imageContainer = AcApp.getGloableLoader().get(
-                    item.previewurl,
-                    imageListener);
-            return convertView;
+            holder.titleView.setText(name);
+            /*
+             * 屏幕方向改变时重置textView lines
+             */
+            if(isLandScape)
+                holder.titleView.setLines(2);
+            else
+                holder.titleView.setMinLines(1);
+            
+            String desc = item.creator.name + " · "+ item.viewernum + "次观看";
+            holder.descView.setText(desc);
         }
         
     }
-    
+    private boolean isLandScape;
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        isLandScape = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE;
+        ((BaseAdapter)mAdapter).notifyDataSetChanged();
+        Log.d("adfd", "onConfigurationChanged::isLandScape="+isLandScape);
+    }
+    private String getChannelName(int id){
+        if(mActivity instanceof HomeActivity){
+            return ((HomeActivity)mActivity).findChannelNameById(id);
+        }
+        return null;
+    }
     private static class ViewHolder {
-        TextView textView;
+        TextView titleView,descView;
         ImageView imageView;
         ImageLoader.ImageContainer imageContainer;
     }

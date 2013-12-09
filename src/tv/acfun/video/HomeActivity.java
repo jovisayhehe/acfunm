@@ -36,6 +36,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.android.volley.Request;
@@ -114,7 +115,7 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         public void onResponse(List<Category> response) {
             for(int i=sTitles.length-1; i>=0 ;i--){
                 String title = sTitles[i];
-                Category cat = new Category(10086+i, title);
+                Category cat = new Category(1024+i, title);
                 response.add(0, cat);
             }
             sCategories = response;
@@ -178,10 +179,31 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         Category cat = sCategories.get(position);
         setTitle(cat.name);
         mMenuList.setItemChecked(position, true);
-        Fragment f = VideosFragment.newInstance(cat);
-        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, f).commit();
-        mDrawer.closeDrawer(mMenuList);
+        if(cat.id > 1024){
+            // TODO
+            Toast.makeText(this, "正在开发中...", 0).show();
+        }else{
+            Fragment f = VideosFragment.newInstance(cat);
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, f).commit();
+            mDrawer.closeDrawer(mMenuList);
+        }
     }
     
-    
+    public String findChannelNameById(int channelId){
+        if(sCategories == null || sCategories.isEmpty())
+            return null;
+        
+        for(int i=0;i<sCategories.size();i++){
+            Category category = sCategories.get(i);
+            if(category.id == channelId)
+                return category.name;
+            if(category.subclasse != null)
+            for (int j = 0; j < category.subclasse.size(); j++) {
+                Category category2 = category.subclasse.get(j);
+                if(category2.id == channelId)
+                    return category2.name;
+            }
+        }
+        return null;
+    }
 }
