@@ -24,7 +24,13 @@ import tv.acfun.video.entity.Category;
 import tv.acfun.video.fragment.VideosFragment;
 import tv.acfun.video.util.CommonUtil;
 import tv.acfun.video.util.net.CategoriesRequest;
+import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -177,18 +183,53 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
     
     private void select(int position){
         Category cat = sCategories.get(position);
-        setTitle(cat.name);
-        mMenuList.setItemChecked(position, true);
         if(cat.id > 1024){
             // TODO
             Toast.makeText(this, "正在开发中...", 0).show();
         }else{
-            Fragment f = VideosFragment.newInstance(cat);
-            getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, f).commit();
-            mDrawer.closeDrawer(mMenuList);
+            if (cat.id != 63 || !handleArea63Click()) {
+                Fragment f = VideosFragment.newInstance(cat);
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, f).commit();
+                mDrawer.closeDrawer(mMenuList);
+                setTitle(cat.name);
+                mMenuList.setItemChecked(position, true);
+            }
+            
         }
     }
     
+    private boolean handleArea63Click() {
+        try{
+            ComponentName cmp = new ComponentName("tv.acfun.a63", "tv.acfun.a63.MainActivity");
+            if (getPackageManager().getActivityInfo(cmp, 0) != null) {
+                Intent intent = new Intent("android.intent.action.MAIN");
+                intent.addCategory("android.intent.category.LAUNCHER");
+                intent.setComponent(cmp);
+                startActivity(intent);
+                return true;
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            OnClickListener onClick = new OnClickListener() {
+                
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if(which == DialogInterface.BUTTON_POSITIVE){
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://pan.baidu.com/s/1pFLDT")));
+                    }
+                    dialog.dismiss();
+                }
+            };
+            new AlertDialog.Builder(this)
+                .setTitle("没有找到文章区客户端")
+                .setMessage("是否前往下载安装？")
+                .setPositiveButton("好", onClick)
+                .setNegativeButton("取消", onClick)
+                .show();
+            
+        }
+        return false;
+    }
     public String findChannelNameById(int channelId){
         if(sCategories == null || sCategories.isEmpty())
             return null;
