@@ -15,17 +15,14 @@
  */
 package tv.acfun.video.adapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import tv.acfun.video.HomeActivity;
 import tv.acfun.video.R;
 import tv.acfun.video.entity.Category;
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 
@@ -33,28 +30,14 @@ import android.widget.TextView;
  * @author Yrom
  *
  */
-public class MenuAdapter extends BaseAdapter {
+public class MenuAdapter extends BaseArrayAdapter<Category> {
     
-    private Context mContext;
-    private List<Category> mItems;
-    
-    private LayoutInflater inflater;
     public MenuAdapter(Context context, List<Category> categories) {
-        mContext = context;
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mItems = categories;
+        super(context, categories);
     }
-
-    @Override
-    public int getCount() {
-        return mItems.size();
-    }
-
-    @Override
-    public Category getItem(int position) {
-        return mItems.get(position);
-    }
-
+    /**
+     * @return cat's id
+     */
     @Override
     public long getItemId(int position) {
         return getItem(position).id;
@@ -66,11 +49,11 @@ public class MenuAdapter extends BaseAdapter {
         int type = getItemViewType(position);
         ViewHolder holder = null;
         if(type == 1){
-            convertView = inflater.inflate(R.layout.header, parent,false);
+            convertView = mInflater.inflate(R.layout.header, parent,false);
             holder = new ViewHolder();
             holder.text = (TextView) convertView.findViewById(android.R.id.text1);
         }else if(convertView == null){
-            convertView = inflater.inflate(R.layout.item_menus, parent,false);
+            convertView = mInflater.inflate(R.layout.item_menus, parent,false);
             holder = new ViewHolder();
             holder.text = (TextView) convertView;
             convertView.setTag(holder);
