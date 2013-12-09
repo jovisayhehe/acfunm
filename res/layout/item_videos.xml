@@ -18,8 +18,8 @@
         android:layout_below="@+id/image"
         android:background="#333"
         android:paddingBottom="4dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="8dp" />
 
     <TextView
@@ -30,8 +30,8 @@
         android:layout_below="@android:id/text1"
         android:background="#333"
         android:paddingBottom="8dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="4dp"
         android:singleLine="true"
         android:typeface="monospace" />

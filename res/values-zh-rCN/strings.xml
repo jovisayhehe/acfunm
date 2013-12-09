@@ -9,11 +9,11 @@
     <string name="title_user_center">个人中心</string>
     <string name="title_categories">频道分类</string>
 	<string-array name="titles">
-        <item>热门视频</item>
-        <item>我的订阅</item>
-        <item>我的收藏</item>
-        <item>观看历史</item>
-        <item>稍后观看</item>
+        <item>热门</item>
+        <item>订阅</item>
+        <item>收藏</item>
+        <item>历史</item>
+        <item>缓存</item>
         <item>频道列表</item>
     </string-array>
 </resources>

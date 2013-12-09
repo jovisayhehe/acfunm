@@ -4,6 +4,7 @@ import java.util.List;
 
 import tv.acfun.video.AcApp;
 import tv.acfun.video.HomeActivity;
+import tv.acfun.video.PlayerActivity;
 import tv.acfun.video.R;
 import tv.acfun.video.adapter.BaseArrayAdapter;
 import tv.acfun.video.api.API;
@@ -104,8 +105,13 @@ public class VideosFragment extends GridFragment{
     }
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        // TODO Auto-generated method stub
-        parent.getItemAtPosition(position);
+        try {
+            Video item = (Video) parent.getItemAtPosition(position);
+            PlayerActivity.start(mActivity, item);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        
     }
     
     public static class VideosRequest extends FastJsonRequest<Videos> {
