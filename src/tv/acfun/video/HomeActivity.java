@@ -94,7 +94,9 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(KEY_STATE_POSITION, mMenuList.getCheckedItemPosition());
+        int checkedItemPosition = mMenuList.getCheckedItemPosition();
+        if(checkedItemPosition != sTitles.length -1)
+            outState.putInt(KEY_STATE_POSITION, checkedItemPosition);
     }
     @Override
     protected void onPostResume() {
