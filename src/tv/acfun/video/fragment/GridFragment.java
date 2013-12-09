@@ -56,15 +56,18 @@ public abstract class GridFragment extends Fragment implements OnItemClickListen
         mGridView = (GridView) view.findViewById(R.id.asset_grid);
         mGridView.setOnItemClickListener(this);
         mLoadingView = view.findViewById(R.id.loading);
-        ((StickyGridHeadersGridView) mGridView).setOnHeaderClickListener(this);
+        if(mGridView instanceof StickyGridHeadersGridView)
+            ((StickyGridHeadersGridView) mGridView).setOnHeaderClickListener(this);
     }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         loadData();
     }
-    
+
     public void setAdapter(ListAdapter adapter){
+        mLoadingView.setVisibility(View.GONE);
+        mGridView.setVisibility(View.VISIBLE);
         if(mAdapter != adapter){
             mAdapter = adapter;
         }

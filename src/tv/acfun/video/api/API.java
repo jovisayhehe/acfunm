@@ -20,16 +20,21 @@ package tv.acfun.video.api;
  * 
  * @see <a href="http://wiki.acfun.tv/index.php/APIDoc4APP">APIDoc4APP</a>
  * @author Yrom
- *
+ * 
  */
 public class API {
     public static final String BASE_URL = "http://api.acfun.tv";
-    public static final String HOME_CATS = BASE_URL+"/home/categories";
-    public static final String VIDEO_DETAIL = BASE_URL+"/videos/%d";
-    public static final String CHANNEL_CATS = BASE_URL+"/videocategories";
-    
+    public static final String HOME_CATS = BASE_URL + "/home/categories";
+    public static final String VIDEO_DETAIL = BASE_URL + "/videos/%d";
+    public static final String CHANNEL_CATS = BASE_URL + "/videocategories";
+    public static final String VIDEO_LIST = BASE_URL + "/videos?class=%d&cursor=%d";
     public static final String EXRAS_CHANNEL_ID = "extras_channel_id";
     public static final String EXRAS_CHANNEL_NAME = "extras_channel_name";
     public static final String EXRAS_CATEGORY_ID = "extras_category_id";
-    
+
+    public static String getVideosUrl(int catId, int page, boolean isoriginal) {
+        String url = String.format(API.VIDEO_LIST, catId, page);
+        if (isoriginal) url = url + "&isoriginal=true";
+        return url;
+    }
 }

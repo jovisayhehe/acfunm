@@ -75,4 +75,8 @@ public class Video {
     
     public int channelId;
     
+    @Override
+    public String toString() {
+        return name+"("+acId+")";
+    }
 }

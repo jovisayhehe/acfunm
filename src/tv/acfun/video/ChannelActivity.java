@@ -22,6 +22,7 @@ import tv.acfun.video.api.API;
 import tv.acfun.video.entity.Category;
 import tv.acfun.video.fragment.CategoriesFragment;
 import tv.acfun.video.fragment.SubCategoryFragment;
+import tv.acfun.video.util.net.CategoriesRequest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -96,7 +97,7 @@ public class ChannelActivity extends ActionBarActivity implements TabListener {
     }
 
     private void requestCategories() {
-        Request<?> request = new CategoriesFragment.CategoriesRequest(catsListener, errorListener);
+        Request<?> request = new CategoriesRequest(catsListener, errorListener);
         AcApp.addRequest(request);
     }
 

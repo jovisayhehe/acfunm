@@ -16,16 +16,12 @@
 
 package tv.acfun.video.fragment;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import tv.acfun.video.AcApp;
 import tv.acfun.video.R;
-import tv.acfun.video.api.API;
 import tv.acfun.video.entity.Category;
-import tv.acfun.video.util.CommonUtil;
-import tv.acfun.video.util.net.Connectivity;
-import tv.acfun.video.util.net.CustomUARequest;
+import tv.acfun.video.util.net.CategoriesRequest;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,15 +32,10 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
-import com.android.volley.NetworkResponse;
-import com.android.volley.ParseError;
 import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
 import com.tonicartos.widget.stickygridheaders.StickyGridHeadersBaseAdapter;
 
 
@@ -73,30 +64,6 @@ public class CategoriesFragment extends GridFragment{
         
     }
     
-    public static class CategoriesRequest extends CustomUARequest<List<Category>> {
-
-        public CategoriesRequest(Listener<List<Category>> listener, ErrorListener errorListner) {
-            super(API.CHANNEL_CATS, null, listener, errorListner);
-        }
-
-        @Override
-        protected Response<List<Category>> parseNetworkResponse(NetworkResponse response) {
-            try {
-                String json = new String(response.data,
-                        HttpHeaderParser.parseCharset(response.headers));
-                return Response.success(JSON.parseArray(json, Category.class),
-                        Connectivity.newCache(response, 3000));
-            } catch (UnsupportedEncodingException e) {
-                String json = new String(response.data);
-                return Response.success(JSON.parseArray(json, Category.class),
-                        Connectivity.newCache(response, 3000));
-            } catch (Exception e) {
-                return Response.error(new ParseError(e));
-            }
-        }
-
-    }
-
     @Override
     protected Request<?> newRequest() {
         return new CategoriesRequest(listener, errorListner);

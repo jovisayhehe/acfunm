@@ -19,31 +19,29 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import com.alibaba.fastjson.JSON;
-import com.android.volley.Request;
-import com.android.volley.Response.ErrorListener;
-import com.android.volley.Response.Listener;
-import com.android.volley.VolleyError;
-
 import tv.acfun.video.adapter.MenuAdapter;
 import tv.acfun.video.entity.Category;
-import tv.acfun.video.fragment.CategoriesFragment.CategoriesRequest;
+import tv.acfun.video.fragment.VideosFragment;
 import tv.acfun.video.util.CommonUtil;
+import tv.acfun.video.util.net.CategoriesRequest;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.ListFragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
+
+import com.alibaba.fastjson.JSON;
+import com.android.volley.Request;
+import com.android.volley.Response.ErrorListener;
+import com.android.volley.Response.Listener;
+import com.android.volley.VolleyError;
 
 
 /**
@@ -55,6 +53,7 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
     private DrawerLayout mDrawer;
     private ListView mMenuList;
     private ActionBarDrawerToggle mDrawerToggle;
+    private static String KEY_STATE_POSITION = "key_state_position";
     public static String[] sTitles;
 
     @Override
@@ -85,10 +84,17 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         mDrawer.setDrawerListener(mDrawerToggle);
         if(sTitles == null)
             sTitles = getResources().getStringArray(R.array.titles);
-        
-        if (savedInstanceState == null && sCategories != null) {
-            select(0);
+        if(sCategories != null){
+            ListAdapter adapter = new MenuAdapter(HomeActivity.this, sCategories);
+            mMenuList.setAdapter(adapter);
+            int position = savedInstanceState==null? 0 : savedInstanceState.getInt(KEY_STATE_POSITION, 0);
+            select(position);
         }
+    }
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(KEY_STATE_POSITION, mMenuList.getCheckedItemPosition());
     }
     @Override
     protected void onPostResume() {
@@ -112,6 +118,7 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
             sCategories = response;
             ListAdapter adapter = new MenuAdapter(HomeActivity.this, sCategories);
             mMenuList.setAdapter(adapter);
+            select(0);
         }
         
     };
@@ -152,7 +159,11 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
     
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        select(position);
+        if(position == sTitles.length-1){
+            ((ListView)parent).smoothScrollBy(view.getTop(), 100);
+        }else
+            select(position);
+        
     }
     
     @Override
@@ -165,15 +176,10 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         Category cat = sCategories.get(position);
         setTitle(cat.name);
         mMenuList.setItemChecked(position, true);
-        Fragment f = new CategoryFragment();
+        Fragment f = VideosFragment.newInstance(cat);
         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, f).commit();
         mDrawer.closeDrawer(mMenuList);
     }
     
-    public static class CategoryFragment extends ListFragment{
-        public CategoryFragment() {
-        }
-        
-    }
     
 }
