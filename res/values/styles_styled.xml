@@ -31,7 +31,6 @@
         <item name="actionModeBackground">@drawable/cab_background_top_styled</item>
         <item name="actionModeSplitBackground">@drawable/cab_background_bottom_styled</item>
         <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Styled</item>
-		<item name="android:progressBarStyleLarge">@style/Widget.ProgressBar.Large.Styled</item>
         
     </style>
 

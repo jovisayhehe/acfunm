@@ -16,6 +16,7 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
         <item name="android:listSelector">@drawable/selectable_background_styled</item>
+        <item name="android:progressBarStyleLarge">@style/Widget.ProgressBar.Large.Styled</item>
     </style>
 
 </resources>
