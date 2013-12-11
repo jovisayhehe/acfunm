@@ -34,6 +34,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
@@ -70,7 +71,8 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mMenuList = (ListView) findViewById(R.id.left_drawer);
+        mMenuList = (ListView) findViewById(android.R.id.list);
+        mProgress = findViewById(android.R.id.progress);
         mMenuList.setOnItemClickListener(this);
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,                  
@@ -94,6 +96,7 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         if(sCategories != null){
             ListAdapter adapter = new MenuAdapter(HomeActivity.this, sCategories);
             mMenuList.setAdapter(adapter);
+            mProgress.setVisibility(View.GONE);
             int position = savedInstanceState==null? 0 : savedInstanceState.getInt(KEY_STATE_POSITION, 0);
             select(position);
         }
@@ -119,6 +122,7 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
 
         @Override
         public void onResponse(List<Category> response) {
+            mProgress.setVisibility(View.GONE);
             for(int i=sTitles.length-1; i>=0 ;i--){
                 String title = sTitles[i];
                 Category cat = new Category(1024+i, title);
@@ -144,6 +148,7 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
                 e.printStackTrace();
             }
         }};
+    private View mProgress;
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -190,7 +195,7 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
             if (cat.id != 63 || !handleArea63Click()) {
                 Fragment f = VideosFragment.newInstance(cat);
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, f).commit();
-                mDrawer.closeDrawer(mMenuList);
+                mDrawer.closeDrawer(GravityCompat.START);
                 setTitle(cat.name);
                 mMenuList.setItemChecked(position, true);
             }
@@ -246,5 +251,8 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
             }
         }
         return null;
+    }
+    public void onAvatarClick(View v){
+        Toast.makeText(this, "正在开发中...", 0).show();
     }
 }

@@ -9,13 +9,35 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <ListView
+    <RelativeLayout
         android:id="@+id/left_drawer"
         android:layout_width="@dimen/drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="#cc303030"
-        android:choiceMode="singleChoice"
-        android:listSelector="?android:attr/listSelector" />
+        android:background="#cc303030" >
+
+        <include layout="@layout/avatar" />
+		<FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@+id/divider"
+        android:layout_below="@+id/avatar"
+        android:background="@color/header" >
+    	</FrameLayout>
+        <ProgressBar
+            style="@android:attr/progressBarStyle"
+            android:id="@android:id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
+        <ListView
+            android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/divider"
+            android:choiceMode="singleChoice"
+            android:listSelector="?android:attr/listSelector" />
+    </RelativeLayout>
 
 </android.support.v4.widget.DrawerLayout>

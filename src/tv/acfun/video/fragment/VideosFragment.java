@@ -181,8 +181,8 @@ public class VideosFragment extends GridFragment{
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         isLandScape = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE;
-        ((BaseAdapter)mAdapter).notifyDataSetChanged();
-        Log.d("adfd", "onConfigurationChanged::isLandScape="+isLandScape);
+        if(mAdapter != null)
+            ((BaseAdapter)mAdapter).notifyDataSetChanged();
     }
     private String getChannelName(int id){
         if(mActivity instanceof HomeActivity){

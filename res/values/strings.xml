@@ -9,13 +9,18 @@
     <string name="title_home">HOME</string>
     <string name="title_user_center">USER</string>
     <string name="title_categories">CATEGORIES</string>
-	
+	<string name="subscribe">Subscribe</string>
+    <string name="unsubscribe">Unsubscribe</string>
+    <string name="subscribed">Subscribed</string>
+    <string name="logout">Sign out</string>
+    <string name="login">Sign in</string>
+    <string name="channel_not_public">"This channel isn't public"</string>
     <string-array name="titles">
-        <item>热门</item>
-        <item>订阅</item>
-        <item>收藏</item>
-        <item>历史</item>
-        <item>缓存</item>
-        <item>频道列表</item>
+        <item>What\'s hot</item>
+        <item>Subscriptions</item>
+        <item>Favorites</item>
+        <item>History</item>
+        <item>Watch later</item>
+        <item>Channels</item>
     </string-array>
 </resources>

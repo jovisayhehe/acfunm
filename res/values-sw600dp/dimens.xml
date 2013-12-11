@@ -2,6 +2,7 @@
 	<dimen name="activity_horizontal_margin">16dp</dimen>
 	<dimen name="item_horizontalSpacing">16dp</dimen>
 	<dimen name="item_verticalSpacing">16dp</dimen>
+	<dimen name="text_horizontal_padding">16dp</dimen>
 	<dimen name="item_width">450dp</dimen>
 	<dimen name="item_height">255dp</dimen>
 	<dimen name="drawer_width">280dp</dimen>
