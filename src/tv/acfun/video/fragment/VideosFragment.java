@@ -163,13 +163,13 @@ public class VideosFragment extends GridFragment{
                 name = TextViewUtils.getSource(item.name);
             }
             holder.titleView.setText(name);
-            /*
-             * 屏幕方向改变时重置textView lines
-             */
-            if(isLandScape)
-                holder.titleView.setLines(2);
-            else
-                holder.titleView.setMinLines(1);
+//            /*
+//             * 屏幕方向改变时重置textView lines
+//             */
+//            if(isLandScape)
+//                holder.titleView.setLines(2);
+//            else
+//                holder.titleView.setMinLines(1);
             
             String desc = item.creator.name + " · "+ item.viewernum + "次观看";
             holder.descView.setText(desc);
@@ -180,9 +180,9 @@ public class VideosFragment extends GridFragment{
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        isLandScape = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE;
-        if(mAdapter != null)
-            ((BaseAdapter)mAdapter).notifyDataSetChanged();
+//        isLandScape = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE;
+//        if(mAdapter != null)
+//            ((BaseAdapter)mAdapter).notifyDataSetChanged();
     }
     private String getChannelName(int id){
         if(mActivity instanceof HomeActivity){

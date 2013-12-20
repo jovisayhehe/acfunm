@@ -20,6 +20,7 @@
         android:paddingBottom="4dp"
         android:paddingLeft="@dimen/text_horizontal_padding"
         android:paddingRight="@dimen/text_horizontal_padding"
+        android:lines="2"
         android:paddingTop="8dp" />
 
     <TextView
