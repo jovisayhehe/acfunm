@@ -33,7 +33,7 @@ public class API {
     public static final String EXRAS_CATEGORY_ID = "extras_category_id";
 
     public static String getVideosUrl(int catId, int page, boolean isoriginal) {
-        String url = String.format(API.VIDEO_LIST, catId, page);
+        String url = String.format(API.VIDEO_LIST, catId, page*20);
         if (isoriginal) url = url + "&isoriginal=true";
         return url;
     }

@@ -18,8 +18,6 @@ package tv.acfun.video.adapter;
 
 import java.util.List;
 
-import tv.acfun.video.entity.Video;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,6 +54,14 @@ public abstract class BaseArrayAdapter<T> extends BaseAdapter {
         mItems.addAll(data);
     }
     
+    // TODO : 去重
+    public void addData(List<T> data){
+        if (mItems != null) {
+            
+            mItems.addAll(data);
+            notifyDataSetChanged();
+        }
+    }
     /**
      * @return position
      */

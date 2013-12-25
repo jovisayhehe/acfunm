@@ -15,17 +15,15 @@ import tv.acfun.video.util.TextViewUtils;
 import tv.acfun.video.util.net.FastJsonRequest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response.ErrorListener;
@@ -43,6 +41,7 @@ import com.android.volley.toolbox.ImageLoader.ImageListener;
 public class VideosFragment extends GridFragment{
     private int catId;
     protected Context mActivity;
+    private int mCurrentPage;
     public VideosFragment() {
     }
     public static Fragment newInstance(Category cat) {
@@ -70,7 +69,6 @@ public class VideosFragment extends GridFragment{
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        isLandScape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
 //        mGridView.setColumnWidth(400);
     }
     Listener<Videos> listener = new Listener<Videos>() {
@@ -78,8 +76,13 @@ public class VideosFragment extends GridFragment{
         @Override
         public void onResponse(Videos response) {
             // TODO Auto-generated method stub
-            ListAdapter adapter = new VideosAdapter(mActivity, response.list);
-            setAdapter(adapter);
+            Toast.makeText(mActivity, String.format("成功加载%d 条数据",response.pageSize), 0).show();
+            if(response.pageNo ==1){
+                ListAdapter adapter = new VideosAdapter(mActivity, response.list);
+                setAdapter(adapter);
+            }else{
+                ((VideosAdapter)mAdapter).addData(response.list);
+            }
         }
         
     };
@@ -87,7 +90,8 @@ public class VideosFragment extends GridFragment{
 
         @Override
         public void onErrorResponse(VolleyError error) {
-            // TODO Auto-generated method stub
+            // TODO : 提示错误
+            
             
         }};
     
@@ -98,7 +102,8 @@ public class VideosFragment extends GridFragment{
     }
     @Override
     protected Request<?> newRequest() {
-        return newRequest(0);
+        mCurrentPage = 0;
+        return newRequest(mCurrentPage);
     }
     @Override
     public void onHeaderClick(AdapterView<?> parent, View view, long id) {
@@ -163,26 +168,16 @@ public class VideosFragment extends GridFragment{
                 name = TextViewUtils.getSource(item.name);
             }
             holder.titleView.setText(name);
-//            /*
-//             * 屏幕方向改变时重置textView lines
-//             */
-//            if(isLandScape)
-//                holder.titleView.setLines(2);
-//            else
-//                holder.titleView.setMinLines(1);
             
             String desc = item.creator.name + " · "+ item.viewernum + "次观看";
             holder.descView.setText(desc);
         }
         
     }
-    private boolean isLandScape;
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-//        isLandScape = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE;
-//        if(mAdapter != null)
-//            ((BaseAdapter)mAdapter).notifyDataSetChanged();
+    protected void onLastItemVisible() {
+        Request<?> request = newRequest(++mCurrentPage);
+        AcApp.addRequest(request);
     }
     private String getChannelName(int id){
         if(mActivity instanceof HomeActivity){

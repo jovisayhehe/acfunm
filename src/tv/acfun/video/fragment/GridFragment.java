@@ -28,6 +28,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ListAdapter;
@@ -38,11 +40,11 @@ import android.widget.AdapterView.OnItemClickListener;
  * @author Yrom
  *
  */
-public abstract class GridFragment extends Fragment implements OnItemClickListener, OnHeaderClickListener {
+public abstract class GridFragment extends Fragment implements OnItemClickListener, OnHeaderClickListener, OnScrollListener {
     protected GridView mGridView;
     protected View mLoadingView;
     protected ListAdapter mAdapter;
-    
+    protected boolean mIsItemVisible;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,6 +57,7 @@ public abstract class GridFragment extends Fragment implements OnItemClickListen
 
         mGridView = (GridView) view.findViewById(R.id.asset_grid);
         mGridView.setOnItemClickListener(this);
+        mGridView.setOnScrollListener(this);
         mLoadingView = view.findViewById(R.id.loading);
         if(mGridView instanceof StickyGridHeadersGridView)
             ((StickyGridHeadersGridView) mGridView).setOnHeaderClickListener(this);
@@ -64,7 +67,7 @@ public abstract class GridFragment extends Fragment implements OnItemClickListen
         super.onActivityCreated(savedInstanceState);
         loadData();
     }
-
+    
     public void setAdapter(ListAdapter adapter){
         mLoadingView.setVisibility(View.GONE);
         mGridView.setVisibility(View.VISIBLE);
@@ -98,4 +101,20 @@ public abstract class GridFragment extends Fragment implements OnItemClickListen
 
     @Override
     public abstract void onItemClick(AdapterView<?> parent, View view, int position, long id);
+    
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        mIsItemVisible = totalItemCount > 0
+                && (firstVisibleItem + visibleItemCount >= totalItemCount - 1);
+    }
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        if(scrollState == SCROLL_STATE_IDLE && mIsItemVisible){
+            onLastItemVisible();
+        }
+    }
+
+    protected void onLastItemVisible(){
+        // do nothing
+    }
 }
