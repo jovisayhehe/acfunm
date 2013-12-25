@@ -21,7 +21,7 @@ import java.util.List;
 import tv.acfun.video.api.API;
 import tv.acfun.video.entity.Category;
 import tv.acfun.video.fragment.CategoriesFragment;
-import tv.acfun.video.fragment.SubCategoryFragment;
+import tv.acfun.video.fragment.ChannelFragment;
 import tv.acfun.video.util.net.CategoriesRequest;
 import android.content.Context;
 import android.content.Intent;
@@ -73,8 +73,8 @@ public class ChannelActivity extends ActionBarActivity implements TabListener {
 
     public static void start(Context context, int channelId, String channelName) {
         Intent intent = new Intent(context, ChannelActivity.class);
-        intent.putExtra(API.EXRAS_CHANNEL_ID, channelId);
-        intent.putExtra(API.EXRAS_CHANNEL_NAME, channelName);
+        intent.putExtra(API.EXTRAS_CHANNEL_ID, channelId);
+        intent.putExtra(API.EXTRAS_CHANNEL_NAME, channelName);
         context.startActivity(intent);
     }
 
@@ -82,8 +82,8 @@ public class ChannelActivity extends ActionBarActivity implements TabListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mChannelId = getIntent().getIntExtra(API.EXRAS_CHANNEL_ID, 0);
-        mChannelName = getIntent().getStringExtra(API.EXRAS_CHANNEL_NAME);
+        mChannelId = getIntent().getIntExtra(API.EXTRAS_CHANNEL_ID, 0);
+        mChannelName = getIntent().getStringExtra(API.EXTRAS_CHANNEL_NAME);
         List<Category> cats = AcApp.getCategories();
         setContentView(R.layout.activity_channel);
         if (cats == null) {
@@ -144,9 +144,9 @@ public class ChannelActivity extends ActionBarActivity implements TabListener {
     }
 
     private Fragment newFragment(int channelId) {
-        Fragment item = new SubCategoryFragment();
+        Fragment item = new ChannelFragment();
         Bundle args = new Bundle();
-        args.putInt(API.EXRAS_CATEGORY_ID, channelId);
+        args.putInt(API.EXTRAS_CATEGORY_ID, channelId);
         item.setArguments(args);
         return item;
     }

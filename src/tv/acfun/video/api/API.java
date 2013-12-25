@@ -28,10 +28,10 @@ public class API {
     public static final String VIDEO_DETAIL = BASE_URL + "/videos/%d";
     public static final String CHANNEL_CATS = BASE_URL + "/videocategories";
     public static final String VIDEO_LIST = BASE_URL + "/videos?class=%d&cursor=%d";
-    public static final String EXRAS_CHANNEL_ID = "extras_channel_id";
-    public static final String EXRAS_CHANNEL_NAME = "extras_channel_name";
-    public static final String EXRAS_CATEGORY_ID = "extras_category_id";
-
+    public static final String EXTRAS_CHANNEL_ID = "extras_channel_id";
+    public static final String EXTRAS_CHANNEL_NAME = "extras_channel_name";
+    public static final String EXTRAS_CATEGORY_ID = "extras_category_id";
+    public static final String EXTRAS_CATEGORY_IDS = "extras_category_ids";
     public static String getVideosUrl(int catId, int page, boolean isoriginal) {
         String url = String.format(API.VIDEO_LIST, catId, page*20);
         if (isoriginal) url = url + "&isoriginal=true";

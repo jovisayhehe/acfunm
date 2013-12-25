@@ -20,7 +20,9 @@ import java.io.InputStream;
 import java.util.List;
 
 import tv.acfun.video.adapter.MenuAdapter;
+import tv.acfun.video.api.API;
 import tv.acfun.video.entity.Category;
+import tv.acfun.video.fragment.ChannelFragment;
 import tv.acfun.video.fragment.VideosFragment;
 import tv.acfun.video.util.CommonUtil;
 import tv.acfun.video.util.net.CategoriesRequest;
@@ -36,6 +38,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -193,7 +196,7 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
             Toast.makeText(this, "正在开发中...", 0).show();
         }else{
             if (cat.id != 63 || !handleArea63Click()) {
-                Fragment f = VideosFragment.newInstance(cat);
+                Fragment f = getFragment(cat);
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, f).commit();
                 mDrawer.closeDrawer(GravityCompat.START);
                 setTitle(cat.name);
@@ -203,6 +206,28 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         }
     }
     
+    private Fragment getFragment(Category cat) {
+        Fragment f = null;
+        Bundle args = new Bundle();
+        if(cat.subclasse != null && !cat.subclasse.isEmpty()){
+            /*
+             * 有子分类的
+             */
+            f = new ChannelFragment();
+            int[] ids = new int[cat.subclasse.size()];
+            for(int i =0;i<ids.length;i++){
+                ids[i] = cat.subclasse.get(i).id;
+            }
+            args.putIntArray(API.EXTRAS_CATEGORY_IDS, ids);
+            f.setArguments(args);
+            f.setRetainInstance(true);
+            
+        }else{
+            f = VideosFragment.newInstance(cat);
+        }
+        
+        return f;
+    }
     private boolean handleArea63Click() {
         try{
             ComponentName cmp = new ComponentName("tv.acfun.a63", "tv.acfun.a63.MainActivity");

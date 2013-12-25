@@ -3,7 +3,6 @@ package tv.acfun.video.fragment;
 import java.util.List;
 
 import tv.acfun.video.AcApp;
-import tv.acfun.video.HomeActivity;
 import tv.acfun.video.PlayerActivity;
 import tv.acfun.video.R;
 import tv.acfun.video.adapter.BaseArrayAdapter;
@@ -45,13 +44,15 @@ public class VideosFragment extends GridFragment{
     public VideosFragment() {
     }
     public static Fragment newInstance(Category cat) {
+        return newInstance(cat.id);
+    }
+    
+    public static Fragment newInstance(int catId){
         VideosFragment f = new VideosFragment();
         Bundle args = new Bundle();
-        if(cat.id > 1024)
-            args.putInt(API.EXRAS_CATEGORY_ID, 1024);
-        else
-            args.putInt(API.EXRAS_CATEGORY_ID,cat.id);
-        // TODO 
+        if(catId > 1024)
+            catId = 1024;
+        args.putInt(API.EXTRAS_CATEGORY_ID,catId);
         f.setArguments(args);
         f.setRetainInstance(true);
         return f;
@@ -64,7 +65,7 @@ public class VideosFragment extends GridFragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        catId = getArguments().getInt(API.EXRAS_CATEGORY_ID);
+        catId = getArguments().getInt(API.EXTRAS_CATEGORY_ID);
     }
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -76,11 +77,11 @@ public class VideosFragment extends GridFragment{
         @Override
         public void onResponse(Videos response) {
             // TODO Auto-generated method stub
-            Toast.makeText(mActivity, String.format("成功加载%d 条数据",response.pageSize), 0).show();
             if(response.pageNo ==1){
                 ListAdapter adapter = new VideosAdapter(mActivity, response.list);
                 setAdapter(adapter);
             }else{
+                Toast.makeText(mActivity, String.format("成功加载%d 条数据",response.pageSize), 0).show();
                 ((VideosAdapter)mAdapter).addData(response.list);
             }
         }
@@ -179,12 +180,7 @@ public class VideosFragment extends GridFragment{
         Request<?> request = newRequest(++mCurrentPage);
         AcApp.addRequest(request);
     }
-    private String getChannelName(int id){
-        if(mActivity instanceof HomeActivity){
-            return ((HomeActivity)mActivity).findChannelNameById(id);
-        }
-        return null;
-    }
+   
     private static class ViewHolder {
         TextView titleView,descView;
         ImageView imageView;
