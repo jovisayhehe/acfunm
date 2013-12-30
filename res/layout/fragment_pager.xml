@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:orientation="vertical" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:app1="http://schemas.android.com/apk/res/tv.acfun.video">
 
     <com.astuetz.PagerSlidingTabStrip
         android:id="@+id/tabs"
@@ -10,6 +10,7 @@
         android:layout_height="48dip"
         android:textSize="14sp"
         app:pstsIndicatorColor="@color/main_color"
+        app1:pstsIndicatorHeight="3dp"
         android:textColor="?android:attr/textColorPrimary"
          />
 
