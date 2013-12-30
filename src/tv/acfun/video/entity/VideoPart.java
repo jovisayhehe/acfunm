@@ -21,6 +21,7 @@ import android.os.Parcelable;
 
 /**
  * {
+     "name":"Part 1",
       "videoId": 779819,
       "sourceId": "119196848",
       "type": "sina",
@@ -30,6 +31,7 @@ import android.os.Parcelable;
  *
  */
 public class VideoPart implements Parcelable{
+    public String name;
     public long videoId;
     public String sourceId;
     public String type;
@@ -41,6 +43,7 @@ public class VideoPart implements Parcelable{
     }
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name == null? "无题":name);
         dest.writeLong(videoId);
         dest.writeString(sourceId);
         dest.writeString(type);
@@ -57,6 +60,7 @@ public class VideoPart implements Parcelable{
         @Override
         public VideoPart createFromParcel(Parcel source) {
             VideoPart part = new VideoPart();
+            part.name = source.readString();
             part.videoId = source.readLong();
             part.sourceId = source.readString();
             part.type = source.readString();

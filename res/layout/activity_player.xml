@@ -1,20 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
-    <RelativeLayout
+    <FrameLayout
+        android:id="@+id/frame_video"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-         >
-        <VideoView 
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="200dp"
-            />
-        
-        
-    </RelativeLayout>
-    
+        android:layout_height="200dp"
+        >
 
-</ScrollView>
+        <include
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            layout="@layout/video_player" />
+    </FrameLayout>
+	<com.astuetz.PagerSlidingTabStrip
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="48dip"
+        android:layout_below="@id/frame_video"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="14sp"
+        app:pstsIndicatorColor="@color/main_color"
+        app:pstsIndicatorHeight="3dp"
+        app:pstsTabPaddingLeftRight="@dimen/text_horizontal_padding" />
+	<ViewStub
+	    android:id="@+id/view_stub"
+	    android:layout_below="@id/tabs"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:padding="8dp"
+	    android:layout="@layout/viewpager" />
+
+	<ProgressBar
+	    android:id="@+id/progressBar"
+	    android:layout_below="@id/tabs"
+	    android:layout_centerHorizontal="true"
+	    style="?android:attr/progressBarStyleLarge"
+	    android:layout_marginTop="30dp"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content" />
+
+</RelativeLayout>

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/controlbar"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:id="@+id/controller"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
     <Button
         android:id="@+id/play_btn"
@@ -14,10 +13,12 @@
         android:text="play" />
 
     <LinearLayout
+        android:id="@+id/controller_bar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:visibility="gone" >
 
         <TextView
             android:id="@+id/time_current"
@@ -53,9 +54,9 @@
 
         <Button
             android:id="@+id/zoom_btn"
-            android:layout_gravity="center_vertical"
             android:layout_width="40dp"
-            android:layout_height="40dp" />
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical" />
     </LinearLayout>
 
 </RelativeLayout>

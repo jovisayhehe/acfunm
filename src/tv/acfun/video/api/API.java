@@ -37,4 +37,9 @@ public class API {
         if (isoriginal) url = url + "&isoriginal=true";
         return url;
     }
+    
+    public static String getVideoDetailsUrl(int acId){
+        return String.format(VIDEO_DETAIL,acId);
+    }
+    
 }
