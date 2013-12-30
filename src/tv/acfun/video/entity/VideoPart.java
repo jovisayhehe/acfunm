@@ -16,6 +16,9 @@
 
 package tv.acfun.video.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * {
       "videoId": 779819,
@@ -26,9 +29,39 @@ package tv.acfun.video.entity;
  * @author Yrom
  *
  */
-public class VideoPart {
+public class VideoPart implements Parcelable{
     public long videoId;
     public String sourceId;
     public String type;
     public String commentId;
+    
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(videoId);
+        dest.writeString(sourceId);
+        dest.writeString(type);
+        dest.writeString(commentId);
+        
+    }
+    public static final Parcelable.Creator<VideoPart> CREATOR = new Creator<VideoPart>() {
+        @Override
+        public VideoPart[] newArray(int size) {
+            
+            return new VideoPart[size];
+        }
+        
+        @Override
+        public VideoPart createFromParcel(Parcel source) {
+            VideoPart part = new VideoPart();
+            part.videoId = source.readLong();
+            part.sourceId = source.readString();
+            part.type = source.readString();
+            part.commentId = source.readString();
+            return part;
+        }
+    };
 }

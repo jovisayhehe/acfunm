@@ -18,6 +18,8 @@ package tv.acfun.video.entity;
 
 import java.util.ArrayList;
 
+import android.os.Bundle;
+
 /**
  * {
   "acId": 904616,
@@ -75,8 +77,24 @@ public class Video {
     
     public int channelId;
     
+    public long createtime;
     @Override
     public String toString() {
         return name+"("+acId+")";
     }
+    
+    public Bundle store(){
+        Bundle b = new Bundle();
+        b.putString("name", name);
+        b.putString("desc", desc);
+        b.putString("up", creator.name);
+        b.putInt("views", viewernum);
+        b.putInt("favs", collectnum);
+        b.putInt("comments", commentnum);
+        b.putInt("channelId", channelId);
+        b.putLong("createtime", createtime);
+        b.putStringArray("tags", tags);
+        return b;
+    }
+    
 }
