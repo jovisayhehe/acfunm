@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <VideoView
+    <io.vov.vitamio.widget.VideoView
         android:id="@+id/video"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
+	<ImageView android:id="@+id/preview"
+	    android:layout_width="match_parent"
+	    android:scaleType="fitXY"
+	    android:layout_height="match_parent"/>
     <include layout="@layout/video_controller" />
 
 </merge>

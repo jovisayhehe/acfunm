@@ -32,7 +32,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".ChannelActivity" />
-        <activity android:name=".PlayerActivity" />
+        <activity
+            android:name=".PlayerActivity"
+            android:configChanges="screenSize|orientation" />
     </application>
 
 </manifest>

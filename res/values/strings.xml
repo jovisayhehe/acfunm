@@ -27,7 +27,6 @@
     <string-array name="details_titles">
         <item>Details</item>
         <item>Parts</item>
-        <item>Relates</item>
         <item>Comments</item>
     </string-array>
 </resources>

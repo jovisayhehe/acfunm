@@ -16,6 +16,8 @@
 
 package tv.acfun.video;
 
+import io.vov.vitamio.widget.VideoView;
+
 import java.util.ArrayList;
 
 import tv.acfun.video.adapter.BaseArrayAdapter;
@@ -29,7 +31,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.ListFragment;
@@ -37,42 +38,84 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.ViewStub;
 import android.widget.AdapterView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.astuetz.PagerSlidingTabStrip;
 
 /**
  * @author Yrom TODO :
  */
-public class PlayerActivity extends ActionBarActivity {
+public class PlayerActivity extends ActionBarActivity implements OnClickListener {
+    private static final String TAG = "PlayerActivity";
+    
     public static void start(Context context, Video video) {
         Intent intent = new Intent(context.getApplicationContext(), PlayerActivity.class);
         intent.putExtra("acid", video.acId);
+        intent.putExtra("preview", video.previewurl);
         context.startActivity(intent);
     }
 
     private ViewPager mPager;
     private Video mVideo;
     private View mProgress;
+    private ImageView previewImage;
+    private int w,h;
+    private boolean isPlaying;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        
         setContentView(R.layout.activity_player);
+        initDisplayer();
+        initViews();
+        setVideoSize();
+        initVideo();
+    }
+    private void initViews() {
         mProgress = findViewById(R.id.progressBar);
+        mVideoFrame = findViewById(R.id.frame_video);
+        findViewById(R.id.play_btn).setOnClickListener(this);
+        mVideoView = (VideoView) findViewById(R.id.video);
+    }
+    private void setVideoSize() {
+        int height = w / 16 * 9;
+        LayoutParams params = mVideoFrame.getLayoutParams();
+        params.height = height;
+        mVideoFrame.setLayoutParams(params);
+        Log.i(TAG, "height = "+height);
+    }
+    private void initVideo() {
         int acId = getIntent().getIntExtra("acid", 0);
+        getSupportActionBar().setTitle("ac"+acId);
+        String preview = getIntent().getStringExtra("preview");
+        previewImage = (ImageView) findViewById(R.id.preview);
+        AcApp.getGloableLoader().get(preview, ImageLoader.getImageListener(previewImage,0,0));
         AcApp.addRequest(new VideoDetailsRequest(acId, listener, errorListner));
     }
-
+    
+    private void initDisplayer() {
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        w = Math.min(displayMetrics.widthPixels,displayMetrics.heightPixels);
+        h = Math.max(displayMetrics.widthPixels,displayMetrics.heightPixels);
+    }
     private void initTabs() {
         ViewStub stub = (ViewStub) findViewById(R.id.view_stub);
         View view = stub.inflate();
@@ -130,8 +173,17 @@ public class PlayerActivity extends ActionBarActivity {
             // TODO Auto-generated method stub
         }
     };
+    private View mVideoFrame;
+    private VideoView mVideoView;
     
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
     public static class VideoDetailsRequest extends FastJsonRequest<Video> {
         public VideoDetailsRequest(int acId, Listener<Video> listener, ErrorListener errorListner) {
             super(API.getVideoDetailsUrl(acId), Video.class, listener, errorListner);
@@ -242,5 +294,30 @@ public class PlayerActivity extends ActionBarActivity {
     }
     private static class ViewHolder{
         TextView name, desc;
+    }
+    @Override
+    public void onClick(View v) {
+        // TODO Auto-generated method stub
+        switch (v.getId()) {
+        case R.id.play_btn:
+            if(!isPlaying){
+                v.setBackgroundResource(R.drawable.btn_pause_selector);
+                startPlay();
+            }else{
+                v.setBackgroundResource(R.drawable.btn_play_selector);
+                pausePlay();
+            }
+            break;
+        default:
+            break;
+        }
+    }
+    private void pausePlay() {
+        // TODO Auto-generated method stub
+        isPlaying = false;
+    }
+    private void startPlay() {
+        isPlaying = true;
+        onPlay(mVideo.episodes.get(0));
     }
 }
