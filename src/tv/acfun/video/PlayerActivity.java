@@ -16,15 +16,25 @@
 
 package tv.acfun.video;
 
-import io.vov.vitamio.widget.VideoView;
+import io.vov.vitamio.LibsChecker;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import tv.acfun.video.adapter.BaseArrayAdapter;
 import tv.acfun.video.api.API;
 import tv.acfun.video.entity.Video;
 import tv.acfun.video.entity.VideoPart;
+import tv.acfun.video.player.MediaList.OnResolvedListener;
+import tv.acfun.video.player.MediaList.Resolver;
+import tv.acfun.video.player.VideoView;
+import tv.acfun.video.player.resolver.BaseResolver;
+import tv.acfun.video.player.resolver.ResolverType;
 import tv.acfun.video.util.TextViewUtils;
+import tv.acfun.video.util.net.Connectivity;
 import tv.acfun.video.util.net.FastJsonRequest;
 import android.content.Context;
 import android.content.Intent;
@@ -47,16 +57,23 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewStub;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.StringRequest;
 import com.astuetz.PagerSlidingTabStrip;
 
 /**
@@ -78,6 +95,9 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     private ImageView previewImage;
     private int w,h;
     private boolean isPlaying;
+    private TextView mProgressText;
+    private Resolver mResolver;
+    private VideoPart mCurrentPart;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +114,9 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         mVideoFrame = findViewById(R.id.frame_video);
         findViewById(R.id.play_btn).setOnClickListener(this);
         mVideoView = (VideoView) findViewById(R.id.video);
+        mVideoView.setMediaBufferingIndicator(findViewById(R.id.buffering_indicator));
+        mProgressText = (TextView)findViewById(R.id.progress_text);
+        
     }
     private void setVideoSize() {
         int height = w / 16 * 9;
@@ -125,7 +148,120 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabs.setViewPager(mPager);
     }
+    
+    OnResolvedListener OnResolved = new OnResolvedListener() {
+        @Override
+        public void onResolved(Resolver resolver) {
+                if(resolver.getMediaList() != null){
+                    mProgressText.setText(mProgressText.getText()
+                            +"完毕.\n"
+                            +"开始加载弹幕...");
+                    addDanmakusRequest();
+                    
+                }else{
+                    mProgressText.setText(mProgressText.getText()+"失败!");
+                    // TODO: show retry
+                }
+        }
 
+    };
+    private Animation animation;
+    private void initAnimation() {
+        animation = AnimationUtils.loadAnimation(mProgressText.getContext(), R.anim.fade_out);
+        animation.setAnimationListener(new AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+            
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+            
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mProgressText.setVisibility(View.GONE);
+            }
+            
+        });
+    }
+
+    private void hideTextDelayed() {
+        mProgressText.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mProgressText.startAnimation(animation);
+            }
+        }, 1500);
+    }
+
+    private void resolveVideos(VideoPart part) {
+        ResolverType type = null;
+        String sourceType = part.type;
+        try {
+            type = ResolverType.valueOf(sourceType.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+        if(type == null){
+            mProgressText.setText(mProgressText.getText()+"\n尚不支持该视频源...");
+            return;
+        }
+        mResolver = type.getResolver(part.sourceId);
+        mResolver.setOnResolvedListener(OnResolved);
+        mResolver.resolveAsync(this.getApplicationContext());
+        mProgressText.setText(mProgressText.getText()+"\n视频分段解析中...");
+    }
+    private void addDanmakusRequest() {
+        String url = "http://comment.acfun.tv/" + mCurrentPart.commentId + ".json";
+        // TODO: acfun lock danmakus
+        StringRequest request = new StringRequest(url, new Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                mProgressText.setText(mProgressText.getText()
+                        +"\n弹幕文件下载完毕."
+                        +"\n开始解析...");
+                try {
+//                    DMSiteType type = DMSiteType.valueOf(mSite.toUpperCase());
+//                    ILoader loader = type.getLoader();
+//                    loader.loadData(response);
+//                    BaseDanmakuParser parser = type.getParser().load(loader.getDataSource());
+//                    mDMView.prepare(parser);
+                    throw new RuntimeException();
+                } catch (Exception e) {
+                    Log.e("Play", "解析失败",e);
+                    mProgressText.setText(mProgressText.getText()
+                            +"\n解析失败...");
+                        
+                }
+                startPlay();
+            }
+        }, new ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                mProgressText.setText(mProgressText.getText() + "\n弹幕文件下载失败！");
+                startPlay();
+                hideTextDelayed();
+            }
+        }) {
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                String parsed;
+                parsed = new String(response.data, Charset.defaultCharset());
+                return Response.success(parsed, Connectivity.newCache(response, 60));
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = super.getHeaders();
+                if (headers == null || headers.equals(Collections.EMPTY_MAP)) {
+                    headers = new HashMap<String, String>();
+                }
+                headers.put("User-Agent", BaseResolver.UA_DEFAULT);
+                return headers;
+            }
+        };
+        Connectivity.addRequest(request);
+    }
+    
     private class DetailsPagerAdapter extends FragmentPagerAdapter {
         private String[] mTitles;
 
@@ -227,17 +363,19 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
      * @param part
      */
     public void onPlay(VideoPart part){
-        try {
-            /*
-             * 调用测试播放器
-             */
-            Intent intent = new Intent("tv.danmaku.dmplayer.action.PLAY", Uri.parse("dm://"+part.type+"/"+part.sourceId+"/"+part.commentId));
-            intent.addCategory(Intent.CATEGORY_DEFAULT);
-            startActivity(intent);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(getApplicationContext(), "请先安装弹幕播放器！", 0).show();
-        }
+        mCurrentPart = part;
+        resolveVideos(part);
+//        try {
+//            /*
+//             * 调用测试播放器
+//             */
+//            Intent intent = new Intent("tv.danmaku.dmplayer.action.PLAY", Uri.parse("dm://"+part.type+"/"+part.sourceId+"/"+part.commentId));
+//            intent.addCategory(Intent.CATEGORY_DEFAULT);
+//            startActivity(intent);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            Toast.makeText(getApplicationContext(), "请先安装弹幕播放器！", 0).show();
+//        }
     }
     
     
@@ -302,7 +440,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         case R.id.play_btn:
             if(!isPlaying){
                 v.setBackgroundResource(R.drawable.btn_pause_selector);
-                startPlay();
+                play();
             }else{
                 v.setBackgroundResource(R.drawable.btn_play_selector);
                 pausePlay();
@@ -312,12 +450,31 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             break;
         }
     }
+    private void play() {
+        if (previewImage.getVisibility() == View.VISIBLE) {
+            previewImage.setVisibility(View.GONE);
+        }
+        if(mCurrentPart == null || mResolver.getMediaList() == null){
+            onPlay(mVideo.episodes.get(0));
+        }else{
+            mVideoView.start();
+            isPlaying = true;
+        }
+    }
     private void pausePlay() {
-        // TODO Auto-generated method stub
         isPlaying = false;
+        mVideoView.pause();
     }
     private void startPlay() {
-        isPlaying = true;
-        onPlay(mVideo.episodes.get(0));
+        
+        mProgressText.setText(mProgressText.getText()
+                +"\n开始缓冲视频..请稍候...");
+        if (!LibsChecker.checkVitamioLibs(this)){
+            mProgressText.setText(mProgressText.getText()
+                    +"\n播放器初始化失败！");
+            return;
+        }
+        mVideoView.setMediaList(mResolver.getMediaList());
+        play();
     }
 }

@@ -35,6 +35,12 @@
         <activity
             android:name=".PlayerActivity"
             android:configChanges="screenSize|orientation" />
+        <activity
+            android:name="io.vov.vitamio.activity.InitActivity"
+            android:configChanges="orientation|keyboardHidden|navigation"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
     </application>
 
 </manifest>

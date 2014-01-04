@@ -29,4 +29,5 @@
         <item>Parts</item>
         <item>Comments</item>
     </string-array>
+    <string name="buffering">Loading...</string>
 </resources>

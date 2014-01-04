@@ -13,6 +13,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             layout="@layout/video_player" />
+        <TextView
+            android:id="@+id/progress_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:padding="16dp"
+            android:text="@string/buffering"
+            android:textColor="#fff"
+            android:textSize="14sp" />
+
     </FrameLayout>
 	<com.astuetz.PagerSlidingTabStrip
         android:id="@+id/tabs"
