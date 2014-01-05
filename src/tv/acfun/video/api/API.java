@@ -16,6 +16,7 @@
 
 package tv.acfun.video.api;
 
+
 /**
  * 
  * @see <a href="http://wiki.acfun.tv/index.php/APIDoc4APP">APIDoc4APP</a>
@@ -32,6 +33,9 @@ public class API {
     public static final String EXTRAS_CHANNEL_NAME = "extras_channel_name";
     public static final String EXTRAS_CATEGORY_ID = "extras_category_id";
     public static final String EXTRAS_CATEGORY_IDS = "extras_category_ids";
+    
+    public static final String COMMENTS = "http://www.acfun.tv/comment_list_json.aspx?contentId=%d&currentPage=%d";
+    
     public static String getVideosUrl(int catId, int page, boolean isoriginal) {
         String url = String.format(API.VIDEO_LIST, catId, page*20);
         if (isoriginal) url = url + "&isoriginal=true";
@@ -40,6 +44,10 @@ public class API {
     
     public static String getVideoDetailsUrl(int acId){
         return String.format(VIDEO_DETAIL,acId);
+    }
+
+    public static String getCommentUrl(int aid, int page) {
+        return String.format(COMMENTS, aid, page);
     }
     
 }

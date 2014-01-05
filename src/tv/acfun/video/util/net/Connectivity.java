@@ -22,6 +22,7 @@ import tv.acfun.video.BuildConfig;
 import tv.acfun.video.util.BitmapCache;
 import tv.acfun.video.util.CommonUtil;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -51,6 +52,7 @@ import com.android.volley.toolbox.ImageLoader;
  * 
  */
 public class Connectivity {
+    private static BitmapCache sCache;
     private static final String DEFAULT_CACHE_DIR = "acfun";
     public static final String UA = "acfun/1.0 (Linux; U; Android " 
             + Build.VERSION.RELEASE + "; "
@@ -265,7 +267,8 @@ public class Connectivity {
     }
     public static ImageLoader getGloableLoader(Context context){
         if(mImageLoader == null){
-            mImageLoader = new ImageLoader(getGloableQueue(context),new BitmapCache());
+            if(sCache == null) sCache = new BitmapCache();
+            mImageLoader = new ImageLoader(getGloableQueue(context),sCache);
         }
         return mImageLoader;
     }
@@ -274,4 +277,15 @@ public class Connectivity {
         Cache.Entry entry = getGloadbleCache(context).get(key);
         return entry ==null? null : entry.data;
     }
+
+    public static Bitmap getBitmap(String key) {
+        if(sCache == null) sCache = new BitmapCache();
+        return sCache.getBitmap(key);
+    }
+
+    public static void putBitmap(String key, Bitmap value) {
+        if(sCache == null) sCache = new BitmapCache();
+        sCache.putBitmap(key, value);
+    }
+    
 }

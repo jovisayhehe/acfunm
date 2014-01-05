@@ -20,9 +20,18 @@ import java.util.List;
 
 import tv.acfun.video.api.API;
 import tv.acfun.video.entity.Category;
+import tv.acfun.video.util.BitmapCache;
 import tv.acfun.video.util.net.Connectivity;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Application;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.text.format.DateFormat;
 
 import com.alibaba.fastjson.JSON;
@@ -38,7 +47,6 @@ public class AcApp extends Application {
     private static AcApp sInstance;
     private static Context sContext;
     private static List<Category> sCategories;
-    
     public void onCreate() {
         super.onCreate();
         sContext = sInstance = this;
@@ -99,6 +107,7 @@ public class AcApp extends Application {
     public static final long _1_min = 60 * 1000;
     public static final long _1_hour = 60 * _1_min;
     public static final long _24_hour = 24 * _1_hour;
+
     public static String getPubDate(long postTime) {
         long delta = System.currentTimeMillis() - postTime;
         if( delta <  _24_hour && delta >= _1_hour){
@@ -136,5 +145,47 @@ public class AcApp extends Application {
      */
     public static String getDateTime(CharSequence format, long msec) {
         return DateFormat.format(format, msec).toString();
+    }
+    
+    public static void startArea63(final Activity context, String className, Intent intent){
+        try{
+            ComponentName cmp = new ComponentName("tv.acfun.a63", className);
+            if (context.getPackageManager().getActivityInfo(cmp, 0) != null) {
+                intent.setComponent(cmp);
+                context.startActivity(intent);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            OnClickListener onClick = new OnClickListener() {
+                
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if(which == DialogInterface.BUTTON_POSITIVE){
+                        context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://pan.baidu.com/s/1pFLDT")));
+                    }
+                    dialog.dismiss();
+                }
+            };
+            new AlertDialog.Builder(context)
+                .setTitle("没有找到文章区客户端")
+                .setMessage("是否前往下载安装？")
+                .setPositiveButton("好", onClick)
+                .setNegativeButton("取消", onClick)
+                .show();
+            
+        }
+    }
+    public static Bitmap getBitmpInCache(String url){
+        String key = getCacheKey(url, 0, 0);
+        return Connectivity.getBitmap(key);
+    }
+    public static String getCacheKey(String url, int maxWidth, int maxHeight) {
+        return new StringBuilder(url.length() + 12).append("#W").append(maxWidth)
+                .append("#H").append(maxHeight).append(url).toString();
+    }
+    
+    public static void putBitmapInCache(String url, Bitmap value){
+        String key = getCacheKey(url, 0, 0);
+        Connectivity.putBitmap(key, value);
     }
 }

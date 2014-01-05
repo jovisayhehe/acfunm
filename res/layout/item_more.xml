@@ -4,6 +4,7 @@
     android:id="@+id/item_more"
     android:gravity="center"
     android:padding="8dp"
+    android:background="?attr/selectableItemBackground"
     style="?android:attr/textAppearanceMedium"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" />

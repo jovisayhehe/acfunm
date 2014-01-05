@@ -229,34 +229,9 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         return f;
     }
     private boolean handleArea63Click() {
-        try{
-            ComponentName cmp = new ComponentName("tv.acfun.a63", "tv.acfun.a63.MainActivity");
-            if (getPackageManager().getActivityInfo(cmp, 0) != null) {
-                Intent intent = new Intent("android.intent.action.MAIN");
-                intent.addCategory("android.intent.category.LAUNCHER");
-                intent.setComponent(cmp);
-                startActivity(intent);
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-            OnClickListener onClick = new OnClickListener() {
-                
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if(which == DialogInterface.BUTTON_POSITIVE){
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://pan.baidu.com/s/1pFLDT")));
-                    }
-                    dialog.dismiss();
-                }
-            };
-            new AlertDialog.Builder(this)
-                .setTitle("没有找到文章区客户端")
-                .setMessage("是否前往下载安装？")
-                .setPositiveButton("好", onClick)
-                .setNegativeButton("取消", onClick)
-                .show();
-            
-        }
+        Intent intent = new Intent("android.intent.action.MAIN");
+        intent.addCategory("android.intent.category.LAUNCHER");
+        AcApp.startArea63(this, "tv.acfun.a63.MainActivity", intent);
         return true;
     }
     public String findChannelNameById(int channelId){

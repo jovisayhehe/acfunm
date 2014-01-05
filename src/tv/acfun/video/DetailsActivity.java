@@ -18,16 +18,14 @@ package tv.acfun.video;
 
 import java.util.ArrayList;
 
-import com.android.volley.VolleyError;
-import com.android.volley.Response.ErrorListener;
-import com.android.volley.Response.Listener;
-import com.android.volley.toolbox.ImageLoader;
-
 import tv.acfun.video.api.API;
+import tv.acfun.video.entity.Comment;
+import tv.acfun.video.entity.Comments;
 import tv.acfun.video.entity.Video;
 import tv.acfun.video.entity.VideoPart;
 import tv.acfun.video.util.FadingActionBarHelper;
 import tv.acfun.video.util.TextViewUtils;
+import tv.acfun.video.util.net.CommentsRequest;
 import tv.acfun.video.util.net.FastJsonRequest;
 import android.content.Context;
 import android.content.Intent;
@@ -43,26 +41,27 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Response.ErrorListener;
+import com.android.volley.Response.Listener;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
+
 /**
  * @author Yrom
  * 
  */
 public class DetailsActivity extends ActionBarActivity implements OnClickListener {
     private ImageView mHeaderImage;
-    private TextView mTitleView,mUpInfoView,mDetailView;
-    protected Video mVideo;
+    private TextView mTitleView, mUpInfoView, mDetailView;
+    private Video mVideo;
+    private LinearLayout mPartsGroup, mCommentsGroup;
+    private FadingActionBarHelper mHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_channel);
         initActionBar();
-        initViews();
-        
-        String preview = getIntent().getStringExtra("preview");
-        AcApp.getGloableLoader().get(preview, ImageLoader.getImageListener(mHeaderImage,0,0));
-        int acId = getIntent().getIntExtra("acid", 0);
-        getSupportActionBar().setTitle("ac"+acId);
-        AcApp.addRequest(new VideoDetailsRequest(acId, listener, errorListner));
     }
 
     private void initViews() {
@@ -71,78 +70,132 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         mUpInfoView = (TextView) findViewById(R.id.up_info);
         mDetailView = (TextView) findViewById(R.id.details);
         mPartsGroup = (LinearLayout) findViewById(R.id.parts);
-        int height = getResources().getDisplayMetrics().widthPixels / 4 * 3;
+        mCommentsGroup = (LinearLayout) findViewById(R.id.comments);
+        int height = getResources().getDisplayMetrics().widthPixels / 16 * 9;
         LayoutParams params = mHeaderImage.getLayoutParams();
         params.height = height;
         mHeaderImage.setLayoutParams(params);
+        String preview = getIntent().getStringExtra("preview");
+        AcApp.getGloableLoader().get(preview, ImageLoader.getImageListener(mHeaderImage, R.drawable.cover_night, 0));
     }
 
     private void initActionBar() {
+        mHelper = new FadingActionBarHelper()
+                .actionBarBackground(R.drawable.ab_solid_styled)
+                .headerLayout(R.layout.details_header)
+                .contentLayout(R.layout.activity_details);
+        mHelper.initActionBar(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        FadingActionBarHelper helper = new FadingActionBarHelper().actionBarBackground(R.drawable.ab_solid_styled)
-                .headerLayout(R.layout.details_header).contentLayout(R.layout.activity_details);
-        setContentView(helper.createView(this));
-        helper.initActionBar(this);
+        int acId = getIntent().getIntExtra("acid", 0);
+        getSupportActionBar().setTitle("ac" + acId);
+        AcApp.addRequest(new VideoDetailsRequest(acId, mVideoListener, mErrorListener));
     }
-    
+
+    private void initContent() {
+        setContentView(mHelper.createView(this));
+    }
+
     public static void start(Context context, Video video) {
         Intent intent = new Intent(context.getApplicationContext(), DetailsActivity.class);
         intent.putExtra("acid", video.acId);
         intent.putExtra("preview", video.previewurl);
         context.startActivity(intent);
     }
-    Listener<Video> listener = new Listener<Video>() {
+
+    Listener<Video> mVideoListener = new Listener<Video>() {
         @Override
         public void onResponse(Video response) {
             mVideo = response;
+            initContent();
+            initViews();
             mTitleView.setText(response.name);
-
-            String info = String.format("%s / 发布于 %s / %d次播放，%d条评论，%d人收藏",
+            String info = String.format("<font color=\"#ff8800\">%s</font> / 发布于 %s <br/>%d次播放，%d条评论，%d人收藏", 
                     response.creator.name,
                     AcApp.getPubDate(response.createtime),
-                    response.viewernum,
-                    response.commentnum,
+                    response.viewernum, 
+                    response.commentnum, 
                     response.collectnum);
-            mUpInfoView.setText(info);
+            mUpInfoView.setText(Html.fromHtml(info));
             mDetailView.setText(Html.fromHtml(TextViewUtils.getSource(response.desc)));
             addParts(0);
+            requestComments();
+        }
+
+    };
+    private void requestComments() {
+        AcApp.addRequest(new CommentsRequest(mVideo.acId, 1, mCommentListener, mErrorListener));
+    }
+    Listener<Comments> mCommentListener = new Listener<Comments>() {
+        @Override
+        public void onResponse(Comments response) {
+            mCommentsGroup.findViewById(R.id.progressBar).setVisibility(View.GONE);
+            if (response.totalCount == 0) {
+                Toast.makeText(getApplicationContext(), "目前尚未有评论。", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            for (int i = 0; i < response.totalCount; i++) {
+                if (i != 0) getLayoutInflater().inflate(R.layout.item_divider_h, mCommentsGroup);
+                if (i >= 15) {
+                    View more = getLayoutInflater().inflate(R.layout.item_more, mCommentsGroup, false);
+                    more.setOnClickListener(DetailsActivity.this);
+                    mCommentsGroup.addView(more);
+                    break;
+                }
+                int id = response.commentList[i];
+                Comment comment = response.commentArr.get(id);
+                addComment(comment);
+            }
         }
     };
+
     private void addParts(int start) {
         ArrayList<VideoPart> episodes = mVideo.episodes;
-        if(start > 0 )
-        mPartsGroup.removeViewAt(mPartsGroup.getChildCount()-1);
-        for(int i=0;i<episodes.size()-start;i++){
-            if(i != 0) getLayoutInflater().inflate(R.layout.item_divider_h, mPartsGroup);
-            if(i == 10) {
-                View more = getLayoutInflater().inflate(R.layout.item_more, mPartsGroup,false);
-                more.setTag(i+start);
+        if (start > 0) mPartsGroup.removeViewAt(mPartsGroup.getChildCount() - 1);
+        for (int i = 0; i < episodes.size() - start; i++) {
+            if (i != 0) getLayoutInflater().inflate(R.layout.item_divider_h, mPartsGroup);
+            if (i == 10) {
+                View more = getLayoutInflater().inflate(R.layout.item_more, mPartsGroup, false);
+                more.setTag(i + start);
                 more.setOnClickListener(DetailsActivity.this);
                 mPartsGroup.addView(more);
                 break;
             }
-            VideoPart part = episodes.get(i+start);
-            addPart(i+start,part);
+            VideoPart part = episodes.get(i + start);
+            addPart(i + start, part);
         }
     }
+
+    private void addComment(Comment comment) {
+        View commentView = getLayoutInflater().inflate(R.layout.item_comments,mCommentsGroup,false);
+        TextView name = (TextView) commentView.findViewById(R.id.user_name);
+        TextView content = (TextView) commentView.findViewById(R.id.comments_content);
+        ImageView avatar = (ImageView) commentView.findViewById(R.id.user_avatar);
+        name.setText("#"+comment.count+"  "+comment.userName);
+        if(!TextUtils.isEmpty(comment.userImg))
+        AcApp.getGloableLoader().get(comment.userImg, ImageLoader.getImageListener(avatar, 0, 0));
+//        content.setText(Html.fromHtml(TextViewUtils.getSource(comment.content)));
+        TextViewUtils.setCommentContent(content, comment);
+        mCommentsGroup.addView(commentView);
+    }
+
     private void addPart(int position, VideoPart item) {
-        View partView = getLayoutInflater().inflate(R.layout.item_videoparts, mPartsGroup,false);
+        View partView = getLayoutInflater().inflate(R.layout.item_videoparts, mPartsGroup, false);
         partView.setOnClickListener(this);
         partView.setTag(item);
         TextView name = (TextView) partView.findViewById(R.id.part_name);
         TextView desc = (TextView) partView.findViewById(R.id.part_desc);
         String text = TextUtils.isEmpty(item.name) ? "点击查看视频" : (position + 1) + ". " + item.name;
         name.setText(text);
-        desc.setText("视频源: " + item.type);
+        desc.setText("来源: " + item.type);
         mPartsGroup.addView(partView);
     }
-    ErrorListener errorListner = new ErrorListener() {
+
+    ErrorListener mErrorListener = new ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
             // TODO Auto-generated method stub
         }
     };
-    private LinearLayout mPartsGroup;
 
     public static class VideoDetailsRequest extends FastJsonRequest<Video> {
         public VideoDetailsRequest(int acId, Listener<Video> listener, ErrorListener errorListner) {
@@ -155,20 +208,32 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         // TODO Auto-generated method stub
         switch (v.getId()) {
         case R.id.item_more:
-            Integer i = (Integer) v.getTag();
-            addParts(i.intValue());
+            Object tag = v.getTag();
+            if(tag != null && tag instanceof Integer){
+                addParts(((Integer) tag).intValue());
+            }else{
+                Intent intent = new Intent();
+                intent.putExtra("aid", mVideo.acId);
+                AcApp.startArea63(this, "tv.acfun.a63.CommentsActivity", intent);
+
+            }
             break;
         case R.id.item_part:
-            Object tag = v.getTag();
-            if(tag != null && tag instanceof VideoPart){
+            tag = v.getTag();
+            if (tag != null && tag instanceof VideoPart) {
                 onPartClick((VideoPart) tag);
             }
+            break;
+        case android.R.id.button1:
+            requestComments();
+            mCommentsGroup.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
             break;
         default:
             break;
         }
     }
-    private void onPartClick(VideoPart item){
-        Toast.makeText(this, "click::"+item.name, 0).show();
+
+    private void onPartClick(VideoPart item) {
+        Toast.makeText(this, "click::" + item.name, 0).show();
     }
 }

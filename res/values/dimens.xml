@@ -10,4 +10,6 @@
 	<dimen name="item_height">155dp</dimen>
 	<dimen name="item_cat_width">90dp</dimen>
 	<dimen name="drawer_width">200dp</dimen>
+	<dimen name="emotions_height">200dp</dimen>
+    <dimen name="emotions_column_width">48dp</dimen>
 </resources>
