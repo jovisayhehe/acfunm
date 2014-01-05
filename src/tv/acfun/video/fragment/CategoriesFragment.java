@@ -172,7 +172,7 @@ public class CategoriesFragment extends GridFragment{
             Category cat = mItems.get(position);
             HeaderViewHolder holder;
             if (convertView == null) {
-                convertView = mInflater.inflate(tv.acfun.video.R.layout.header, parent, false);
+                convertView = mInflater.inflate(tv.acfun.video.R.layout.item_header, parent, false);
                 holder = new HeaderViewHolder();
                 holder.textView = (TextView) convertView.findViewById(android.R.id.text1);
                 convertView.setTag(holder);

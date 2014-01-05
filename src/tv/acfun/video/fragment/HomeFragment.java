@@ -180,7 +180,7 @@ public class HomeFragment extends GridFragment {
 
     private class HomeAdapter extends BaseAdapter implements StickyGridHeadersBaseAdapter {
 
-        private int mHeaderResId = R.layout.header;
+        private int mHeaderResId = R.layout.item_header;
         private int mItemResId = R.layout.item_home;
         private LayoutInflater mInflater;
         private List<HomeCat> mItems;

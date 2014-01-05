@@ -49,7 +49,7 @@ public class MenuAdapter extends BaseArrayAdapter<Category> {
         int type = getItemViewType(position);
         ViewHolder holder = null;
         if(type == 1){
-            convertView = mInflater.inflate(R.layout.header, parent,false);
+            convertView = mInflater.inflate(R.layout.item_header, parent,false);
             holder = new ViewHolder();
             holder.text = (TextView) convertView.findViewById(android.R.id.text1);
         }else if(convertView == null){
