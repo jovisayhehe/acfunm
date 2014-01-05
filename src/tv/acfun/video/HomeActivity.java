@@ -236,7 +236,6 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
                 intent.addCategory("android.intent.category.LAUNCHER");
                 intent.setComponent(cmp);
                 startActivity(intent);
-                return true;
             }
         }catch(Exception e){
             e.printStackTrace();
@@ -258,7 +257,7 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
                 .show();
             
         }
-        return false;
+        return true;
     }
     public String findChannelNameById(int channelId){
         if(sCategories == null || sCategories.isEmpty())
