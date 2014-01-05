@@ -36,6 +36,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewStub;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -43,6 +44,8 @@ import android.widget.Toast;
 
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 
@@ -86,9 +89,9 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
                 .contentLayout(R.layout.activity_details);
         mHelper.initActionBar(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        int acId = getIntent().getIntExtra("acid", 0);
-        getSupportActionBar().setTitle("ac" + acId);
-        AcApp.addRequest(new VideoDetailsRequest(acId, mVideoListener, mErrorListener));
+        mAcId = getIntent().getIntExtra("acid", 0);
+        getSupportActionBar().setTitle("ac" + mAcId);
+        AcApp.addRequest(new VideoDetailsRequest(mAcId, mVideoListener, mErrorListener));
     }
 
     private void initContent() {
@@ -123,7 +126,14 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
 
     };
     private void requestComments() {
-        AcApp.addRequest(new CommentsRequest(mVideo.acId, 1, mCommentListener, mErrorListener));
+        AcApp.addRequest(new CommentsRequest(mVideo.acId, 1, mCommentListener, new ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                mCommentsGroup.findViewById(R.id.progressBar).setVisibility(View.GONE);
+                getLayoutInflater().inflate(R.layout.tips_retry, mCommentsGroup);
+                mCommentsGroup.findViewById(android.R.id.button1).setOnClickListener(DetailsActivity.this);
+            }
+        }));
     }
     Listener<Comments> mCommentListener = new Listener<Comments>() {
         @Override
@@ -173,7 +183,6 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         name.setText("#"+comment.count+"  "+comment.userName);
         if(!TextUtils.isEmpty(comment.userImg))
         AcApp.getGloableLoader().get(comment.userImg, ImageLoader.getImageListener(avatar, 0, 0));
-//        content.setText(Html.fromHtml(TextViewUtils.getSource(comment.content)));
         TextViewUtils.setCommentContent(content, comment);
         mCommentsGroup.addView(commentView);
     }
@@ -193,9 +202,20 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
     ErrorListener mErrorListener = new ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
-            // TODO Auto-generated method stub
+            findViewById(R.id.loading).setVisibility(View.GONE);
+            View retry = findViewById(R.id.tips_retry);
+            if(retry == null){
+                ViewStub stub = (ViewStub) findViewById(R.id.view_stub);
+                stub.setLayoutResource(R.layout.tips_retry);
+                stub.setInflatedId(R.id.tips_retry);
+                View view = stub.inflate();
+                view.findViewById(android.R.id.button1).setOnClickListener(DetailsActivity.this);
+            }else{
+                retry.setVisibility(View.VISIBLE);
+            }
         }
     };
+    private int mAcId;
 
     public static class VideoDetailsRequest extends FastJsonRequest<Video> {
         public VideoDetailsRequest(int acId, Listener<Video> listener, ErrorListener errorListner) {
@@ -225,8 +245,15 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
             }
             break;
         case android.R.id.button1:
-            requestComments();
-            mCommentsGroup.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+            if(mVideo == null){
+                findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                findViewById(R.id.tips_retry).setVisibility(View.GONE);
+                AcApp.addRequest(new VideoDetailsRequest(mAcId, mVideoListener, mErrorListener));
+            }else{
+                requestComments();
+                mCommentsGroup.findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                mCommentsGroup.removeViewAt(mCommentsGroup.getChildCount()-1);
+            }
             break;
         default:
             break;
