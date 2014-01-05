@@ -74,6 +74,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         mDetailView = (TextView) findViewById(R.id.details);
         mPartsGroup = (LinearLayout) findViewById(R.id.parts);
         mCommentsGroup = (LinearLayout) findViewById(R.id.comments);
+        findViewById(R.id.play_btn).setOnClickListener(this);
         int height = getResources().getDisplayMetrics().widthPixels / 16 * 9;
         LayoutParams params = mHeaderImage.getLayoutParams();
         params.height = height;
@@ -86,6 +87,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         mHelper = new FadingActionBarHelper()
                 .actionBarBackground(R.drawable.ab_solid_styled)
                 .headerLayout(R.layout.details_header)
+                .headerOverlayLayout(R.layout.header_overlay)
                 .contentLayout(R.layout.activity_details);
         mHelper.initActionBar(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -254,6 +256,9 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
                 mCommentsGroup.findViewById(R.id.loading).setVisibility(View.VISIBLE);
                 mCommentsGroup.removeViewAt(mCommentsGroup.getChildCount()-1);
             }
+            break;
+        case R.id.play_btn:
+            onPartClick(mVideo.episodes.get(0));
             break;
         default:
             break;
