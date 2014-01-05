@@ -33,7 +33,10 @@
         <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Styled</item>
         
     </style>
-
+    <style name="ActionBar.Transparent" parent="@style/Widget.AppCompat.ActionBar.Solid">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="background">@android:color/transparent</item>
+    </style>
     <style name="ActionBar.Solid.Styled" parent="@style/Widget.AppCompat.ActionBar.Solid">
         <item name="background">@drawable/ab_solid_styled</item>
         <item name="backgroundStacked">@drawable/ab_stacked_solid_styled</item>
