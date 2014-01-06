@@ -36,7 +36,7 @@ public class TudouResolver extends BaseResolver{
     @Override
     public void resolveAsync(Context context) {
         // Not support yet
-        handler.sendEmptyMessage(ARG_ERROR);
+        mHandler.sendEmptyMessage(ARG_ERROR);
     }
 
     @Override

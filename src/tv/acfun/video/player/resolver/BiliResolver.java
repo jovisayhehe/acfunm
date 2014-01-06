@@ -59,7 +59,7 @@ public class BiliResolver extends BaseResolver{
                     resolve(context);
                 } catch (ResolveException e) {
                     e.printStackTrace();
-                    handler.sendEmptyMessage(ARG_ERROR);
+                    mHandler.sendEmptyMessage(ARG_ERROR);
                 }
             }
         }.start();

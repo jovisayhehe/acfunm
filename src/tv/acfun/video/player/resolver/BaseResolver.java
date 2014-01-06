@@ -46,14 +46,27 @@ import android.util.Log;
  */
 public abstract class BaseResolver implements Resolver, Callback {
     public static final String UA_DEFAULT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36"; 
+    public static final int RESOLUTION_HD3 = 3;
+    public static final int RESOLUTION_HD2 = 2;
+    public static final int RESOLUTION_HD = 1;
+    public static final int RESOLUTION_NORMAL = 0;
+    public static final int RESOLUTION_DEFAULT = 1;
     protected static final int ARG_OK = 1;
     protected static final int ARG_ERROR = 0;
     protected static final String TAG = "Resolver";
     
     protected String vid;
     protected MediaList mList;
-    protected Handler handler;
-    
+    protected Handler mHandler;
+    // TODO: change parsing mode
+
+    protected int mResolutionMode = RESOLUTION_DEFAULT;
+    /**
+     * @param resolution  {@code RESOLUTION_*}
+     */
+    public void setResolution(int resolution){
+        mResolutionMode = resolution;
+    }
     static {
         System.setProperty("org.xml.sax.driver", "org.xmlpull.v1.sax2.Driver");
     }
@@ -62,7 +75,7 @@ public abstract class BaseResolver implements Resolver, Callback {
     public BaseResolver(String vid){
         this.vid = vid;
         this.mList = new MediaList();
-        handler = new Handler(this);
+        mHandler = new Handler(this);
     }
     @Override
     public void clearCache() {
@@ -189,7 +202,7 @@ public abstract class BaseResolver implements Resolver, Callback {
         }
         @Override
         public void endDocument() throws SAXException {
-            handler.sendEmptyMessage(ARG_OK);
+            mHandler.sendEmptyMessage(ARG_OK);
         }
         @Override
         public void characters(char[] ch, int start, int length) throws SAXException {

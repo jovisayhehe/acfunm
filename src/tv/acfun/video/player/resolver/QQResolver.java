@@ -54,7 +54,7 @@ public class QQResolver extends BaseResolver {
                 s.mUrl = vi.getString("url");// "url": "http://vhotwsh.video.qq.com/flv/76/54/84sHlkSh6bE.mp4?vkey=...
                 mList.add(s);
             }
-            handler.sendEmptyMessage(ARG_OK);
+            mHandler.sendEmptyMessage(ARG_OK);
         } catch (Exception e) {
             e.printStackTrace();
             throw new ResolveException(e);
@@ -68,7 +68,7 @@ public class QQResolver extends BaseResolver {
                 try{
                     resolve(null);
                 }catch(ResolveException e){
-                    handler.sendEmptyMessage(ARG_ERROR);
+                    mHandler.sendEmptyMessage(ARG_ERROR);
                 }
             }
         }.start();

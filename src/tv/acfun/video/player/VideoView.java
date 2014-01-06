@@ -34,7 +34,6 @@ import io.vov.vitamio.Vitamio;
 import io.vov.vitamio.utils.Log;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
@@ -239,7 +238,10 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
     };
     private OnBufferingUpdateListener mBufferingUpdateListener = new OnBufferingUpdateListener() {
         public void onBufferingUpdate(MediaPlayer mp, int percent) {
-            mCurrentBufferPercentage = percent;
+            if(mList != null)
+                mCurrentBufferPercentage = (int) (percent * mp.getDuration() / mList.getTotalDuration());
+            else
+                mCurrentBufferPercentage = percent;
             if (mOnBufferingUpdateListener != null) mOnBufferingUpdateListener.onBufferingUpdate(mp, percent);
         }
     };
@@ -395,12 +397,10 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
         mContext.sendBroadcast(i);
         release(false);
         try {
-//            mDuration = -1;
             mCurrentBufferPercentage = 0;
             initPlayer(index);
             mMediaPlayer.prepareAsync();
             mCurrentState = STATE_PREPARING;
-            attachMediaController();
         } catch (IOException ex) {
             Log.e("Unable to open content: " + mUri, ex);
             mCurrentState = STATE_ERROR;
@@ -445,26 +445,13 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
     public void setMediaController(MediaController controller) {
         if (mMediaController != null) mMediaController.hide();
         mMediaController = controller;
-        attachMediaController();
+        mMediaController.setEnabled(isInPlaybackState());
+//        attachMediaController();
     }
 
     public void setMediaBufferingIndicator(View mediaBufferingIndicator) {
         if (mMediaBufferingIndicator != null) mMediaBufferingIndicator.setVisibility(View.GONE);
         mMediaBufferingIndicator = mediaBufferingIndicator;
-    }
-
-    private void attachMediaController() {
-        if (mMediaPlayer != null && mMediaController != null) {
-            mMediaController.setMediaPlayer(this);
-            View anchorView = this.getParent() instanceof View ? (View) this.getParent() : this;
-            mMediaController.setAnchorView(anchorView);
-            mMediaController.setEnabled(isInPlaybackState());
-            if (mUri != null) {
-                List<String> paths = mUri.getPathSegments();
-                String name = paths == null || paths.isEmpty() ? "null" : paths.get(paths.size() - 1);
-                mMediaController.setFileName(name);
-            }
-        }
     }
 
     public void setOnPreparedListener(OnPreparedListener l) {
@@ -505,12 +492,12 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
         }
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-        if (isInPlaybackState() && mMediaController != null) toggleMediaControlsVisiblity();
-        return false;
-    }
-
+//    @Override
+//    public boolean onTouchEvent(MotionEvent ev) {
+//        if (isInPlaybackState() && mMediaController != null) toggleMediaControlsVisiblity();
+//        return false;
+//    }
+//
     @Override
     public boolean onTrackballEvent(MotionEvent ev) {
         if (isInPlaybackState() && mMediaController != null) toggleMediaControlsVisiblity();
@@ -598,7 +585,6 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
         
         if (isInPlaybackState()) {
             if (mDuration > 0) return mDuration;
-            
             if (mList != null)
                 mDuration =  mList.getTotalDuration();
             else
@@ -613,8 +599,9 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
         if (isInPlaybackState()) {
             if (mList != null && mMediaPlayer instanceof MediaSegmentPlayer)
                 return ((MediaSegmentPlayer) mMediaPlayer).getAbsolutePosition();
-        } else
-            return mMediaPlayer.getCurrentPosition();
+            else
+                return mMediaPlayer.getCurrentPosition();
+        }
         return 0;
     }
 
@@ -725,7 +712,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
     }
 
     public void setPreferHWDecoder(boolean enabled) {
-        // TODO Auto-generated method stub
         mPreferHWDecoder = enabled;
     }
+    
 }

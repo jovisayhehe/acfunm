@@ -14,18 +14,6 @@ public class YoukuResolver extends BaseResolver{
 
     private static final String TAG = "YoukuResolver";
    
-    
-    // TODO: change parsing mode
-    /**
-     * <pre>
-     * 
-     * hd3|hd2|mp4|flv
-     * ---------------
-     *  3 | 2 | 1 | 0
-     *  </pre>
-     */
-    private int mode = 1;
-
     public YoukuResolver(String vid) {
         super(vid);
     }
@@ -46,9 +34,9 @@ public class YoukuResolver extends BaseResolver{
             String seg = null;
             String fids = null;
             // TODO : the hd3 mode
-            if (mode >= 2 && fileids.has("hd2")) {
+            if (mResolutionMode >= RESOLUTION_HD2 && fileids.has("hd2")) {
                 seg = "hd2";
-            } else if (mode >= 1 && fileids.has("mp4")) {
+            } else if (mResolutionMode >= RESOLUTION_HD && fileids.has("mp4")) {
                 seg = "mp4";
             } else if (fileids.has("flv")) {
                 seg = "flv";
@@ -79,12 +67,12 @@ public class YoukuResolver extends BaseResolver{
                 s.mUrl = u;
                 mList.add(s);
             }
-            handler.sendEmptyMessage(ARG_OK);
+            mHandler.sendEmptyMessage(ARG_OK);
             
         } catch (JSONException e) {
             if (BuildConfig.DEBUG)
                 Log.w(TAG, "解析视频地址失败" + url, e);
-            handler.sendEmptyMessage(ARG_ERROR);
+            mHandler.sendEmptyMessage(ARG_ERROR);
         }
     }
 
