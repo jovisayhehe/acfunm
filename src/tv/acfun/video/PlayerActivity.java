@@ -72,6 +72,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     private static final String EXTRA_VIDEO = "video";
     private static final String TAG = "PlayerActivity";
     private static final int SEEK_COMPLETE = 10;
+    private static final int SYNC = 11;
     private VideoView mVideoView;
     private View mBufferingIndicator;
     private TextView mProgressText;
@@ -159,6 +160,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             mHandler.sendEmptyMessageDelayed(SEEK_COMPLETE, 100);
         }
     };
+    protected DanmakuTimer mTimer;
     DanmakuSurfaceView.Callback mDMCallback = new DanmakuSurfaceView.Callback() {
         @Override
         public void prepared() {
@@ -167,7 +169,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
                 @Override
                 public void run() {
                     mProgressText.setText(mProgressText.getText() + "\n弹幕加载完毕.");
-                    if (mVideoView.isPlaying()) mDMView.start(mVideoView.getCurrentPosition());
+                    mHandler.sendEmptyMessage(SYNC);
                     hideTextDelayed();
                 }
             });
@@ -176,6 +178,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         @Override
         public void updateTimer(DanmakuTimer timer) {
             // TODO Auto-generated method stub
+            mTimer = timer;
         }
 
         @Override
@@ -293,19 +296,21 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
 
     @Override
     public void onClick(View v) {
-        // TODO Auto-generated method stub
-        if (mMediaController != null) toggleMediaControlsVisiblity();
+        if (mMediaController != null) 
+            toggleMediaControlsVisiblity();
     }
 
     @Override
     public void start() {
         mVideoView.start();
-        mDMView.start(mVideoView.getCurrentPosition());
+        mDMView.resume();
+        mHandler.sendEmptyMessageDelayed(SYNC,200);
     }
 
     @Override
     public void pause() {
         mVideoView.pause();
+        mHandler.removeMessages(SYNC);
         mDMView.pause();
     }
 
@@ -323,6 +328,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     public void seekTo(long pos) {
         Log.i(TAG, "seek to "+ pos);
         mVideoView.seekTo(pos);
+        mHandler.removeMessages(SYNC);
         mDMView.pause();
     }
 
@@ -347,15 +353,18 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     public void onStop() {
         super.onStop();
         if(mVideoView != null){
-            mVideoView.stopPlayback();
+            mVideoView.pause();
         }
         if(mDMView != null)
-            mDMView.stop();
+            mDMView.pause();
     }
     
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(mVideoView != null){
+            mVideoView.stopPlayback();
+        }
         if(mDMView != null)
             mDMView.release();
     }
@@ -366,8 +375,15 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         case SEEK_COMPLETE:
             if(isPlaying()){
                 mDMView.start(getCurrentPosition());
+                mHandler.sendEmptyMessageDelayed(SYNC, 1500);
             }else
                 mHandler.sendEmptyMessageDelayed(SEEK_COMPLETE, 100);
+            break;
+        case SYNC:
+            if (isPlaying()){
+                mDMView.start(getCurrentPosition());
+                mHandler.sendEmptyMessageDelayed(SYNC, 1500);
+            }
             break;
         default:
             break;
