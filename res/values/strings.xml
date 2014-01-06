@@ -30,4 +30,6 @@
         <item>Comments</item>
     </string-array>
     <string name="buffering">Loading...</string>
+    <string name="source_type_not_support_yet">"The type of source isn't support yet."</string>
+    <string name="url_area63">http://pan.baidu.com/s/1pJHcqLl</string>
 </resources>

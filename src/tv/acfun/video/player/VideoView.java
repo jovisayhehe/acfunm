@@ -22,6 +22,7 @@ import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.MediaPlayer.OnBufferingUpdateListener;
 import io.vov.vitamio.MediaPlayer.OnCompletionListener;
 import io.vov.vitamio.MediaPlayer.OnErrorListener;
+import io.vov.vitamio.MediaPlayer.OnHWRenderFailedListener;
 import io.vov.vitamio.MediaPlayer.OnInfoListener;
 import io.vov.vitamio.MediaPlayer.OnPreparedListener;
 import io.vov.vitamio.MediaPlayer.OnSeekCompleteListener;
@@ -31,7 +32,6 @@ import io.vov.vitamio.MediaPlayer.TrackInfo;
 import io.vov.vitamio.R;
 import io.vov.vitamio.Vitamio;
 import io.vov.vitamio.utils.Log;
-import io.vov.vitamio.widget.MediaController;
 
 import java.io.IOException;
 import java.util.List;
@@ -54,6 +54,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Toast;
 
 /**
  * Displays a video file. The VideoView class can load images from various
@@ -107,6 +108,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 //                setVideoLayout(mVideoLayout, mAspectRatio);
                 if (mSurfaceWidth == mVideoWidth && mSurfaceHeight == mVideoHeight) {
                     if (mTargetState == STATE_PLAYING) {
+                        if(mMediaBufferingIndicator != null) mMediaBufferingIndicator.setVisibility(View.GONE);
                         start();
                         if (mMediaController != null) mMediaController.show();
                     } else if (!isPlaying() && (seekToPosition != 0 || getCurrentPosition() > 0)) {
@@ -179,6 +181,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
     private long mSeekWhenPrepared; 
     private Context mContext;
     private Map<String, String> mHeaders;
+    private boolean mPreferHWDecoder;
     private OnCompletionListener mCompletionListener = new OnCompletionListener() {
         public void onCompletion(MediaPlayer mp) {
             Log.d("onCompletion");
@@ -186,6 +189,14 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
             mTargetState = STATE_PLAYBACK_COMPLETED;
             if (mMediaController != null) mMediaController.hide();
             if (mOnCompletionListener != null) mOnCompletionListener.onCompletion(mMediaPlayer);
+        }
+    };
+    private OnHWRenderFailedListener mOnHWRenderFailedListener = new OnHWRenderFailedListener() {
+        @Override
+        public void onFailed() {
+            Toast.makeText(mContext, "硬解失败...自动切换为软解！", Toast.LENGTH_SHORT).show();
+            mPreferHWDecoder = false;
+            openVideo();
         }
     };
     private OnCompletionListener mItemCompletionListener = new OnCompletionListener() {
@@ -363,6 +374,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
         invalidate();
     }
     private MediaList mList;
+
     public void setMediaList(MediaList list){
         mList = list;
         setVideoURI(null);
@@ -410,9 +422,9 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
     private void initPlayer(int index) throws IllegalArgumentException, SecurityException, IllegalStateException, IOException{
         if(mList != null ){
             
-            mMediaPlayer = new MediaSegmentPlayer(mContext,mList.get(index));
+            mMediaPlayer = new MediaSegmentPlayer(mContext,mPreferHWDecoder,mList.get(index));
         }else{
-            mMediaPlayer = new MediaPlayer(mContext);
+            mMediaPlayer = new MediaPlayer(mContext,mPreferHWDecoder);
         }
         mMediaPlayer.setOnPreparedListener(mPreparedListener);
         mMediaPlayer.setOnVideoSizeChangedListener(mSizeChangedListener);
@@ -422,6 +434,8 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
         mMediaPlayer.setOnInfoListener(mInfoListener);
         mMediaPlayer.setOnSeekCompleteListener(mSeekCompleteListener);
         mMediaPlayer.setOnTimedTextListener(mTimedTextListener);
+        if(mPreferHWDecoder)
+            mMediaPlayer.setOnHWRenderFailedListener(mOnHWRenderFailedListener);
         mMediaPlayer.setDataSource(mContext, mUri, mHeaders);
         mMediaPlayer.setDisplay(mSurfaceHolder);
         mMediaPlayer.setVideoChroma(mVideoChroma == MediaPlayer.VIDEOCHROMA_RGB565 ? MediaPlayer.VIDEOCHROMA_RGB565
@@ -708,5 +722,10 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 
     protected boolean isInPlaybackState() {
         return (mMediaPlayer != null && mCurrentState != STATE_ERROR && mCurrentState != STATE_IDLE && mCurrentState != STATE_PREPARING);
+    }
+
+    public void setPreferHWDecoder(boolean enabled) {
+        // TODO Auto-generated method stub
+        mPreferHWDecoder = enabled;
     }
 }

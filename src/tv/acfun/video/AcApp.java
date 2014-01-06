@@ -161,7 +161,7 @@ public class AcApp extends Application {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if(which == DialogInterface.BUTTON_POSITIVE){
-                        context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://pan.baidu.com/s/1pFLDT")));
+                        context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.url_area63))));
                     }
                     dialog.dismiss();
                 }

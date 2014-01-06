@@ -34,7 +34,8 @@
         <activity android:name=".DetailsActivity" android:theme="@style/AppTheme.TranslucentActionBar"/>
         <activity
             android:name=".PlayerActivity"
-            android:configChanges="screenSize|orientation" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="orientation" />
         <activity
             android:name="io.vov.vitamio.activity.InitActivity"
             android:configChanges="orientation|keyboardHidden|navigation"

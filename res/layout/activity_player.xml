@@ -1,53 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#000"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <FrameLayout
-        android:id="@+id/frame_video"
+    android:layout_height="match_parent" >
+    <tv.acfun.video.player.VideoView
+        android:id="@+id/video"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        >
-        <include
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
+
+    <!-- <master.flame.danmaku.ui.widget.DanmakuSurfaceView
+        android:id="@+id/danmakus"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" /> -->
+
+    <LinearLayout
+        android:id="@+id/buffering_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:orientation="vertical"
+        android:visibility="gone"
+         >
+ 		<ProgressBar
+            android:id="@+id/buffering_progress"
+            style="@android:attr/progressBarStyleLarge"
+            android:layout_width="60dip"
+            android:layout_height="60dip" />
+        <TextView
+            android:id="@+id/buffering_msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            layout="@layout/video_player" />
-        <TextView
-            android:id="@+id/progress_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:padding="16dp"
-            android:text="@string/buffering"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="0"
+            android:scaleType="centerInside"
+            android:singleLine="true"
             android:textColor="#fff"
-            android:textSize="14sp" />
+            android:text="@string/buffering"
+            android:textSize="12sp" />
 
-    </FrameLayout>
-	<com.astuetz.PagerSlidingTabStrip
-        android:id="@+id/tabs"
+    </LinearLayout>
+    <TextView 
+        android:padding="16dp"
         android:layout_width="match_parent"
-        android:layout_height="48dip"
-        android:layout_below="@id/frame_video"
-        android:textColor="?android:attr/textColorPrimary"
+        android:layout_height="wrap_content"
+        android:text="@string/buffering"
+        android:id="@+id/progress_text"
+        android:textColor="#fff"
         android:textSize="14sp"
-        app:pstsIndicatorColor="@color/main_color"
-        app:pstsIndicatorHeight="3dp"
+        android:layout_gravity="bottom"
         />
-	<ViewStub
-	    android:id="@+id/view_stub"
-	    android:layout_below="@id/tabs"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:layout="@layout/viewpager" />
-
-	<ProgressBar
-	    android:id="@+id/progressBar"
-	    android:layout_below="@id/tabs"
-	    android:layout_centerHorizontal="true"
-	    style="?android:attr/progressBarStyleLarge"
-	    android:layout_marginTop="30dp"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content" />
-
-</RelativeLayout>
+</FrameLayout>

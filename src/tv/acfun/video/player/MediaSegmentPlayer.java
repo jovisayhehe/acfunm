@@ -24,6 +24,7 @@ import java.util.Map;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 /**
  * @author Yrom
@@ -46,7 +47,7 @@ public class MediaSegmentPlayer extends MediaPlayer{
         if(uri == null) uri = Uri.parse(mSegment.mUrl);
         super.setDataSource(context, uri, headers);
     }
-    
+
     public long getAbsolutePosition(){
         return mSegment.mStartTime + super.getCurrentPosition();
     }

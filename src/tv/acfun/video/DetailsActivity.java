@@ -27,7 +27,9 @@ import tv.acfun.video.util.FadingActionBarHelper;
 import tv.acfun.video.util.TextViewUtils;
 import tv.acfun.video.util.net.CommentsRequest;
 import tv.acfun.video.util.net.FastJsonRequest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -44,8 +46,6 @@ import android.widget.Toast;
 
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
-import com.android.volley.NetworkResponse;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 
@@ -265,7 +265,20 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         }
     }
 
-    private void onPartClick(VideoPart item) {
+    private void onPartClick(final VideoPart item) {
         Toast.makeText(this, "click::" + item.name, 0).show();
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                PlayerActivity.start(DetailsActivity.this, item,which == DialogInterface.BUTTON_POSITIVE);
+                dialog.dismiss();
+            }
+        };
+        new AlertDialog.Builder(this)
+                .setTitle("是否开启硬解")
+                .setMessage("测试硬解。。。")
+                .setPositiveButton("是", listener)
+                .setNegativeButton("否", listener)
+                .show();
     }
 }
