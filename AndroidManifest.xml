@@ -35,6 +35,7 @@
         <activity
             android:name=".PlayerActivity"
             android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="sensorLandscape"
             android:configChanges="orientation" />
         <activity
             android:name="io.vov.vitamio.activity.InitActivity"
