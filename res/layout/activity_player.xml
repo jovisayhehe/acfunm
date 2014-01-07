@@ -3,11 +3,19 @@
     android:background="#000"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-    <tv.acfun.video.player.VideoView
+    <!-- <tv.acfun.video.player.VideoView
         android:id="@+id/video"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center" />
+        android:layout_gravity="center" /> -->
+        <ViewStub 
+            android:id="@+id/view_stub"
+            android:inflatedId="@+id/video"
+            android:layout="@layout/video_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            />
 	<TextView 
         android:padding="16dp"
         android:layout_width="match_parent"

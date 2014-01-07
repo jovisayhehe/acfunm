@@ -38,6 +38,11 @@
             android:screenOrientation="sensorLandscape"
             android:configChanges="orientation" />
         <activity
+            android:name=".PlayerSysActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="sensorLandscape"
+            android:configChanges="orientation" />
+        <activity
             android:name="io.vov.vitamio.activity.InitActivity"
             android:configChanges="orientation|keyboardHidden|navigation"
             android:launchMode="singleTop"

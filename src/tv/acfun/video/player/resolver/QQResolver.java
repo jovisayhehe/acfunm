@@ -36,7 +36,16 @@ public class QQResolver extends BaseResolver {
 
     @Override
     public void resolve(Context context) throws ResolveException {
+        
         try {
+            if(mResolutionMode < RESOLUTION_HD2){
+                MediaSegment s = new MediaSegment();
+                s.mUrl = "http://vsrc.store.qq.com/" + vid + ".mp4?channel=vhot2&sdtfrom=v2&r=931&rfc=v0";
+                mList.add(s);
+                mHandler.sendEmptyMessage(ARG_OK);
+                return;
+            }
+            
             String url = "http://vv.video.qq.com/geturl?otype=json&vid="+vid;
             
             String response = getResponseAsString(url);

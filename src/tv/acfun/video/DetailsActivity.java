@@ -270,14 +270,18 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                PlayerActivity.start(DetailsActivity.this, item,which == DialogInterface.BUTTON_POSITIVE);
+                if (which == DialogInterface.BUTTON_NEUTRAL) {
+                    PlayerSysActivity.start(DetailsActivity.this, item);
+                } else
+                    PlayerActivity.start(DetailsActivity.this, item, which == DialogInterface.BUTTON_POSITIVE);
                 dialog.dismiss();
             }
         };
         new AlertDialog.Builder(this)
                 .setTitle("是否开启硬解")
-                .setMessage("测试硬解。。。")
-                .setPositiveButton("是", listener)
+                .setMessage("软件硬解 和系统硬解")
+                .setPositiveButton("软件", listener)
+                .setNeutralButton("系统", listener)
                 .setNegativeButton("否", listener)
                 .show();
     }

@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import org.json.JSONObject;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -27,6 +28,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 import tv.acfun.video.player.MediaList;
 import tv.acfun.video.player.ResolveException;
+import tv.acfun.video.util.net.Connectivity;
 import android.content.Context;
 import android.util.Log;
 
@@ -42,9 +44,13 @@ public class SinaResolver extends BaseResolver {
     @Override
     public void resolve(Context context) throws ResolveException {
         // TODO Auto-generated method stub
-        String url = getContentUrl(vid);
-        Log.i(TAG, "sina video url = " + url);
         try {
+            if(mResolutionMode < RESOLUTION_HD2){
+                vid = getSinaMp4Vid(vid);
+                Log.i(TAG, "sina mp4 mode");
+            }
+            String url = getContentUrl(vid);
+            Log.i(TAG, "sina video url = " + url);
             InputStream stream = getResponseAsStream(url);
             XMLReader xmlReader = XMLReaderFactory.createXMLReader();
             ContentHandler contentHandler = new UrlContentHandler();
@@ -86,7 +92,14 @@ public class SinaResolver extends BaseResolver {
             .append(d);
         return builder.toString();
     }
-
+    private static String getSinaMp4Vid(String vid) throws Exception{
+        String checkIdUrl = "http://video.sina.com.cn/interface/video_ids/video_ids.php?v="+vid;
+        JSONObject jsonObj = getJSONObject(checkIdUrl);
+        if(jsonObj == null) return null;
+        int ipadVid = jsonObj.getInt("ipad_vid");
+        if(ipadVid != 0 && ipadVid != Integer.valueOf(vid)) vid = ipadVid+""; // 赋予新Id
+        return vid;
+    }
     private static String getKey(String str) {
         try {
             MessageDigest digest = MessageDigest.getInstance("MD5");

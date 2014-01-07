@@ -200,9 +200,9 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
     };
     private OnCompletionListener mItemCompletionListener = new OnCompletionListener() {
         public void onCompletion(MediaPlayer mp) {
-            if(mp instanceof MediaSegmentPlayer){
+            if(mp instanceof IMediaSegmentPlayer){
                 Log.d("mItemCompletion");
-                int order = ((MediaSegmentPlayer)mp).getOrder();
+                int order = ((IMediaSegmentPlayer)mp).getOrder();
                 if(order >= mList.size()-1){
                     mCompletionListener.onCompletion(mp);
                 }else{
@@ -597,8 +597,8 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 
     public long getCurrentPosition() {
         if (isInPlaybackState()) {
-            if (mList != null && mMediaPlayer instanceof MediaSegmentPlayer)
-                return ((MediaSegmentPlayer) mMediaPlayer).getAbsolutePosition();
+            if (mList != null && mMediaPlayer instanceof IMediaSegmentPlayer)
+                return ((IMediaSegmentPlayer) mMediaPlayer).getAbsolutePosition();
             else
                 return mMediaPlayer.getCurrentPosition();
         }
@@ -607,10 +607,10 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 
     public void seekTo(long msec) {
         if (isInPlaybackState()) {
-            if (mList != null && mMediaPlayer instanceof MediaSegmentPlayer){
+            if (mList != null && mMediaPlayer instanceof IMediaSegmentPlayer){
                 MediaSegment item = mList.getItemByTime(msec);
                 long relativePosition = item.getRelativeTime(msec);
-                if (((MediaSegmentPlayer) mMediaPlayer).isSameMediaItem(item)){
+                if (((IMediaSegmentPlayer) mMediaPlayer).isSameMediaItem(item)){
                     mMediaPlayer.seekTo(relativePosition);
                 }else{
                     openVideo(item.mOrder);

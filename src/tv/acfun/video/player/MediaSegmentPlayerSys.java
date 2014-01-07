@@ -16,30 +16,35 @@
 
 package tv.acfun.video.player;
 
-import io.vov.vitamio.MediaPlayer;
-
 import java.io.IOException;
 import java.util.Map;
 
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.text.TextUtils;
 
 /**
  * @author Yrom
- *
+ * 
  */
-public class MediaSegmentPlayer extends MediaPlayer implements IMediaSegmentPlayer{
+public class MediaSegmentPlayerSys extends MediaPlayer implements IMediaSegmentPlayer {
     private MediaSegment mSegment;
-    public MediaSegmentPlayer(Context ctx, boolean preferHWDecoder,MediaSegment segment) {
-        super(ctx, preferHWDecoder);
+
+    public MediaSegmentPlayerSys(MediaSegment segment) {
         mSegment = segment;
     }
 
-    public MediaSegmentPlayer(Context ctx, MediaSegment segment) {
-        this(ctx,false,segment);
+    @Override
+    public long getAbsolutePosition() {
+        return mSegment.mStartTime + super.getCurrentPosition();
     }
-    
+    @Override
+    public void setDataSource(Context context, Uri uri) throws IOException, IllegalArgumentException, SecurityException,
+            IllegalStateException {
+        if(uri == null) uri = Uri.parse(mSegment.mUrl);
+        super.setDataSource(context, uri);
+    }
     @Override
     public void setDataSource(Context context, Uri uri, Map<String, String> headers) throws IOException, IllegalArgumentException,
             SecurityException, IllegalStateException {
@@ -47,32 +52,26 @@ public class MediaSegmentPlayer extends MediaPlayer implements IMediaSegmentPlay
         super.setDataSource(context, uri, headers);
     }
 
-    public long getAbsolutePosition(){
-        return mSegment.mStartTime + super.getCurrentPosition();
-    }
-    
     @Override
-    public long getDuration() {
-        if(mSegment.mDuration >0 ) return mSegment.mDuration;
+    public int getDuration() {
+        if (mSegment.mDuration > 0) return (int) mSegment.mDuration;
         return super.getDuration();
     }
+
+    @Override
     public boolean hasDataSource() {
-        if (mSegment == null || TextUtils.isEmpty(mSegment.mUrl))
-            return false;
-
+        if (mSegment == null || TextUtils.isEmpty(mSegment.mUrl)) return false;
         return true;
     }
-    
+
+    @Override
     public boolean isSameMediaItem(MediaSegment mediaItem) {
-        if (!hasDataSource())
-            return false;
-
-        if (mSegment.mOrder != mediaItem.mOrder)
-            return false;
-
+        if (!hasDataSource()) return false;
+        if (mSegment.mOrder != mediaItem.mOrder) return false;
         return true;
     }
 
+    @Override
     public int getOrder() {
         return mSegment.mOrder;
     }

@@ -16,15 +16,10 @@
 
 package tv.acfun.video;
 
-import io.vov.vitamio.LibsChecker;
-import io.vov.vitamio.MediaPlayer;
-import io.vov.vitamio.MediaPlayer.OnPreparedListener;
-
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 
 import master.flame.danmaku.controller.DMSiteType;
 import master.flame.danmaku.danmaku.loader.ILoader;
@@ -32,17 +27,19 @@ import master.flame.danmaku.danmaku.model.DanmakuTimer;
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
 import master.flame.danmaku.ui.widget.DanmakuSurfaceView;
 import tv.acfun.video.entity.VideoPart;
+import tv.acfun.video.player.IMediaSegmentPlayer;
 import tv.acfun.video.player.MediaController;
 import tv.acfun.video.player.MediaController.MediaPlayerControl;
 import tv.acfun.video.player.MediaList.OnResolvedListener;
 import tv.acfun.video.player.MediaList.Resolver;
-import tv.acfun.video.player.MediaSegmentPlayer;
-import tv.acfun.video.player.VideoView;
+import tv.acfun.video.player.VideoViewSys;
 import tv.acfun.video.player.resolver.BaseResolver;
 import tv.acfun.video.player.resolver.ResolverType;
 import tv.acfun.video.util.net.Connectivity;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Handler.Callback;
@@ -51,8 +48,8 @@ import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewStub;
 import android.view.View.OnClickListener;
+import android.view.ViewStub;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -66,24 +63,23 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
 /**
- * @author Yrom TODO :
+ * @author Yrom 
+ * 
+ * TODO : 与 PlayerActivity整合在一起
  */
-public class PlayerActivity extends ActionBarActivity implements OnClickListener, MediaPlayerControl, Callback {
-    private static final String EXTRA_PREFER_HW = "prefer_hw";
+public class PlayerSysActivity extends ActionBarActivity implements OnClickListener, MediaPlayerControl, Callback {
     private static final String EXTRA_VIDEO = "video";
-    private static final String TAG = "PlayerActivity";
+    private static final String TAG = PlayerSysActivity.class.getSimpleName();
     private static final int SEEK_COMPLETE = 10;
     private static final int SYNC = 11;
-    private VideoView mVideoView;
+    private VideoViewSys mVideoView;
     private View mBufferingIndicator;
     private TextView mProgressText;
-    private boolean mEnabledHW;
     private DanmakuSurfaceView mDMView;
 
-    public static void start(Context context, VideoPart video, boolean hw) {
-        Intent intent = new Intent(context.getApplicationContext(), PlayerActivity.class);
+    public static void start(Context context, VideoPart video) {
+        Intent intent = new Intent(context.getApplicationContext(), PlayerSysActivity.class);
         intent.putExtra(EXTRA_VIDEO, video);
-        intent.putExtra(EXTRA_PREFER_HW, hw);
         context.startActivity(intent);
     }
 
@@ -91,8 +87,8 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         @Override
         public void onPrepared(MediaPlayer mp) {
             if (mDMView.isPrepared()) {
-                if (mp instanceof MediaSegmentPlayer)
-                    mDMView.start(((MediaSegmentPlayer) mp).getAbsolutePosition());
+                if (mp instanceof IMediaSegmentPlayer)
+                    mDMView.start(((IMediaSegmentPlayer) mp).getAbsolutePosition());
                 else
                     mDMView.start();
             }
@@ -117,7 +113,6 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!LibsChecker.checkVitamioLibs(this)) return;
         mHandler = new Handler(this);
         Parcelable extra = getIntent().getParcelableExtra(EXTRA_VIDEO);
         if (extra == null) {
@@ -125,7 +120,6 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             finish();
             return;
         }
-        mEnabledHW = getIntent().getBooleanExtra(EXTRA_PREFER_HW, false);
         mVideo = (VideoPart) extra;
         setContentView(R.layout.activity_player);
         initViews();
@@ -136,9 +130,8 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
 
     private void initViews() {
         ViewStub stub = (ViewStub) findViewById(R.id.view_stub);
-        stub.setLayoutResource(R.layout.video_view);
-        mVideoView = (VideoView) stub.inflate();
-        mVideoView.setPreferHWDecoder(mEnabledHW);
+        stub.setLayoutResource(R.layout.video_view_sys);
+        mVideoView = (VideoViewSys) stub.inflate();
         Map<String, String> headers = new HashMap<String, String>();
         headers.put("User-Agent", BaseResolver.UA_DEFAULT);
         mVideoView.setVideoHeaders(headers);
@@ -291,7 +284,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             return;
         }
         sResolver = (BaseResolver) type.getResolver(mVideo.sourceId);
-        sResolver.setResolution(BaseResolver.RESOLUTION_HD2);
+        sResolver.setResolution(BaseResolver.RESOLUTION_HD);
         sResolver.setOnResolvedListener(OnResolved);
         sResolver.resolveAsync(getApplicationContext());
         mProgressText.setText(mProgressText.getText() + "\n视频分段解析中...");
