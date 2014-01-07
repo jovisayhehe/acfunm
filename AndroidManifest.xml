@@ -31,17 +31,18 @@
             </intent-filter>
         </activity>
         <activity android:name=".ChannelActivity" />
+        <activity android:name=".SettingsActivity" />
         <activity android:name=".DetailsActivity" android:theme="@style/AppTheme.TranslucentActionBar"/>
         <activity
             android:name=".PlayerActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="sensorLandscape"
             android:configChanges="orientation" />
-        <activity
+        <!-- <activity
             android:name=".PlayerSysActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="sensorLandscape"
-            android:configChanges="orientation" />
+            android:configChanges="orientation" /> -->
         <activity
             android:name="io.vov.vitamio.activity.InitActivity"
             android:configChanges="orientation|keyboardHidden|navigation"

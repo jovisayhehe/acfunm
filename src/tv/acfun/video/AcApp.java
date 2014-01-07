@@ -16,6 +16,7 @@
 
 package tv.acfun.video;
 
+import java.io.File;
 import java.util.List;
 
 import tv.acfun.video.api.API;
@@ -30,8 +31,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 
 import com.alibaba.fastjson.JSON;
@@ -47,13 +51,54 @@ public class AcApp extends Application {
     private static AcApp sInstance;
     private static Context sContext;
     private static List<Category> sCategories;
+    private static SharedPreferences sSharedPreferences;
     public void onCreate() {
         super.onCreate();
         sContext = sInstance = this;
         Connectivity.getGloableQueue(this);
+        sSharedPreferences = PreferenceManager.getDefaultSharedPreferences(sContext);
     }
     public static AcApp instance() {
         return sInstance;
+    }
+    // ====================================
+    // config SharedPreferences
+    // ====================================
+
+    public static SharedPreferences getConfig() {
+        return sSharedPreferences;
+    }
+
+    public static void putString(String key, String value) {
+        sSharedPreferences.edit().putString(key, value).commit();
+    }
+    
+    public static String getString(String key, String defValue){
+        return sSharedPreferences.getString(key, defValue);
+    }
+    
+    public static void putBoolean(String key, boolean value) {
+        sSharedPreferences.edit().putBoolean(key, value).commit();
+    }
+
+    public static boolean getBoolean(String key, boolean defValue){
+        return sSharedPreferences.getBoolean(key, defValue);
+    }
+    
+    public static int getInt(String key, int defValue){
+        return sSharedPreferences.getInt(key, defValue);
+    }
+    
+    public static void putInt(String key, int value) {
+        sSharedPreferences.edit().putInt(key, value).commit();
+    }
+    
+    public static float getFloat(String key, float defValue){
+        return sSharedPreferences.getFloat(key, defValue);
+    }
+    
+    public static void putFloat(String key, float value) {
+        sSharedPreferences.edit().putFloat(key, value).commit();
     }
     
     public static void addRequest(Request<?> request){
@@ -187,5 +232,22 @@ public class AcApp extends Application {
     public static void putBitmapInCache(String url, Bitmap value){
         String key = getCacheKey(url, 0, 0);
         Connectivity.putBitmap(key, value);
+    }
+    public static boolean isExternalStorageAvailable() {
+        return Environment.MEDIA_MOUNTED.equals(Environment
+                .getExternalStorageState());
+    }
+    /**
+     * 获得缓存目录 <br>
+     * <b>NOTE:</b>请先调用 {@link #isExternalStorageAvailable()} 判断是否可用
+     * 
+     * @param type
+     *            {@link #IMAGE} {@link #VIDEO} and so on.
+     * @return 
+     */
+    public static File getExternalCacheDir(String type) {
+        File cacheDir = new File(sContext.getExternalCacheDir(), type);
+        cacheDir.mkdirs();
+        return cacheDir;
     }
 }

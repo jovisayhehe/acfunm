@@ -65,6 +65,7 @@ public abstract class BaseResolver implements Resolver, Callback {
      * @param resolution  {@code RESOLUTION_*}
      */
     public void setResolution(int resolution){
+        Log.d(TAG, "RESOLUTION::"+resolution);
         mResolutionMode = resolution;
     }
     static {

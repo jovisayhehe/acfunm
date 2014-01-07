@@ -26,20 +26,15 @@ import tv.acfun.video.fragment.ChannelFragment;
 import tv.acfun.video.fragment.VideosFragment;
 import tv.acfun.video.util.CommonUtil;
 import tv.acfun.video.util.net.CategoriesRequest;
-import android.app.AlertDialog;
-import android.content.ComponentName;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -163,14 +158,26 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
-
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
           return true;
         }
         // Handle your other action bar items...
-
+        switch (item.getItemId()) {
+        case R.id.action_settings:
+            SettingsActivity.start(this);
+            break;
+        default:
+            break;
+        }
         return super.onOptionsItemSelected(item);
     }
     

@@ -48,6 +48,7 @@ import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
@@ -69,7 +70,6 @@ import com.android.volley.toolbox.StringRequest;
  * @author Yrom TODO :
  */
 public class PlayerActivity extends ActionBarActivity implements OnClickListener, MediaPlayerControl, Callback {
-    private static final String EXTRA_PREFER_HW = "prefer_hw";
     private static final String EXTRA_VIDEO = "video";
     private static final String TAG = "PlayerActivity";
     private static final int SEEK_COMPLETE = 10;
@@ -80,10 +80,9 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     private boolean mEnabledHW;
     private DanmakuSurfaceView mDMView;
 
-    public static void start(Context context, VideoPart video, boolean hw) {
+    public static void start(Context context, VideoPart video) {
         Intent intent = new Intent(context.getApplicationContext(), PlayerActivity.class);
         intent.putExtra(EXTRA_VIDEO, video);
-        intent.putExtra(EXTRA_PREFER_HW, hw);
         context.startActivity(intent);
     }
 
@@ -125,7 +124,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             finish();
             return;
         }
-        mEnabledHW = getIntent().getBooleanExtra(EXTRA_PREFER_HW, false);
+        mEnabledHW = AcApp.getBoolean(getString(R.string.key_hw_decode), false);
         mVideo = (VideoPart) extra;
         setContentView(R.layout.activity_player);
         initViews();
@@ -191,9 +190,9 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
                 @Override
                 public void run() {
                     mProgressText.setText(mProgressText.getText() + "\n弹幕加载失败!");
+                    hideTextDelayed();
                 }
             });
-            hideTextDelayed();
         }
     };
     private MediaController mMediaController;
@@ -223,6 +222,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             @Override
             public void onErrorResponse(VolleyError error) {
                 mProgressText.setText(mProgressText.getText() + "\n弹幕文件下载失败！");
+                hideTextDelayed();
                 startPlay();
             }
         }) {
@@ -291,7 +291,8 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             return;
         }
         sResolver = (BaseResolver) type.getResolver(mVideo.sourceId);
-        sResolver.setResolution(BaseResolver.RESOLUTION_HD2);
+        int resolution = Integer.parseInt(AcApp.getString(getString(R.string.key_resolution_mode), "1"));
+        sResolver.setResolution(resolution);
         sResolver.setOnResolvedListener(OnResolved);
         sResolver.resolveAsync(getApplicationContext());
         mProgressText.setText(mProgressText.getText() + "\n视频分段解析中...");

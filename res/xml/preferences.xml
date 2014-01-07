@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/action_settings" >
+
+    <PreferenceCategory android:title="@string/action_settings" >
+        <Preference
+            android:key="@string/key_clear_cache"
+            android:title="@string/clear_cache" />
+
+        <Preference
+            android:key="@string/key_update"
+            android:title="@string/update" />
+        <CheckBoxPreference 
+            android:defaultValue="false"
+            android:key="@string/key_hw_decode"
+            android:title="@string/hw_decode" />
+        
+        <ListPreference android:entries="@array/pref_resolution_entries"
+            android:key="@string/key_resolution_mode"
+            android:entryValues="@array/pref_resolution_values"
+            android:title="@string/resolution"
+            android:defaultValue="@integer/high_d"
+            />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/others" >
+        <Preference
+            android:key="@string/key_about"
+            android:title="@string/about" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/about_url" />
+        </Preference>
+        <Preference
+            android:key="@string/key_rating"
+            android:title="@string/rating" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="market://details?id=tv.acfun.a63" />
+        </Preference>
+        <Preference
+            android:key="@string/key_feedback"
+            android:title="@string/feed_back" />
+        <!-- <Preference
+            android:key="@string/key_donate"
+            android:summary="@string/buy_me_coffee"
+            android:title="@string/donate" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/donate_url" />
+        </Preference> -->
+    </PreferenceCategory>
+
+</PreferenceScreen>
