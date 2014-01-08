@@ -77,4 +77,6 @@
     <string name="failed">Failed!</string>
     <string name="player_type">"Type of player: %s"</string>
     <string name="enable_danmaku_drawing_cache">"Enable danmaku drawing cache: %b"</string>
+    <string name="hide_requote">Quote hidden.</string>
+    <string name="comment_hint">Bu tucao bu shufusiji.</string>
 </resources>

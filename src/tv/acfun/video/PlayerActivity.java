@@ -63,6 +63,7 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * @author Yrom TODO :
@@ -403,5 +404,16 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             break;
         }
         return false;
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

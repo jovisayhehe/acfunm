@@ -32,6 +32,7 @@
         </activity>
         <activity android:name=".ChannelActivity" />
         <activity android:name=".SettingsActivity" />
+        <activity android:name=".ConversationActivity" />
         <activity android:name=".DetailsActivity" android:theme="@style/AppTheme.TranslucentActionBar"/>
         <activity
             android:name=".PlayerActivity"
@@ -49,6 +50,17 @@
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
+        
+      	<meta-data
+            android:name="UMENG_APPKEY"
+            android:value="521d6ae356240bd04f0569ac" />
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="Test" />
+        <service
+            android:name="com.umeng.common.net.DownloadingService"
+            android:exported="true"
+            android:process=":DownloadingService" />
     </application>
 
 </manifest>

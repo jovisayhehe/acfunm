@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <color name="header">#f80</color>
     <color name="pressed_styled">#CCFF8800</color>
-    <color name="main_color">#f80</color> 
+    <color name="main_color">#f80</color>
+    <color name="umeng_fb_color_btn_pressed">#0099cc</color>
+    <color name="umeng_fb_color_btn_normal">#33B5E5</color>
+
 </resources>

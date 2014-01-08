@@ -48,6 +48,13 @@ import com.android.volley.Request;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.fb.FeedbackAgent;
+import com.umeng.fb.model.Conversation;
+import com.umeng.fb.model.Conversation.SyncListener;
+import com.umeng.fb.model.DevReply;
+import com.umeng.fb.model.Reply;
+import com.umeng.update.UmengUpdateAgent;
 
 
 /**
@@ -98,6 +105,34 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
             int position = savedInstanceState==null? 0 : savedInstanceState.getInt(KEY_STATE_POSITION, 0);
             select(position);
         }
+        initUmeng();
+    }
+
+    private void initUmeng() {
+        MobclickAgent.setDebugMode(BuildConfig.DEBUG);
+        UmengUpdateAgent.update(this);
+        MobclickAgent.onError(this);
+        SyncListener listener = new Conversation.SyncListener() {
+
+            @Override
+            public void onSendUserReply(List<Reply> replyList) {
+            }
+
+            @Override
+            public void onReceiveDevReply(List<DevReply> replyList) {
+                if(replyList == null || replyList.isEmpty()){
+                    return;
+                }
+                Intent intent = new Intent(HomeActivity.this, ConversationActivity.class);
+                String text = replyList.get(0).getContent();
+                AcApp.showNotification(intent, 
+                        R.id.comments_content, 
+                        text, 
+                        R.drawable.notify_chat,
+                        getString(R.string.umeng_fb_notification_ticker_text));
+            }
+        };
+        new FeedbackAgent(this).getDefaultConversation().sync(listener);
     }
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -174,6 +209,9 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         switch (item.getItemId()) {
         case R.id.action_settings:
             SettingsActivity.start(this);
+            break;
+        case R.id.action_feedback:
+            startActivity(new Intent(this, ConversationActivity.class));
             break;
         default:
             break;
@@ -260,5 +298,17 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
     }
     public void onAvatarClick(View v){
         Toast.makeText(this, "正在开发中...", 0).show();
+    }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

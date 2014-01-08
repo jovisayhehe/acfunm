@@ -27,9 +27,7 @@ import tv.acfun.video.util.FadingActionBarHelper;
 import tv.acfun.video.util.TextViewUtils;
 import tv.acfun.video.util.net.CommentsRequest;
 import tv.acfun.video.util.net.FastJsonRequest;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -48,6 +46,7 @@ import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * @author Yrom
@@ -66,7 +65,17 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         setContentView(R.layout.activity_channel);
         initActionBar();
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
     private void initViews() {
         mHeaderImage = (ImageView) findViewById(R.id.image_header);
         mTitleView = (TextView) findViewById(R.id.title);
