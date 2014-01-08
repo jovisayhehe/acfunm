@@ -18,6 +18,7 @@ package tv.acfun.video;
 
 import io.vov.vitamio.LibsChecker;
 import io.vov.vitamio.MediaPlayer;
+import io.vov.vitamio.MediaPlayer.OnInfoListener;
 import io.vov.vitamio.MediaPlayer.OnPreparedListener;
 
 import java.nio.charset.Charset;
@@ -30,6 +31,7 @@ import master.flame.danmaku.danmaku.loader.ILoader;
 import master.flame.danmaku.danmaku.model.DanmakuTimer;
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
 import master.flame.danmaku.ui.widget.DanmakuSurfaceView;
+import tv.ac.fun.R;
 import tv.acfun.video.entity.VideoPart;
 import tv.acfun.video.player.MediaController;
 import tv.acfun.video.player.MediaController.MediaPlayerControl;
@@ -117,6 +119,23 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             }
         }
     };
+    OnInfoListener onInfo = new OnInfoListener() {
+        @Override
+        public boolean onInfo(MediaPlayer mp, int what, int extra) {
+            // TODO Auto-generated method stub
+            if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START) {
+                mp.pause();
+                mDMView.pause();
+                if (mBufferingIndicator != null) mBufferingIndicator.setVisibility(View.VISIBLE);
+            } else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
+                mp.start();
+                mDMView.resume();
+                mHandler.sendEmptyMessageDelayed(SYNC, 500);
+                if (mBufferingIndicator != null) mBufferingIndicator.setVisibility(View.GONE);
+            }
+            return false;
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,6 +170,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         mProgressText = (TextView) findViewById(R.id.progress_text);
         mVideoView.setOnPreparedListener(onPrepared);
         mVideoView.setOnSeekCompleteListener(onSeekComplete);
+        mVideoView.setOnInfoListener(onInfo);
         mDMView = (DanmakuSurfaceView) findViewById(R.id.danmakus);
         mDMView.enableDanmakuDrawingCache(mEnabledDrawingCache);
         mDMView.setCallback(mDMCallback);
@@ -394,8 +414,10 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         case SYNC:
             if (isPlaying()){
                 mDMView.start(getCurrentPosition());
-                mHandler.sendEmptyMessageDelayed(SYNC, 1500);
+            }else{
+                mDMView.pause();
             }
+            mHandler.sendEmptyMessageDelayed(SYNC, 1500);
             break;
         case HIDE_TEXT:
             mProgressText.startAnimation(mTextAnimation);

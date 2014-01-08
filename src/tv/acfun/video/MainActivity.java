@@ -1,5 +1,6 @@
 package tv.acfun.video;
 
+import tv.ac.fun.R;
 import tv.acfun.video.fragment.CategoriesFragment;
 import tv.acfun.video.fragment.HomeFragment;
 import tv.acfun.video.util.CommonUtil;

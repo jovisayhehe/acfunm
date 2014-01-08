@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import tv.ac.fun.BuildConfig;
+import tv.ac.fun.R;
 import tv.acfun.video.adapter.MenuAdapter;
 import tv.acfun.video.api.API;
 import tv.acfun.video.entity.Category;

@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 import org.xml.sax.XMLReader;
 
 import tv.acfun.video.AcApp;
-import tv.acfun.video.R;
+import tv.ac.fun.R;
 import tv.acfun.video.entity.Comment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

@@ -3,6 +3,7 @@ package tv.acfun.video;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import tv.ac.fun.R;
 
 import android.content.Context;
 import android.os.Bundle;

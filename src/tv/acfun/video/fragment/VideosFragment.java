@@ -5,7 +5,7 @@ import java.util.List;
 import tv.acfun.video.AcApp;
 import tv.acfun.video.DetailsActivity;
 import tv.acfun.video.PlayerActivity;
-import tv.acfun.video.R;
+import tv.ac.fun.R;
 import tv.acfun.video.adapter.BaseArrayAdapter;
 import tv.acfun.video.api.API;
 import tv.acfun.video.entity.Category;

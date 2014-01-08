@@ -19,7 +19,7 @@ package tv.acfun.video.fragment;
 import java.util.List;
 
 import tv.acfun.video.AcApp;
-import tv.acfun.video.R;
+import tv.ac.fun.R;
 import tv.acfun.video.entity.Category;
 import tv.acfun.video.util.net.CategoriesRequest;
 import android.content.Context;
@@ -172,7 +172,7 @@ public class CategoriesFragment extends GridFragment{
             Category cat = mItems.get(position);
             HeaderViewHolder holder;
             if (convertView == null) {
-                convertView = mInflater.inflate(tv.acfun.video.R.layout.item_header, parent, false);
+                convertView = mInflater.inflate(R.layout.item_header, parent, false);
                 holder = new HeaderViewHolder();
                 holder.textView = (TextView) convertView.findViewById(android.R.id.text1);
                 convertView.setTag(holder);

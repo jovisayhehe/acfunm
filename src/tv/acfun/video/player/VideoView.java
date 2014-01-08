@@ -29,7 +29,7 @@ import io.vov.vitamio.MediaPlayer.OnSeekCompleteListener;
 import io.vov.vitamio.MediaPlayer.OnTimedTextListener;
 import io.vov.vitamio.MediaPlayer.OnVideoSizeChangedListener;
 import io.vov.vitamio.MediaPlayer.TrackInfo;
-import io.vov.vitamio.R;
+import tv.ac.fun.R;
 import io.vov.vitamio.Vitamio;
 import io.vov.vitamio.utils.Log;
 

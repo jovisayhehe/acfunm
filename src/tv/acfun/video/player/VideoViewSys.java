@@ -19,7 +19,7 @@ package tv.acfun.video.player;
 import java.io.IOException;
 import java.util.Map;
 
-import tv.acfun.video.R;
+import tv.ac.fun.R;
 import tv.acfun.video.player.MediaController.MediaPlayerControl;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;

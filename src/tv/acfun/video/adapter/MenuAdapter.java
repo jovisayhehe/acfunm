@@ -18,7 +18,7 @@ package tv.acfun.video.adapter;
 import java.util.List;
 
 import tv.acfun.video.HomeActivity;
-import tv.acfun.video.R;
+import tv.ac.fun.R;
 import tv.acfun.video.entity.Category;
 import android.content.Context;
 import android.view.View;

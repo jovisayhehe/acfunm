@@ -18,6 +18,7 @@ package tv.acfun.video;
 
 import java.util.ArrayList;
 
+import tv.ac.fun.R;
 import tv.acfun.video.api.API;
 import tv.acfun.video.entity.Comment;
 import tv.acfun.video.entity.Comments;

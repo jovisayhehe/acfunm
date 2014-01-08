@@ -18,7 +18,7 @@ import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 
-import tv.acfun.video.BuildConfig;
+import tv.ac.fun.BuildConfig;
 import tv.acfun.video.util.BitmapCache;
 import tv.acfun.video.util.CommonUtil;
 import android.content.Context;

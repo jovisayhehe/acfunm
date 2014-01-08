@@ -21,7 +21,7 @@ import com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView;
 import com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView.OnHeaderClickListener;
 
 import tv.acfun.video.AcApp;
-import tv.acfun.video.R;
+import tv.ac.fun.R;
 import tv.acfun.video.util.net.Connectivity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

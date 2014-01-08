@@ -26,6 +26,7 @@ import master.flame.danmaku.danmaku.loader.ILoader;
 import master.flame.danmaku.danmaku.model.DanmakuTimer;
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
 import master.flame.danmaku.ui.widget.DanmakuSurfaceView;
+import tv.ac.fun.R;
 import tv.acfun.video.entity.VideoPart;
 import tv.acfun.video.player.IMediaSegmentPlayer;
 import tv.acfun.video.player.MediaController;

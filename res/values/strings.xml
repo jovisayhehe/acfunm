@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">AcFun Video</string>
+    <string name="app_name">AcFun</string>
     <string name="drawer_open">AcFun Danmakus Video</string>
     <string name="drawer_close">@string/app_name</string>
     <string name="action_settings">Settings</string>

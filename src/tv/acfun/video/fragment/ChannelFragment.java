@@ -17,7 +17,7 @@
 package tv.acfun.video.fragment;
 
 import tv.acfun.video.HomeActivity;
-import tv.acfun.video.R;
+import tv.ac.fun.R;
 import tv.acfun.video.api.API;
 import android.app.Activity;
 import android.os.Bundle;

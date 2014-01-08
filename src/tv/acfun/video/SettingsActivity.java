@@ -16,6 +16,7 @@
 
 package tv.acfun.video;
 
+import tv.ac.fun.R;
 import tv.acfun.video.util.FileUtil;
 import android.content.Context;
 import android.content.Intent;

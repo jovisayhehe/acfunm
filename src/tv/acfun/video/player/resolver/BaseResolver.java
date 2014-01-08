@@ -29,7 +29,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import tv.acfun.video.BuildConfig;
+import tv.ac.fun.BuildConfig;
 import tv.acfun.video.player.MediaList;
 import tv.acfun.video.player.MediaList.OnResolvedListener;
 import tv.acfun.video.player.MediaList.Resolver;

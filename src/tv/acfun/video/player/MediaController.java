@@ -23,7 +23,7 @@ import io.vov.vitamio.widget.OutlineTextView;
 
 import java.lang.reflect.Method;
 
-import tv.acfun.video.R;
+import tv.ac.fun.R;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;

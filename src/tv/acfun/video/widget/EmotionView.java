@@ -19,7 +19,7 @@ package tv.acfun.video.widget;
 import java.io.IOException;
 
 import tv.acfun.video.AcApp;
-import tv.acfun.video.R;
+import tv.ac.fun.R;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

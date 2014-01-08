@@ -21,7 +21,7 @@ import java.util.List;
 
 import tv.acfun.video.AcApp;
 import tv.acfun.video.ChannelActivity;
-import tv.acfun.video.R;
+import tv.ac.fun.R;
 import tv.acfun.video.api.API;
 import tv.acfun.video.entity.HomeCat;
 import tv.acfun.video.entity.Video;
