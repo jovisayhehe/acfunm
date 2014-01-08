@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import master.flame.danmaku.controller.DMSiteType;
 import master.flame.danmaku.danmaku.loader.ILoader;
 import master.flame.danmaku.danmaku.model.DanmakuTimer;
@@ -48,12 +47,11 @@ import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
 import android.os.Parcelable;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewStub;
 import android.view.View.OnClickListener;
+import android.view.ViewStub;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -74,11 +72,13 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     private static final String TAG = "PlayerActivity";
     private static final int SEEK_COMPLETE = 10;
     private static final int SYNC = 11;
+    private static final int HIDE_TEXT = 12;
     private VideoView mVideoView;
     private View mBufferingIndicator;
     private TextView mProgressText;
     private boolean mEnabledHW;
     private DanmakuSurfaceView mDMView;
+    private boolean mEnabledDrawingCache;
 
     public static void start(Context context, VideoPart video) {
         Intent intent = new Intent(context.getApplicationContext(), PlayerActivity.class);
@@ -104,11 +104,14 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     OnResolvedListener OnResolved = new OnResolvedListener() {
         @Override
         public void onResolved(Resolver resolver) {
-            if (resolver.getMediaList() != null) {
-                mProgressText.setText(mProgressText.getText() + "完毕..共" + resolver.getMediaList().size() + "段\n" + "开始加载弹幕...");
+            if (resolver.getMediaList() != null && resolver.getMediaList().size()>0) {
+                mProgressText.setText(mProgressText.getText() 
+                        + getString(R.string.video_segments_parsing_success, resolver.getMediaList().size() )
+                        +"\n" 
+                        + getString(R.string.danmakus_buffering));
                 addDanmakusRequest();
             } else {
-                mProgressText.setText(mProgressText.getText() + "失败!");
+                mProgressText.setText(mProgressText.getText() + getString(R.string.failed));
                 // TODO: show retry
             }
         }
@@ -125,6 +128,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             return;
         }
         mEnabledHW = AcApp.getBoolean(getString(R.string.key_hw_decode), false);
+        mEnabledDrawingCache = AcApp.getBoolean(getString(R.string.key_dm_cache), true);
         mVideo = (VideoPart) extra;
         setContentView(R.layout.activity_player);
         initViews();
@@ -147,7 +151,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         mVideoView.setOnPreparedListener(onPrepared);
         mVideoView.setOnSeekCompleteListener(onSeekComplete);
         mDMView = (DanmakuSurfaceView) findViewById(R.id.danmakus);
-        mDMView.enableDanmakuDrawingCache(false);
+        mDMView.enableDanmakuDrawingCache(mEnabledDrawingCache);
         mDMView.setCallback(mDMCallback);
         mDMView.setOnClickListener(this);
         mMediaController = new MediaController(this);
@@ -170,7 +174,11 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             mProgressText.post(new Runnable() {
                 @Override
                 public void run() {
-                    mProgressText.setText(mProgressText.getText() + "\n弹幕加载完毕.");
+                    mProgressText.setText(mProgressText.getText()
+                            +"\n"
+                            + getString(R.string.danmakus_loaded)
+                            +"\n"
+                            +getString(R.string.enable_danmaku_drawing_cache,mEnabledDrawingCache));
                     mHandler.sendEmptyMessage(SYNC);
                     hideTextDelayed();
                 }
@@ -189,7 +197,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             mProgressText.post(new Runnable() {
                 @Override
                 public void run() {
-                    mProgressText.setText(mProgressText.getText() + "\n弹幕加载失败!");
+                    mProgressText.setText(mProgressText.getText() + "\n"+getString(R.string.danmakus_load_failed));
                     hideTextDelayed();
                 }
             });
@@ -205,7 +213,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             @Override
             public void onResponse(String response) {
                 // TODO Auto-generated method stub
-                mProgressText.setText(mProgressText.getText() + "\n弹幕文件下载完毕." + "\n开始解析...");
+                mProgressText.setText(mProgressText.getText() + "\n"+ getString(R.string.danmakus_downloaded));
                 try {
                     DMSiteType type = DMSiteType.ACFUN;
                     ILoader loader = type.getLoader();
@@ -214,14 +222,14 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
                     mDMView.prepare(parser);
                 } catch (Exception e) {
                     Log.e(TAG, "解析失败", e);
-                    mProgressText.setText(mProgressText.getText() + "\n解析失败...");
+                    mProgressText.setText(mProgressText.getText() +"\n" +getString(R.string.parsing_failed));
                 }
                 startPlay();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                mProgressText.setText(mProgressText.getText() + "\n弹幕文件下载失败！");
+                mProgressText.setText(mProgressText.getText() +"\n"+getString(R.string.danmakus_download_failed));
                 hideTextDelayed();
                 startPlay();
             }
@@ -246,18 +254,17 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     }
 
     private void hideTextDelayed() {
-        mProgressText.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mProgressText.startAnimation(mTextAnimation);
-            }
-        }, 1500);
+        mHandler.sendEmptyMessageDelayed(HIDE_TEXT, 2500);
     }
 
     private void startPlay() {
-        mProgressText.setText(mProgressText.getText() + "\n开始缓冲视频..请稍候...");
+        mProgressText.setText(mProgressText.getText() 
+                + "\n"
+                +getString(R.string.video_buffering)
+                +"\n"
+                +getString(R.string.player_type,mEnabledHW?"HW":"SW")
+                );
         mVideoView.setMediaList(sResolver.getMediaList());
-        mVideoView.requestFocus();
         mVideoView.start();
     }
 
@@ -295,7 +302,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         sResolver.setResolution(resolution);
         sResolver.setOnResolvedListener(OnResolved);
         sResolver.resolveAsync(getApplicationContext());
-        mProgressText.setText(mProgressText.getText() + "\n视频分段解析中...");
+        mProgressText.setText(mProgressText.getText() + "\n"+getString(R.string.video_segments_paring));
     }
 
     @Override
@@ -388,6 +395,9 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
                 mDMView.start(getCurrentPosition());
                 mHandler.sendEmptyMessageDelayed(SYNC, 1500);
             }
+            break;
+        case HIDE_TEXT:
+            mProgressText.startAnimation(mTextAnimation);
             break;
         default:
             break;

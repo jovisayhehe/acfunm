@@ -27,5 +27,27 @@
 
     <string name="buffering">加载中...</string>
     <string name="source_type_not_support_yet">尚不支持该视频源！</string>
-
+    <string name="hw_decode">尝试开启硬解码</string>
+    <string name="clear_cache">清除缓存</string>
+    <string name="update">更新</string>
+    <string name="donate">捐助开发者</string>
+    <string name="others">其他</string>
+    <string name="about">关于</string>
+    <string name="dm_cache">开启多线程绘制弹幕</string>
+    <string name="wifi_only">仅限WIFI</string>
+    <string name="rating">评分!</string>
+    <string name="feed_back">反馈</string>
+    <string name="resolution">清晰度偏好</string>
+    <string name="danmakus_loaded">弹幕加载完毕.</string>
+    <string name="danmakus_load_failed">弹幕加载失败!</string>
+    <string name="danmakus_downloaded">弹幕文件下载完毕.\n开始解析...</string>
+    <string name="danmakus_download_failed">弹幕文件下载失败！</string>
+    <string name="parsing_failed">解析失败!</string>
+    <string name="video_buffering">开始缓冲视频..请稍候...</string>
+    <string name="video_segments_paring">视频分段解析中...</string>
+    <string name="video_segments_parsing_success">完毕..共%d段</string>
+    <string name="danmakus_buffering">开始加载弹幕...</string>
+    <string name="failed">失败!</string>
+    <string name="player_type">"播放器类型: %s"</string>
+    <string name="enable_danmaku_drawing_cache">"开启弹幕绘制缓存: %B"</string>
 </resources>

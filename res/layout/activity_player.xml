@@ -16,6 +16,10 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             />
+    <master.flame.danmaku.ui.widget.DanmakuSurfaceView
+        android:id="@+id/danmakus"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 	<TextView 
         android:padding="16dp"
         android:layout_width="match_parent"
@@ -26,10 +30,6 @@
         android:textSize="14sp"
         android:layout_gravity="bottom"
         />
-    <master.flame.danmaku.ui.widget.DanmakuSurfaceView
-        android:id="@+id/danmakus"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
     
     <LinearLayout
         android:id="@+id/buffering_indicator"

@@ -14,7 +14,10 @@
             android:defaultValue="false"
             android:key="@string/key_hw_decode"
             android:title="@string/hw_decode" />
-        
+        <CheckBoxPreference 
+            android:defaultValue="true"
+            android:key="@string/key_dm_cache"
+            android:title="@string/dm_cache" />
         <ListPreference android:entries="@array/pref_resolution_entries"
             android:key="@string/key_resolution_mode"
             android:entryValues="@array/pref_resolution_values"
@@ -36,7 +39,7 @@
             android:title="@string/rating" >
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="market://details?id=tv.acfun.a63" />
+                android:data="market://details?id=tv.ac.fun" />
         </Preference>
         <Preference
             android:key="@string/key_feedback"
