@@ -108,9 +108,6 @@ public class VideosFragment extends GridFragment{
         return newRequest(mCurrentPage);
     }
     @Override
-    public void onHeaderClick(AdapterView<?> parent, View view, long id) {
-    }
-    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         try {
             Video item = (Video) parent.getItemAtPosition(position);

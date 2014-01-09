@@ -50,6 +50,7 @@ import android.os.Handler.Callback;
 import android.os.Message;
 import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -179,6 +180,8 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         mMediaController.setAnchorView(mDMView);
         mMediaController.setMediaPlayer(this);
         mMediaController.setInstantSeeking(false);
+        String name = mVideo.name == null?"":mVideo.name;
+        mMediaController.setFileName(name);
         mVideoView.setMediaController(mMediaController);
     }
     MediaPlayer.OnSeekCompleteListener onSeekComplete = new MediaPlayer.OnSeekCompleteListener() {

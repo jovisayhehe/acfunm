@@ -17,8 +17,6 @@ package tv.acfun.video.fragment;
 
 import com.android.volley.Cache;
 import com.android.volley.Request;
-import com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView;
-import com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView.OnHeaderClickListener;
 
 import tv.acfun.video.AcApp;
 import tv.ac.fun.R;
@@ -40,7 +38,7 @@ import android.widget.AdapterView.OnItemClickListener;
  * @author Yrom
  *
  */
-public abstract class GridFragment extends Fragment implements OnItemClickListener, OnHeaderClickListener, OnScrollListener {
+public abstract class GridFragment extends Fragment implements OnItemClickListener, OnScrollListener {
     protected GridView mGridView;
     protected View mLoadingView;
     protected ListAdapter mAdapter;
@@ -59,8 +57,8 @@ public abstract class GridFragment extends Fragment implements OnItemClickListen
         mGridView.setOnItemClickListener(this);
         mGridView.setOnScrollListener(this);
         mLoadingView = view.findViewById(R.id.loading);
-        if(mGridView instanceof StickyGridHeadersGridView)
-            ((StickyGridHeadersGridView) mGridView).setOnHeaderClickListener(this);
+//        if(mGridView instanceof StickyGridHeadersGridView)
+//            ((StickyGridHeadersGridView) mGridView).setOnHeaderClickListener(this);
     }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -96,8 +94,8 @@ public abstract class GridFragment extends Fragment implements OnItemClickListen
 
     protected abstract Request<?> newRequest();
 
-    @Override
-    public abstract void onHeaderClick(AdapterView<?> parent, View view, long id);
+//    @Override
+//    public abstract void onHeaderClick(AdapterView<?> parent, View view, long id);
 
     @Override
     public abstract void onItemClick(AdapterView<?> parent, View view, int position, long id);
