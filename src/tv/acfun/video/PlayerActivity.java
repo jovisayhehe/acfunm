@@ -41,23 +41,32 @@ import tv.acfun.video.player.MediaSegmentPlayer;
 import tv.acfun.video.player.VideoView;
 import tv.acfun.video.player.resolver.BaseResolver;
 import tv.acfun.video.player.resolver.ResolverType;
+import tv.acfun.video.util.SystemBarTintManager;
 import tv.acfun.video.util.net.Connectivity;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
 import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
-import android.text.TextUtils;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.view.ViewStub;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -103,7 +112,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         }
     };
     private Animation mTextAnimation;
-    private BaseResolver sResolver;
+    private BaseResolver mResolver;
     private VideoPart mVideo;
     OnResolvedListener OnResolved = new OnResolvedListener() {
         @Override
@@ -123,10 +132,10 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     OnInfoListener onInfo = new OnInfoListener() {
         @Override
         public boolean onInfo(MediaPlayer mp, int what, int extra) {
-            // TODO Auto-generated method stub
             if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START) {
                 mp.pause();
                 mDMView.pause();
+                mHandler.removeMessages(SYNC);
                 if (mBufferingIndicator != null) mBufferingIndicator.setVisibility(View.VISIBLE);
             } else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
                 mp.start();
@@ -137,10 +146,17 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             return false;
         }
     };
+    @TargetApi(19)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         if (!LibsChecker.checkVitamioLibs(this)) return;
+        if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.KITKAT){
+            setTheme(R.style.AppTheme_NoActionBar_TranslucentDecor);
+        }else{
+            setTheme(R.style.AppTheme_NoActionBar_FullScreen);
+        }
+        super.onCreate(savedInstanceState);
+        
         mHandler = new Handler(this);
         Parcelable extra = getIntent().getParcelableExtra(EXTRA_VIDEO);
         if (extra == null) {
@@ -154,7 +170,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         setContentView(R.layout.activity_player);
         initViews();
         initAnimation();
-        if (sResolver != null && sResolver.getMediaList() != null)  return;
+        if (mResolver != null && mResolver.getMediaList() != null && mResolver.getMediaList().size() > 0)  return;
         resolveVideos();
     }
 
@@ -175,14 +191,16 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         mDMView = (DanmakuSurfaceView) findViewById(R.id.danmakus);
         mDMView.enableDanmakuDrawingCache(mEnabledDrawingCache);
         mDMView.setCallback(mDMCallback);
-        mDMView.setOnClickListener(this);
-        mMediaController = new MediaController(this);
-        mMediaController.setAnchorView(mDMView);
+        View holder = findViewById(R.id.holder);
+        holder.setOnClickListener(this);
+        mMediaController = (MediaController)new MediaController(this);
+        mMediaController.setAnchorView(holder);
         mMediaController.setMediaPlayer(this);
         mMediaController.setInstantSeeking(false);
         String name = mVideo.name == null?"":mVideo.name;
         mMediaController.setFileName(name);
         mVideoView.setMediaController(mMediaController);
+        
     }
     MediaPlayer.OnSeekCompleteListener onSeekComplete = new MediaPlayer.OnSeekCompleteListener() {
         @Override
@@ -211,7 +229,6 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
 
         @Override
         public void updateTimer(DanmakuTimer timer) {
-            // TODO Auto-generated method stub
             mTimer = timer;
         }
 
@@ -236,7 +253,6 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         StringRequest request = new StringRequest(url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                // TODO Auto-generated method stub
                 mProgressText.setText(mProgressText.getText() + "\n"+ getString(R.string.danmakus_downloaded));
                 try {
                     DMSiteType type = DMSiteType.ACFUN;
@@ -288,7 +304,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
                 +"\n"
                 +getString(R.string.player_type,mEnabledHW?"HW":"SW")
                 );
-        mVideoView.setMediaList(sResolver.getMediaList());
+        mVideoView.setMediaList(mResolver.getMediaList());
         mVideoView.start();
     }
 
@@ -321,16 +337,35 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             Toast.makeText(this, getString(R.string.source_type_not_support_yet), Toast.LENGTH_SHORT).show();
             return;
         }
-        sResolver = (BaseResolver) type.getResolver(mVideo.sourceId);
+        mResolver = (BaseResolver) type.getResolver(mVideo.sourceId);
         int resolution = Integer.parseInt(AcApp.getString(getString(R.string.key_resolution_mode), "1"));
-        sResolver.setResolution(resolution);
-        sResolver.setOnResolvedListener(OnResolved);
-        sResolver.resolveAsync(getApplicationContext());
+        mResolver.setResolution(resolution);
+        mResolver.setOnResolvedListener(OnResolved);
+        mResolver.resolveAsync(getApplicationContext());
         mProgressText.setText(mProgressText.getText() + "\n"+getString(R.string.video_segments_paring));
     }
-
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        
+        menu.add(Menu.NONE, 0x1, Menu.NONE, "关闭弹幕");
+        menu.add(Menu.NONE, 0x2, Menu.NONE, "发送弹幕");
+    }
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+        case 0x1:
+            mDMView.stop();
+            break;
+        case 0x2:
+            
+            break;
+        }
+        
+        return super.onContextItemSelected(item);
+    }
     @Override
     public void onClick(View v) {
+        Log.i(TAG, "onclick::"+v.getClass().getName());
         if (mMediaController != null) 
             toggleMediaControlsVisiblity();
     }
@@ -338,8 +373,10 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     @Override
     public void start() {
         mVideoView.start();
-        mDMView.resume();
-        mHandler.sendEmptyMessageDelayed(SYNC,200);
+        if(isDMShow()){
+            mDMView.resume();
+            mHandler.sendEmptyMessageDelayed(SYNC,200);
+        }
     }
 
     @Override
@@ -397,6 +434,9 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(mHandler != null){
+            mHandler.removeMessages(SYNC);
+        }
         if(mVideoView != null){
             mVideoView.stopPlayback();
         }
@@ -440,5 +480,26 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     protected void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+    }
+
+    @Override
+    public boolean isDMShow() {
+        return mDMView.getVisibility() == View.VISIBLE;
+    }
+
+    @Override
+    public void closeDM() {
+        mDMView.pause();
+        mDMView.setVisibility(View.GONE);
+        mHandler.removeCallbacksAndMessages(null);
+    }
+
+    @Override
+    public void startDM() {
+        mDMView.setVisibility(View.VISIBLE);
+        if(isPlaying()){
+            mDMView.start(getCurrentPosition());
+            mHandler.sendEmptyMessageDelayed(SYNC, 200);
+        }
     }
 }

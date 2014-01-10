@@ -65,7 +65,7 @@ import android.widget.Toast;
  * {@link io.vov.vitamio.MediaPlayer}, such as {@link #getVideoWidth()},
  * {@link #setTimedTextShown(boolean)}
  */
-public class VideoView extends SurfaceView implements MediaController.MediaPlayerControl {
+public class VideoView extends SurfaceView  {
     public static final int VIDEO_LAYOUT_ORIGIN = 0;
     public static final int VIDEO_LAYOUT_SCALE = 1;
     public static final int VIDEO_LAYOUT_STRETCH = 2;

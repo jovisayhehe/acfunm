@@ -387,4 +387,22 @@ public class PlayerSysActivity extends ActionBarActivity implements OnClickListe
         }
         return false;
     }
+
+    @Override
+    public boolean isDMShow() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void closeDM() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void startDM() {
+        // TODO Auto-generated method stub
+        
+    }
 }

@@ -36,7 +36,6 @@
         <activity android:name="tv.acfun.video.DetailsActivity" android:theme="@style/AppTheme.TranslucentActionBar"/>
         <activity
             android:name="tv.acfun.video.PlayerActivity"
-            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="sensorLandscape"
             android:configChanges="orientation" />
         <!-- <activity

@@ -20,15 +20,11 @@ package tv.acfun.video.player;
 import io.vov.vitamio.utils.Log;
 import io.vov.vitamio.utils.StringUtils;
 import io.vov.vitamio.widget.OutlineTextView;
-
-import java.lang.reflect.Method;
-
 import tv.ac.fun.R;
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Rect;
+import android.content.res.Resources;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Handler;
@@ -39,10 +35,10 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -167,6 +163,18 @@ public class MediaController extends FrameLayout {
       mHandler.sendEmptyMessageDelayed(SHOW_PROGRESS, 1000);
     }
   };
+    private View mDMButton;
+    private OnClickListener mDMListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if(mPlayer.isDMShow()){
+                mPlayer.closeDM();
+            }else{
+                mPlayer.startDM();
+            }
+        }
+    };
+    private View mControllerBar;
 
   public MediaController(Context context, AttributeSet attrs) {
     super(context, attrs);
@@ -184,9 +192,9 @@ public class MediaController extends FrameLayout {
   private boolean initController(Context context) {
     mContext = context;
     mAM = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
-    return true;
+    return true; 
   }
-
+  
   @Override
   public void onFinishInflate() {
     if (mRoot != null)
@@ -248,7 +256,12 @@ public class MediaController extends FrameLayout {
       mPauseButton.requestFocus();
       mPauseButton.setOnClickListener(mPauseListener);
     }
-
+    
+    mDMButton = v.findViewById(R.id.mediacontroller_dm);
+    if(mDMButton != null){
+        mPauseButton.setFocusable(true);
+        mDMButton.setOnClickListener(mDMListener);
+    }
     mProgress = (SeekBar) v.findViewById(R.id.mediacontroller_seekbar);
     if (mProgress != null) {
       if (mProgress instanceof SeekBar) {
@@ -257,14 +270,54 @@ public class MediaController extends FrameLayout {
       }
       mProgress.setMax(1000);
     }
-
+    
     mEndTime = (TextView) v.findViewById(R.id.mediacontroller_time_total);
     mCurrentTime = (TextView) v.findViewById(R.id.mediacontroller_time_current);
     mFileName = (TextView) v.findViewById(R.id.mediacontroller_file_name);
     if (mFileName != null)
       mFileName.setText(mTitle);
+    mControllerBar = v.findViewById(R.id.mediacontroller_bar);
+    RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mControllerBar.getLayoutParams();
+    int height = getNavigationBarHeight();
+    if(height > 0) {
+        lp.bottomMargin = height;
+        mControllerBar.setLayoutParams(lp);
+    }
+    
+    View top = v.findViewById(R.id.mediacontroller_top);
+    FrameLayout.LayoutParams p = (FrameLayout.LayoutParams) top.getLayoutParams();
+    height = getStatusBarHeight();
+    if(height >0){
+        p.topMargin = height;
+        v.setLayoutParams(p);
+    }
+    
   }
-
+  
+  private int getNavigationBarHeight(){
+      Resources resources = getResources();
+      try{
+          int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+          if (resourceId > 0) {
+              return resources.getDimensionPixelSize(resourceId);
+          }
+      }catch(Exception e){
+          e.printStackTrace();
+      }
+      return 0;
+  }
+  private int getStatusBarHeight(){
+      Resources resources = getResources();
+      try{
+          int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
+          if (resourceId > 0) {
+              return resources.getDimensionPixelSize(resourceId);
+          }
+      }catch(Exception e){
+          e.printStackTrace();
+      }
+      return 0;
+  }
   public void setMediaPlayer(MediaPlayerControl player) {
     mPlayer = player;
     updatePausePlay();
@@ -333,7 +386,7 @@ public class MediaController extends FrameLayout {
     if (!mShowing && mAnchor != null && mAnchor.getWindowToken() != null) {
       if (mPauseButton != null)
         mPauseButton.requestFocus();
-
+      showBar();
       if (mFromXml) {
         setVisibility(View.VISIBLE);
       } else {
@@ -361,6 +414,7 @@ public class MediaController extends FrameLayout {
   }
 
   public boolean isShowing() {
+      if(mFromXml) return getVisibility() == VISIBLE;
     return mShowing;
   }
 
@@ -370,8 +424,7 @@ public class MediaController extends FrameLayout {
 
     if (mShowing) {
       try {
-          if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-              mAnchor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
+        hideyBar();
         mHandler.removeMessages(SHOW_PROGRESS);
         if (mFromXml)
           setVisibility(View.GONE);
@@ -385,7 +438,35 @@ public class MediaController extends FrameLayout {
         mHiddenListener.onHidden();
     }
   }
-
+  @TargetApi(19)
+  private void hideyBar() {
+      if(Build.VERSION.SDK_INT < 14 || mAnchor == null) return;
+      int uiVisibility = mAnchor.getSystemUiVisibility();
+      int newUiOptions = uiVisibility;
+      if (Build.VERSION.SDK_INT >= 18) {
+          newUiOptions |= View.SYSTEM_UI_FLAG_IMMERSIVE;
+          newUiOptions |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+          newUiOptions |= View.SYSTEM_UI_FLAG_FULLSCREEN;
+      }else  {
+          newUiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+      }
+      
+      mAnchor.setSystemUiVisibility(newUiOptions);
+  }
+  @TargetApi(19)
+  private void showBar(){
+      if(Build.VERSION.SDK_INT < 14 || mAnchor == null) return;
+      int uiVisibility = mAnchor.getSystemUiVisibility();
+      int newUiOptions = uiVisibility;
+      if (Build.VERSION.SDK_INT >= 18) {
+          newUiOptions &= ~View.SYSTEM_UI_FLAG_IMMERSIVE;
+          newUiOptions &= ~View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+          newUiOptions &= ~View.SYSTEM_UI_FLAG_FULLSCREEN;
+      }else  {
+          newUiOptions &= ~View.SYSTEM_UI_FLAG_LOW_PROFILE;
+      }
+      mAnchor.setSystemUiVisibility(newUiOptions);
+  }
   public void setOnShownListener(OnShownListener l) {
     mShownListener = l;
   }
@@ -421,8 +502,8 @@ public class MediaController extends FrameLayout {
 
   @Override
   public boolean onTouchEvent(MotionEvent event) {
-    show(sDefaultTimeout);
-    return true;
+      hide();
+    return false;
   }
 
   @Override
@@ -460,9 +541,9 @@ public class MediaController extends FrameLayout {
       return;
 
     if (mPlayer.isPlaying())
-      mPauseButton.setImageResource(R.drawable.mediacontroller_pause_button);
+      mPauseButton.setImageResource(R.drawable.ic_action_pause);
     else
-      mPauseButton.setImageResource(R.drawable.mediacontroller_play_button);
+      mPauseButton.setImageResource(R.drawable.ic_action_play);
   }
 
   private void doPauseResume() {
@@ -504,6 +585,12 @@ public class MediaController extends FrameLayout {
     boolean isPlaying();
 
     int getBufferPercentage();
+    
+    boolean isDMShow();
+    
+    void closeDM();
+    
+    void startDM();
   }
 
 }

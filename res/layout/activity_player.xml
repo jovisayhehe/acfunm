@@ -30,7 +30,20 @@
         android:textSize="14sp"
         android:layout_gravity="bottom"
         />
-    
+	<View 
+	    android:id="@+id/holder"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    />
+<!--     <tv.acfun.video.player.MediaController 
+        android:id="@+id/mediacontroller"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        >
+       <include layout="@layout/video_controller"/> 
+    </tv.acfun.video.player.MediaController> -->
+        
     <LinearLayout
         android:id="@+id/buffering_indicator"
         android:layout_width="wrap_content"

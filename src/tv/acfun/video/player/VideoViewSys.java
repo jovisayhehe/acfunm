@@ -49,7 +49,7 @@ import android.view.View;
  * provides various display options such as scaling and tinting.
  */
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-public class VideoViewSys extends SurfaceView implements MediaPlayerControl {
+public class VideoViewSys extends SurfaceView  {
     private String TAG = "VideoView";
     // settable by the client
     private Uri mUri;
@@ -599,7 +599,6 @@ public class VideoViewSys extends SurfaceView implements MediaPlayerControl {
         }
     }
 
-    @Override
     public void start() {
         if (isInPlaybackState()) {
             mMediaPlayer.start();
@@ -608,7 +607,6 @@ public class VideoViewSys extends SurfaceView implements MediaPlayerControl {
         mTargetState = STATE_PLAYING;
     }
 
-    @Override
     public void pause() {
         if (isInPlaybackState()) {
             if (mMediaPlayer.isPlaying()) {
@@ -627,7 +625,6 @@ public class VideoViewSys extends SurfaceView implements MediaPlayerControl {
         openVideo();
     }
 
-    @Override
     public long getDuration() {
         if (isInPlaybackState()) { 
             if(mList != null) return mList.getTotalDuration();
@@ -635,7 +632,6 @@ public class VideoViewSys extends SurfaceView implements MediaPlayerControl {
         return -1;
     }
 
-    @Override
     public long getCurrentPosition() {
         if (isInPlaybackState()) { 
             if (mList != null && mMediaPlayer instanceof IMediaSegmentPlayer)
@@ -644,7 +640,6 @@ public class VideoViewSys extends SurfaceView implements MediaPlayerControl {
         return 0;
     }
 
-    @Override
     public void seekTo(long msec) {
         if (isInPlaybackState()) {
             if (mList != null && mMediaPlayer instanceof IMediaSegmentPlayer) {
@@ -665,12 +660,10 @@ public class VideoViewSys extends SurfaceView implements MediaPlayerControl {
         }
     }
 
-    @Override
     public boolean isPlaying() {
         return isInPlaybackState() && mMediaPlayer.isPlaying();
     }
 
-    @Override
     public int getBufferPercentage() {
         if (mMediaPlayer != null) { return mCurrentBufferPercentage; }
         return 0;
