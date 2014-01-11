@@ -263,7 +263,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
                 AcApp.addRequest(new VideoDetailsRequest(mAcId, mVideoListener, mErrorListener));
             }else{
                 requestComments();
-                mCommentsGroup.findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                mCommentsGroup.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
                 mCommentsGroup.removeViewAt(mCommentsGroup.getChildCount()-1);
             }
             break;
