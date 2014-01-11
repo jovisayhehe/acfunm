@@ -18,31 +18,29 @@
 -->
 
 <resources>
-	
-    <style name="Theme.Styled" parent="@style/Theme.AppCompat">
-        <item name="android:selectableItemBackground">@drawable/selectable_background_styled</item>
-        <item name="android:actionBarItemBackground">?android:attr/selectableItemBackground</item>
+
+    <style name="Theme.Styled" parent="@style/Theme.AppCompat.Light">
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_styled</item>
         <item name="android:popupMenuStyle">@style/PopupMenu.Styled</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListView.Styled</item>
-        <item name="android:actionBarTabBarStyle">@style/ActionBarTabBarStyle.Styled</item>
-        <item name="android:actionBarTabTextStyle">@style/ActionBarTextStyle.Styled</item>
+        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Styled</item>
         <item name="android:actionDropDownStyle">@style/DropDownNav.Styled</item>
-        <item name="android:actionBarStyle">@style/ActionBar.Solid.Styled</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Transparent.Styled</item>
         <item name="android:actionModeBackground">@drawable/cab_background_top_styled</item>
         <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_styled</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Styled</item>
+        <item name="android:selectableItemBackground">@drawable/selectable_background_styled</item>
+        
     </style>
-	<style name="Theme.Styled.TabStyled" parent="@style/Theme.Styled">
-	    <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Styled</item>
-	</style>
-    <style name="ActionBar.Solid.Styled" parent="@style/Widget.AppCompat.ActionBar.Solid">
+
+    <style name="ActionBar.Solid.Styled" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
         <item name="android:background">@drawable/ab_solid_styled</item>
         <item name="android:backgroundStacked">@drawable/ab_stacked_solid_styled</item>
         <item name="android:backgroundSplit">@drawable/ab_bottom_solid_styled</item>
         <item name="android:progressBarStyle">@style/ProgressBar.Styled</item>
     </style>
 
-    <style name="ActionBar.Transparent.Styled" parent="@style/Widget.AppCompat.ActionBar">
+    <style name="ActionBar.Transparent.Styled" parent="@style/Widget.AppCompat.Light.ActionBar">
         <item name="android:background">@drawable/ab_transparent_styled</item>
         <item name="android:progressBarStyle">@style/ProgressBar.Styled</item>
     </style>
@@ -52,9 +50,5 @@
         <item name="android:popupMenuStyle">@style/PopupMenu.Styled</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListView.Styled</item>
     </style>
-    
-	<style name="ActionBarTabBarStyle.Styled" parent="@style/Widget.AppCompat.ActionBar.TabBar">
-	    <item name="android:divider">@null</item>
-	    <item name="android:showDividers">none</item>
-	</style>
+
 </resources>

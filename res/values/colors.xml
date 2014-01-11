@@ -2,9 +2,12 @@
 <resources>
 
     <color name="header">#f80</color>
-    <color name="pressed_styled">#CCFF8800</color>
-    <color name="main_color">#f80</color>
+    <color name="pressed_styled">#CCf29510</color>
+    <color name="main_color">#f08810</color>
     <color name="umeng_fb_color_btn_pressed">#0099cc</color>
     <color name="umeng_fb_color_btn_normal">#33B5E5</color>
+    <color name="bg">#ededed</color>
+    <color name="text_color_title">#0187c5</color>
+    <color name="text_color_gray">#999</color>
 
 </resources>

@@ -36,6 +36,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -78,13 +79,14 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawer.setDrawerShadow(R.drawable.drawer_shadow, Gravity.RIGHT);
         mMenuList = (ListView) findViewById(android.R.id.list);
         mProgress = findViewById(android.R.id.progress);
         mMenuList.setOnItemClickListener(this);
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,                  
                 mDrawer,         
-                R.drawable.ic_navigation_drawer, 
+                R.drawable.ic_drawer, 
                 R.string.drawer_open,  
                 R.string.drawer_close 
                 ) {

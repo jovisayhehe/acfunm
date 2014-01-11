@@ -17,54 +17,47 @@
      limitations under the License.
 -->
 
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources>
 
-    <style name="Theme.Styled" parent="@style/Theme.AppCompat">
-        <item name="selectableItemBackground">@drawable/selectable_background_styled</item>
-        <item name="actionBarItemBackground">?attr/selectableItemBackground</item>
+    <style name="Theme.Styled" parent="@style/Theme.AppCompat.Light">
+        <item name="actionBarItemBackground">@drawable/selectable_background_styled</item>
         <item name="popupMenuStyle">@style/PopupMenu.Styled</item>
         <item name="dropDownListViewStyle">@style/DropDownListView.Styled</item>
-        <item name="actionBarTabBarStyle">@style/ActionBarTabBarStyle.Styled</item>
         <item name="actionBarTabStyle">@style/ActionBarTabStyle.Styled</item>
         <item name="actionDropDownStyle">@style/DropDownNav.Styled</item>
-        <item name="actionBarStyle">@style/ActionBar.Solid.Styled</item>
+        <item name="actionBarStyle">@style/ActionBar.Transparent.Styled</item>
         <item name="actionModeBackground">@drawable/cab_background_top_styled</item>
         <item name="actionModeSplitBackground">@drawable/cab_background_bottom_styled</item>
         <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Styled</item>
+        <item name="selectableItemBackground">@drawable/selectable_background_styled</item>
         
     </style>
-    <style name="ActionBar.Transparent" parent="@style/Widget.AppCompat.ActionBar.Solid">
-        <item name="android:background">@android:color/transparent</item>
-        <item name="background">@android:color/transparent</item>
-    </style>
-    <style name="ActionBar.Solid.Styled" parent="@style/Widget.AppCompat.ActionBar.Solid">
+
+    <style name="ActionBar.Solid.Styled" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
         <item name="background">@drawable/ab_solid_styled</item>
         <item name="backgroundStacked">@drawable/ab_stacked_solid_styled</item>
         <item name="backgroundSplit">@drawable/ab_bottom_solid_styled</item>
         <item name="progressBarStyle">@style/ProgressBar.Styled</item>
     </style>
 
-    <style name="ActionBar.Transparent.Styled" parent="@style/Widget.AppCompat.ActionBar">
+    <style name="ActionBar.Transparent.Styled" parent="@style/Widget.AppCompat.Light.ActionBar">
         <item name="background">@drawable/ab_transparent_styled</item>
         <item name="progressBarStyle">@style/ProgressBar.Styled</item>
     </style>
 	
-    <style name="PopupMenu.Styled" parent="@style/Widget.AppCompat.PopupMenu">	
+    <style name="PopupMenu.Styled" parent="@style/Widget.AppCompat.Light.PopupMenu">	
         <item name="android:popupBackground">@drawable/menu_dropdown_panel_styled</item>	
     </style>
 	
-    <style name="DropDownListView.Styled" parent="@style/Widget.AppCompat.ListView.DropDown">
+    <style name="DropDownListView.Styled" parent="@style/Widget.AppCompat.Light.ListView.DropDown">
         <item name="android:listSelector">@drawable/selectable_background_styled</item>
     </style>
 
-    <style name="ActionBarTabStyle.Styled" parent="@style/Widget.AppCompat.ActionBar.TabView">
+    <style name="ActionBarTabStyle.Styled" parent="@style/Widget.AppCompat.Light.ActionBar.TabView">
         <item name="android:background">@drawable/tab_indicator_ab_styled</item>
     </style>
-	<style name="ActionBarTabBarStyle.Styled" parent="@style/Widget.AppCompat.ActionBar.TabBar">
-	    <item name="divider">@null</item>
-	    <item name="showDividers">none</item>
-	</style>
-    <style name="DropDownNav.Styled" parent="@style/Widget.AppCompat.Spinner.DropDown.ActionBar">
+	
+    <style name="DropDownNav.Styled" parent="@style/Widget.AppCompat.Light.Spinner.DropDown.ActionBar">
         <item name="android:background">@drawable/spinner_background_ab_styled</item>
         <item name="android:popupBackground">@drawable/menu_dropdown_panel_styled</item>
         <item name="android:dropDownSelector">@drawable/selectable_background_styled</item>
@@ -74,25 +67,14 @@
         <item name="android:progressDrawable">@drawable/progress_horizontal_styled</item>
     </style>
     
-    <style name="ActionButton.CloseMode.Styled" parent="@style/Widget.AppCompat.ActionButton.CloseMode">
+    <style name="ActionButton.CloseMode.Styled" parent="@style/Widget.AppCompat.Light.ActionButton.CloseMode">
         <item name="android:background">@drawable/btn_cab_done_styled</item>
     </style>
     
-    <style name="ActionBarTextStyle.Styled" parent="@style/Widget.AppCompat.ActionBar.TabText">
-	    <item name="android:textSize">14sp</item>
-	</style>
     <!-- this style is only referenced in a Light.DarkActionBar based theme -->
     <style name="Theme.Styled.Widget" parent="@style/Theme.AppCompat">
         <item name="popupMenuStyle">@style/PopupMenu.Styled</item>
         <item name="dropDownListViewStyle">@style/DropDownListView.Styled</item>
     </style>
-	
-    <style name="Widget.ProgressBar.Large.Styled"  parent="android:Widget.ProgressBar.Large">
-        <item name="android:indeterminateDrawable">@drawable/loading_animation</item>
-        <item name="android:gravity">center</item>
-        <item name="android:minWidth">100dip</item>
-        <item name="android:maxWidth">100dip</item>
-        <item name="android:minHeight">100dip</item>
-        <item name="android:maxHeight">100dip</item>
-    </style>
+
 </resources>
