@@ -455,7 +455,12 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             break;
         case SYNC:
             if (isPlaying()){
-                mDMView.start(getCurrentPosition());
+                long cur = getCurrentPosition();
+                long d = Math.abs(cur -mTimer.currMillisecond );
+                if(d > 1000){
+                    mDMView.start(cur);
+                    Log.i(TAG, String.format("timer sync::%d",d));
+                }
             }else{
                 mDMView.pause();
             }
