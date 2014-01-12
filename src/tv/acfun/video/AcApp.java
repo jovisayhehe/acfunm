@@ -21,8 +21,9 @@ import java.util.List;
 
 import tv.ac.fun.R;
 import tv.acfun.video.api.API;
+import tv.acfun.video.db.DB;
 import tv.acfun.video.entity.Category;
-import tv.acfun.video.util.BitmapCache;
+import tv.acfun.video.entity.User;
 import tv.acfun.video.util.net.Connectivity;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -34,9 +35,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.content.pm.PackageInfo;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
@@ -291,5 +292,11 @@ public class AcApp extends Application {
             sNotiManager = (NotificationManager) sContext
                     .getSystemService(NOTIFICATION_SERVICE);
         sNotiManager.notify(notificationId, notification);
+    }
+    public static User getUser() {
+        return new DB(sContext).getUser();
+    }
+    public static void logout(){
+        new DB(sContext).logout();
     }
 }
