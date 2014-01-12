@@ -149,14 +149,13 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     @TargetApi(19)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (!LibsChecker.checkVitamioLibs(this)) return;
         if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.KITKAT){
             setTheme(R.style.AppTheme_NoActionBar_TranslucentDecor);
         }else{
             setTheme(R.style.AppTheme_NoActionBar_FullScreen);
         }
         super.onCreate(savedInstanceState);
-        
+        if (!LibsChecker.checkVitamioLibs(this)) return;
         mHandler = new Handler(this);
         Parcelable extra = getIntent().getParcelableExtra(EXTRA_VIDEO);
         if (extra == null) {
