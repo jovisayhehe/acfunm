@@ -115,7 +115,7 @@ public class VideosFragment extends GridFragment{
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         try {
             Video item = (Video) parent.getItemAtPosition(position);
-            mDb.insertHistory(item.acId);
+            mDb.insertHistory(item);
             Object tag = view.getTag();
             if(tag != null && tag instanceof ViewHolder){
                 ViewHolder holder =( ViewHolder)tag;

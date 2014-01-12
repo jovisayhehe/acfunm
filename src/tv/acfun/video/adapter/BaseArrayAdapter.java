@@ -39,6 +39,7 @@ public abstract class BaseArrayAdapter<T> extends BaseAdapter {
 
     @Override
     public int getCount() {
+        if(mItems == null || mItems.isEmpty()) return 0;
         return mItems.size();
     }
 

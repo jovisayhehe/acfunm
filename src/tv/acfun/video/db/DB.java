@@ -77,8 +77,8 @@ public final class DB {
 
     public void addFav(Video video) {
         SQLiteDatabase db = helper.getWritableDatabase();
-        db.execSQL("INSERT INTO " + DBOpenHelper.TABLE_FAV + " (aid, title, desc,channelId,favs,time) VALUES(?,?,?,?,?,?)", new Object[] {
-                video.acId, video.name, video.desc, video.channelId, video.collectnum, System.currentTimeMillis() });
+        db.execSQL("INSERT INTO " + DBOpenHelper.TABLE_FAV + " (aid, title, desc, preview, channelId,favs,time) VALUES(?,?,?,?,?,?,?)",
+                new Object[] {video.acId, video.name, video.desc, video.previewurl, video.channelId, video.collectnum, System.currentTimeMillis() });
         db.close();
     }
 
@@ -117,6 +117,7 @@ public final class DB {
             v.desc = query.getString(query.getColumnIndex("desc"));
             v.channelId = query.getInt(query.getColumnIndex("channelId"));
             v.collectnum = query.getInt(query.getColumnIndex("favs"));
+            v.previewurl = query.getString(query.getColumnIndex("preview"));
             // 收藏的时间
             v.createtime = query.getLong(query.getColumnIndex("time"));
             videos.add(v);
@@ -126,10 +127,14 @@ public final class DB {
         return videos;
     }
 
-    public long insertHistory(int aid) {
+    public long insertHistory(Video video) {
         ContentValues values = new ContentValues();
-        values.put("aid", aid);
-        return helper.getWritableDatabase().insertWithOnConflict(DBOpenHelper.TABLE_HISTORY, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        values.put("aid", video.acId);
+        values.put("title", video.name);
+        values.put("channelId", video.channelId);
+        values.put("preview", video.previewurl);
+        values.put("time", System.currentTimeMillis());
+        return helper.getWritableDatabase().insertWithOnConflict(DBOpenHelper.TABLE_HISTORY, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
     public synchronized boolean isWatched(int aid) {
@@ -137,5 +142,33 @@ public final class DB {
                 "select count(*) from " + DBOpenHelper.TABLE_HISTORY + " where aid=" + aid);
         boolean isWatched = state.simpleQueryForLong() > 0;
         return isWatched;
+    }
+    /**
+     * 仅返回最近50条历史记录
+     * @return
+     */
+    public List<Video> getHistory() {
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor query = db.rawQuery("SELECT * FROM " + DBOpenHelper.TABLE_HISTORY +" ORDER BY _id DESC LIMIT 50", null);
+        
+        if (query.getCount() <= 0) {
+            query.close();
+            db.close();
+            return null;
+        }
+        List<Video> videos = new ArrayList<Video>(query.getCount());
+        while (query.moveToNext()) {
+            Video v = new Video();
+            v.acId = query.getInt(query.getColumnIndex("aid"));
+            v.name = query.getString(query.getColumnIndex("title"));
+            v.channelId = query.getInt(query.getColumnIndex("channelId"));
+            v.previewurl = query.getString(query.getColumnIndex("preview"));
+            // 浏览的时间
+            v.createtime = query.getLong(query.getColumnIndex("time"));
+            videos.add(v);
+        }
+        query.close();
+        db.close();
+        return videos;
     }
 }
