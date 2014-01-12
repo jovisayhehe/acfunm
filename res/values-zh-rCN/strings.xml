@@ -50,4 +50,7 @@
     <string name="failed">失败!</string>
     <string name="player_type">"播放器类型: %s"</string>
     <string name="enable_danmaku_drawing_cache">"开启弹幕绘制缓存: %B"</string>
+    <string name="user_name">用户名</string>
+    <string name="password">密码</string>
+    <string name="signin">登录</string>
 </resources>

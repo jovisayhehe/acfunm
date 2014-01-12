@@ -79,4 +79,7 @@
     <string name="enable_danmaku_drawing_cache">"Enable danmaku drawing cache: %b"</string>
     <string name="hide_requote">Quote hidden.</string>
     <string name="comment_hint">Bu tucao bu shufusiji.</string>
+    <string name="user_name">User name</string>
+    <string name="password">Password</string>
+    <string name="signin">Sign In</string>
 </resources>

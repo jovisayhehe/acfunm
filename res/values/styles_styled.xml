@@ -76,5 +76,8 @@
         <item name="popupMenuStyle">@style/PopupMenu.Styled</item>
         <item name="dropDownListViewStyle">@style/DropDownListView.Styled</item>
     </style>
-
+	
+    <style name="Theme.Styled.Dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowNoTitle">true</item>
+    </style>
 </resources>

@@ -23,11 +23,15 @@ import tv.ac.fun.BuildConfig;
 import tv.ac.fun.R;
 import tv.acfun.video.adapter.MenuAdapter;
 import tv.acfun.video.api.API;
+import tv.acfun.video.db.DB;
 import tv.acfun.video.entity.Category;
+import tv.acfun.video.entity.User;
 import tv.acfun.video.fragment.ChannelFragment;
 import tv.acfun.video.fragment.VideosFragment;
 import tv.acfun.video.util.CommonUtil;
 import tv.acfun.video.util.net.CategoriesRequest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -42,8 +46,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
@@ -51,6 +58,7 @@ import com.android.volley.Request;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.FeedbackAgent;
 import com.umeng.fb.model.Conversation;
@@ -69,6 +77,9 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
     private DrawerLayout mDrawer;
     private ListView mMenuList;
     private ActionBarDrawerToggle mDrawerToggle;
+    private View mAvatarFrame;
+    private ImageView mAvatar;
+    private TextView mNameText;
     private static String KEY_STATE_POSITION = "key_state_position";
     public static String[] sTitles;
 
@@ -78,6 +89,10 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         setContentView(R.layout.activity_home);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+        mUser = AcApp.getUser();
+        mAvatarFrame = findViewById(R.id.avatar);
+        mAvatar = (ImageView) mAvatarFrame.findViewById(android.R.id.icon);
+        mNameText = (TextView) mAvatarFrame.findViewById(android.R.id.text1);
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawer.setDrawerShadow(R.drawable.drawer_shadow, Gravity.RIGHT);
         mMenuList = (ListView) findViewById(android.R.id.list);
@@ -109,6 +124,7 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
             int position = savedInstanceState==null? 0 : savedInstanceState.getInt(KEY_STATE_POSITION, 0);
             select(position);
         }
+        setUserInfo();
         initUmeng();
     }
 
@@ -186,6 +202,7 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
             }
         }};
     private View mProgress;
+    private User mUser;
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -301,9 +318,70 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         return null;
     }
     public void onAvatarClick(View v){
-        Toast.makeText(this, "正在开发中...", 0).show();
+        if(mUser == null)
+            startActivityForResult(SigninActivity.createIntent(this.getApplicationContext()),SigninActivity.REQUEST_SIGN_IN);
+        else{
+            DialogInterface.OnClickListener clickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if(which == DialogInterface.BUTTON_POSITIVE){
+                        mUser = null;
+                        AcApp.logout();
+                        invalidateAvatarFrame();
+                    }
+                    dialog.dismiss();
+                }
+            };
+            new AlertDialog.Builder(this)
+                .setTitle("确定要注销吗？")
+                .setMessage("注销后无法同步收藏和发表评论")
+                .setNegativeButton("取消", clickListener)
+                .setPositiveButton("注销", clickListener).show();
+        }
     }
-    
+    @Override
+    protected void onActivityResult(int request, int result, Intent data) {
+        super.onActivityResult(request, result, data);
+        if(result == RESULT_OK ){
+            if(request == SigninActivity.REQUEST_SIGN_IN){
+                mUser = data.getExtras().getParcelable("user");
+                setUserInfo();
+            }else{
+                invalidateAvatarFrame();
+            }
+        }
+    }
+    private void invalidateAvatarFrame() {
+        mUser = null;
+        RelativeLayout leftDrawer = (RelativeLayout)mDrawer.findViewById(R.id.left_drawer);
+        leftDrawer.removeViewAt(0);
+        mAvatarFrame = getLayoutInflater().inflate(R.layout.avatar, leftDrawer,false);
+        leftDrawer.addView(mAvatarFrame, 0);
+        mAvatar = (ImageView) mAvatarFrame.findViewById(android.R.id.icon);
+        mNameText = (TextView) mAvatarFrame.findViewById(android.R.id.text1);
+    }
+
+    private void setUserInfo() {
+        if(mUser != null){
+            AcApp.getGloableLoader().get(mUser.avatar, ImageLoader.getImageListener(mAvatar, R.drawable.acgirl, R.drawable.acgirl));
+            mNameText.setText(mUser.name);
+            if(mUser.isExpired()){
+                new AlertDialog.Builder(this)
+                .setTitle("您的账户已过期！")
+                .setMessage("过期后会出现无法评论、签到等问题，请注销后重新登录！")
+                .setPositiveButton("注销", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mUser = null;
+                        AcApp.logout();
+                        dialog.dismiss();
+                        invalidateAvatarFrame();
+                    }
+                }).show();
+            }
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -314,5 +392,17 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
     protected void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+    }
+    private long mLastBackPressedMs;
+    @Override
+    public void onBackPressed() {
+        long currentTimeMillis = System.currentTimeMillis();
+        if(currentTimeMillis - mLastBackPressedMs < 1500){
+            super.onBackPressed();
+        }else{
+            mLastBackPressedMs =currentTimeMillis;
+            Toast.makeText(getApplicationContext(), "再按一次退出", Toast.LENGTH_SHORT).show();
+            
+        }
     }
 }

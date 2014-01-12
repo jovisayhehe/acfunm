@@ -8,6 +8,7 @@ import tv.acfun.video.PlayerActivity;
 import tv.ac.fun.R;
 import tv.acfun.video.adapter.BaseArrayAdapter;
 import tv.acfun.video.api.API;
+import tv.acfun.video.db.DB;
 import tv.acfun.video.entity.Category;
 import tv.acfun.video.entity.Video;
 import tv.acfun.video.entity.Videos;
@@ -15,6 +16,7 @@ import tv.acfun.video.util.TextViewUtils;
 import tv.acfun.video.util.net.FastJsonRequest;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
@@ -62,6 +64,7 @@ public class VideosFragment extends GridFragment{
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mActivity = activity;
+        mDb = new DB(mActivity);
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -96,6 +99,7 @@ public class VideosFragment extends GridFragment{
             
             
         }};
+    private DB mDb;
     
     private Request<?> newRequest(int page){
         Request<?> request =  new VideosRequest(catId,page,true,listener,errListener);
@@ -111,6 +115,12 @@ public class VideosFragment extends GridFragment{
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         try {
             Video item = (Video) parent.getItemAtPosition(position);
+            mDb.insertHistory(item.acId);
+            Object tag = view.getTag();
+            if(tag != null && tag instanceof ViewHolder){
+                ViewHolder holder =( ViewHolder)tag;
+                holder.titleView.setTextColor(0xFF666666);
+            }
             DetailsActivity.start(mActivity, item);
         } catch (Exception e) {
             // TODO: handle exception
@@ -167,8 +177,9 @@ public class VideosFragment extends GridFragment{
                 name = TextViewUtils.getSource(item.name);
             }
             holder.titleView.setText(name);
+            holder.titleView.setTextColor(mDb.isWatched(item.acId)?0xFF666666:0xFF000000);
             
-            String desc = item.creator.name + " · "+ item.viewernum + "次观看";
+            String desc = item.creator.name + " · "+ item.viewernum + "次播放";
             holder.descView.setText(desc);
         }
         

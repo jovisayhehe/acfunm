@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="tv.ac.fun"
-    android:versionCode="17"
-    android:versionName="1.2.0_alpha" >
+    android:versionCode="18"
+    android:versionName="1.2.1_alpha" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -31,6 +31,7 @@
             </intent-filter>
         </activity>
         <activity android:name="tv.acfun.video.ChannelActivity" />
+        <activity android:name="tv.acfun.video.SigninActivity" android:theme="@style/Theme.Styled.Dialog" />
         <activity android:name="tv.acfun.video.SettingsActivity" />
         <activity android:name="tv.acfun.video.ConversationActivity" />
         <activity android:name="tv.acfun.video.DetailsActivity" android:theme="@style/AppTheme.TranslucentActionBar"/>
@@ -45,8 +46,8 @@
             android:configChanges="orientation" /> -->
         <activity
             android:name="io.vov.vitamio.activity.InitActivity"
-            android:configChanges="orientation|keyboardHidden|navigation"
             android:launchMode="singleTop"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         

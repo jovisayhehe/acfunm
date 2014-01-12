@@ -50,5 +50,7 @@
         <item name="android:popupMenuStyle">@style/PopupMenu.Styled</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListView.Styled</item>
     </style>
-
+    <style name="Theme.Styled.Dialog" parent="@android:style/Theme.Holo.Dialog.NoActionBar.MinWidth">
+        
+    </style>
 </resources>
