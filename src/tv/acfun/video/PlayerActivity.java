@@ -16,10 +16,10 @@
 
 package tv.acfun.video;
 
-import io.vov.vitamio.LibsChecker;
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.MediaPlayer.OnInfoListener;
 import io.vov.vitamio.MediaPlayer.OnPreparedListener;
+import io.vov.vitamio.Vitamio;
 
 import java.nio.charset.Charset;
 import java.util.Collections;
@@ -43,10 +43,16 @@ import tv.acfun.video.player.resolver.BaseResolver;
 import tv.acfun.video.player.resolver.ResolverType;
 import tv.acfun.video.util.net.Connectivity;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
@@ -151,8 +157,14 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             setTheme(R.style.AppTheme_NoActionBar_FullScreen);
         }
         super.onCreate(savedInstanceState);
-        if (!LibsChecker.checkVitamioLibs(this)) return;
         mHandler = new Handler(this);
+        if (!Vitamio.isInitialized(this)){
+            initLibs();
+        }else{
+            init();
+        }
+    }
+    private void init() {
         Parcelable extra = getIntent().getParcelableExtra(EXTRA_VIDEO);
         if (extra == null) {
             Toast.makeText(this, "出错了！EXTRA_VIDEO == null", Toast.LENGTH_SHORT).show();
@@ -162,13 +174,67 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         mEnabledHW = AcApp.getBoolean(getString(R.string.key_hw_decode), false);
         mEnabledDrawingCache = AcApp.getBoolean(getString(R.string.key_dm_cache), true);
         mVideo = (VideoPart) extra;
+        
         setContentView(R.layout.activity_player);
         initViews();
         initAnimation();
         if (mResolver != null && mResolver.getMediaList() != null && mResolver.getMediaList().size() > 0)  return;
         resolveVideos();
     }
+    private void initLibs(){
+        new AsyncTask<Object, Object, Boolean>() {
+            protected ProgressDialog mPD;
 
+            @Override
+            protected void onPreExecute() {
+                mPD = new ProgressDialog(PlayerActivity.this);
+                mPD.setCancelable(false);
+                mPD.setMessage(PlayerActivity.this.getString(R.string.vitamio_init_decoders));
+                mPD.show();
+            }
+
+            @Override
+            protected Boolean doInBackground(Object... params) {
+                boolean init = false;
+                if(Vitamio.getVitamioType() < 70){
+                    String fileName = Environment.getExternalStorageDirectory()+"/codec.7z";
+                    init = Vitamio.initialize(PlayerActivity.this,fileName);
+                }else
+                    init =  Vitamio.initialize(PlayerActivity.this, R.raw.libarm);
+                return init;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean inited) {
+                mPD.dismiss();
+                if (inited) {
+                    init();
+                } else {
+                    DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            if(which == DialogInterface.BUTTON_POSITIVE){
+                                Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse("http://pan.baidu.com/s/1c03RAUG"));
+                                startActivity(intent);
+                            }
+                            finish();
+                            
+                        }
+                    };
+                    new AlertDialog.Builder(PlayerActivity.this)
+                        .setTitle("你的设备需要下载解码器")
+                        .setMessage(R.string.cpu_not_support)
+                        .setNegativeButton("取消", listener)
+                        .setPositiveButton("好", listener)
+                        .show();
+                    
+                }
+            }
+
+          }.execute();
+    }
     private void initViews() {
         ViewStub stub = (ViewStub) findViewById(R.id.view_stub);
         stub.setLayoutResource(R.layout.video_view);

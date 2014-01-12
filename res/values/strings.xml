@@ -82,4 +82,5 @@
     <string name="user_name">User name</string>
     <string name="password">Password</string>
     <string name="signin">Sign In</string>
+    <string name="cpu_not_support">请手动下载解码器到SD卡根目录下..</string>
 </resources>
