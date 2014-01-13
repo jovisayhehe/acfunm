@@ -24,6 +24,7 @@ import org.xml.sax.XMLReader;
 import tv.acfun.video.AcApp;
 import tv.ac.fun.R;
 import tv.acfun.video.entity.Comment;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -38,6 +39,7 @@ import android.text.Spanned;
 import android.text.style.StrikethroughSpan;
 import android.text.util.Linkify;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.MeasureSpec;
 import android.widget.TextView;
@@ -130,8 +132,6 @@ public class TextViewUtils {
             comment.setText(text);
             Log.e("wtf", "set comment",e);
         }
-//        comment.setTextColor(Color.BLACK);
-//        comment.setTextSize(AcApp.getPreferenceFontSize());
         Pattern http = Pattern.compile("http://[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?",
                 Pattern.CASE_INSENSITIVE);
         Linkify.addLinks(comment, http, "http://");
@@ -206,4 +206,16 @@ public class TextViewUtils {
         text = text.replace("[email]", "<font color=\"#FF9A03\"> ").replace("[/email]", "</font>");
         return text;
     }
+
+    public static TextView createBubbleTextView(Context context, String text){
+      //creating textview dynamically
+      TextView tv = new TextView(context);
+      tv.setText(text);
+      tv.setTextSize(14);
+      tv.setBackgroundResource(R.drawable.abc_ab_solid_light_holo);
+      tv.setGravity(Gravity.CENTER);
+      tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_reply, 0, 0, 0);
+      return tv;
+    }
+
 }

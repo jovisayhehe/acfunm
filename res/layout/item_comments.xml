@@ -47,6 +47,7 @@
         android:layout_marginTop="4dip"
         android:layout_marginLeft="8dp"
         android:layout_toRightOf="@id/user_avatar"
+        android:linksClickable="false"
         android:padding="4dp"
         />
 

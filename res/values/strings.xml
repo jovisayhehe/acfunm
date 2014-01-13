@@ -40,7 +40,12 @@
         <item>1</item>
         <item>2</item>
     </string-array>
-    
+    <string-array name="title_sizes">
+        <item>Small</item>
+        <item>Normal</item>
+        <item>Large</item>
+        <item>Huge</item>
+    </string-array>
     <string name="buffering">Loading...</string>
     <string name="source_type_not_support_yet">"The type of source isn't support yet."</string>
     <string name="url_area63">http://pan.baidu.com/s/1pJHcqLl</string>
@@ -84,4 +89,17 @@
     <string name="signin">Sign In</string>
     <string name="cpu_not_support">请手动下载解码器到SD卡根目录下..</string>
     <string name="action_fav">收藏</string>
+    <string name="post_comment">评论</string>
+    <string name="time_out">获取超时！点击重试</string>
+    <string name="posting_comment">评论提交中...</string>
+    <string name="comment_success">评论成功! </string>
+    <string name="comment_failed">评论失败! </string>
+    <string name="reloading">点我重新加载</string>
+    <string name="no_comment_yet">尚无评论。</string>
+    <string name="sign_in_first">请先登录。</string>
+    <string name="no_comment">没有评论内容。</string>
+    <string name="comment_not_enough">吐槽得不够！</string>
+    <string name="action_font_size">字体大小</string>
+    <string name="comment_font_size">评论字体大小</string>
+    <string name="action_comment">评论</string>
 </resources>

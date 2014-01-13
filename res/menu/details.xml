@@ -7,5 +7,9 @@
         android:icon="@drawable/ic_action_favorite"
         android:title="@string/action_fav"
         app:showAsAction="ifRoom"/>
-
+    <item android:id="@+id/action_comment"
+        android:title="@string/action_comment"
+        android:icon="@drawable/ic_action_chat"
+        app:showAsAction="ifRoom"
+        />
 </menu>

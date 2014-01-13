@@ -9,5 +9,6 @@
     <color name="bg">#ededed</color>
     <color name="text_color_title">#0187c5</color>
     <color name="text_color_gray">#999</color>
+    <color name="error">#ff0000</color>
 
 </resources>

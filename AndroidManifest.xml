@@ -15,6 +15,7 @@
     <uses-sdk
         android:minSdkVersion="9"
         android:targetSdkVersion="19" />
+
     <application
         android:name="tv.acfun.video.AcApp"
         android:allowBackup="true"
@@ -32,21 +33,30 @@
             </intent-filter>
         </activity>
         <activity android:name="tv.acfun.video.ChannelActivity" />
-        <activity android:name="tv.acfun.video.SigninActivity" android:theme="@style/Theme.Styled.Dialog" />
+        <activity
+            android:name="tv.acfun.video.SigninActivity"
+            android:theme="@style/Theme.Styled.Dialog" />
         <activity android:name="tv.acfun.video.SettingsActivity" />
         <activity android:name="tv.acfun.video.ConversationActivity" />
-        <activity android:name="tv.acfun.video.DetailsActivity" android:theme="@style/AppTheme.TranslucentActionBar"/>
+        <activity
+            android:name="tv.acfun.video.CommentsActivity"
+            android:configChanges="screenSize|orientation"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
+        <activity
+            android:name="tv.acfun.video.DetailsActivity"
+            android:theme="@style/AppTheme.TranslucentActionBar" />
         <activity
             android:name="tv.acfun.video.PlayerActivity"
-            android:screenOrientation="sensorLandscape"
-            android:configChanges="orientation" />
-        
-      	<meta-data
+            android:configChanges="orientation"
+            android:screenOrientation="sensorLandscape" />
+
+        <meta-data
             android:name="UMENG_APPKEY"
             android:value="521d6ae356240bd04f0569ac" />
         <meta-data
             android:name="UMENG_CHANNEL"
             android:value="Test" />
+
         <service
             android:name="com.umeng.common.net.DownloadingService"
             android:exported="true"

@@ -252,9 +252,10 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
             if (tag != null && tag instanceof Integer) {
                 addParts(((Integer) tag).intValue());
             } else {
-                Intent intent = new Intent();
-                intent.putExtra("aid", mVideo.acId);
-                AcApp.startArea63(this, "tv.acfun.a63.CommentsActivity", intent);
+//                Intent intent = new Intent();
+//                intent.putExtra("aid", mVideo.acId);
+//                AcApp.startArea63(this, "tv.acfun.a63.CommentsActivity", intent);
+                CommentsActivity.start(this, mAcId);
             }
             break;
         case R.id.item_part:
@@ -318,6 +319,9 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
             return true;
         case R.id.action_fav:
             handleFav(item);
+            return true;
+        case R.id.action_comment:
+            CommentsActivity.start(this, mAcId);
             return true;
         default:
             return super.onOptionsItemSelected(item);
