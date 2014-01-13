@@ -29,7 +29,6 @@ import tv.acfun.video.entity.Content;
 import tv.acfun.video.entity.Contents;
 import tv.acfun.video.entity.User;
 import tv.acfun.video.util.MemberUtils;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -94,7 +93,7 @@ public class FavoritesFragment extends ListFragment {
             }
             if(mActivity instanceof HomeActivity){
                 String channel = ((HomeActivity)mActivity).findChannelNameById(item.channelId);
-                holder.channel.setText(channel);
+                holder.channel.setText(channel == null? "未知频道" : channel);
             }
             holder.title.setText(item.title);
             holder.time.setText("发布于 "+AcApp.getPubDate(item.releaseDate));
