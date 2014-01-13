@@ -12,10 +12,12 @@
             android:title="@string/update" />
         <CheckBoxPreference 
             android:defaultValue="false"
+            android:summaryOn="如果播放异常请取消勾选"
             android:key="@string/key_hw_decode"
             android:title="@string/hw_decode" />
         <CheckBoxPreference 
             android:defaultValue="true"
+            android:summaryOn="如果弹幕播放失败请取消勾选"
             android:key="@string/key_dm_cache"
             android:title="@string/dm_cache" />
         <ListPreference android:entries="@array/pref_resolution_entries"
