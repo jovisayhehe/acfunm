@@ -91,6 +91,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     private VideoView mVideoView;
     private View mBufferingIndicator;
     private TextView mProgressText;
+    private TextView mBufferingMsg;
     private boolean mEnabledHW;
     private DanmakuSurfaceView mDMView;
     private boolean mEnabledDrawingCache;
@@ -127,6 +128,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
                 addDanmakusRequest();
             } else {
                 mProgressText.setText(mProgressText.getText() + getString(R.string.failed));
+                mBufferingIndicator.setVisibility(View.GONE);
                 // TODO: show retry
             }
         }
@@ -138,16 +140,18 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
                 mp.pause();
                 mDMView.pause();
                 mHandler.removeMessages(SYNC);
-                if (mBufferingIndicator != null) mBufferingIndicator.setVisibility(View.VISIBLE);
+                mBufferingMsg.setText("");
+                mBufferingIndicator.setVisibility(View.VISIBLE);
             } else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
                 mp.start();
                 mDMView.resume();
                 mHandler.sendEmptyMessageDelayed(SYNC, 500);
-                if (mBufferingIndicator != null) mBufferingIndicator.setVisibility(View.GONE);
+                mBufferingIndicator.setVisibility(View.GONE);
             }
             return false;
         }
     };
+
     @TargetApi(19)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -244,6 +248,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         headers.put("User-Agent", BaseResolver.UA_DEFAULT);
         mVideoView.setVideoHeaders(headers);
         mBufferingIndicator = findViewById(R.id.buffering_indicator);
+        mBufferingMsg = (TextView)mBufferingIndicator.findViewById(R.id.buffering_msg);
         mVideoView.setMediaBufferingIndicator(mBufferingIndicator);
         mProgressText = (TextView) findViewById(R.id.progress_text);
         mVideoView.setOnPreparedListener(onPrepared);
@@ -261,8 +266,18 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         String name = mVideo.name == null?"":mVideo.name;
         mMediaController.setFileName(name);
         mVideoView.setMediaController(mMediaController);
+        mVideoView.setOnBufferingUpdateListener(onBuffering);
         
     }
+    MediaPlayer.OnBufferingUpdateListener onBuffering = new MediaPlayer.OnBufferingUpdateListener(){
+
+        @Override
+        public void onBufferingUpdate(MediaPlayer mp, int percent) {
+            mBufferingMsg.setText(percent+"%");
+        }
+        
+    };
+    
     MediaPlayer.OnSeekCompleteListener onSeekComplete = new MediaPlayer.OnSeekCompleteListener() {
         @Override
         public void onSeekComplete(MediaPlayer mp) {
@@ -426,7 +441,6 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     }
     @Override
     public void onClick(View v) {
-        Log.i(TAG, "onclick::"+v.getClass().getName());
         if (mMediaController != null) 
             toggleMediaControlsVisiblity();
     }
@@ -517,11 +531,13 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             break;
         case SYNC:
             if (isPlaying()){
-                long cur = getCurrentPosition();
-                long d = Math.abs(cur -mTimer.currMillisecond );
-                if(d > 1000){
-                    mDMView.start(cur);
-                    Log.i(TAG, String.format("timer sync::%d",d));
+                if(mTimer != null){
+                    long cur = getCurrentPosition();
+                    long d = Math.abs(cur -mTimer.currMillisecond );
+                    if(d > 1000){
+                        mDMView.start(cur);
+                        Log.i(TAG, String.format("timer sync::%d",d));
+                    }
                 }
             }else{
                 mDMView.pause();

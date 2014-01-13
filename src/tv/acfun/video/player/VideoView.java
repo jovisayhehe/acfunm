@@ -238,10 +238,6 @@ public class VideoView extends SurfaceView  {
     };
     private OnBufferingUpdateListener mBufferingUpdateListener = new OnBufferingUpdateListener() {
         public void onBufferingUpdate(MediaPlayer mp, int percent) {
-            if(mList != null)
-                mCurrentBufferPercentage = (int) (percent * mp.getDuration() / mList.getTotalDuration());
-            else
-                mCurrentBufferPercentage = percent;
             if (mOnBufferingUpdateListener != null) mOnBufferingUpdateListener.onBufferingUpdate(mp, percent);
         }
     };

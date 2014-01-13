@@ -24,7 +24,6 @@
         android:padding="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/buffering"
         android:id="@+id/progress_text"
         android:textColor="#fff"
         android:textSize="14sp"
@@ -52,13 +51,12 @@
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:orientation="vertical"
-        android:visibility="gone"
          >
  		<ProgressBar
             android:id="@+id/buffering_progress"
-            style="@android:attr/progressBarStyleLarge"
-            android:layout_width="60dip"
-            android:layout_height="60dip" />
+            style="@style/Widget.ProgressBar.Large.Styled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/buffering_msg"
             android:layout_width="wrap_content"
