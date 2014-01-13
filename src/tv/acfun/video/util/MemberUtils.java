@@ -118,6 +118,14 @@ public class MemberUtils{
         }
         return JSON.parseObject(result, Contents.class);
 	}
+	
+	public static Contents getPushContents(Cookie[] cookies, int pageNo){
+	    String result = Connectivity.doGet("/api/member.aspx", String.format("name=publishContent&isGroup=0&groupId=-1&pageSize=10&pageNo=%d",pageNo), cookies);
+        if(TextUtils.isEmpty(result)){
+            return null;
+        }
+        return JSON.parseObject(result, Contents.class);
+	}
 	public static boolean checkFavourite(Cookie[] cookies, int cid){
 	    JSONObject result = Connectivity.getResultJson("/member/collect_exist.aspx", String.format("cId=%d",cid), cookies);
 	    if(result != null){

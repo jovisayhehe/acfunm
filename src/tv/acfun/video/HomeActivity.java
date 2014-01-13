@@ -28,6 +28,8 @@ import tv.acfun.video.entity.User;
 import tv.acfun.video.fragment.ChannelFragment;
 import tv.acfun.video.fragment.FavoritesFragment;
 import tv.acfun.video.fragment.HistoryFragment;
+import tv.acfun.video.fragment.NotCompleteFragment;
+import tv.acfun.video.fragment.PushContentFragment;
 import tv.acfun.video.fragment.VideosFragment;
 import tv.acfun.video.util.CommonUtil;
 import tv.acfun.video.util.net.CategoriesRequest;
@@ -259,13 +261,15 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
     private void select(int position){
         Category cat = sCategories.get(position);
         Fragment f = null;
-        if(cat.id == 1026){
+        if(cat.id == 1025){
+            f = new PushContentFragment();
+        }else if(cat.id == 1026){
             f = new FavoritesFragment();
         }else if(cat.id == 1027){
             f = new HistoryFragment();
         }else if(cat.id > 1024){
             // TODO:
-            Toast.makeText(this, "正在开发中...", 0).show();
+            f = NotCompleteFragment.newInstance(cat.id);
         }else{
             if (cat.id != 63 || !handleArea63Click()) {
                 f = getFragment(cat);

@@ -20,7 +20,7 @@
         <item>Subscriptions</item>
         <item>Favorites</item>
         <item>History</item>
-        <!-- <item>Watch later</item> -->
+        <item>Watch later</item>
         <item>Channels</item>
     </string-array>
     
