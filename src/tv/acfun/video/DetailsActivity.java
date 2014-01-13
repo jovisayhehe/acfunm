@@ -305,51 +305,63 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
     }
 
     @Override
-    public boolean onOptionsItemSelected(final MenuItem item) {
-        if(item.getItemId() == R.id.action_fav){
-            if(isFaved){
-                DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener(){
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if(which == DialogInterface.BUTTON_POSITIVE){
-                            new Thread(){
-                                public void run() {
-                                    boolean deleteFavourite = MemberUtils.deleteFavourite(String.valueOf(mAcId), mCookies);
-                                    //TODO 提示
-                                    isFaved = !deleteFavourite;
-                                    Log.i("Delete", "deleteFavourite::"+mAcId+":"+deleteFavourite);
-                                }
-                            }.start();
-                            item.setTitle("收藏");
-                            item.setIcon(R.drawable.ic_action_favorite);
-                        }
-                    }
-                    
-                };
-                AcApp.showDeleteFavAlert(this,listener);
-            }else{
-                if(mCookies == null){
-                    Toast.makeText(getApplicationContext(), "请先登录", Toast.LENGTH_SHORT).show();
-                    
-                }else{
-                    new Thread(){
-                        public void run() {
-                            boolean add = MemberUtils.addFavourite(String.valueOf(mAcId), mCookies);
-                          //TODO 提示
-                            Log.i("add", "addFavourite::"+mAcId+":"+add);
-                        }
-                    }.start();
-                    item.setTitle("取消收藏");
-                    item.setIcon(R.drawable.ic_action_favorited);
-                }
-            }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case R.id.action_settings:
+            SettingsActivity.start(this);
             return true;
-        }else if(item.getItemId() == android.R.id.home){
+        case R.id.action_feedback:
+            startActivity(new Intent(this, ConversationActivity.class));
+            return true;
+        case android.R.id.home:
             finish();
             return true;
+        case R.id.action_fav:
+            handleFav(item);
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
+    }
+
+    private void handleFav(final MenuItem item) {
+        if(isFaved){
+            DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener(){
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if(which == DialogInterface.BUTTON_POSITIVE){
+                        new Thread(){
+                            public void run() {
+                                boolean deleteFavourite = MemberUtils.deleteFavourite(String.valueOf(mAcId), mCookies);
+                                //TODO 提示
+                                isFaved = !deleteFavourite;
+                                Log.i("Delete", "deleteFavourite::"+mAcId+":"+deleteFavourite);
+                            }
+                        }.start();
+                        item.setTitle("收藏");
+                        item.setIcon(R.drawable.ic_action_favorite);
+                    }
+                }
+                
+            };
+            AcApp.showDeleteFavAlert(this,listener);
+        }else{
+            if(mCookies == null){
+                Toast.makeText(getApplicationContext(), "请先登录", Toast.LENGTH_SHORT).show();
+                
+            }else{
+                new Thread(){
+                    public void run() {
+                        boolean add = MemberUtils.addFavourite(String.valueOf(mAcId), mCookies);
+                      //TODO 提示
+                        Log.i("add", "addFavourite::"+mAcId+":"+add);
+                    }
+                }.start();
+                item.setTitle("取消收藏");
+                item.setIcon(R.drawable.ic_action_favorited);
+            }
+        }
     }
 
     private void onPartClick(final VideoPart item) {

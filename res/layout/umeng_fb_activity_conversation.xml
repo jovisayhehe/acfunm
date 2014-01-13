@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/comments_bar_backgroud_dark"
+        android:background="@drawable/comments_bar_backgroud"
         android:gravity="center_vertical"
         android:minHeight="48dp"
         android:paddingLeft="@dimen/activity_horizontal_margin"
