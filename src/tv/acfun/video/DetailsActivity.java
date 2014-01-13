@@ -317,6 +317,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
                                 public void run() {
                                     boolean deleteFavourite = MemberUtils.deleteFavourite(String.valueOf(mAcId), mCookies);
                                     //TODO 提示
+                                    isFaved = !deleteFavourite;
                                     Log.i("Delete", "deleteFavourite::"+mAcId+":"+deleteFavourite);
                                 }
                             }.start();
@@ -329,7 +330,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
                 AcApp.showDeleteFavAlert(this,listener);
             }else{
                 if(mCookies == null){
-                    Toast.makeText(getApplicationContext(), "请先登录", 0).show();
+                    Toast.makeText(getApplicationContext(), "请先登录", Toast.LENGTH_SHORT).show();
                     
                 }else{
                     new Thread(){

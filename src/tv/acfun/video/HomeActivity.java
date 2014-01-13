@@ -323,6 +323,20 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         }
         return null;
     }
+    public boolean isArticleChannel(int channelId){
+        if(channelId == 63) return true;
+        for(int i=0;i<sCategories.size();i++){
+            Category category = sCategories.get(i);
+            if(category.id == 63){
+                for (int j = 0; j < category.subclasse.size(); j++) {
+                    Category category2 = category.subclasse.get(j);
+                    if(category2.id == channelId)
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
     public void onAvatarClick(View v){
         if(mUser == null)
             startActivityForResult(SigninActivity.createIntent(this.getApplicationContext()),SigninActivity.REQUEST_SIGN_IN);

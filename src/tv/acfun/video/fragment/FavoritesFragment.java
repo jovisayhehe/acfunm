@@ -155,17 +155,21 @@ public class FavoritesFragment extends ListFragment {
         if(o != null && o instanceof Content){
             
             Content c = (Content)o;
-            if(c.channelId == 63){
-                try {
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse("ac://"+c.aid));
-                    startActivity(intent);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    AcApp.area63Alert(mActivity);
+            if(mActivity instanceof HomeActivity){
+                boolean isArticleChannel = ((HomeActivity)mActivity).isArticleChannel(c.channelId);
+                if(isArticleChannel){
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse("ac://ac"+c.aid));
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        AcApp.area63Alert(mActivity);
+                    }
+                    return;
                 }
-            }else
-                DetailsActivity.start(mActivity, c.toVideo());
+            }
+            DetailsActivity.start(mActivity, c.toVideo());
         }
     }
     @Override
