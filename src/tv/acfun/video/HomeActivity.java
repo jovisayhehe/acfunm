@@ -23,10 +23,10 @@ import tv.ac.fun.BuildConfig;
 import tv.ac.fun.R;
 import tv.acfun.video.adapter.MenuAdapter;
 import tv.acfun.video.api.API;
-import tv.acfun.video.db.DB;
 import tv.acfun.video.entity.Category;
 import tv.acfun.video.entity.User;
 import tv.acfun.video.fragment.ChannelFragment;
+import tv.acfun.video.fragment.FavoritesFragment;
 import tv.acfun.video.fragment.HistoryFragment;
 import tv.acfun.video.fragment.VideosFragment;
 import tv.acfun.video.util.CommonUtil;
@@ -259,7 +259,9 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
     private void select(int position){
         Category cat = sCategories.get(position);
         Fragment f = null;
-        if(cat.id == 1027){
+        if(cat.id == 1026){
+            f = new FavoritesFragment();
+        }else if(cat.id == 1027){
             f = new HistoryFragment();
         }else if(cat.id > 1024){
             // TODO:

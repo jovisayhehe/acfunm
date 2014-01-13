@@ -47,7 +47,11 @@ public abstract class BaseArrayAdapter<T> extends BaseAdapter {
     public T getItem(int position) {
         return mItems.get(position);
     }
-    
+    public T remove(int position){
+       T t = mItems.remove(position);
+       notifyDataSetChanged();
+       return t;
+    }
     public void setData(List<T> data) {
         if (mItems != null) {
             mItems.clear();

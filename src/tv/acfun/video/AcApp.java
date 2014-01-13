@@ -208,24 +208,27 @@ public class AcApp extends Application {
             }
         }catch(Exception e){
             e.printStackTrace();
-            OnClickListener onClick = new OnClickListener() {
-                
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if(which == DialogInterface.BUTTON_POSITIVE){
-                        context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.url_area63))));
-                    }
-                    dialog.dismiss();
-                }
-            };
-            new AlertDialog.Builder(context)
-                .setTitle("没有找到文章区客户端")
-                .setMessage("是否前往下载安装？")
-                .setPositiveButton("好", onClick)
-                .setNegativeButton("取消", onClick)
-                .show();
+            area63Alert(context);
             
         }
+    }
+    public static void area63Alert(final Activity context) {
+        OnClickListener onClick = new OnClickListener() {
+            
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(which == DialogInterface.BUTTON_POSITIVE){
+                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.url_area63))));
+                }
+                dialog.dismiss();
+            }
+        };
+        new AlertDialog.Builder(context)
+            .setTitle("没有找到文章区客户端")
+            .setMessage("是否前往下载安装？")
+            .setPositiveButton("好", onClick)
+            .setNegativeButton("取消", onClick)
+            .show();
     }
     public static Bitmap getBitmpInCache(String url){
         String key = getCacheKey(url, 0, 0);
@@ -298,5 +301,13 @@ public class AcApp extends Application {
     }
     public static void logout(){
         new DB(sContext).logout();
+    }
+    public static void showDeleteFavAlert(Activity context, DialogInterface.OnClickListener listener) {
+        new AlertDialog.Builder(context)
+            .setTitle("删除收藏？")
+            .setMessage("删除后不可恢复")
+            .setPositiveButton("是", listener)
+            .setNegativeButton("否", listener).show();
+            
     }
 }

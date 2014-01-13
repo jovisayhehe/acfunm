@@ -31,7 +31,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -44,30 +43,15 @@ import android.widget.TextView;
  * 
  */
 public class HistoryFragment extends ListFragment implements OnItemClickListener {
-    private Activity mActivity;
     private DB mDb;
     private ListAdapter mAdapter;
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mActivity = activity;
         mDb = new DB(mActivity);
     }
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        int paddingH = getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
-        int paddingV = getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin);
-        getListView().setPadding(paddingH, paddingV, paddingH, paddingV);
-        getListView().setOnItemClickListener(this);
-    }
     
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        init();
-    }
-    private void init() {
+    protected void init() {
         new AsyncTask<Void, Void, List<Video>>() {
             @Override
             protected List<Video> doInBackground(Void... params) {

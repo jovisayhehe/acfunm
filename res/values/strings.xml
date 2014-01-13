@@ -20,7 +20,7 @@
         <item>Subscriptions</item>
         <item>Favorites</item>
         <item>History</item>
-        <item>Watch later</item>
+        <!-- <item>Watch later</item> -->
         <item>Channels</item>
     </string-array>
     
@@ -83,4 +83,5 @@
     <string name="password">Password</string>
     <string name="signin">Sign In</string>
     <string name="cpu_not_support">请手动下载解码器到SD卡根目录下..</string>
+    <string name="action_fav">收藏</string>
 </resources>

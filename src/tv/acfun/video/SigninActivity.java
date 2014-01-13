@@ -116,6 +116,7 @@ public class SigninActivity extends Activity {
         }
         @Override
         protected void onPostExecute(Boolean result) {
+            dialog.dismiss();
             if(result.booleanValue()){
                 MobclickAgent.onEvent(SigninActivity.this, "sign_in");
                 Intent data = new Intent();
@@ -126,7 +127,7 @@ public class SigninActivity extends Activity {
                 mNameView.setError(response);
                 Toast.makeText(getApplicationContext(), response,0).show();
             }
-            dialog.dismiss();
+            
         }
         
     }

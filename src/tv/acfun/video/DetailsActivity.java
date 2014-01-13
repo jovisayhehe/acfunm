@@ -18,22 +18,30 @@ package tv.acfun.video;
 
 import java.util.ArrayList;
 
+import org.apache.commons.httpclient.Cookie;
+
 import tv.ac.fun.R;
 import tv.acfun.video.api.API;
 import tv.acfun.video.entity.Comment;
 import tv.acfun.video.entity.Comments;
+import tv.acfun.video.entity.User;
 import tv.acfun.video.entity.Video;
 import tv.acfun.video.entity.VideoPart;
 import tv.acfun.video.util.FadingActionBarHelper;
+import tv.acfun.video.util.MemberUtils;
 import tv.acfun.video.util.TextViewUtils;
 import tv.acfun.video.util.net.CommentsRequest;
 import tv.acfun.video.util.net.FastJsonRequest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
@@ -43,6 +51,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
@@ -59,13 +68,18 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
     private Video mVideo;
     private LinearLayout mPartsGroup, mCommentsGroup;
     private FadingActionBarHelper mHelper;
+    private Cookie[] mCookies;
+    private boolean isFaved;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel);
         initActionBar();
+        User user = AcApp.getUser();
+        if (user != null) mCookies = JSON.parseObject(user.cookies, Cookie[].class);
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -77,6 +91,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         super.onPause();
         MobclickAgent.onPause(this);
     }
+
     private void initViews() {
         mHeaderImage = (ImageView) findViewById(R.id.image_header);
         mTitleView = (TextView) findViewById(R.id.title);
@@ -94,11 +109,8 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
     }
 
     private void initActionBar() {
-        mHelper = new FadingActionBarHelper()
-                .actionBarBackground(R.drawable.ab_solid_styled)
-                .headerLayout(R.layout.details_header)
-                .headerOverlayLayout(R.layout.header_overlay)
-                .contentLayout(R.layout.activity_details);
+        mHelper = new FadingActionBarHelper().actionBarBackground(R.drawable.ab_solid_styled).headerLayout(R.layout.details_header)
+                .headerOverlayLayout(R.layout.header_overlay).contentLayout(R.layout.activity_details);
         mHelper.initActionBar(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mAcId = getIntent().getIntExtra("acid", 0);
@@ -124,19 +136,15 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
             initContent();
             initViews();
             mTitleView.setText(response.name);
-            String info = String.format("<font color=\"#ff8800\">%s</font> / 发布于 %s <br/>%d次播放，%d条评论，%d人收藏", 
-                    response.creator.name,
-                    AcApp.getPubDate(response.createtime),
-                    response.viewernum, 
-                    response.commentnum, 
-                    response.collectnum);
+            String info = String.format("<font color=\"#ff8800\">%s</font> / 发布于 %s <br/>%d次播放，%d条评论，%d人收藏", response.creator.name,
+                    AcApp.getPubDate(response.createtime), response.viewernum, response.commentnum, response.collectnum);
             mUpInfoView.setText(Html.fromHtml(info));
             mDetailView.setText(Html.fromHtml(TextViewUtils.getSource(response.desc)));
             addParts(0);
             requestComments();
         }
-
     };
+
     private void requestComments() {
         AcApp.addRequest(new CommentsRequest(mVideo.acId, 1, mCommentListener, new ErrorListener() {
             @Override
@@ -147,6 +155,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
             }
         }));
     }
+
     Listener<Comments> mCommentListener = new Listener<Comments>() {
         @Override
         public void onResponse(Comments response) {
@@ -188,13 +197,12 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
     }
 
     private void addComment(Comment comment) {
-        View commentView = getLayoutInflater().inflate(R.layout.item_comments,mCommentsGroup,false);
+        View commentView = getLayoutInflater().inflate(R.layout.item_comments, mCommentsGroup, false);
         TextView name = (TextView) commentView.findViewById(R.id.user_name);
         TextView content = (TextView) commentView.findViewById(R.id.comments_content);
         ImageView avatar = (ImageView) commentView.findViewById(R.id.user_avatar);
-        name.setText("#"+comment.count+"  "+comment.userName);
-        if(!TextUtils.isEmpty(comment.userImg))
-        AcApp.getGloableLoader().get(comment.userImg, ImageLoader.getImageListener(avatar, 0, 0));
+        name.setText("#" + comment.count + "  " + comment.userName);
+        if (!TextUtils.isEmpty(comment.userImg)) AcApp.getGloableLoader().get(comment.userImg, ImageLoader.getImageListener(avatar, 0, 0));
         TextViewUtils.setCommentContent(content, comment);
         mCommentsGroup.addView(commentView);
     }
@@ -216,13 +224,13 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         public void onErrorResponse(VolleyError error) {
             findViewById(R.id.loading).setVisibility(View.GONE);
             View retry = findViewById(R.id.tips_retry);
-            if(retry == null){
+            if (retry == null) {
                 ViewStub stub = (ViewStub) findViewById(R.id.view_stub);
                 stub.setLayoutResource(R.layout.tips_retry);
                 stub.setInflatedId(R.id.tips_retry);
                 View view = stub.inflate();
                 view.findViewById(android.R.id.button1).setOnClickListener(DetailsActivity.this);
-            }else{
+            } else {
                 retry.setVisibility(View.VISIBLE);
             }
         }
@@ -241,13 +249,12 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         switch (v.getId()) {
         case R.id.item_more:
             Object tag = v.getTag();
-            if(tag != null && tag instanceof Integer){
+            if (tag != null && tag instanceof Integer) {
                 addParts(((Integer) tag).intValue());
-            }else{
+            } else {
                 Intent intent = new Intent();
                 intent.putExtra("aid", mVideo.acId);
                 AcApp.startArea63(this, "tv.acfun.a63.CommentsActivity", intent);
-
             }
             break;
         case R.id.item_part:
@@ -257,14 +264,14 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
             }
             break;
         case android.R.id.button1:
-            if(mVideo == null){
+            if (mVideo == null) {
                 findViewById(R.id.loading).setVisibility(View.VISIBLE);
                 findViewById(R.id.tips_retry).setVisibility(View.GONE);
                 AcApp.addRequest(new VideoDetailsRequest(mAcId, mVideoListener, mErrorListener));
-            }else{
+            } else {
                 requestComments();
                 mCommentsGroup.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-                mCommentsGroup.removeViewAt(mCommentsGroup.getChildCount()-1);
+                mCommentsGroup.removeViewAt(mCommentsGroup.getChildCount() - 1);
             }
             break;
         case R.id.play_btn:
@@ -273,6 +280,75 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         default:
             break;
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
+        getMenuInflater().inflate(R.menu.details, menu);
+        if (mCookies != null) new Thread() {
+            public void run() {
+                isFaved = MemberUtils.checkFavourite(mCookies, mAcId);
+                if (isFaved) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            MenuItem item = menu.findItem(R.id.action_fav);
+                            item.setTitle("取消收藏");
+                            item.setIcon(R.drawable.ic_action_favorited);
+                        }
+                    });
+                }
+            }
+        }.start();
+        getMenuInflater().inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        if(item.getItemId() == R.id.action_fav){
+            if(isFaved){
+                DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener(){
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(which == DialogInterface.BUTTON_POSITIVE){
+                            new Thread(){
+                                public void run() {
+                                    boolean deleteFavourite = MemberUtils.deleteFavourite(String.valueOf(mAcId), mCookies);
+                                    //TODO 提示
+                                    Log.i("Delete", "deleteFavourite::"+mAcId+":"+deleteFavourite);
+                                }
+                            }.start();
+                            item.setTitle("收藏");
+                            item.setIcon(R.drawable.ic_action_favorite);
+                        }
+                    }
+                    
+                };
+                AcApp.showDeleteFavAlert(this,listener);
+            }else{
+                if(mCookies == null){
+                    Toast.makeText(getApplicationContext(), "请先登录", 0).show();
+                    
+                }else{
+                    new Thread(){
+                        public void run() {
+                            boolean add = MemberUtils.addFavourite(String.valueOf(mAcId), mCookies);
+                          //TODO 提示
+                            Log.i("add", "addFavourite::"+mAcId+":"+add);
+                        }
+                    }.start();
+                    item.setTitle("取消收藏");
+                    item.setIcon(R.drawable.ic_action_favorited);
+                }
+            }
+            return true;
+        }else if(item.getItemId() == android.R.id.home){
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void onPartClick(final VideoPart item) {

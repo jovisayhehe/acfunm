@@ -13,8 +13,10 @@ import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.PostMethod;
 
 import tv.acfun.video.entity.Comment;
+import tv.acfun.video.entity.Contents;
 import tv.acfun.video.entity.User;
 import tv.acfun.video.util.net.Connectivity;
+import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
@@ -100,38 +102,29 @@ public class MemberUtils{
         nps[1] = new NameValuePair("operate", "0");
         return Connectivity.postResultJson("/member/collect.aspx", nps, cookies).getBooleanValue("success");
 	}
-//	public static List<Favorite> getFavouriteOnline(Cookie[] cookies, int pageNo){
-//	    return getFavouriteOnline(cookies, 15, pageNo);
-//	}
-//	public static int totalPage;
-//	public static List<Favorite> getFavouriteOnline(Cookie[] cookies, int pageSize, int pageNo){
-//	    JSONObject json = Connectivity.getResultJson("/member/collection.aspx", String.format("count=%d&pageNo=%d",pageSize,pageNo), cookies);
-//        
-//        List<Favorite> favs = null;
-//        if(json != null){
-//            try {
-//                if(!json.getBoolean("success")){
-//                    return null;
-//                }
-//                totalPage = json.getJSONObject("page").getInt("totalPage");
-//                favs = new ArrayList<Favorite>();
-//                JSONArray array = json.getJSONArray("contents");
-//                for(int i=0;i<array.length();i++){
-//                    JSONObject content = array.getJSONObject(i);
-//                    Favorite fav = new Favorite();
-//                    fav.aid = content.getString("aid");
-//                    fav.channelid = content.getInt("channelId");
-//                    fav.title = content.getString("title");
-//                    fav.type = ChannelApi.getChannelType(fav.channelid);
-//                    favs.add(fav);
-//                }
-//            } catch (JSONException e) {
-//                Log.e("Member", "try to get favorite data online",e);
-//            }
-//            
-//        }
-//        return favs;
-//	}
+	/**
+	 * 
+	 * @param cookies
+	 * @param pageNo 1~
+	 * @return
+	 */
+	public static Contents getFavouriteOnline(Cookie[] cookies, int pageNo){
+	    return getFavouriteOnline(cookies, 20, pageNo);
+	}
+	public static Contents getFavouriteOnline(Cookie[] cookies, int pageSize, int pageNo){
+	    String result = Connectivity.doGet("/member/collection.aspx", String.format("count=%d&pageNo=%d&channelId=0",pageSize,pageNo), cookies);
+        if(TextUtils.isEmpty(result)){
+            return null;
+        }
+        return JSON.parseObject(result, Contents.class);
+	}
+	public static boolean checkFavourite(Cookie[] cookies, int cid){
+	    JSONObject result = Connectivity.getResultJson("/member/collect_exist.aspx", String.format("cId=%d",cid), cookies);
+	    if(result != null){
+	        return result.getBooleanValue("result");
+	    }
+	    return false;
+	}
 	public static JSONObject checkIn(Cookie[] cks){
 	    return Connectivity.postResultJson("/member/checkin.aspx", null, cks);
 	}
