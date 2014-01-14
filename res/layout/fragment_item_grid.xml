@@ -3,12 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <GridView
+    <com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView
         android:id="@+id/asset_grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:columnWidth="@dimen/item_width"
         android:drawSelectorOnTop="true"
         android:horizontalSpacing="@dimen/item_horizontalSpacing"
         android:listSelector="?android:attr/listSelector"
@@ -16,7 +15,7 @@
         android:paddingBottom="8dp"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="8dp"
+        android:paddingTop="4dp"
         android:verticalSpacing="@dimen/item_verticalSpacing" />
 
     <ProgressBar

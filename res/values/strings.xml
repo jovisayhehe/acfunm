@@ -16,6 +16,7 @@
     <string name="login">Sign in</string>
     <string name="channel_not_public">"This channel isn't public"</string>
     <string-array name="titles">
+        <item>Home</item>
         <item>What\'s hot</item>
         <item>Subscriptions</item>
         <item>Favorites</item>

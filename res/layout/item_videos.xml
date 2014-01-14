@@ -12,30 +12,32 @@
 
     <TextView
         android:id="@android:id/text1"
-        style="@android:style/TextAppearance.Medium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/image"
-        android:background="#fff"
-        android:paddingBottom="4dp"
+        android:background="@drawable/row_backgroud"
+        android:paddingBottom="8dp"
+        android:textSize="@dimen/item_text_size"
         android:paddingLeft="@dimen/text_horizontal_padding"
         android:paddingRight="@dimen/text_horizontal_padding"
         android:lines="2"
         android:paddingTop="8dp" />
 
-    <TextView
+<!--     <TextView
         android:id="@android:id/text2"
         style="@android:style/TextAppearance.Small"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@android:id/text1"
-        android:background="@drawable/row_backgroud"
+        android:layout_alignLeft="@id/image"
+        android:layout_alignRight="@id/image"
+       	android:layout_alignBottom="@id/image"
+        android:background="#99000000"
         android:paddingBottom="8dp"
         android:paddingLeft="@dimen/text_horizontal_padding"
         android:paddingRight="@dimen/text_horizontal_padding"
         android:paddingTop="4dp"
         android:singleLine="true"
         android:textColor="@color/text_color_gray"
-        android:typeface="monospace" />
+        android:typeface="monospace" /> -->
 
 </RelativeLayout>

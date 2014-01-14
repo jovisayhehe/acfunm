@@ -28,6 +28,7 @@ import tv.acfun.video.entity.User;
 import tv.acfun.video.fragment.ChannelFragment;
 import tv.acfun.video.fragment.FavoritesFragment;
 import tv.acfun.video.fragment.HistoryFragment;
+import tv.acfun.video.fragment.HomeFragment;
 import tv.acfun.video.fragment.NotCompleteFragment;
 import tv.acfun.video.fragment.PushContentFragment;
 import tv.acfun.video.fragment.VideosFragment;
@@ -181,7 +182,7 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
             mProgress.setVisibility(View.GONE);
             for(int i=sTitles.length-1; i>=0 ;i--){
                 String title = sTitles[i];
-                Category cat = new Category(1024+i, title);
+                Category cat = new Category(1023+i, title);
                 response.add(0, cat);
             }
             sCategories = response;
@@ -261,7 +262,9 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
     private void select(int position){
         Category cat = sCategories.get(position);
         Fragment f = null;
-        if(cat.id == 1025){
+        if(cat.id == 1023){
+            f = new HomeFragment();
+        }else if(cat.id == 1025){
             f = new PushContentFragment();
         }else if(cat.id == 1026){
             f = new FavoritesFragment();
@@ -281,7 +284,10 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         setTitle(cat.name);
         mMenuList.setItemChecked(position, true);
     }
-    
+    public void selectFragmentByChannelId(int id){
+        int position = findChannelPosition(id);
+        select(position);
+    }
     private Fragment getFragment(Category cat) {
         Fragment f = null;
         Bundle args = new Bundle();
@@ -340,6 +346,21 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
             }
         }
         return false;
+    }
+    
+    public int findChannelPosition(int channelId){
+        for(int i=0;i<sCategories.size();i++){
+            Category category = sCategories.get(i);
+            if(category.id == channelId)
+                return i;
+            if(category.subclasse != null)
+            for (int j = 0; j < category.subclasse.size(); j++) {
+                Category category2 = category.subclasse.get(j);
+                if(category2.id == channelId)
+                    return i;
+            }
+        }
+        return 0;
     }
     public void onAvatarClick(View v){
         if(mUser == null)

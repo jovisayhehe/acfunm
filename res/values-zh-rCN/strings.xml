@@ -12,6 +12,7 @@
     <string name="login">登录</string>
 
     <string-array name="titles">
+        <item>首页</item>
         <item>今日热门</item>
         <item>我的订阅</item>
         <item>收藏管理</item>

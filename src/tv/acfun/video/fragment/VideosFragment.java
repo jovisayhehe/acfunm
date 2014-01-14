@@ -4,7 +4,6 @@ import java.util.List;
 
 import tv.acfun.video.AcApp;
 import tv.acfun.video.DetailsActivity;
-import tv.acfun.video.PlayerActivity;
 import tv.ac.fun.R;
 import tv.acfun.video.adapter.BaseArrayAdapter;
 import tv.acfun.video.api.API;
@@ -12,11 +11,12 @@ import tv.acfun.video.db.DB;
 import tv.acfun.video.entity.Category;
 import tv.acfun.video.entity.Video;
 import tv.acfun.video.entity.Videos;
+import tv.acfun.video.util.DensityUtil;
 import tv.acfun.video.util.TextViewUtils;
 import tv.acfun.video.util.net.FastJsonRequest;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
@@ -42,7 +42,6 @@ import com.android.volley.toolbox.ImageLoader.ImageListener;
  */
 public class VideosFragment extends GridFragment{
     private int catId;
-    protected Context mActivity;
     private int mCurrentPage;
     public VideosFragment() {
     }
@@ -63,7 +62,6 @@ public class VideosFragment extends GridFragment{
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mActivity = activity;
         mDb = new DB(mActivity);
     }
     @Override
@@ -75,12 +73,30 @@ public class VideosFragment extends GridFragment{
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 //        mGridView.setColumnWidth(400);
+        
+        setNumColumns();
+        
     }
+    
+    private void setNumColumns() {
+        int w = getResources().getDisplayMetrics().widthPixels;
+        int n = w / getResources().getDimensionPixelSize(R.dimen.item_width);
+        if (n < 2) n = 2;
+        mGridView.setNumColumns(n);
+    }
+
+    
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setNumColumns();
+    }
+
+
     Listener<Videos> listener = new Listener<Videos>() {
 
         @Override
         public void onResponse(Videos response) {
-            // TODO Auto-generated method stub
             if(response.pageNo ==1){
                 ListAdapter adapter = new VideosAdapter(mActivity, response.list);
                 setAdapter(adapter);
@@ -148,7 +164,7 @@ public class VideosFragment extends GridFragment{
                 convertView = mInflater.inflate(R.layout.item_videos, parent, false);
                 holder = new ViewHolder();
                 holder.titleView = (TextView) convertView.findViewById(android.R.id.text1);
-                holder.descView = (TextView) convertView.findViewById(android.R.id.text2);
+//                holder.descView = (TextView) convertView.findViewById(android.R.id.text2);
                 holder.imageView = (ImageView) convertView.findViewById(R.id.image);
                 convertView.setTag(holder);
             } else {
@@ -179,8 +195,8 @@ public class VideosFragment extends GridFragment{
             holder.titleView.setText(name);
             holder.titleView.setTextColor(mDb.isWatched(item.acId)?0xFF666666:0xFF000000);
             
-            String desc = item.creator.name + " · "+ item.viewernum + "次播放";
-            holder.descView.setText(desc);
+//            String desc = item.creator.name /*+ "/"+ item.viewernum + "次播放"*/;
+//            holder.descView.setText(desc);
         }
         
     }

@@ -52,7 +52,7 @@ public class FastJsonRequest<T> extends CustomUARequest<T> {
         try {
             String json = new String(
                     response.data, HttpHeaderParser.parseCharset(response.headers));
-            return Response.success(JSON.parseObject(json, mClazz),HttpHeaderParser.parseCacheHeaders(response));
+            return Response.success(JSON.parseObject(json, mClazz),Connectivity.newCache(response,120));
         }catch (UnsupportedEncodingException e) {
             String json = new String(response.data);
             return Response.success(JSON.parseObject(json, mClazz),HttpHeaderParser.parseCacheHeaders(response));

@@ -17,10 +17,13 @@ package tv.acfun.video.fragment;
 
 import com.android.volley.Cache;
 import com.android.volley.Request;
+import com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView;
+import com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView.OnHeaderClickListener;
 
 import tv.acfun.video.AcApp;
 import tv.ac.fun.R;
 import tv.acfun.video.util.net.Connectivity;
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -38,11 +41,17 @@ import android.widget.AdapterView.OnItemClickListener;
  * @author Yrom
  *
  */
-public abstract class GridFragment extends Fragment implements OnItemClickListener, OnScrollListener {
+public abstract class GridFragment extends Fragment implements OnItemClickListener, OnScrollListener, OnHeaderClickListener {
     protected GridView mGridView;
     protected View mLoadingView;
     protected ListAdapter mAdapter;
     protected boolean mIsItemVisible;
+    protected Activity mActivity;
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mActivity = activity;
+    }
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,8 +66,8 @@ public abstract class GridFragment extends Fragment implements OnItemClickListen
         mGridView.setOnItemClickListener(this);
         mGridView.setOnScrollListener(this);
         mLoadingView = view.findViewById(R.id.loading);
-//        if(mGridView instanceof StickyGridHeadersGridView)
-//            ((StickyGridHeadersGridView) mGridView).setOnHeaderClickListener(this);
+        if(mGridView instanceof StickyGridHeadersGridView)
+            ((StickyGridHeadersGridView) mGridView).setOnHeaderClickListener(this);
     }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -113,6 +122,10 @@ public abstract class GridFragment extends Fragment implements OnItemClickListen
     }
 
     protected void onLastItemVisible(){
+        // do nothing
+    }
+    @Override
+    public void onHeaderClick(AdapterView<?> parent, View view, long id) {
         // do nothing
     }
 }
