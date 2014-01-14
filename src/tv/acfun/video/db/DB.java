@@ -90,9 +90,11 @@ public final class DB {
     }
 
     public synchronized boolean isFav(int aid) {
-        SQLiteStatement state = helper.getReadableDatabase().compileStatement(
+        SQLiteDatabase db = helper.getReadableDatabase();
+        SQLiteStatement state = db.compileStatement(
                 "select count(*) from " + DBOpenHelper.TABLE_FAV + " where aid=" + aid);
         boolean isFav = state.simpleQueryForLong() > 0;
+        db.close();
         return isFav;
     }
 
@@ -134,13 +136,18 @@ public final class DB {
         values.put("channelId", video.channelId);
         values.put("preview", video.previewurl);
         values.put("time", System.currentTimeMillis());
-        return helper.getWritableDatabase().insertWithOnConflict(DBOpenHelper.TABLE_HISTORY, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        SQLiteDatabase db = helper.getWritableDatabase();
+        long l =  db.insertWithOnConflict(DBOpenHelper.TABLE_HISTORY, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        db.close();
+        return l;
     }
 
     public synchronized boolean isWatched(int aid) {
-        SQLiteStatement state = helper.getReadableDatabase().compileStatement(
+        SQLiteDatabase db = helper.getReadableDatabase();
+        SQLiteStatement state = db.compileStatement(
                 "select count(*) from " + DBOpenHelper.TABLE_HISTORY + " where aid=" + aid);
         boolean isWatched = state.simpleQueryForLong() > 0;
+        db.close();
         return isWatched;
     }
     /**

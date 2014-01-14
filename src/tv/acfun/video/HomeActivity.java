@@ -84,6 +84,7 @@ import com.umeng.update.UmengUpdateAgent;
  */
 public class HomeActivity extends ActionBarActivity implements OnItemClickListener {
     
+    private static final String STACK_NAME = "p";
     private DrawerLayout mDrawer;
     private ListView mMenuList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -312,9 +313,10 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         }
         if(f == null) return;
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, f);
+        // pop stack
+        getSupportFragmentManager().popBackStack(STACK_NAME, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         if(cat.id != 1023){
-            getSupportFragmentManager().popBackStack("p", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            transaction.addToBackStack("p");
+            transaction.addToBackStack(STACK_NAME);
         }
         transaction.commit();
         mDrawer.closeDrawer(GravityCompat.START);
