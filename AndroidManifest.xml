@@ -47,7 +47,7 @@
             android:theme="@style/AppTheme.TranslucentActionBar" />
         <activity
             android:name="tv.acfun.video.PlayerActivity"
-            android:configChanges="orientation"
+            android:configChanges="orientation|screenSize"
             android:screenOrientation="sensorLandscape" />
 
         <meta-data

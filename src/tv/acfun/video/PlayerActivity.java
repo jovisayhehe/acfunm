@@ -267,6 +267,8 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         mMediaController.setFileName(name);
         mVideoView.setMediaController(mMediaController);
         mVideoView.setOnBufferingUpdateListener(onBuffering);
+        boolean chroma565 = AcApp.getBoolean(getString(R.string.key_chroma_565), false);
+        if(chroma565) mVideoView.setVideoChroma(MediaPlayer.VIDEOCHROMA_RGB565);
         
     }
     MediaPlayer.OnBufferingUpdateListener onBuffering = new MediaPlayer.OnBufferingUpdateListener(){
@@ -504,6 +506,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         }
         if(mDMView != null)
             mDMView.pause();
+        mHandler.removeCallbacksAndMessages(null);
     }
     
     @Override

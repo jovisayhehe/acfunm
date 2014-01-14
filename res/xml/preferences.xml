@@ -20,6 +20,11 @@
             android:summaryOn="如果弹幕播放失败请取消勾选"
             android:key="@string/key_dm_cache"
             android:title="@string/dm_cache" />
+        <CheckBoxPreference 
+            android:defaultValue="false"
+            android:summaryOff="如果视频全是马赛克请勾选"
+            android:key="@string/key_chroma_565"
+            android:title="@string/video_chroma_565" />
         <ListPreference android:entries="@array/pref_resolution_entries"
             android:key="@string/key_resolution_mode"
             android:entryValues="@array/pref_resolution_values"

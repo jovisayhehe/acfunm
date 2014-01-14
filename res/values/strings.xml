@@ -59,6 +59,8 @@
     <string name="key_donate">donate</string>
     <string name="key_hw_decode">hw_decode</string>
     <string name="key_dm_cache">dm_cache</string>
+    <string name="key_chroma_565">video_chroma_565</string>
+    <string name="video_chroma_565">Select 16bit color</string>
     <string name="dm_cache">Danmaku drawing cache</string>
     <string name="hw_decode">Hardware decoder</string>
     <string name="clear_cache">Clear cache</string>
