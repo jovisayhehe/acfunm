@@ -17,6 +17,7 @@ package tv.acfun.video;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.List;
 
 import tv.ac.fun.BuildConfig;
@@ -31,6 +32,7 @@ import tv.acfun.video.fragment.HistoryFragment;
 import tv.acfun.video.fragment.HomeFragment;
 import tv.acfun.video.fragment.NotCompleteFragment;
 import tv.acfun.video.fragment.PushContentFragment;
+import tv.acfun.video.fragment.SearchFragment;
 import tv.acfun.video.fragment.VideosFragment;
 import tv.acfun.video.util.CommonUtil;
 import tv.acfun.video.util.net.CategoriesRequest;
@@ -41,13 +43,16 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.ViewDragHelper;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
@@ -99,6 +104,7 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         mNameText = (TextView) mAvatarFrame.findViewById(android.R.id.text1);
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawer.setDrawerShadow(R.drawable.drawer_shadow, Gravity.RIGHT);
+        initDrawer();
         mMenuList = (ListView) findViewById(android.R.id.list);
         mProgress = findViewById(android.R.id.progress);
         mMenuList.setOnItemClickListener(this);
@@ -130,6 +136,20 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         }
         setUserInfo();
         initUmeng();
+    }
+
+    private void initDrawer() {
+        try {
+            Field mDragger = mDrawer.getClass().getDeclaredField("mLeftDragger");
+            mDragger.setAccessible(true);
+            ViewDragHelper draggerObj = (ViewDragHelper) mDragger.get(mDrawer);
+            Field mEdgeSize = draggerObj.getClass().getDeclaredField("mEdgeSize");
+            mEdgeSize.setAccessible(true);
+            int edge = mEdgeSize.getInt(draggerObj);
+            mEdgeSize.setInt(draggerObj, edge * 2);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void initUmeng() {
@@ -188,6 +208,7 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
             sCategories = response;
             ListAdapter adapter = new MenuAdapter(HomeActivity.this, sCategories);
             mMenuList.setAdapter(adapter);
+            ((ViewGroup) findViewById(R.id.content_frame)).removeAllViews();
             select(0);
         }
         
@@ -262,24 +283,35 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
     private void select(int position){
         Category cat = sCategories.get(position);
         Fragment f = null;
-        if(cat.id == 1023){
+        switch (cat.id) {
+        case 1023:
             f = new HomeFragment();
-        }else if(cat.id == 1025){
+            break;
+        case 1025:
             f = new PushContentFragment();
-        }else if(cat.id == 1026){
+            break;
+        case 1026:
             f = new FavoritesFragment();
-        }else if(cat.id == 1027){
+            break;
+        case 1027:
             f = new HistoryFragment();
-        }else if(cat.id > 1024){
-            // TODO:
+            break;
+        case 1028:
             f = NotCompleteFragment.newInstance(cat.id);
-        }else{
+            break;
+        case 1029:
+            f = new SearchFragment();
+            break;
+        default:
             if (cat.id != 63 || !handleArea63Click()) {
                 f = getFragment(cat);
             }
+            break;
         }
         if(f == null) return;
-        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, f).commit();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, f);
+        if(cat.id != 1023) transaction.addToBackStack("pop");
+        transaction.commit();
         mDrawer.closeDrawer(GravityCompat.START);
         setTitle(cat.name);
         mMenuList.setItemChecked(position, true);
@@ -441,6 +473,11 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
     private long mLastBackPressedMs;
     @Override
     public void onBackPressed() {
+        if(getSupportFragmentManager().popBackStackImmediate()){
+            setTitle(sTitles[0]);
+            mMenuList.setItemChecked(0, true);
+            return ;
+        }
         long currentTimeMillis = System.currentTimeMillis();
         if(currentTimeMillis - mLastBackPressedMs < 1500){
             super.onBackPressed();

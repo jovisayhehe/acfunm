@@ -209,18 +209,6 @@ public class MediaController extends FrameLayout {
     mAnimStyle = android.R.style.Animation;
   }
   
-//  @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-//	public void setWindowLayoutType() {
-//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-//			try {
-//				mAnchor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-//				Method setWindowLayoutType = PopupWindow.class.getMethod("setWindowLayoutType", new Class[] { int.class });
-//				setWindowLayoutType.invoke(mWindow, WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG);
-//			} catch (Exception e) {
-//				Log.e("setWindowLayoutType", e);
-//			}
-//		}
-//	}
 
   /**
    * Set the view that acts as the anchor for the control view. This can for
@@ -283,15 +271,15 @@ public class MediaController extends FrameLayout {
         lp.bottomMargin = height;
         mControllerBar.setLayoutParams(lp);
     }
-    
-    View top = v.findViewById(R.id.mediacontroller_top);
-    FrameLayout.LayoutParams p = (FrameLayout.LayoutParams) top.getLayoutParams();
-    height = getStatusBarHeight();
-    if(height >0){
-        p.topMargin = height;
-        v.setLayoutParams(p);
+    if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.KITKAT){
+        View top = v.findViewById(R.id.mediacontroller_top);
+        FrameLayout.LayoutParams p = (FrameLayout.LayoutParams) top.getLayoutParams();
+        height = getStatusBarHeight();
+        if(height >0){
+            p.topMargin = height;
+            v.setLayoutParams(p);
+        }
     }
-    
   }
   
   private int getNavigationBarHeight(){

@@ -22,6 +22,7 @@
         <item>Favorites</item>
         <item>History</item>
         <item>Watch later</item>
+        <item>Search</item>
         <item>Channels</item>
     </string-array>
     
@@ -89,18 +90,19 @@
     <string name="password">Password</string>
     <string name="signin">Sign In</string>
     <string name="cpu_not_support">请手动下载解码器到SD卡根目录下..</string>
-    <string name="action_fav">收藏</string>
-    <string name="post_comment">评论</string>
-    <string name="time_out">获取超时！点击重试</string>
-    <string name="posting_comment">评论提交中...</string>
-    <string name="comment_success">评论成功! </string>
-    <string name="comment_failed">评论失败! </string>
-    <string name="reloading">点我重新加载</string>
-    <string name="no_comment_yet">尚无评论。</string>
+    <string name="action_fav">Favorite</string>
+    <string name="post_comment">Comment</string>
+    <string name="time_out">Request time out.</string>
+    <string name="posting_comment">Posting..</string>
+    <string name="comment_success">Success! </string>
+    <string name="comment_failed">Fail to comment! </string>
+    <string name="reloading">Tap to reload.</string>
+    <string name="no_comment_yet">No comment yet.</string>
     <string name="sign_in_first">请先登录。</string>
-    <string name="no_comment">没有评论内容。</string>
-    <string name="comment_not_enough">吐槽得不够！</string>
-    <string name="action_font_size">字体大小</string>
-    <string name="comment_font_size">评论字体大小</string>
-    <string name="action_comment">评论</string>
+    <string name="no_comment">No content</string>
+    <string name="comment_not_enough">Not enough.</string>
+    <string name="action_font_size">Font size</string>
+    <string name="comment_font_size">Font size of comment</string>
+    <string name="action_comment">Comment</string>
+    <string name="search_result">%d items found.</string>
 </resources>

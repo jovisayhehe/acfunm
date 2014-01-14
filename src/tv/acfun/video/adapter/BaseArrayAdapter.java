@@ -39,7 +39,7 @@ public abstract class BaseArrayAdapter<T> extends BaseAdapter {
 
     @Override
     public int getCount() {
-        if(mItems == null || mItems.isEmpty()) return 0;
+        if (mItems == null || mItems.isEmpty()) return 0;
         return mItems.size();
     }
 
@@ -47,26 +47,34 @@ public abstract class BaseArrayAdapter<T> extends BaseAdapter {
     public T getItem(int position) {
         return mItems.get(position);
     }
-    public T remove(int position){
-       T t = mItems.remove(position);
-       notifyDataSetChanged();
-       return t;
+
+    public T remove(int position) {
+        if (mItems == null) return null;
+        T t = mItems.remove(position);
+        notifyDataSetChanged();
+        return t;
     }
+
     public void setData(List<T> data) {
-        if (mItems != null) {
-            mItems.clear();
-        }
+        clear();
         mItems.addAll(data);
     }
-    
-    // TODO : 去重
-    public void addData(List<T> data){
+
+    public void clear() {
         if (mItems != null) {
-            
+            mItems.clear();
+            notifyDataSetChanged();
+        }
+    }
+
+    // TODO : 去重
+    public void addData(List<T> data) {
+        if (mItems != null) {
             mItems.addAll(data);
             notifyDataSetChanged();
         }
     }
+
     /**
      * @return position
      */

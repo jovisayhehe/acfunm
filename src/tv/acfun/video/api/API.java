@@ -16,6 +16,9 @@
 
 package tv.acfun.video.api;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 
 /**
  * 
@@ -35,6 +38,7 @@ public class API {
     public static final String EXTRAS_CATEGORY_IDS = "extras_category_ids";
     
     public static final String COMMENTS = "http://www.acfun.tv/comment_list_json.aspx?contentId=%d&currentPage=%d";
+    public static final String URL_SEARCH = "http://www.acfun.tv/api/search.aspx?query=%s&exact=1&channelIds=1,58,59,60,70,69,68&orderId=%d&orderBy=%d&pageNo=%d&pageSize=%d";
     
     public static String getVideosUrl(int catId, int page, boolean isoriginal) {
         String url = String.format(API.VIDEO_LIST, catId, page*20);
@@ -48,6 +52,26 @@ public class API {
 
     public static String getCommentUrl(int aid, int page) {
         return String.format(COMMENTS, aid, page);
+    }
+
+    /**
+     * @param query key word
+     * @param orderId 相关、日期、点击、评论、收藏，0~4
+     * @param orderBy 按标题标签、用户、内容简介查找，1~3
+     * @param pageNo 
+     * @param pageSize http://www.acfun.tv/api/search.aspx?query={query}&exact=1&channelIds=63&orderId=2&orderBy=1&pageNo=1&pageSize=10&_=1387786184949
+     * @return
+     */
+    public static String getSearchUrl(String query, int orderId, int orderBy, int pageNo, int pageSize){
+        String url = null;
+        try {
+            String key = URLEncoder.encode(query, "UTF-8");
+            String format = URL_SEARCH; 
+            url = String.format(format, key,orderId,orderBy,pageNo,pageSize);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return url;
     }
     
 }

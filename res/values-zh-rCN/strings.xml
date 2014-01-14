@@ -15,9 +15,10 @@
         <item>首页</item>
         <item>今日热门</item>
         <item>我的订阅</item>
-        <item>收藏管理</item>
+        <item>收藏夹</item>
         <item>浏览历史</item>
         <item>稍后观看</item>
+        <item>搜索</item>
         <item>频道列表</item>
     </string-array>
     <string-array name="details_titles">
@@ -54,4 +55,19 @@
     <string name="user_name">用户名</string>
     <string name="password">密码</string>
     <string name="signin">登录</string>
+    <string name="action_fav">收藏</string>
+    <string name="post_comment">评论</string>
+    <string name="time_out">获取超时！点击重试</string>
+    <string name="posting_comment">评论提交中...</string>
+    <string name="comment_success">评论成功! </string>
+    <string name="comment_failed">评论失败! </string>
+    <string name="reloading">点我重新加载</string>
+    <string name="no_comment_yet">尚无评论。</string>
+    <string name="sign_in_first">请先登录。</string>
+    <string name="no_comment">没有评论内容。</string>
+    <string name="comment_not_enough">吐槽得不够！</string>
+    <string name="action_font_size">字体大小</string>
+    <string name="comment_font_size">评论字体大小</string>
+    <string name="action_comment">评论</string>
+    <string name="search_result">找到%d条数据</string>
 </resources>
