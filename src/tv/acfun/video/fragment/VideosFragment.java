@@ -9,9 +9,9 @@ import tv.acfun.video.adapter.BaseArrayAdapter;
 import tv.acfun.video.api.API;
 import tv.acfun.video.db.DB;
 import tv.acfun.video.entity.Category;
+import tv.acfun.video.entity.HomeCat;
 import tv.acfun.video.entity.Video;
 import tv.acfun.video.entity.Videos;
-import tv.acfun.video.util.DensityUtil;
 import tv.acfun.video.util.TextViewUtils;
 import tv.acfun.video.util.net.FastJsonRequest;
 import android.app.Activity;
@@ -27,6 +27,7 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.android.volley.Request;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
@@ -40,7 +41,7 @@ import com.android.volley.toolbox.ImageLoader.ImageListener;
  * @author Yrom
  *
  */
-public class VideosFragment extends GridFragment{
+public class VideosFragment extends RefreshActionGridFragment{
     private int catId;
     private int mCurrentPage;
     public VideosFragment() {
@@ -97,6 +98,7 @@ public class VideosFragment extends GridFragment{
 
         @Override
         public void onResponse(Videos response) {
+            hideRefreshAnimation();
             if(response.pageNo ==1){
                 ListAdapter adapter = new VideosAdapter(mActivity, response.list);
                 setAdapter(adapter);
@@ -112,7 +114,8 @@ public class VideosFragment extends GridFragment{
         @Override
         public void onErrorResponse(VolleyError error) {
             // TODO : 提示错误
-            
+            hideRefreshAnimation();
+            Toast.makeText(getActivity(), "读取数据失败，请重试！", 0).show();
             
         }};
     private DB mDb;

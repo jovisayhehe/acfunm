@@ -29,14 +29,9 @@ import tv.acfun.video.entity.Video;
 import tv.acfun.video.util.TextViewUtils;
 import tv.acfun.video.util.net.Connectivity;
 import tv.acfun.video.util.net.CustomUARequest;
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -61,7 +56,7 @@ import com.tonicartos.widget.stickygridheaders.StickyGridHeadersBaseAdapter;
  * @author Yrom
  * 
  */
-public class HomeFragment extends GridFragment {
+public class HomeFragment extends RefreshActionGridFragment {
 
     public HomeFragment() {
     }
@@ -70,6 +65,7 @@ public class HomeFragment extends GridFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        setRetainInstance(true);
     }
     
     @Override
@@ -108,7 +104,6 @@ public class HomeFragment extends GridFragment {
             Toast.makeText(getActivity(), "读取数据失败，请重试！", 0).show();
         }
     };
-    private MenuItem refreshItem;
 
     @Override
     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
@@ -124,37 +119,6 @@ public class HomeFragment extends GridFragment {
         ((HomeActivity)mActivity).selectFragmentByChannelId(channelId);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.refresh, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_refresh) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                showRefreshAnimation(item);
-            }
-            loadData();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private void showRefreshAnimation(MenuItem item) {
-        refreshItem = item;
-        refreshItem.setActionView(R.layout.progress);
-    }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private void hideRefreshAnimation() {
-        mLoadingView.setVisibility(View.GONE);
-        mGridView.setVisibility(View.VISIBLE);
-        if (refreshItem != null) {
-            refreshItem.setActionView(null);
-        }
-    }
 
     private static class HomeCatsRequest extends CustomUARequest<List<HomeCat>> {
 

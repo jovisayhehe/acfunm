@@ -37,6 +37,7 @@ import tv.acfun.video.fragment.VideosFragment;
 import tv.acfun.video.util.CommonUtil;
 import tv.acfun.video.util.net.CategoriesRequest;
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -131,6 +132,7 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
             ListAdapter adapter = new MenuAdapter(HomeActivity.this, sCategories);
             mMenuList.setAdapter(adapter);
             mProgress.setVisibility(View.GONE);
+            ((ViewGroup) findViewById(R.id.content_frame)).removeAllViews();
             int position = savedInstanceState==null? 0 : savedInstanceState.getInt(KEY_STATE_POSITION, 0);
             select(position);
         }
@@ -310,7 +312,10 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         }
         if(f == null) return;
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, f);
-        if(cat.id != 1023) transaction.addToBackStack("pop");
+        if(cat.id != 1023){
+            getSupportFragmentManager().popBackStack("p", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            transaction.addToBackStack("p");
+        }
         transaction.commit();
         mDrawer.closeDrawer(GravityCompat.START);
         setTitle(cat.name);
