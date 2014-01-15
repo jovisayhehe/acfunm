@@ -77,7 +77,12 @@ public class DownloadManager {
         return mProvider.getQueuedDownloads();
     }
     public DownloadEntry getEntryByVid(String vid){
-        return mProvider.getQueueJobByVid(vid).getEntry();
+        DownloadJob job = mProvider.getQueueJobByVid(vid);
+        if (job == null) {
+            job = mProvider.getDownloadedJobByVid(vid);
+        }
+        if (job != null) return job.getEntry();
+        return null;
     }
     
     public void cancel(String vid, boolean shouldDeleFile) {

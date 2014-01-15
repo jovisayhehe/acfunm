@@ -1,6 +1,7 @@
 
 package tv.acfun.video.util.download;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -14,8 +15,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import tv.acfun.video.AcApp;
 import tv.acfun.video.entity.VideoSegment;
 import tv.acfun.video.util.download.DownloadTask.DownloadTaskListener;
-import android.os.AsyncTask;
+import tv.acfun.video.util.net.DanmakusRequest;
 import android.util.Log;
+
+import com.android.volley.toolbox.StringRequest;
 
 /**
  * Job of download
@@ -103,6 +106,12 @@ public class DownloadJob {
         for (DownloadTask task : mTasks) {
             task.executeOnExecutor(sExecutor);
         }
+        final File dmFile = new File(mEntry.destination,mEntry.part.commentId+".json");
+        if(!dmFile.exists()){
+            StringRequest request = new DanmakusRequest(mEntry.part.commentId, mEntry.destination, null, null);
+            AcApp.addRequest(request);
+        }
+        
     }
     public void cancel() {
         if(mTasks == null) initTask();  // 奇怪的地方，居然没初始化。。真是不上线不知道哪会有bug

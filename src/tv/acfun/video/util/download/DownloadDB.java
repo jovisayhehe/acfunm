@@ -17,7 +17,7 @@ public interface DownloadDB {
     // =============================
     // constants
     // =============================
-    int    VERSION         = 2;
+    int    VERSION         = 3;
     String DOWNLOAD_DB     = "download.db";
     String DOWNLOAD_TABLE  = "downloads";
     /** download job's id*/
@@ -27,6 +27,7 @@ public interface DownloadDB {
     String COLUMN_SUBTITLE = "subtitle";
     String COLUMN_VID      = "vid";
     String COLUMN_VTYPE    = "vtype";
+    String COLUMN_CID      = "cid";
     /** num in part */
     String COLUMN_NUM      = "part_num";
     /**

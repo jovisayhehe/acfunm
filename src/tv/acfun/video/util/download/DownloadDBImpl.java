@@ -100,6 +100,7 @@ public class DownloadDBImpl implements DownloadDB {
         entry.part.sourceId = cursor.getString(cursor.getColumnIndex(COLUMN_VID));
         entry.part.name = cursor.getString(cursor.getColumnIndex(COLUMN_SUBTITLE));
         entry.part.type = cursor.getString(cursor.getColumnIndex(COLUMN_VTYPE));
+        entry.part.commentId = cursor.getString(cursor.getColumnIndex(COLUMN_CID));
         entry.part.segments = new ArrayList<VideoSegment>();
         DownloadJob job = new DownloadJob(entry);
         job.setUserAgent(cursor.getString(cursor.getColumnIndex(COLUMN_UA)));
@@ -129,6 +130,7 @@ public class DownloadDBImpl implements DownloadDB {
         values.put(COLUMN_AID, entry.aid);
         values.put(COLUMN_TITLE, entry.title);
         values.put(COLUMN_VID, entry.part.sourceId);
+        values.put(COLUMN_CID, entry.part.commentId);
         values.put(COLUMN_VTYPE, entry.part.type);
         values.put(COLUMN_SUBTITLE, entry.part.name);
         String path = entry.destination;
@@ -182,6 +184,7 @@ public class DownloadDBImpl implements DownloadDB {
         values.put(COLUMN_TITLE, entry.title);
         values.put(COLUMN_DEST, entry.destination);
         values.put(COLUMN_VID, entry.part.sourceId);
+        values.put(COLUMN_CID, entry.part.commentId);
         values.put(COLUMN_VTYPE, entry.part.type);
         values.put(COLUMN_SUBTITLE, entry.part.name);
         String whereClause = COLUMN_AID+"=? and "+COLUMN_VID + "=? and " + COLUMN_NUM +"=?";

@@ -21,6 +21,12 @@ import io.vov.vitamio.MediaPlayer.OnInfoListener;
 import io.vov.vitamio.MediaPlayer.OnPreparedListener;
 import io.vov.vitamio.Vitamio;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,6 +36,7 @@ import master.flame.danmaku.controller.DMSiteType;
 import master.flame.danmaku.danmaku.loader.ILoader;
 import master.flame.danmaku.danmaku.model.DanmakuTimer;
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
+import master.flame.danmaku.danmaku.util.IOUtils;
 import master.flame.danmaku.ui.widget.DanmakuSurfaceView;
 import tv.ac.fun.R;
 import tv.acfun.video.entity.VideoPart;
@@ -42,7 +49,10 @@ import tv.acfun.video.player.MediaSegmentPlayer;
 import tv.acfun.video.player.VideoView;
 import tv.acfun.video.player.resolver.BaseResolver;
 import tv.acfun.video.player.resolver.ResolverType;
+import tv.acfun.video.util.download.DownloadEntry;
 import tv.acfun.video.util.net.Connectivity;
+import tv.acfun.video.util.net.DanmakusRequest;
+import tv.acfun.video.util.net.NetWorkUtil;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -327,51 +337,60 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     private MediaController mMediaController;
     private Handler mHandler;
     private MediaList mList;
+    Response.Listener<String> dmListener = new Response.Listener<String>() {
+        @Override
+        public void onResponse(String response) {
+            mProgressText.setText(mProgressText.getText() + "\n"+ getString(R.string.danmakus_downloaded));
+            try {
+                DMSiteType type = DMSiteType.ACFUN;
+                ILoader loader = type.getLoader();
+                loader.loadData(response);
+                BaseDanmakuParser parser = type.getParser().load(loader.getDataSource());
+                mDMView.prepare(parser);
+            } catch (Exception e) {
+                Log.e(TAG, "解析失败", e);
+                mProgressText.setText(mProgressText.getText() +"\n" +getString(R.string.parsing_failed));
+            }
+            startPlay();
+        }
 
+        
+    };
+    Response.ErrorListener err = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            mProgressText.setText(mProgressText.getText() +"\n"+getString(R.string.danmakus_download_failed));
+            hideTextDelayed();
+            startPlay();
+        }
+    };
     private void addDanmakusRequest() {
-        String url = "http://comment.acfun.tv/" + mVideo.commentId + ".json";
+        DownloadEntry entry = AcApp.getDownloadManager().getEntryByVid(mVideo.sourceId);
+        if(entry != null && !NetWorkUtil.isNetworkAvailable(this)){
+            if(loadDownloadedDanmakus(entry)) return;
+        }
         // TODO: acfun lock danmakus
-        StringRequest request = new StringRequest(url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                mProgressText.setText(mProgressText.getText() + "\n"+ getString(R.string.danmakus_downloaded));
-                try {
-                    DMSiteType type = DMSiteType.ACFUN;
-                    ILoader loader = type.getLoader();
-                    loader.loadData(response);
-                    BaseDanmakuParser parser = type.getParser().load(loader.getDataSource());
-                    mDMView.prepare(parser);
-                } catch (Exception e) {
-                    Log.e(TAG, "解析失败", e);
-                    mProgressText.setText(mProgressText.getText() +"\n" +getString(R.string.parsing_failed));
-                }
-                startPlay();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                mProgressText.setText(mProgressText.getText() +"\n"+getString(R.string.danmakus_download_failed));
-                hideTextDelayed();
-                startPlay();
-            }
-        }) {
-            protected Response<String> parseNetworkResponse(NetworkResponse response) {
-                String parsed;
-                parsed = new String(response.data, Charset.defaultCharset());
-                return Response.success(parsed, Connectivity.newCache(response, 60));
-            }
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = super.getHeaders();
-                if (headers == null || headers.equals(Collections.EMPTY_MAP)) {
-                    headers = new HashMap<String, String>();
-                }
-                headers.put("User-Agent", BaseResolver.UA_DEFAULT);
-                return headers;
-            }
-        };
+        String save =entry ==null?null: entry.destination;
+        StringRequest request = new DanmakusRequest(mVideo.commentId,save,dmListener , err);
         Connectivity.addRequest(request);
+    }
+
+    private boolean loadDownloadedDanmakus(DownloadEntry entry) {
+        
+        File dmFile = new File(entry.destination, entry.part.commentId + ".json");
+        if (!dmFile.exists()) return false;
+        try {
+            DMSiteType type = DMSiteType.ACFUN;
+            ILoader loader = type.getLoader();
+            loader.load(new FileInputStream(dmFile));
+            BaseDanmakuParser parser = type.getParser().load(loader.getDataSource());
+            mDMView.prepare(parser);
+        } catch (Exception e) {
+            Log.e(TAG, "解析失败", e);
+            mProgressText.setText(mProgressText.getText() + "\n" + getString(R.string.parsing_failed));
+        }
+        startPlay();
+        return true;
     }
 
     private void hideTextDelayed() {

@@ -76,6 +76,14 @@ public class DownloadProvider {
         }
         return null;
     }
+    
+    public DownloadJob getDownloadedJobByVid(String vid){
+        for(DownloadJob j : mCompletedJobs){
+            if(j.getEntry().part.sourceId.equals(vid)) 
+                return j;
+        }
+        return null;
+    }
 
     public List<VideoPart> getVideoParts(String aid){
         List<VideoPart> parts = null;

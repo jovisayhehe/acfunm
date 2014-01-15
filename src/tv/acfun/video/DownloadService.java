@@ -1,5 +1,6 @@
 package tv.acfun.video;
 
+import tv.acfun.video.entity.VideoPart;
 import tv.acfun.video.player.resolver.BaseResolver;
 import tv.acfun.video.util.download.DownloadDB;
 import tv.acfun.video.util.download.DownloadEntry;
@@ -135,7 +136,8 @@ public class DownloadService extends Service {
         AcApp.showNotification(mIntent, DOWNLOAD_NOTIFICATION_ID, text, icon, title, flag);
     }
     private void showDownloadedNoti(int status,DownloadJob job) {
-        String contentText = job.getEntry().part.name;
+        VideoPart part = job.getEntry().part;
+        String contentText = "ac"+job.getEntry().aid + " - "+part.name;
         // FIXME: hard code
         String title = "";
         if (status == DownloadDB.STATUS_SUCCESS)
