@@ -24,6 +24,7 @@ import tv.acfun.video.api.API;
 import tv.acfun.video.db.DB;
 import tv.acfun.video.entity.Category;
 import tv.acfun.video.entity.User;
+import tv.acfun.video.util.download.DownloadManager;
 import tv.acfun.video.util.net.Connectivity;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -44,6 +45,7 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.android.volley.Request;
@@ -310,4 +312,27 @@ public class AcApp extends Application {
             .setNegativeButton("否", listener).show();
             
     }
+    /**
+     * 获得视频文件下载路径，默认为/sdcard/Download/AcFun/videos/{aid}/{vid}
+     * @return
+     */
+    public static File getDownloadPath(String aid, String vid){
+        File path = new File(sSharedPreferences.getString("download_path", Environment.getExternalStorageDirectory().getAbsolutePath()+"/Download/AcFun/Videos/"+aid+"/"+vid));
+        if(!path.exists()) path.mkdirs();
+        return path;
+    }
+    public static void showToast(String string) {
+        Toast.makeText(sContext, string, Toast.LENGTH_SHORT).show();
+    }
+    
+    private static DownloadManager sDownloadManager;
+    
+    public static DownloadManager getDownloadManager(){
+        if(sDownloadManager == null){
+            sDownloadManager = new DownloadManager(sContext);
+            sDownloadManager.getProvider().loadOldDownloads();
+        }
+        return sDownloadManager;
+    }
+    
 }

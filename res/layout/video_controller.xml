@@ -18,7 +18,7 @@
             android:layout_alignParentRight="true"
             android:background="@drawable/media_btn_bg_selector"
             android:gravity="center_vertical"
-            android:src="@drawable/ic_action_overflow" />
+            android:src="@drawable/ic_action_overflow_dark" />
 
         <TextView
             android:id="@+id/mediacontroller_file_name"

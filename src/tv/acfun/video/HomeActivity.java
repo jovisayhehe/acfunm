@@ -262,6 +262,10 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         case R.id.action_feedback:
             startActivity(new Intent(this, ConversationActivity.class));
             break;
+        case R.id.action_download_manager:
+            startActivity(new Intent(this, DownloadManActivity.class));
+            
+            break;
         default:
             break;
         }

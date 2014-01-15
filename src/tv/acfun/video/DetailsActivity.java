@@ -27,9 +27,16 @@ import tv.acfun.video.entity.Comments;
 import tv.acfun.video.entity.User;
 import tv.acfun.video.entity.Video;
 import tv.acfun.video.entity.VideoPart;
+import tv.acfun.video.player.MediaList;
+import tv.acfun.video.player.MediaList.OnResolvedListener;
+import tv.acfun.video.player.MediaList.Resolver;
+import tv.acfun.video.player.resolver.BaseResolver;
+import tv.acfun.video.player.resolver.ResolverType;
 import tv.acfun.video.util.FadingActionBarHelper;
 import tv.acfun.video.util.MemberUtils;
 import tv.acfun.video.util.TextViewUtils;
+import tv.acfun.video.util.download.DownloadEntry;
+import tv.acfun.video.util.download.DownloadManager;
 import tv.acfun.video.util.net.CommentsRequest;
 import tv.acfun.video.util.net.FastJsonRequest;
 import android.content.Context;
@@ -37,6 +44,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.PopupMenu;
+import android.support.v7.widget.PopupMenu.OnMenuItemClickListener;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
@@ -216,6 +225,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         String text = TextUtils.isEmpty(item.name) ? "点击查看视频" : (position + 1) + ". " + item.name;
         name.setText(text);
         desc.setText("来源: " + item.type);
+        partView.findViewById(R.id.part_overlow).setOnClickListener(this);
         mPartsGroup.addView(partView);
     }
 
@@ -236,6 +246,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         }
     };
     private int mAcId;
+    private DownloadManager manager;
 
     public static class VideoDetailsRequest extends FastJsonRequest<Video> {
         public VideoDetailsRequest(int acId, Listener<Video> listener, ErrorListener errorListner) {
@@ -278,11 +289,31 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         case R.id.play_btn:
             onPartClick(mVideo.episodes.get(0));
             break;
+        case R.id.part_overlow:
+            PopupMenu menu = new PopupMenu(v.getContext(), v);
+            menu.inflate(R.menu.menu_details_download);
+            tag = ((View)v.getParent()).getTag();
+            menu.setOnMenuItemClickListener(new OnDownloadMenuClick((VideoPart) tag));
+            menu.show();
+            break;
         default:
             break;
         }
     }
-
+    private class OnDownloadMenuClick implements OnMenuItemClickListener{
+        VideoPart mPart;
+        public OnDownloadMenuClick(VideoPart part){
+            mPart = part;
+        }
+        @Override
+        public boolean onMenuItemClick(MenuItem arg0) {
+            if(arg0.getItemId() == R.id.menu_download){
+                startDownload(mPart);
+            }
+            return false;
+        }
+        
+    }
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.details, menu);
@@ -305,6 +336,42 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         return super.onCreateOptionsMenu(menu);
     }
 
+    public void startDownload(final VideoPart part) {
+        if(manager==null) manager = AcApp.getDownloadManager();
+        if(manager.getProvider().isPartDownloaded(part))
+            Toast.makeText(getApplicationContext(), "已下载", 0).show();
+        else
+            download(part);
+    }
+
+    private void download(final VideoPart part) {
+        Log.i("D", "start download:::"+part.name);
+        ResolverType type = ResolverType.valueOf(part.type.toUpperCase());
+        if(type == null){
+            Toast.makeText(getApplicationContext(), getString(R.string.source_type_not_support_yet), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Resolver resolver = type.getResolver(part.sourceId);
+        resolver.resolveAsync(this);
+        int resolution = Integer.parseInt(AcApp.getString(getString(R.string.key_resolution_mode), "1"));
+        if(resolution < BaseResolver.RESOLUTION_HD2) resolution = BaseResolver.RESOLUTION_HD2;
+        ((BaseResolver) resolver).setResolution(resolution);
+        resolver.setOnResolvedListener(new OnResolvedListener() {
+            @Override
+            public void onResolved(Resolver resolver) {
+                MediaList list = resolver.getMediaList();
+                if(list == null){
+                    Toast.makeText(getApplicationContext(), getString(R.string.parsing_failed), Toast.LENGTH_SHORT).show();
+                }else{
+                    part.segments = list.toSegments();
+                    DownloadEntry entry = new DownloadEntry(String.valueOf(mAcId), mVideo.name, part);
+                    manager.download(entry);
+                    Toast.makeText(getApplicationContext(), String.format("ac%d - %s已加到下载队列",mAcId,part.name), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -322,6 +389,9 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
             return true;
         case R.id.action_comment:
             CommentsActivity.start(this, mAcId);
+            return true;
+        case R.id.menu_download:
+            startActivity(new Intent(this, DownloadManActivity.class));
             return true;
         default:
             return super.onOptionsItemSelected(item);

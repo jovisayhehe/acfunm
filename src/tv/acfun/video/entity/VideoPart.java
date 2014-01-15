@@ -16,6 +16,8 @@
 
 package tv.acfun.video.entity;
 
+import java.util.List;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -36,7 +38,10 @@ public class VideoPart implements Parcelable{
     public String sourceId;
     public String type;
     public String commentId;
+    public List<VideoSegment> segments;
     
+    public boolean isDownloaded;
+    public boolean isDownloading;
     @Override
     public int describeContents() {
         return 0;
@@ -48,7 +53,8 @@ public class VideoPart implements Parcelable{
         dest.writeString(sourceId);
         dest.writeString(type);
         dest.writeString(commentId);
-        
+        dest.writeList(segments);
+        dest.writeInt(isDownloaded?1:0);
     }
     public static final Parcelable.Creator<VideoPart> CREATOR = new Creator<VideoPart>() {
         @Override
@@ -65,7 +71,32 @@ public class VideoPart implements Parcelable{
             part.sourceId = source.readString();
             part.type = source.readString();
             part.commentId = source.readString();
+            part.segments = source.readArrayList(getClass().getClassLoader());
+            part.isDownloaded = source.readInt() == 1;
             return part;
         }
     };
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((sourceId == null) ? 0 : sourceId.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        return result;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        VideoPart other = (VideoPart) obj;
+        if (sourceId == null) {
+            if (other.sourceId != null) return false;
+        } else if (!sourceId.equals(other.sourceId)) return false;
+        if (type == null) {
+            if (other.type != null) return false;
+        } else if (!type.equals(other.type)) return false;
+        return true;
+    }
+    
 }

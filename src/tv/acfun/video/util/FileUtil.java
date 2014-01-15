@@ -106,9 +106,16 @@ public class FileUtil {
      * @return
      */
     public static String getUrlExt(String url){
+        return getUrlExt(url,".mp4");
+    }
+    /**
+     *   "/" ~ "?"之间的".xxx"
+     * @param url
+     * @return defValue if not found ext
+     */
+    public static String getUrlExt(String url, String defValue){
         
         if (!TextUtils.isEmpty(url)) {
-//            int start = url.lastIndexOf('.');
             int start = url.lastIndexOf('/');
             int end = url.lastIndexOf('?');
             end = end <= start ? url.length() : end;
@@ -124,7 +131,7 @@ public class FileUtil {
             }
             
         }
-        return ".jpg";
+        return defValue;
     }
     
     public static String guessVideoMimetype(String ext){

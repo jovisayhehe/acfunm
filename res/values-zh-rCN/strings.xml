@@ -71,4 +71,11 @@
     <string name="comment_font_size">评论字体大小</string>
     <string name="action_comment">评论</string>
     <string name="search_result">找到%d条数据</string>
+    <string name="no_download">O(∩_∩)O 没有下载项~</string>
+	<string name="nosdcard">没有找到外部存储卡！</string>
+	<string name="menu_download_delete">删除</string>
+	<string name="menu_download_resume">继续</string>
+	<string name="menu_download_pause">暂停</string>
+	<string name="menu_select_all">全选</string>
+	<string name="menu_downlod">下载</string>
 </resources>

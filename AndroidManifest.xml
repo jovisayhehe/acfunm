@@ -49,14 +49,17 @@
             android:name="tv.acfun.video.PlayerActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="sensorLandscape" />
-
+ 		<activity
+            android:name="tv.acfun.video.DownloadManActivity"
+            android:configChanges="orientation|screenSize"
+            />
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="521d6ae356240bd04f0569ac" />
         <meta-data
             android:name="UMENG_CHANNEL"
             android:value="GoogePlay" />
-
+		<service android:name="tv.acfun.video.DownloadService" android:label="Acfun DownloadService"/>
         <service
             android:name="com.umeng.common.net.DownloadingService"
             android:exported="true"

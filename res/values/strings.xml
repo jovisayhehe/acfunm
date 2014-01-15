@@ -48,7 +48,12 @@
         <item>Large</item>
         <item>Huge</item>
     </string-array>
-    <string name="buffering">Loading...</string>
+    <string-array name="download_state">
+        <item>所有</item>
+        <item>下载中</item>
+        <item>已下载</item>
+    </string-array>
+<string name="buffering">Loading...</string>
     <string name="source_type_not_support_yet">"The type of source isn't support yet."</string>
     <string name="url_area63">http://pan.baidu.com/s/1pJHcqLl</string>
     <string name="key_clear_cache">clear_cache</string>
@@ -107,4 +112,12 @@
     <string name="comment_font_size">Font size of comment</string>
     <string name="action_comment">Comment</string>
     <string name="search_result">%d items found.</string>
+    <string name="nosdcard">SD card not found.</string>
+    <string name="no_download">O(∩_∩)O 没有下载项~</string>
+    <string name="menu_download_delete">Delete</string>
+	<string name="menu_download_resume">Continue</string>
+	<string name="menu_download_pause">Pause</string>
+	<string name="menu_select_all">Select All</string>
+	<string name="menu_downlod">Download</string>
+	<string name="download_manager">下载管理</string>
 </resources>

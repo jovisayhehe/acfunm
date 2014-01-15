@@ -3,6 +3,8 @@ package tv.acfun.video.player;
 import java.util.ArrayList;
 import java.util.List;
 
+import tv.acfun.video.entity.VideoSegment;
+
 import android.content.Context;
 
 public final class MediaList {
@@ -81,5 +83,35 @@ public final class MediaList {
 
     public interface OnResolvedListener{
         void onResolved(Resolver resolver);
+    }
+    /**
+     * 转换为下载用的Segment
+     * @return
+     */
+    public List<VideoSegment> toSegments(){
+        List<VideoSegment> segments = new ArrayList<VideoSegment>(size());
+        for(MediaSegment ms : mSegmentList){
+            VideoSegment vs = new VideoSegment();
+            vs.url = ms.mUrl;
+            vs.stream = ms.mUrl;
+            vs.duration = ms.mDuration;
+            vs.num = ms.mOrder;
+            vs.size = ms.mSize;
+            segments.add(vs);
+        }
+        return segments;
+    }
+
+    public static MediaList createFromeSegments(List<VideoSegment> segments) {
+        MediaList list = new MediaList();
+        for(VideoSegment vs : segments){
+            MediaSegment ms = new MediaSegment();
+            ms.mUrl = vs.url;
+            ms.mDuration = vs.duration;
+            ms.mSize = vs.size;
+            list.add(ms);
+        }
+        
+        return list;
     }
 }

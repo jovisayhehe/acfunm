@@ -80,7 +80,7 @@ public class HomeFragment extends RefreshActionGridFragment {
         public void onResponse(List<HomeCat> response) {
             hideRefreshAnimation();
             if (mAdapter == null) {
-                mAdapter = new HomeAdapter(getActivity().getApplicationContext(), response);
+                mAdapter = new HomeAdapter(mActivity.getApplicationContext(), response);
             } else {
                 ((HomeAdapter) mAdapter).setData(response);
             }

@@ -35,6 +35,7 @@ import tv.ac.fun.R;
 import tv.acfun.video.entity.VideoPart;
 import tv.acfun.video.player.MediaController;
 import tv.acfun.video.player.MediaController.MediaPlayerControl;
+import tv.acfun.video.player.MediaList;
 import tv.acfun.video.player.MediaList.OnResolvedListener;
 import tv.acfun.video.player.MediaList.Resolver;
 import tv.acfun.video.player.MediaSegmentPlayer;
@@ -120,7 +121,8 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     OnResolvedListener OnResolved = new OnResolvedListener() {
         @Override
         public void onResolved(Resolver resolver) {
-            if (resolver.getMediaList() != null && resolver.getMediaList().size()>0) {
+            mList = resolver.getMediaList();
+            if (mList != null && mList.size()>0) {
                 mProgressText.setText(mProgressText.getText() 
                         + getString(R.string.video_segments_parsing_success, resolver.getMediaList().size() )
                         +"\n" 
@@ -324,6 +326,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     };
     private MediaController mMediaController;
     private Handler mHandler;
+    private MediaList mList;
 
     private void addDanmakusRequest() {
         String url = "http://comment.acfun.tv/" + mVideo.commentId + ".json";
@@ -382,7 +385,8 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
                 +"\n"
                 +getString(R.string.player_type,mEnabledHW?"HW":"SW")
                 );
-        mVideoView.setMediaList(mResolver.getMediaList());
+
+        mVideoView.setMediaList(mList);
         mVideoView.start();
     }
 
@@ -403,6 +407,11 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     }
 
     private void resolveVideos() {
+        if(mVideo.isDownloaded){
+            mList = MediaList.createFromeSegments(mVideo.segments);
+            addDanmakusRequest();
+            return;
+        }
         String sourceType = mVideo.type;
         ResolverType type = null;
         try {

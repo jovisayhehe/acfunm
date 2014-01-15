@@ -56,8 +56,11 @@ public abstract class BaseArrayAdapter<T> extends BaseAdapter {
     }
 
     public void setData(List<T> data) {
-        clear();
-        mItems.addAll(data);
+        if(mItems == null) mItems =data;
+        else{
+            clear();
+            mItems.addAll(data);
+        }
     }
 
     public void clear() {
