@@ -30,6 +30,8 @@ import tv.acfun.video.util.TextViewUtils;
 import tv.acfun.video.util.net.Connectivity;
 import tv.acfun.video.util.net.CustomUARequest;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -108,6 +110,18 @@ public class HomeFragment extends RefreshActionGridFragment {
     @Override
     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
         Video o = ((HomeAdapter) mAdapter).getVideoItem(arg2);
+        boolean isArticleChannel = ((HomeActivity)mActivity).isArticleChannel(o.channelId);
+        if(isArticleChannel){
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("ac://ac"+o.acId));
+                startActivity(intent);
+            } catch (Exception e) {
+                e.printStackTrace();
+                AcApp.area63Alert(mActivity);
+            }
+            return;
+        }
         DetailsActivity.start(getActivity(), o);
     }
 
