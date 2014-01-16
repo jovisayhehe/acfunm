@@ -2,11 +2,7 @@ Acfun Video for Android
 ====
 >这是 Acfun 视频专版，一个全新的客户端。
 
->无聊之作，为“探索”Android Pad开发的一个实验品。 
-
-旧版 repo: <https://github.com/jovisayhehe/acfunm>
-
-旧版 APK: <https://play.google.com/store/apps/details?id=tv.ac.fun> 
+旧版请 `checkout commit 084bac541a1d6316a71f3ab7bbb4b4440fb5f969`
 
 欢迎加入 __Google+ 社群__，参与讨论：<https://plus.google.com/communities/109973498842592117118>
 
@@ -18,3 +14,6 @@ Dependencies
 - Volley 
 - VitamioBundle <https://github.com/yixia/VitamioBundle>
 - StickyGridHeaders <https://github.com/TonicArtos/StickyGridHeaders>
+- PagerSlidingTabStrip <https://github.com/astuetz/PagerSlidingTabStrip>
+- FadingActionBar <https://github.com/ManuelPeinado/FadingActionBar>
+- DanmakuFlameMaster <https://github.com/ctiao/DanmakuFlameMaster>
