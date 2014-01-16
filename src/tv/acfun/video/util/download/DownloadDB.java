@@ -17,7 +17,7 @@ public interface DownloadDB {
     // =============================
     // constants
     // =============================
-    int    VERSION         = 3;
+    int    VERSION         = 4;
     String DOWNLOAD_DB     = "download.db";
     String DOWNLOAD_TABLE  = "downloads";
     /** download job's id*/
