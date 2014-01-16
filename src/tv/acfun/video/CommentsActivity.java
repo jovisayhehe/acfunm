@@ -37,7 +37,6 @@ import tv.acfun.video.widget.EmotionView;
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
@@ -48,6 +47,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.text.ClipboardManager;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -401,7 +401,7 @@ public class CommentsActivity extends ActionBarActivity implements OnClickListen
         ClipboardManager ma = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
             ClipData text = ClipData.newHtmlText(c.userName, c.content, c.content);
-            ma.setPrimaryClip(text);
+            ((android.content.ClipboardManager) ma).setPrimaryClip(text);
         }else{
             ma.setText(c.content);
         }

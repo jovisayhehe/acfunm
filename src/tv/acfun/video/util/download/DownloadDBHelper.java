@@ -36,7 +36,7 @@ public class DownloadDBHelper extends SQLiteOpenHelper {
                 + COLUMN_SUBTITLE + " VARCHAR," 
                 + COLUMN_UA + " TEXT,"
                 + COLUMN_MIME + " VARCHAR(20),"
-                + COLUMN_DURATION + " INTEGER"
+                + COLUMN_DURATION + " INTEGER,"
                 + COLUMN_CID +" VARCHAR"
                 + ");");
 
