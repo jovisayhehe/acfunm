@@ -390,7 +390,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         case R.id.action_comment:
             CommentsActivity.start(this, mAcId);
             return true;
-        case R.id.menu_download:
+        case R.id.action_download_manager:
             startActivity(new Intent(this, DownloadManActivity.class));
             return true;
         default:

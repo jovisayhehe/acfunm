@@ -8,7 +8,7 @@
         android:id="@android:id/text1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="这个功能正在开发中。\n催促作者快点完成(σﾟ∀ﾟ)σ\n请点——"
+        android:text="这个功能正在开发中。。。\n加入稍后观看后可以在WIFI网络下自动缓存视频。。\n催促作者快点完成(σﾟ∀ﾟ)σ\n请点——"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
 	<Button
