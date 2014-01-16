@@ -1,0 +1,17 @@
+<resources>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">8dp</dimen>
+    <dimen name="item_horizontalSpacing">16dp</dimen>
+    <dimen name="item_verticalSpacing">8dp</dimen>
+    <dimen name="text_horizontal_padding">8dp</dimen>
+    <dimen name="item_width">130dp</dimen>
+	<dimen name="item_height">95dp</dimen>
+	<dimen name="item_cat_width">120dp</dimen>
+	<dimen name="item_cat_height">90dp</dimen>
+	<dimen name="drawer_width">200dp</dimen>
+	<dimen name="emotions_height">200dp</dimen>
+    <dimen name="emotions_column_width">48dp</dimen>
+    <dimen name="item_text_size">14sp</dimen>
+</resources>

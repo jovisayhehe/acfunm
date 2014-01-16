@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="low_d">0</integer>
+    <integer name="high_d" >1</integer>
+    <integer name="high_d_2">2</integer>
+    <integer name="high_d_3">3</integer>
+    <integer name="max_floors_w">6</integer>
+</resources>

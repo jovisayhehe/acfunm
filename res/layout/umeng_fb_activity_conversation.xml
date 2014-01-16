@@ -1,0 +1,48 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <ListView
+        android:id="@+id/umeng_fb_reply_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/umeng_fb_reply_content_wrapper"
+        android:layout_alignParentTop="true"
+        android:cacheColorHint="@android:color/transparent"
+        android:choiceMode="none"
+        android:divider="@null"
+        android:listSelector="@android:color/transparent"
+        android:padding="16dp"
+        android:transcriptMode="alwaysScroll" />
+
+    <LinearLayout
+        android:id="@+id/umeng_fb_reply_content_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/comments_bar_backgroud"
+        android:gravity="center_vertical"
+        android:minHeight="48dp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/umeng_fb_reply_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/comment_hint"
+            android:inputType="textNoSuggestions|textMultiLine"
+            android:maxLines="5" />
+
+        <ImageButton
+            android:id="@+id/umeng_fb_send"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:src="@drawable/ic_action_send" />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#000"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    <!-- <tv.acfun.video.player.VideoView
+        android:id="@+id/video"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center" /> -->
+        <ViewStub 
+            android:id="@+id/view_stub"
+            android:inflatedId="@+id/video"
+            android:layout="@layout/video_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            />
+    <master.flame.danmaku.ui.widget.DanmakuSurfaceView
+        android:id="@+id/danmakus"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+	<TextView 
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/progress_text"
+        android:textColor="#fff"
+        android:textSize="14sp"
+        android:layout_gravity="bottom"
+        />
+	<View 
+	    android:id="@+id/holder"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    />
+	<RelativeLayout 
+	    android:id="@+id/ads"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="center"
+	    android:visibility="gone"
+	    >
+	  <com.google.ads.AdView
+         xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+         android:id="@+id/ad"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         ads:adSize="IAB_MRECT"
+         android:layout_gravity="center_horizontal"
+         ads:adUnitId="a152c17d82486e0"
+         ads:loadAdOnCreate="true" />
+	    <ImageButton 
+	        android:src="@drawable/ic_clear"
+	        android:id="@+id/close"
+	        android:layout_width="40dp"
+	        android:layout_height="40dp"
+	        android:background="#000"
+	        />
+	</RelativeLayout>
+        
+    <LinearLayout
+        android:id="@+id/buffering_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:orientation="vertical"
+         >
+ 		<ProgressBar
+            android:id="@+id/buffering_progress"
+            style="@style/Widget.ProgressBar.Large.Styled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/buffering_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="0"
+            android:scaleType="centerInside"
+            android:singleLine="true"
+            android:textColor="#fff"
+            android:text="@string/buffering"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+</FrameLayout>

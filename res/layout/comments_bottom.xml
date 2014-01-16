@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:layout_gravity="bottom"
+    android:background="@drawable/background_tab" >
+
+    <LinearLayout
+        android:id="@+id/send_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="48dp"
+        android:orientation="horizontal" >
+
+        <ImageButton
+            android:id="@+id/comments_emotion_btn"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:src="@drawable/smiley" />
+
+        <EditText
+            android:id="@+id/comments_edit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/post_comment"
+            android:inputType="textNoSuggestions|textMultiLine"
+            android:maxLines="5" />
+
+        <ImageButton
+            android:id="@+id/comments_send_btn"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:src="@drawable/social_send_now" />
+    </LinearLayout>
+
+    <GridView
+        android:id="@+id/emotions"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/emotions_height"
+        android:layout_below="@id/send_bar"
+        android:columnWidth="@dimen/emotions_column_width"
+        android:horizontalSpacing="8dp"
+        android:listSelector="?attr/selectableItemBackground"
+        android:numColumns="auto_fit"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="8dp"
+        android:visibility="gone" />
+
+</RelativeLayout>

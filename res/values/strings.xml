@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">AcFun</string>
+    <string name="drawer_open">AcFun Danmakus Video</string>
+    <string name="drawer_close">@string/app_name</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="title_home">HOME</string>
+    <string name="title_user_center">USER</string>
+    <string name="title_categories">CATEGORIES</string>
+	<string name="subscribe">Subscribe</string>
+    <string name="unsubscribe">Unsubscribe</string>
+    <string name="subscribed">Subscribed</string>
+    <string name="logout">Sign out</string>
+    <string name="login">Sign in</string>
+    <string name="channel_not_public">"This channel isn't public"</string>
+    <string-array name="titles">
+        <item>Home</item>
+        <item>What\'s hot</item>
+        <item>Subscriptions</item>
+        <item>Favorites</item>
+        <item>History</item>
+        <item>Watch later</item>
+        <item>Search</item>
+        <item>Channels</item>
+    </string-array>
+    
+    <string-array name="details_titles">
+        <item>Details</item>
+        <item>Parts</item>
+        <item>Comments</item>
+    </string-array>
+    
+     <string-array name="pref_resolution_entries">
+        <item>流畅</item>
+        <item>高清</item>
+        <item>超清</item>
+    </string-array>
+     <string-array name="pref_resolution_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="title_sizes">
+        <item>Small</item>
+        <item>Normal</item>
+        <item>Large</item>
+        <item>Huge</item>
+    </string-array>
+    <string-array name="download_state">
+        <item>所有</item>
+        <item>下载中</item>
+        <item>已下载</item>
+    </string-array>
+<string name="buffering">Loading...</string>
+    <string name="source_type_not_support_yet">"The type of source isn't support yet."</string>
+    <string name="url_area63">http://pan.baidu.com/s/1pJHcqLl</string>
+    <string name="key_clear_cache">clear_cache</string>
+    <string name="key_update">update</string>
+    <string name="key_about">about</string>
+    <string name="key_rating">rating</string>
+    <string name="key_feedback">feedback</string>
+    <string name="key_donate">donate</string>
+    <string name="key_hw_decode">hw_decode</string>
+    <string name="key_dm_cache">dm_cache</string>
+    <string name="key_chroma_565">video_chroma_565</string>
+    <string name="video_chroma_565">Select 16bit color</string>
+    <string name="dm_cache">Danmaku drawing cache</string>
+    <string name="hw_decode">Hardware decoder</string>
+    <string name="clear_cache">Clear cache</string>
+    <string name="update">Update</string>
+    <string name="donate">Donate!</string>
+    <string name="others">Others</string>
+    <string name="about">About</string>
+    <string name="wifi_only">WIFI Only</string>
+    <string name="rating">Rating!</string>
+    <string name="feed_back">Feedback</string>
+    <string name="about_url">http://yrom.sinaapp.com/faq.html</string>
+    <string name="key_resolution_mode">resolution_mode</string>
+    <string name="resolution">Definition Preference</string>
+    <string name="danmakus_loaded">Danmakus loaded.</string>
+    <string name="danmakus_load_failed">Danmakus failed to load!</string>
+    <string name="danmakus_downloaded">"Danmakus' file downloaded.\nStart parsing..."</string>
+    <string name="danmakus_download_failed">"Danmakus' file failed to load."</string>
+    <string name="parsing_failed">Failed to parsing!</string>
+    <string name="video_buffering">Video buffering...</string>
+    <string name="video_segments_paring">Video segments parsing...</string>
+    <string name="video_segments_parsing_success">Done. %d segments found.</string>
+    <string name="danmakus_buffering">Danmakus buffering...</string>
+    <string name="failed">Failed!</string>
+    <string name="player_type">"Type of player: %s"</string>
+    <string name="enable_danmaku_drawing_cache">"Enable danmaku drawing cache: %b"</string>
+    <string name="hide_requote">Quote hidden.</string>
+    <string name="comment_hint">Bu tucao bu shufusiji.</string>
+    <string name="user_name">User name</string>
+    <string name="password">Password</string>
+    <string name="signin">Sign In</string>
+    <string name="cpu_not_support">请手动下载解码器到SD卡根目录下..</string>
+    <string name="action_fav">Favorite</string>
+    <string name="post_comment">Comment</string>
+    <string name="time_out">Request time out.</string>
+    <string name="posting_comment">Posting..</string>
+    <string name="comment_success">Success! </string>
+    <string name="comment_failed">Fail to comment! </string>
+    <string name="reloading">Tap to reload.</string>
+    <string name="no_comment_yet">No comment yet.</string>
+    <string name="sign_in_first">请先登录。</string>
+    <string name="no_comment">No content</string>
+    <string name="comment_not_enough">Not enough.</string>
+    <string name="action_font_size">Font size</string>
+    <string name="comment_font_size">Font size of comment</string>
+    <string name="action_comment">Comment</string>
+    <string name="search_result">%d items found.</string>
+    <string name="nosdcard">SD card not found.</string>
+    <string name="no_download">O(∩_∩)O 没有下载项~</string>
+    <string name="menu_download_delete">Delete</string>
+	<string name="menu_download_resume">Continue</string>
+	<string name="menu_download_pause">Pause</string>
+	<string name="menu_select_all">Select All</string>
+	<string name="menu_downlod">Download</string>
+	<string name="download_manager">下载管理</string>
+</resources>

@@ -1,0 +1,51 @@
+<resources>
+
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+    <style name="AppBaseTheme" parent="Theme.Styled">
+        <item name="android:windowBackground">@color/bg</item>
+        
+    </style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:listSelector">@drawable/selectable_background_styled</item>
+        <item name="android:progressBarStyleLarge">@style/Widget.ProgressBar.Large.Styled</item>
+    </style>
+    
+<style name="Widget.ProgressBar.Large.Styled"  parent="android:Widget.ProgressBar.Large">
+        <item name="android:indeterminateDrawable">@drawable/loading_animation</item>
+        <item name="android:gravity">center</item>
+        <item name="android:minWidth">100dip</item>
+        <item name="android:maxWidth">100dip</item>
+        <item name="android:minHeight">100dip</item>
+        <item name="android:maxHeight">100dip</item>
+    </style>
+        
+    <style name="AppTheme.TranslucentActionBar" >
+        <item name="android:actionBarStyle">@style/ActionBar.Transparent</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="actionBarStyle">@style/ActionBar.Transparent</item>
+        <item name="windowActionBarOverlay">true</item>
+    </style>
+    <style name="AppTheme.NoActionBar" >
+        <item name="windowActionBar">false</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+    <style name="AppTheme.NoActionBar.FullScreen" >
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+    <style name="AppTheme.NoActionBar.TranslucentDecor">
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+    <style name="ActionBar.Transparent" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="background">@android:color/transparent</item>
+    </style>
+</resources>

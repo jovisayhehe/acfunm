@@ -1,0 +1,12 @@
+<resources>
+	<dimen name="activity_horizontal_margin">16dp</dimen>
+	<dimen name="item_horizontalSpacing">16dp</dimen>
+	<dimen name="item_verticalSpacing">16dp</dimen>
+	<dimen name="text_horizontal_padding">16dp</dimen>
+	<dimen name="item_cat_width">160dp</dimen>
+	<dimen name="item_cat_height">110dp</dimen>
+	<dimen name="item_width">200dp</dimen>
+	<dimen name="item_height">120dp</dimen>
+	<dimen name="drawer_width">280dp</dimen>
+	<dimen name="item_text_size">16sp</dimen>
+</resources>
