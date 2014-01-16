@@ -12,7 +12,6 @@
         android:singleLine="true"
         android:ellipsize="marquee"
         android:layout_marginRight="20dip"
-        android:textColor="@color/text_color_selector"
         android:textSize="16sp" />
 
     <TextView
@@ -37,7 +36,6 @@
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="@color/main_color_light"
             android:textSize="13sp" >
         </TextView>
 
@@ -58,7 +56,6 @@
 
     <CheckBox
         android:id="@+id/download_checked"
-        style="@style/ACCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:focusable="false"

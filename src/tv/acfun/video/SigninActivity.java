@@ -1,0 +1,135 @@
+package tv.acfun.video;
+
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.HashMap;
+
+import org.apache.commons.httpclient.HttpException;
+
+import tv.ac.fun.R;
+import tv.acfun.video.db.DB;
+import tv.acfun.video.entity.User;
+import tv.acfun.video.util.MemberUtils;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
+
+import com.alibaba.fastjson.JSONException;
+import com.umeng.analytics.MobclickAgent;
+
+public class SigninActivity extends Activity {
+    public static final int REQUEST_SIGN_IN = 1;
+    private EditText mNameView;
+    private EditText mPwdView;
+
+    public static Intent createIntent(Context pkgContext) {
+        return new Intent(pkgContext, SigninActivity.class);
+    }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_signin);
+        
+        mNameView = (EditText) findViewById(R.id.user_name);
+        
+        mPwdView = (EditText) findViewById(R.id.password);
+        final View btn = findViewById(R.id.btn_signin);
+        btn.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                if(mNameView.getText().length() == 0 || mPwdView.getText().length() == 0){
+                    mNameView.setError("用户名和密码不能为空！");
+                }else
+                    new LoginTask().execute();
+//                setResult(RESULT_OK);
+//                finish();
+            }
+        });
+        mPwdView.setOnEditorActionListener(new OnEditorActionListener() {
+            
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER){
+                    InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+                    btn.performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
+        
+    }
+    private class LoginTask extends AsyncTask<Void, Void, Boolean>{
+        private String response;
+        private User user;
+        private ProgressDialog dialog;
+        @Override
+        protected void onPreExecute() {
+            
+            dialog = new ProgressDialog(SigninActivity.this);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.setMessage("登录...");
+            dialog.show();
+        }
+        
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            
+            try {
+                HashMap<String, Object> map = MemberUtils.login(mNameView.getText().toString(), mPwdView.getText().toString());
+                if((Boolean)map.get("success")){
+                    user = (User) map.get("user");
+                    user.savedTime = System.currentTimeMillis();
+                    new DB(getApplicationContext()).saveUser(user);
+                    
+                    return true;
+                }else{
+                    response ="错误: "+map.get("result").toString();
+                }
+            } catch (HttpException e) {
+                e.printStackTrace();
+                response = "错误: 请检查网络连接";
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+                response = "错误: 请检查网络是否通畅";
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+                response = "错误: 登录失败";
+            } 
+            
+            return false;
+        }
+        @Override
+        protected void onPostExecute(Boolean result) {
+            dialog.dismiss();
+            if(result.booleanValue()){
+                MobclickAgent.onEvent(SigninActivity.this, "sign_in");
+                Intent data = new Intent();
+                data.putExtra("user", user);
+                setResult(RESULT_OK, data);
+                finish();
+            }else{
+                mNameView.setError(response);
+                Toast.makeText(getApplicationContext(), response,0).show();
+            }
+            
+        }
+        
+    }
+    
+}

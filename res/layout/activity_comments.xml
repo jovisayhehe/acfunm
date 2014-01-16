@@ -1,41 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/content_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical" >
 
         <ListView
-            android:id="@android:id/list"
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:padding="4dp"
-            />
-
-        <TextView
-            android:id="@+id/time_out_text"
+	    	android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:paddingLeft="8dp"
+        	android:paddingRight="8dp"
+        	android:paddingTop="0dp"
+        	android:layout_above="@+id/comments_bar"
+        	android:listSelector="?android:attr/listSelector"
+            />
+        <TextView
+            android:id="@+id/time_out_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:gravity="center"
+            android:drawablePadding="8dp"
             android:text="@string/time_out"
-            android:textColor="@color/listselectable_pressed"
-            android:textSize="18sp"
-            android:visibility="gone" />
-
-        <include layout="@layout/comments_bottom" />
-    </LinearLayout>
+            android:textSize="16sp"
+            android:layout_centerInParent="true"
+            android:textColor="@color/error"
+             />
+        <include layout="@layout/comments_bottom" android:id="@+id/comments_bar" />
 
     <ProgressBar
-        android:id="@+id/time_progress"
-        android:layout_width="100dip"
-        android:layout_height="100dip"
-        android:layout_gravity="center"
-        android:indeterminateDrawable="@drawable/loading_animation"
+        android:id="@+id/progressBar"
+        style="@style/Widget.ProgressBar.Large.Styled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:visibility="gone" />
 
-</FrameLayout>
+</RelativeLayout>

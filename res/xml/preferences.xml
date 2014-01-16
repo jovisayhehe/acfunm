@@ -1,84 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen android:title="设置"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-   <!--  <PreferenceCategory android:title="操作"> -->
-        <Preference 
-            android:icon="@drawable/ic_discard"
-            android:title="清空图片缓存" 
-            android:key="clear_imgcache"
-            />
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/action_settings" >
+
+    <PreferenceCategory android:title="@string/action_settings" >
+        <Preference
+            android:key="@string/key_clear_cache"
+            android:title="@string/clear_cache" />
+
+        <Preference
+            android:key="@string/key_update"
+            android:title="@string/update" />
         <CheckBoxPreference 
-            android:icon="@drawable/ic_player"
-            android:title="播放器"
-            android:summaryOn="调用外部播放器"
-            android:summaryOff="不使用外部播放器"
-            android:key="ex_palyer" 
+            android:defaultValue="false"
+            android:summaryOn="如果播放异常请取消勾选"
+            android:key="@string/key_hw_decode"
+            android:title="@string/hw_decode" />
+        <CheckBoxPreference 
+            android:defaultValue="true"
+            android:summaryOn="如果弹幕播放失败请取消勾选"
+            android:key="@string/key_dm_cache"
+            android:title="@string/dm_cache" />
+        <CheckBoxPreference 
+            android:defaultValue="false"
+            android:summaryOff="如果视频全是马赛克请勾选"
+            android:key="@string/key_chroma_565"
+            android:title="@string/video_chroma_565" />
+        <ListPreference android:entries="@array/pref_resolution_entries"
+            android:key="@string/key_resolution_mode"
+            android:entryValues="@array/pref_resolution_values"
+            android:title="@string/resolution"
+            android:defaultValue="@integer/high_d"
             />
-<!--         <ListPreference
-            android:icon="@drawable/ic_grid"
-            android:title="主页内容显示模式"
-            android:key="home_display_mode"
-            android:entries="@array/pref_entries_home_display_mode"
-            android:entryValues="@array/pref_values_home_display_mode"
-            android:defaultValue="1"
-            android:dialogTitle="设置主页显示内容"
-            /> -->
-        <ListPreference
-            android:icon="@drawable/ic_video"
-            android:title="视频清晰度"
-            android:entries="@array/pref_entries_parse_mode"
-            android:entryValues="@array/pref_values_parse_mode"
-            android:key="parse_mode" 
-            android:defaultValue="0"
-            android:dialogTitle="设置视频清晰度"
-            />
-        <tv.avfun.view.SeekBarPreference
-            android:key="num_of_floor"
-            android:icon="@drawable/mode_article"
-	        android:title="评论最大楼层数"
-	        android:dialogMessage="按手机性能设置为滑动最流畅的一档"
-	        android:defaultValue="40"
-	        android:text="层"
-	        android:max="100"
-	        android:negativeButtonText="@null"
-            />
-            
-            
-            
-<!--     </PreferenceCategory> -->
-     <PreferenceCategory android:title="测试功能">
-         <CheckBoxPreference 
-            android:title="弹幕开关"
-            android:summaryOn="开启弹幕"
-            android:summaryOff="关闭弹幕"
-            android:key="danmaku_mode" 
-            />
- <!--         <Preference
-            android:icon="@drawable/ic_about"
-            android:title="关于"
-            android:key="about"
-            />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/others" >
         <Preference
-            android:icon="@drawable/social_share"
-            android:title="分享"
-            android:key="share"
-            android:summary="不把好东西分享给好♂友？"
-            />
+            android:key="@string/key_about"
+            android:title="@string/about" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/about_url" />
+        </Preference>
         <Preference
-            android:icon="@drawable/ic_rating_good"
-            android:title="点评"
-            android:key="comment"
-            android:summary="不值得5星好评吗？"
-            />
-        <Preference 
-            android:icon="@drawable/ic_email"
-            android:title="反(tu)馈(cao)"
-            android:key="feedback" />
-         <Preference 
-            android:icon="@drawable/ic_a"
-            android:title="A岛"
-            android:summary="一个充满A级爱情的地方"
-            android:key="hfun" />-->
-    </PreferenceCategory> 
-    
+            android:key="@string/key_rating"
+            android:title="@string/rating" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="market://details?id=tv.ac.fun" />
+        </Preference>
+        <Preference
+            android:key="@string/key_feedback"
+            android:title="@string/feed_back" />
+        <!-- <Preference
+            android:key="@string/key_donate"
+            android:summary="@string/buy_me_coffee"
+            android:title="@string/donate" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/donate_url" />
+        </Preference> -->
+    </PreferenceCategory>
+
 </PreferenceScreen>

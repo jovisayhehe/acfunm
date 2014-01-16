@@ -1,94 +1,51 @@
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources>
 
-    <style name="AcTheme" parent="@style/Theme.Sherlock.Light">
-        <!-- <item name="homeAsUpIndicator">@drawable/new_indicator</item>
-        <item name="android:homeAsUpIndicator">@drawable/new_indicator</item> -->
-        <item name="actionBarStyle">@style/ACActionBar</item>
-        <item name="android:actionBarStyle">@style/ACActionBar</item>
-
-     <!--    <item name="android:actionBarTabStyle">@style/ACTabStyle</item>
-        <item name="actionBarTabStyle">@style/ACTabStyle</item>
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+    <style name="AppBaseTheme" parent="Theme.Styled">
+        <item name="android:windowBackground">@color/bg</item>
         
-        <item name="android:actionBarTabBarStyle">@style/AcTabBarStyle</item>
-        <item name="actionBarTabBarStyle">@style/AcTabBarStyle</item> -->
-
-        <item name="android:actionBarItemBackground">@drawable/selectable_background</item>
-        <item name="actionBarItemBackground">@drawable/selectable_background</item>
-        <item name="actionBarTabTextStyle">@style/AcTabBarText</item>
-        <item name="android:actionBarTabTextStyle">@style/AcTabBarText</item>
-        <item name="android:editTextStyle">@style/ACEditTextStyle</item>
-        <item name="android:windowBackground">@color/main_win_bg</item>
-        <item name="android:checkboxStyle">@style/ACCheckBox</item>
-        <item name="android:radioButtonStyle">@style/ACRadioButton</item>
-        <item name="spinnerItemStyle">@style/spinnerItemStyle</item>
-        <item name="vpiTabPageIndicatorStyle">@style/AcTabPageIndicator</item>
-    </style>
-    <style name="AcTabBarStyle" parent="Widget.Sherlock.Light.ActionBar.TabBar">
-        <item name="android:dividerPadding">0dp</item>
-        <item name="android:showDividers">middle</item>
-        <item name="android:divider">@null</item>
-    </style>
-	<style name="AcTabPageIndicator" parent="Widget.TabPageIndicator">
-        <item name="android:background">@drawable/tab_indicator_ab</item>
-        <item name="android:textAppearance">@style/AcTabPageIndicator.Text</item>
-        <item name="android:textColor">#333</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:gravity">center_horizontal</item>
-        <item name="android:paddingLeft">16dp</item>
-        <item name="android:paddingRight">16dp</item>
-        <item name="android:fadingEdge">horizontal</item>
-        <item name="android:fadingEdgeLength">8dp</item>
-    </style>
-    <style name="AcTabPageIndicator.Text" parent="android:TextAppearance">
-        <item name="android:typeface">monospace</item>
-    </style>
-    <style name="ACTabStyle" parent="Widget.Sherlock.Light.ActionBar.TabView">
-        <item name="android:background">@drawable/tab_indicator_ab</item>
-        <item name="background">@drawable/tab_indicator_ab</item>
     </style>
 
-    <style name="OrangeListView" parent="@style/Widget.Sherlock.ListView.DropDown">
-        <item name="android:listSelector">@drawable/selectable_background</item>
-        <item name="android:divider">@drawable/listview_divider</item>
-        <item name="android:dividerHeight">2px</item>
-    </style>
-
-    <style name="ACSpinnerStyle" parent="android:Widget.Spinner">
-        <item name="android:background">@drawable/action_bar_spinner</item>
-        <item name="android:dropDownSelector">@drawable/selectable_background</item>
-    </style>
-
-    <style name="AcTabBarText" parent="Widget.Sherlock.Light.ActionBar.TabText">
-        <item name="android:textSize">14sp</item>
-    </style>
-
-    <style name="ACActionBar" parent="@style/Widget.Sherlock.Light.ActionBar">
-        <item name="android:background">@drawable/ab_transparent</item>
-        <item name="background">@drawable/ab_transparent</item>
-    </style>
-
-    <style name="ACEditTextStyle" parent="android:Widget.EditText">
-        <item name="android:background">@drawable/edit_text_holo_light</item>
-        <item name="android:textColor">#000000</item>
-    </style>
-
-    <style name="ACCheckBox" parent="android:Widget.CompoundButton.CheckBox">
-        <item name="android:button">@drawable/btn_check_holo_light</item>
-    </style>
-
-    <style name="ACRadioButton" parent="android:Widget.CompoundButton.RadioButton">
-        <item name="android:button">@drawable/btn_radio_holo_light</item>
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:listSelector">@drawable/selectable_background_styled</item>
+        <item name="android:progressBarStyleLarge">@style/Widget.ProgressBar.Large.Styled</item>
     </style>
     
-    <style name="spinnerItemStyle" parent="@style/Widget.Sherlock.TextView.SpinnerItem">
-        <item name="android:paddingLeft">4dp</item>
-        <item name="android:paddingRight">4dp</item>
+<style name="Widget.ProgressBar.Large.Styled"  parent="android:Widget.ProgressBar.Large">
+        <item name="android:indeterminateDrawable">@drawable/loading_animation</item>
+        <item name="android:gravity">center</item>
+        <item name="android:minWidth">100dip</item>
+        <item name="android:maxWidth">100dip</item>
+        <item name="android:minHeight">100dip</item>
+        <item name="android:maxHeight">100dip</item>
     </style>
-    <style name="Transparent" parent="@style/Theme.Sherlock.Light.NoActionBar">
-        <item name="android:windowBackground">@color/half_transparent</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>   
+        
+    <style name="AppTheme.TranslucentActionBar" >
+        <item name="android:actionBarStyle">@style/ActionBar.Transparent</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="actionBarStyle">@style/ActionBar.Transparent</item>
+        <item name="windowActionBarOverlay">true</item>
     </style>
-   
-    
+    <style name="AppTheme.NoActionBar" >
+        <item name="windowActionBar">false</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+    <style name="AppTheme.NoActionBar.FullScreen" >
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+    <style name="AppTheme.NoActionBar.TranslucentDecor">
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+    <style name="ActionBar.Transparent" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="background">@android:color/transparent</item>
+    </style>
 </resources>

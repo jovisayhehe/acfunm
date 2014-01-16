@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ViewStub
+        android:id="@+id/view_stub"
+        android:inflatedId="@+id/pager"
+        android:layout="@layout/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="100dip"
+        android:layout_height="100dip"
+        android:layout_gravity="center"
+        android:indeterminateDrawable="@drawable/loading_animation" />
+
+</FrameLayout>

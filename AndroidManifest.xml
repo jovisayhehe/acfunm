@@ -1,59 +1,73 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="tv.ac.fun"
+    android:versionCode="22"
+    android:versionName="1.2.6" >
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="tv.ac.fun" android:versionCode="15" android:versionName="1.1.5">  
-  <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="17"/>  
-  <uses-permission android:name="android.permission.INTERNET"/>  
-  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>  
-  <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>  
-  <uses-permission android:name="android.permission.READ_PHONE_STATE"/>  
-  <uses-permission android:name="android.permission.WAKE_LOCK"/>  
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>  
-  <application android:name="tv.avfun.app.AcApp" android:largeHeap="true" android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:logo="@drawable/ic_launcher" android:allowBackup="true" android:theme="@style/AcTheme"> 
-    <activity android:name="tv.avfun.SplashActivity" android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden|screenSize|screenLayout" android:theme="@style/Theme.Sherlock.NoActionBar" android:noHistory="true"> 
-      <intent-filter> 
-        <action android:name="android.intent.action.MAIN"/>  
-        <category android:name="android.intent.category.LAUNCHER"/> 
-      </intent-filter> 
-    </activity>  
-    <activity android:name="tv.avfun.MainActivity" android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"> 
-      <meta-data android:name="android.app.default_searchable" android:value="tv.avfun.SearchResultActivity"/> 
-    </activity>
-    <activity android:name="tv.avfun.OverlayActivity" android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden|screenSize|screenLayout" 
-        android:theme="@style/Transparent"
-        />  
-    <activity android:name="tv.avfun.SearchResultActivity" android:launchMode="singleTop" android:label="@string/title_activity_main"> 
-      <intent-filter> 
-        <action android:name="android.intent.action.SEARCH"/> 
-      </intent-filter>  
-      <meta-data android:name="android.app.searchable" android:resource="@xml/searchable"/> 
-    </activity>  
-    <activity android:name="tv.avfun.ChannelActivity" android:configChanges="orientation|screenSize"/>  
-    <activity android:name="tv.avfun.DetailActivity" android:screenOrientation="portrait" android:configChanges="orientation|screenSize" android:uiOptions="splitActionBarWhenNarrow"> 
-      <meta-data android:name="android.app.default_searchable" android:value="tv.avfun.SearchResultActivity"/>  
-      <intent-filter> 
-        <action android:name="android.intent.action.VIEW"/>  
-        <category android:name="android.intent.category.DEFAULT"/>  
-        <data android:scheme="av"/> 
-      </intent-filter> 
-    </activity>  
-    <activity android:name="tv.avfun.CommentsActivity" android:configChanges="orientation|screenSize"/>  
-    <activity android:name="tv.avfun.SettingsActivity"/>  
-    <activity android:name="tv.avfun.WebViewActivity" android:configChanges="orientation|screenSize"/>  
-    <activity android:name="tv.avfun.HistoryActivity"/>  
-    <activity android:name="tv.avfun.ImagePagerActivity"/>  
-    <activity android:name="tv.avfun.WebImageActivity" android:theme="@style/Theme.Sherlock.Light.DarkActionBar"/>  
-    <activity android:name="tv.avfun.PlayActivity" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" android:configChanges="orientation|keyboardHidden|screenSize|screenLayout" android:screenOrientation="landscape"/>  
-    <activity android:name="io.vov.vitamio.activity.InitActivity" android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation" android:launchMode="singleTop" android:theme="@android:style/Theme.NoTitleBar" android:windowSoftInputMode="stateAlwaysHidden"/>  
-    <activity android:name="tv.avfun.FavoriteActivity"/>  
-    <activity android:name="tv.avfun.SectionActivity"/>  
-    <activity android:name="tv.avfun.DownloadManActivity" android:uiOptions="splitActionBarWhenNarrow"/>  
-    <activity android:name="tv.avfun.HelpActivity"/>  
-    <service android:name="com.umeng.common.net.DownloadingService" android:exported="true" android:process=":DownloadingService"/>  
-    <service android:name="tv.avfun.DownloadService"/>  
-    <activity android:name="com.umeng.fb.ui.SendFeedback" android:windowSoftInputMode="adjustResize"/>  
-    <activity android:name="com.umeng.fb.ui.FeedbackConversations"/>  
-    <activity android:name="com.umeng.fb.ui.FeedbackConversation" android:configChanges="keyboard"/>  
-    <meta-data android:value="51a1964056240b7b21039d4c" android:name="UMENG_APPKEY"/>  
-    <meta-data android:value="GooglePlay" android:name="UMENG_CHANNEL"/> 
-  </application> 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <uses-sdk
+        android:minSdkVersion="9"
+        android:targetSdkVersion="19" />
+
+    <application
+        android:name="tv.acfun.video.AcApp"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="tv.acfun.video.HomeActivity"
+            android:configChanges="screenSize|orientation"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="tv.acfun.video.ChannelActivity" />
+        <activity
+            android:name="tv.acfun.video.SigninActivity"
+            android:theme="@style/Theme.Styled.Dialog" />
+        <activity android:name="tv.acfun.video.SettingsActivity" />
+        <activity android:name="tv.acfun.video.ConversationActivity" />
+        <activity
+            android:name="tv.acfun.video.CommentsActivity"
+            android:configChanges="screenSize|orientation"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
+        <activity
+            android:name="tv.acfun.video.DetailsActivity"
+            android:theme="@style/AppTheme.TranslucentActionBar" />
+        <activity
+            android:name="tv.acfun.video.PlayerActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="sensorLandscape" />
+ 		<activity
+            android:name="tv.acfun.video.DownloadManActivity"
+            android:configChanges="orientation|screenSize"
+            />
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="521d6ae356240bd04f0569ac" />
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="GoogePlay" />
+		<service android:name="tv.acfun.video.DownloadService" android:label="Acfun DownloadService"/>
+        <service
+            android:name="com.umeng.common.net.DownloadingService"
+            android:exported="true"
+            android:process=":DownloadingService" />
+        
+        
+        <activity android:name="com.google.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
+    </application>
+
 </manifest>

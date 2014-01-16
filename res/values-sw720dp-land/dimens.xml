@@ -1,0 +1,4 @@
+<resources>
+
+    <dimen name="drawer_width">400dp</dimen>
+</resources>

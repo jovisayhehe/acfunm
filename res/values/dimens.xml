@@ -1,33 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- sliding menu -->
-    <dimen name="slidingmenu_offset">170dp</dimen>
-    <dimen name="slidingmenu_offset_2">65dp</dimen>
-    <dimen name="shadow_width">20dp</dimen>
-    <dimen name="slide_nav_item_height">48dip</dimen>
-    <dimen name="slide_nav_item_text_size">20sp</dimen>
-    
-    <dimen name="mem_btn_width">70dip</dimen>
-    <dimen name="mem_btn_height">30dip</dimen>
-    <dimen name="mem_marginLeft">206dip</dimen>
-    <dimen name="img_w">85dip</dimen>
-    <dimen name="img_h">80dip</dimen>
-    <dimen name="gdviewitemtext_size">20sp</dimen>
-    <dimen name="list_padding">10dip</dimen>
-    
-    
-    <dimen name="video_item_width">98dip</dimen>
-    <dimen name="video_item_height">116dip</dimen>
-    <dimen name="channel_title_padding_left">40dip</dimen>
-    <dimen name="page_margin">8dip</dimen>
-    
-    <dimen name="banner_height">135dip</dimen>
-    <dimen name="banner_indicator_view_width">5dip</dimen> 
-    <dimen name="banner_indicator_view_height">5dip</dimen>
-    <dimen name="banner_indicator_view_margin_horizontal">3dip</dimen>
-    
-    <dimen name="banner_indicator_margin_bottom">8dip</dimen>
-    <dimen name="preview_image_height">75dp</dimen>
-
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">8dp</dimen>
+    <dimen name="item_horizontalSpacing">16dp</dimen>
+    <dimen name="item_verticalSpacing">8dp</dimen>
+    <dimen name="text_horizontal_padding">8dp</dimen>
+    <dimen name="item_width">130dp</dimen>
+	<dimen name="item_height">95dp</dimen>
+	<dimen name="item_cat_width">120dp</dimen>
+	<dimen name="item_cat_height">90dp</dimen>
+	<dimen name="drawer_width">200dp</dimen>
+	<dimen name="emotions_height">200dp</dimen>
+    <dimen name="emotions_column_width">48dp</dimen>
+    <dimen name="item_text_size">14sp</dimen>
 </resources>

@@ -25,7 +25,6 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="@string/time_out"
-        android:textColor="@color/listselectable_pressed"
         android:textSize="18sp"
         android:visibility="gone" />
 

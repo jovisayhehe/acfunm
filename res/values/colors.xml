@@ -1,31 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="android_white">#FFFFFF</color>
-    <color name="android_tab_unpressed">#CDCDCD</color>
-    <color name="listselectable_focused">#88f47b26</color>
-    <color name="listselectable_pressed">#ccf47b26</color>
-    <color name="listfooter">#E9E9E9</color>
-    <color name="main_color">#FF9A03</color>
-    <color name="main_win_bg">#E9E9E9</color>
-    <color name="detail_play_bg">#FF9901</color>
-    <color name="detail_play_p_bg">#FFCE9F</color>
-    <color name="web_color">#f6f6f6</color>
-    <color name="web_btn_color">#CEBEAE</color>
-    <color name="slide_nav_black">#ff191b1b</color>
-    <color name="transparent">#00000000</color>
-    <color name="white">#FFFFFF</color>
-    <color name="dark_gray">#ff333333</color>
-    <color name="video_item_pressed">#b2ff7e00</color>
-    <color name="banner_indicator_highlight">#ffffffff</color>
-    <color name="banner_indicator_normal">#66ffffff</color>
-    <color name="update_info_bg">#CC2278FF</color>
-    <color name="text_color_pressed">#ccf47b26</color>
-    <color name="text_color_default">#333</color>
-    <color name="main_color_light">#ccFF9A03</color>
-    <color name="gray_light">#e2e2e2</color>
-    <color name="gray">#CDCDCD</color>
-    <color name="half_transparent">#99000000</color>
-    <color name="article_info_bg_green">#5BB75B</color>
-    <color name="article_info_bg_blue">#08c</color>
+    <color name="header">#f80</color>
+    <color name="pressed_styled">#CCf29510</color>
+    <color name="main_color">#f08810</color>
+    <color name="umeng_fb_color_btn_pressed">#0099cc</color>
+    <color name="umeng_fb_color_btn_normal">#33B5E5</color>
+    <color name="bg">#ededed</color>
+    <color name="text_color_title">#0187c5</color>
+    <color name="text_color_gray">#999</color>
+    <color name="error">#ff0000</color>
+
 </resources>

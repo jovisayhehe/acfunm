@@ -1,49 +1,22 @@
-自己写的acfun的客户端
----
-
-###一些功能###
-* 文章区优化阅读，漫画，文本，和混合模式
-* 观看历史，同步收藏
-* 登陆功能，评论功能
-* 番剧列表
-
-<a href="https://play.google.com/store/apps/details?id=tv.ac.fun"><img src="http://www.android.com/images/brand/get_it_on_play_logo_large.png"/></a>
+Acfun Video for Android
+====
+>这是 Acfun 视频专版，一个全新的客户端。
 
 
-欢迎 加入Google+ 社群，参与讨论： https://plus.google.com/communities/109973498842592117118
+旧版请 `checkout commit 084bac541a1d6316a71f3ab7bbb4b4440fb5f969`
 
----
-###我说###
- * 希望得到吐槽和各种毒舌啊！
- * <del>长视频被分段很头疼啊！</del>
- * <del>播放不了土豆源啊！</del> 
- * 谢！
+[![get it on play](http://www.android.com/images/brand/get_it_on_play_logo_large.png)](https://play.google.com/store/apps/details?id=tv.ac.fun)
 
----
+欢迎加入 __Google+ 社群__，参与讨论：<https://plus.google.com/communities/109973498842592117118>
 
-TODO List
-==========
-★ - 期望值  
-☆ - 难易度  
-■□ - 进度 (0-5)  
 
-1. 功能完善 ★ ☆☆
+Dependencies
+===
 
-- <del>频道内容的下拉刷新  ☆</del>
-- Banner ★ ☆☆               ■■■□□
-- 增加关于和功能简介 ☆☆     ■■□□□
-- 增加排行榜 ☆               □□□□□
-- 屏幕适配 ★ ☆☆☆             ■□□□□
-- 我的收藏(在线)及订阅★ ☆☆☆  ■■■□□
-
-2. 完善视频播放★★★★★ ☆☆☆☆☆
-
-- 朱军画质的抉择 ★ ☆☆      ■■■■■
-- 弹幕！ ★★★★★ ☆☆☆☆☆        ■□□□□
-- 视频离线下载 ★★★★ ☆☆☆☆   ■■■■■
-- <del>播放时自动缓存★ ☆☆☆</del> 以边下边播功能代替
-
-3. 完善文章显示★★ ☆☆☆
-
-- 漫画模式优化 ☆☆☆        ■■□□□
-- 评论盖楼 ★★★ ☆☆☆☆       ■■■■■
+- Android Support v7 Appcompat
+- Volley 
+- VitamioBundle <https://github.com/yixia/VitamioBundle>
+- StickyGridHeaders <https://github.com/TonicArtos/StickyGridHeaders>
+- PagerSlidingTabStrip <https://github.com/astuetz/PagerSlidingTabStrip>
+- FadingActionBar <https://github.com/ManuelPeinado/FadingActionBar>
+- DanmakuFlameMaster <https://github.com/ctiao/DanmakuFlameMaster>

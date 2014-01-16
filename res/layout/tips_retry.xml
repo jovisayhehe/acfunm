@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:id="@+id/tips_retry"
+    android:orientation="horizontal" >
+    
+	<TextView
+	    android:id="@android:id/text1"
+	    android:text="没有获取到数据"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:textSize="16sp"
+	    android:textColor="#ee0000"
+	    android:padding="8dp"
+	    />
+	<Button 
+	    android:id="@android:id/button1"
+	    android:text="重试"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    />
+</LinearLayout>
