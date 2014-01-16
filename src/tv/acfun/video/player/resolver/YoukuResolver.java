@@ -69,7 +69,7 @@ public class YoukuResolver extends BaseResolver{
             }
             mHandler.sendEmptyMessage(ARG_OK);
             
-        } catch (JSONException e) {
+        } catch (Exception e) {
             if (BuildConfig.DEBUG)
                 Log.w(TAG, "解析视频地址失败" + url, e);
             mHandler.sendEmptyMessage(ARG_ERROR);

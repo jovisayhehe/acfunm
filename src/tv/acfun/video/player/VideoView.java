@@ -89,6 +89,7 @@ public class VideoView extends SurfaceView  {
             if (mVideoWidth != 0 && mVideoHeight != 0) setVideoLayout(mVideoLayout, mAspectRatio);
         }
     };
+    
     OnPreparedListener mPreparedListener = new OnPreparedListener() {
         public void onPrepared(MediaPlayer mp) {
             Log.d("onPrepared");
@@ -103,6 +104,7 @@ public class VideoView extends SurfaceView  {
             mVideoAspectRatio = mp.getVideoAspectRatio();
             long seekToPosition = mSeekWhenPrepared;
             if (seekToPosition != 0) seekTo(seekToPosition);
+            mSeekWhenPrepared = 0;
             if (mVideoWidth != 0 && mVideoHeight != 0) {
 //                setVideoLayout(mVideoLayout, mAspectRatio);
                 if (mSurfaceWidth == mVideoWidth && mSurfaceHeight == mVideoHeight) {
@@ -119,6 +121,7 @@ public class VideoView extends SurfaceView  {
             }
         }
     };
+    
     SurfaceHolder.Callback mSHCallback = new SurfaceHolder.Callback() {
         public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
             mSurfaceWidth = w;
