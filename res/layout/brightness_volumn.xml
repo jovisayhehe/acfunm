@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:orientation="horizontal" android:background="#00000000" android:padding="0.0dip" android:layout_width="wrap_content" android:layout_height="wrap_content"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <ImageView android:layout_gravity="center" android:id="@+id/operation_bg" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/video_volumn_bg" />
-    <FrameLayout android:layout_gravity="bottom|center" android:paddingBottom="25.0dip" android:layout_width="wrap_content" android:layout_height="wrap_content">
-        <ImageView android:layout_gravity="left" android:id="@+id/operation_full" android:layout_width="94.0dip" android:layout_height="wrap_content" android:src="@drawable/video_num_bg" />
-        <ImageView android:layout_gravity="left" android:id="@+id/operation_percent" android:layout_width="0.0dip" android:layout_height="wrap_content" android:src="@drawable/video_num_front" android:scaleType="matrix" />
-    </FrameLayout>
-</FrameLayout>
