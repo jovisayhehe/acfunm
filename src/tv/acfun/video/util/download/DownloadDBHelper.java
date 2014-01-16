@@ -50,7 +50,6 @@ public class DownloadDBHelper extends SQLiteOpenHelper {
         }
             
         if(oldVersion <4){
-            db.execSQL("ALTER TABLE " + DOWNLOAD_TABLE + " ALTER COLUMN " + COLUMN_DURATION +" INTEGER"); 
             db.execSQL("ALTER TABLE " + DOWNLOAD_TABLE + " ADD " + COLUMN_CID +" VARCHAR"); 
         }
     }
