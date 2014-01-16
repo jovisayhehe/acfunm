@@ -23,7 +23,7 @@
         android:lines="2"
         android:paddingTop="8dp" />
 
-<!--     <TextView
+    <TextView
         android:id="@android:id/text2"
         style="@android:style/TextAppearance.Small"
         android:layout_width="match_parent"
@@ -31,13 +31,10 @@
         android:layout_alignLeft="@id/image"
         android:layout_alignRight="@id/image"
        	android:layout_alignBottom="@id/image"
-        android:background="#99000000"
-        android:paddingBottom="8dp"
-        android:paddingLeft="@dimen/text_horizontal_padding"
-        android:paddingRight="@dimen/text_horizontal_padding"
-        android:paddingTop="4dp"
+        android:background="#66000000"
+        android:padding="8dp"
         android:singleLine="true"
-        android:textColor="@color/text_color_gray"
-        android:typeface="monospace" /> -->
+        android:textColor="#ddd"
+        android:typeface="monospace" />
 
 </RelativeLayout>

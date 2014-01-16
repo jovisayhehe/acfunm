@@ -1,5 +1,6 @@
 package tv.acfun.video.fragment;
 
+import java.text.NumberFormat;
 import java.util.List;
 
 import tv.acfun.video.AcApp;
@@ -19,6 +20,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.format.Formatter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -167,7 +169,7 @@ public class VideosFragment extends RefreshActionGridFragment{
                 convertView = mInflater.inflate(R.layout.item_videos, parent, false);
                 holder = new ViewHolder();
                 holder.titleView = (TextView) convertView.findViewById(android.R.id.text1);
-//                holder.descView = (TextView) convertView.findViewById(android.R.id.text2);
+                holder.descView = (TextView) convertView.findViewById(android.R.id.text2);
                 holder.imageView = (ImageView) convertView.findViewById(R.id.image);
                 convertView.setTag(holder);
             } else {
@@ -198,8 +200,8 @@ public class VideosFragment extends RefreshActionGridFragment{
             holder.titleView.setText(name);
             holder.titleView.setTextColor(mDb.isWatched(item.acId)?0xFF666666:0xFF000000);
             
-//            String desc = item.creator.name /*+ "/"+ item.viewernum + "次播放"*/;
-//            holder.descView.setText(desc);
+            String desc = NumberFormat.getInstance().format(item.viewernum) + "播放";
+            holder.descView.setText(desc);
         }
         
     }
