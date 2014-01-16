@@ -117,7 +117,7 @@ public class VideosFragment extends RefreshActionGridFragment{
         public void onErrorResponse(VolleyError error) {
             // TODO : 提示错误
             hideRefreshAnimation();
-            Toast.makeText(getActivity(), "读取数据失败，请重试！", 0).show();
+            Toast.makeText(mActivity, "读取数据失败，请重试！", 0).show();
             
         }};
     private DB mDb;

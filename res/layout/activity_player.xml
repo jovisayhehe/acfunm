@@ -34,14 +34,30 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
 	    />
-<!--     <tv.acfun.video.player.MediaController 
-        android:id="@+id/mediacontroller"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        >
-       <include layout="@layout/video_controller"/> 
-    </tv.acfun.video.player.MediaController> -->
+	<RelativeLayout 
+	    android:id="@+id/ads"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="center"
+	    android:visibility="gone"
+	    >
+	  <com.google.ads.AdView
+         xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+         android:id="@+id/ad"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         ads:adSize="IAB_MRECT"
+         android:layout_gravity="center_horizontal"
+         ads:adUnitId="a152c17d82486e0"
+         ads:loadAdOnCreate="true" />
+	    <ImageButton 
+	        android:src="@drawable/ic_clear"
+	        android:id="@+id/close"
+	        android:layout_width="40dp"
+	        android:layout_height="40dp"
+	        android:background="#000"
+	        />
+	</RelativeLayout>
         
     <LinearLayout
         android:id="@+id/buffering_indicator"

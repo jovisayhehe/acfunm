@@ -17,18 +17,13 @@
 package tv.acfun.video;
 
 import io.vov.vitamio.MediaPlayer;
+import io.vov.vitamio.MediaPlayer.OnCompletionListener;
 import io.vov.vitamio.MediaPlayer.OnInfoListener;
 import io.vov.vitamio.MediaPlayer.OnPreparedListener;
 import io.vov.vitamio.Vitamio;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +31,6 @@ import master.flame.danmaku.controller.DMSiteType;
 import master.flame.danmaku.danmaku.loader.ILoader;
 import master.flame.danmaku.danmaku.model.DanmakuTimer;
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
-import master.flame.danmaku.danmaku.util.IOUtils;
 import master.flame.danmaku.ui.widget.DanmakuSurfaceView;
 import tv.ac.fun.R;
 import tv.acfun.video.entity.VideoPart;
@@ -83,15 +77,13 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.umeng.analytics.MobclickAgent;
 
 /**
- * @author Yrom TODO :
+ * @author Yrom 
  */
 public class PlayerActivity extends ActionBarActivity implements OnClickListener, MediaPlayerControl, Callback {
     private static final String EXTRA_VIDEO = "video";
@@ -163,6 +155,14 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             return false;
         }
     };
+    private View mAds;
+    OnCompletionListener onComplete = new OnCompletionListener() {
+        @Override
+        public void onCompletion(MediaPlayer mp) {
+            markComplete();
+        }
+    };
+    private boolean mComplete;
 
     @TargetApi(19)
     @Override
@@ -179,6 +179,10 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         }else{
             init();
         }
+    }
+    private void markComplete() {
+        mComplete = true;
+        mAds.setVisibility(View.VISIBLE);
     }
     private void init() {
         Parcelable extra = getIntent().getParcelableExtra(EXTRA_VIDEO);
@@ -266,6 +270,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         mVideoView.setOnPreparedListener(onPrepared);
         mVideoView.setOnSeekCompleteListener(onSeekComplete);
         mVideoView.setOnInfoListener(onInfo);
+        mVideoView.setOnCompletionListener(onComplete);
         mDMView = (DanmakuSurfaceView) findViewById(R.id.danmakus);
         mDMView.enableDanmakuDrawingCache(mEnabledDrawingCache);
         mDMView.setCallback(mDMCallback);
@@ -281,6 +286,11 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         mVideoView.setOnBufferingUpdateListener(onBuffering);
         boolean chroma565 = AcApp.getBoolean(getString(R.string.key_chroma_565), false);
         if(chroma565) mVideoView.setVideoChroma(MediaPlayer.VIDEOCHROMA_RGB565);
+        
+        
+        // ads
+        mAds = findViewById(R.id.ads);
+        findViewById(R.id.close).setOnClickListener(this);
         
     }
     MediaPlayer.OnBufferingUpdateListener onBuffering = new MediaPlayer.OnBufferingUpdateListener(){
@@ -471,16 +481,23 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     }
     @Override
     public void onClick(View v) {
-        if (mMediaController != null) 
+        if(v.getId() == R.id.close){
+            mAds.setVisibility(View.GONE);
+        }else if (mMediaController != null) 
             toggleMediaControlsVisiblity();
     }
 
     @Override
     public void start() {
-        mVideoView.start();
-        if(isDMShow()){
-            mDMView.resume();
-            mHandler.sendEmptyMessageDelayed(SYNC,200);
+        mAds.setVisibility(View.GONE);
+        if(mComplete){
+            startPlay();
+        }else{
+            mVideoView.start();
+            if(isDMShow()){
+                mDMView.resume();
+                mHandler.sendEmptyMessageDelayed(SYNC,200);
+            }
         }
     }
 
@@ -489,6 +506,9 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         mVideoView.pause();
         mHandler.removeMessages(SYNC);
         mDMView.pause();
+        
+        mAds.setVisibility(View.VISIBLE);
+        
     }
 
     @Override
