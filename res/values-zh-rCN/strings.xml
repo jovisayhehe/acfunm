@@ -78,4 +78,5 @@
 	<string name="menu_download_pause">暂停</string>
 	<string name="menu_select_all">全选</string>
 	<string name="menu_downlod">下载</string>
+	<string name="menu_watch_later">稍后观看</string>
 </resources>

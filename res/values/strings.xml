@@ -119,5 +119,6 @@
 	<string name="menu_download_pause">Pause</string>
 	<string name="menu_select_all">Select All</string>
 	<string name="menu_downlod">Download</string>
+	<string name="menu_watch_later">Watch later</string>
 	<string name="download_manager">下载管理</string>
 </resources>

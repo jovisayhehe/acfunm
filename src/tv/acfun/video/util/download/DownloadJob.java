@@ -16,6 +16,7 @@ import tv.acfun.video.AcApp;
 import tv.acfun.video.entity.VideoSegment;
 import tv.acfun.video.util.download.DownloadTask.DownloadTaskListener;
 import tv.acfun.video.util.net.DanmakusRequest;
+import android.os.Build;
 import android.util.Log;
 
 import com.android.volley.toolbox.StringRequest;
@@ -104,7 +105,10 @@ public class DownloadJob {
         
         notifyDownloadStarted();
         for (DownloadTask task : mTasks) {
-            task.executeOnExecutor(sExecutor);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+                task.executeOnExecutor(sExecutor);
+            else
+                task.execute();
         }
         final File dmFile = new File(mEntry.destination,mEntry.part.commentId+".json");
         if(!dmFile.exists()){
