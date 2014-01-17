@@ -44,16 +44,14 @@ public class DownloadDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // TODO
         if(oldVersion <2){
             db.execSQL("ALTER TABLE " + DOWNLOAD_TABLE + " ADD " + COLUMN_DURATION +" INTEGER"); 
         }
-        if(oldVersion <3){
-            db.execSQL("ALTER TABLE " + DOWNLOAD_TABLE + " ALTER COLUMN " + COLUMN_DURATION +" INTEGER"); 
-        }
-            
-        if(oldVersion <4){
+        if(oldVersion < 5){
+            try {
             db.execSQL("ALTER TABLE " + DOWNLOAD_TABLE + " ADD " + COLUMN_CID +" VARCHAR"); 
+            } catch (Exception e) {
+            }
         }
     }
 

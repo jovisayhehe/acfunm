@@ -309,6 +309,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         public boolean onMenuItemClick(MenuItem arg0) {
             if(arg0.getItemId() == R.id.menu_download){
                 startDownload(mPart);
+            }else if(arg0.getItemId() == R.id.menu_watch_later){
             }
             return false;
         }
