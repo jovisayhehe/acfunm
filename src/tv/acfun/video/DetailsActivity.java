@@ -114,6 +114,8 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         params.height = height;
         mHeaderImage.setLayoutParams(params);
         String preview = getIntent().getStringExtra("preview");
+        if(TextUtils.isEmpty(preview) || mVideo != null) 
+            preview = mVideo.previewurl;
         AcApp.getGloableLoader().get(preview, ImageLoader.getImageListener(mHeaderImage, R.drawable.cover_night, 0));
     }
 
@@ -122,7 +124,14 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
                 .headerOverlayLayout(R.layout.header_overlay).contentLayout(R.layout.activity_details);
         mHelper.initActionBar(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mAcId = getIntent().getIntExtra("acid", 0);
+        if(Intent.ACTION_VIEW.equalsIgnoreCase(getIntent().getAction())
+                &&getIntent().getData()!=null &&  getIntent().getData().getScheme().equals("av")){
+            mAcId = Integer.parseInt(getIntent().getDataString().substring(7));
+        }else{
+            mAcId = getIntent().getIntExtra("acid", 0);
+        }
+        if (mAcId == 0)
+            throw new IllegalArgumentException("没有 id");
         getSupportActionBar().setTitle("ac" + mAcId);
         AcApp.addRequest(new VideoDetailsRequest(mAcId, mVideoListener, mErrorListener));
     }

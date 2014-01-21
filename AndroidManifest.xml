@@ -44,7 +44,15 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
             android:name="tv.acfun.video.DetailsActivity"
-            android:theme="@style/AppTheme.TranslucentActionBar" />
+            android:theme="@style/AppTheme.TranslucentActionBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="av" />
+            </intent-filter>
+        </activity>
         <activity
             android:name="tv.acfun.video.PlayerActivity"
             android:configChanges="orientation|screenSize"

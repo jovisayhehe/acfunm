@@ -21,8 +21,8 @@ import java.util.regex.Pattern;
 
 import org.xml.sax.XMLReader;
 
-import tv.acfun.video.AcApp;
 import tv.ac.fun.R;
+import tv.acfun.video.AcApp;
 import tv.acfun.video.entity.Comment;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -33,13 +33,16 @@ import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Html.ImageGetter;
+import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.style.ClickableSpan;
 import android.text.style.StrikethroughSpan;
 import android.text.util.Linkify;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.MeasureSpec;
 import android.widget.TextView;
@@ -133,10 +136,11 @@ public class TextViewUtils {
             comment.setText(text);
             Log.e("wtf", "set comment",e);
         }
-        Pattern http = Pattern.compile("http://[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?",
+        Pattern http = Pattern.compile("http://[a-zA-Z0-9+&@#/%?=~_\\-|!:,\\.;]*[a-zA-Z0-9+&@#/%=~_|]",
                 Pattern.CASE_INSENSITIVE);
         Linkify.addLinks(comment, http, "http://");
-        Linkify.addLinks(comment, Pattern.compile("(ac\\d{5,})", Pattern.CASE_INSENSITIVE), "ac://");
+        Linkify.addLinks(comment, Pattern.compile("(ac\\d{5,})", Pattern.CASE_INSENSITIVE), "av://");
+        comment.setOnTouchListener(ClickableSpanTextViewTouchListener.getInstance());
     }
     static void end(SpannableStringBuilder text, Class<?> kind,
                 Object repl) {
@@ -218,5 +222,48 @@ public class TextViewUtils {
       tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_reply, 0, 0, 0);
       return tv;
     }
+    /**
+     * @see http://stackoverflow.com/questions/8558732/listview-textview-with-linkmovementmethod-makes-list-item-unclickable
+     *
+     */
+    public static class ClickableSpanTextViewTouchListener implements View.OnTouchListener{
+        public boolean onTouch(View v, MotionEvent event) {
+            boolean ret = false;
+            CharSequence text = ((TextView) v).getText();
+            Spannable stext = Spannable.Factory.getInstance().newSpannable(text);
+            TextView widget = (TextView) v;
+            int action = event.getAction();
 
+            if (action == MotionEvent.ACTION_UP ||
+                    action == MotionEvent.ACTION_DOWN) {
+                int x = (int) event.getX();
+                int y = (int) event.getY();
+
+                x -= widget.getTotalPaddingLeft();
+                y -= widget.getTotalPaddingTop();
+
+                x += widget.getScrollX();
+                y += widget.getScrollY();
+
+                Layout layout = widget.getLayout();
+                int line = layout.getLineForVertical(y);
+                int off = layout.getOffsetForHorizontal(line, x);
+
+                ClickableSpan[] link = stext.getSpans(off, off, ClickableSpan.class);
+
+                if (link.length != 0) {
+                    if (action == MotionEvent.ACTION_UP) {
+                        link[0].onClick(widget);
+                    }
+                    ret = true;
+                }
+            }
+            return ret;
+        }
+        private static ClickableSpanTextViewTouchListener sInstance;
+        public static View.OnTouchListener getInstance(){
+            if(sInstance == null) sInstance = new ClickableSpanTextViewTouchListener();
+            return sInstance;
+        }
+    }
 }
