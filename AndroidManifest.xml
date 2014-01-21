@@ -60,6 +60,7 @@
  		<activity
             android:name="tv.acfun.video.DownloadManActivity"
             android:configChanges="orientation|screenSize"
+            android:uiOptions="splitActionBarWhenNarrow"
             />
         <meta-data
             android:name="UMENG_APPKEY"

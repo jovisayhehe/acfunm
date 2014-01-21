@@ -31,6 +31,7 @@ import tv.acfun.video.util.net.Connectivity;
 import tv.acfun.video.util.net.CustomUARequest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -59,7 +60,7 @@ import com.tonicartos.widget.stickygridheaders.StickyGridHeadersBaseAdapter;
  * 
  */
 public class HomeFragment extends RefreshActionGridFragment {
-
+    private int mNumColumns;
     public HomeFragment() {
     }
 
@@ -73,9 +74,23 @@ public class HomeFragment extends RefreshActionGridFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        int w = getResources().getDimensionPixelSize(R.dimen.item_cat_width);
-        mGridView.setColumnWidth(w);
+        setNumColumns();
     }
+
+    private void setNumColumns() {
+        int w = getResources().getDisplayMetrics().widthPixels;
+        int n = w / getResources().getDimensionPixelSize(R.dimen.item_cat_width);
+        if (n < 2) n = 2;
+        mGridView.setNumColumns(n);
+        mNumColumns = n;
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setNumColumns();
+    }
+    
     private Listener<List<HomeCat>> listener = new Listener<List<HomeCat>>() {
 
         @Override
@@ -263,7 +278,11 @@ public class HomeFragment extends RefreshActionGridFragment {
 
         @Override
         public int getCountForHeader(int header) {
-            return getItem(header).videos.size();
+            int numColumns = mNumColumns;
+            int size = getItem(header).videos.size();
+            int num = numColumns*3;
+            if(size > num) size =num;
+            return size;
         }
 
         @Override
