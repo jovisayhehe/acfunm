@@ -70,13 +70,6 @@
 		    />
     </LinearLayout>
 
-     <com.google.ads.AdView
-         xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         ads:adSize="IAB_BANNER"
-         android:layout_gravity="center_horizontal"
-         ads:adUnitId="a152c17d82486e0"
-         ads:loadAdOnCreate="true" />
+     <include layout="@layout/ads"  android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_horizontal"/>
 
 </LinearLayout>
