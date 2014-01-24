@@ -3,14 +3,13 @@ package tv.acfun.video.fragment;
 import java.text.NumberFormat;
 import java.util.List;
 
+import tv.ac.fun.R;
 import tv.acfun.video.AcApp;
 import tv.acfun.video.DetailsActivity;
-import tv.ac.fun.R;
 import tv.acfun.video.adapter.BaseArrayAdapter;
 import tv.acfun.video.api.API;
 import tv.acfun.video.db.DB;
 import tv.acfun.video.entity.Category;
-import tv.acfun.video.entity.HomeCat;
 import tv.acfun.video.entity.Video;
 import tv.acfun.video.entity.Videos;
 import tv.acfun.video.util.TextViewUtils;
@@ -20,16 +19,15 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.format.Formatter;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
 import com.android.volley.Request;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
@@ -101,6 +99,7 @@ public class VideosFragment extends RefreshActionGridFragment{
         @Override
         public void onResponse(Videos response) {
             hideRefreshAnimation();
+            mIsLoading = false;
             if(response.pageNo ==1){
                 ListAdapter adapter = new VideosAdapter(mActivity, response.list);
                 setAdapter(adapter);
@@ -117,10 +116,12 @@ public class VideosFragment extends RefreshActionGridFragment{
         public void onErrorResponse(VolleyError error) {
             // TODO : 提示错误
             hideRefreshAnimation();
+            mIsLoading = false;
             Toast.makeText(mActivity, "读取数据失败，请重试！", 0).show();
             
         }};
     private DB mDb;
+    private boolean mIsLoading;
     
     private Request<?> newRequest(int page){
         Request<?> request =  new VideosRequest(catId,page,true,listener,errListener);
@@ -206,9 +207,17 @@ public class VideosFragment extends RefreshActionGridFragment{
         
     }
     @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+        if(mIsItemVisible) onLastItemVisible();
+    }
+    
+    @Override
     protected void onLastItemVisible() {
+        if(mIsLoading) return;
         Request<?> request = newRequest(++mCurrentPage);
         AcApp.addRequest(request);
+        mIsLoading = true;
     }
    
     private static class ViewHolder {

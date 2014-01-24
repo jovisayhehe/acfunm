@@ -21,10 +21,10 @@ import io.vov.vitamio.utils.Log;
 import io.vov.vitamio.utils.StringUtils;
 import io.vov.vitamio.widget.OutlineTextView;
 import tv.ac.fun.R;
+import tv.acfun.video.util.SystemBarConfig;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.res.Resources;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Handler;
@@ -265,47 +265,36 @@ public class MediaController extends FrameLayout {
     if (mFileName != null)
       mFileName.setText(mTitle);
     mControllerBar = v.findViewById(R.id.mediacontroller_bar);
-    RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mControllerBar.getLayoutParams();
-    int height = getNavigationBarHeight();
-    if(height > 0) {
+  }
+
+    private void handleControllerMargin(View v) {
+        if (!mConfig.hasNavigtionBar()) return;
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mControllerBar.getLayoutParams();
+        int height = mConfig.getPixelInsetBottom();
+        int right = mConfig.getPixelInsetRight();
         lp.bottomMargin = height;
+        lp.rightMargin = right;
         mControllerBar.setLayoutParams(lp);
-    }
-    if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.KITKAT){
-        View top = v.findViewById(R.id.mediacontroller_top);
-        FrameLayout.LayoutParams p = (FrameLayout.LayoutParams) top.getLayoutParams();
-        height = getStatusBarHeight();
-        if(height >0){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            View top = v.findViewById(R.id.mediacontroller_top);
+            FrameLayout.LayoutParams p = (FrameLayout.LayoutParams) top.getLayoutParams();
+            height = mConfig.getPixelInsetTop(false);
             p.topMargin = height;
-            v.setLayoutParams(p);
+            p.rightMargin = right;
+            top.setLayoutParams(p);
+            
+            View bottom = v.findViewById(R.id.mediacontroller_bottom);
+            FrameLayout.LayoutParams p2 = (FrameLayout.LayoutParams) bottom.getLayoutParams();
+            p2.rightMargin = right;
+            bottom.setLayoutParams(p2);
         }
     }
+  private SystemBarConfig mConfig;
+  public void setSystemBarConfig(SystemBarConfig config) {
+      mConfig = config;
+      handleControllerMargin(mRoot);
   }
-  
-  private int getNavigationBarHeight(){
-      Resources resources = getResources();
-      try{
-          int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-          if (resourceId > 0) {
-              return resources.getDimensionPixelSize(resourceId);
-          }
-      }catch(Exception e){
-          e.printStackTrace();
-      }
-      return 0;
-  }
-  private int getStatusBarHeight(){
-      Resources resources = getResources();
-      try{
-          int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
-          if (resourceId > 0) {
-              return resources.getDimensionPixelSize(resourceId);
-          }
-      }catch(Exception e){
-          e.printStackTrace();
-      }
-      return 0;
-  }
+
   public void setMediaPlayer(MediaPlayerControl player) {
     mPlayer = player;
     updatePausePlay();
@@ -378,14 +367,8 @@ public class MediaController extends FrameLayout {
       if (mFromXml) {
         setVisibility(View.VISIBLE);
       } else {
-//        int[] location = new int[2];
-
-//        mAnchor.getLocationInWindow(location);
-        
-//        Rect anchorRect = new Rect(location[0], location[1], location[0] + mAnchor.getWidth(), location[1] + mAnchor.getHeight());
 
         mWindow.setAnimationStyle(mAnimStyle);
-//        setWindowLayoutType();
         mWindow.showAtLocation(mAnchor, Gravity.NO_GRAVITY, 0, 0);
       }
       mShowing = true;
@@ -580,5 +563,6 @@ public class MediaController extends FrameLayout {
     
     void startDM();
   }
+
 
 }

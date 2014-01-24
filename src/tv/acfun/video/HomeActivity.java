@@ -93,7 +93,6 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
     private TextView mNameText;
     private static String KEY_STATE_POSITION = "key_state_position";
     public static String[] sTitles;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,6 +123,7 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
 
             public void onDrawerOpened(View drawerView) {
                 getSupportActionBar().setTitle(R.string.drawer_open);
+                mMenuList.requestFocus();
             }
         };
         mDrawer.setDrawerListener(mDrawerToggle);
@@ -134,7 +134,7 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
             mMenuList.setAdapter(adapter);
             mProgress.setVisibility(View.GONE);
             ((ViewGroup) findViewById(R.id.content_frame)).removeAllViews();
-            int position = savedInstanceState==null? 0 : savedInstanceState.getInt(KEY_STATE_POSITION, 0);
+            int position = savedInstanceState == null ? 0 : savedInstanceState.getInt(KEY_STATE_POSITION, 0);
             select(position);
         }
         setUserInfo();
@@ -316,9 +316,14 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
             break;
         }
         if(f == null) return;
+        
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, f);
         // pop stack
-        getSupportFragmentManager().popBackStack(STACK_NAME, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        try {
+            getSupportFragmentManager().popBackStack(STACK_NAME, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        } catch (IllegalStateException e) {
+            // pop error
+        }
         if(cat.id != 1023){
             transaction.addToBackStack(STACK_NAME);
         }

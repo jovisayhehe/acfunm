@@ -26,6 +26,7 @@ import tv.acfun.video.util.net.Connectivity;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,6 +83,7 @@ public abstract class GridFragment extends Fragment implements OnItemClickListen
             mAdapter = adapter;
         }
         mGridView.setAdapter(mAdapter);
+        mGridView.requestFocus();
     }
     protected void loadData(){
         mLoadingView.setVisibility(View.VISIBLE);

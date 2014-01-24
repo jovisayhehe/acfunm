@@ -43,6 +43,7 @@ import tv.acfun.video.player.MediaSegmentPlayer;
 import tv.acfun.video.player.VideoView;
 import tv.acfun.video.player.resolver.BaseResolver;
 import tv.acfun.video.player.resolver.ResolverType;
+import tv.acfun.video.util.SystemBarConfig;
 import tv.acfun.video.util.download.DownloadEntry;
 import tv.acfun.video.util.net.Connectivity;
 import tv.acfun.video.util.net.DanmakusRequest;
@@ -280,6 +281,14 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         mMediaController.setAnchorView(holder);
         mMediaController.setMediaPlayer(this);
         mMediaController.setInstantSeeking(false);
+        boolean transStatusBar = false;
+        boolean transNavBar = false;
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.KITKAT){
+            transNavBar = true;
+            transStatusBar = true;
+        }
+        SystemBarConfig config = new SystemBarConfig(this,transStatusBar,transNavBar);
+        mMediaController.setSystemBarConfig(config);
         String name = mVideo.name == null?"":mVideo.name;
         mMediaController.setFileName(name);
         mVideoView.setMediaController(mMediaController);

@@ -6,6 +6,7 @@
     android:layout_height="52dp"
     android:background="?attr/selectableItemBackground"
     android:onClick="onAvatarClick"
+    android:focusable="true"
      >
 	<ImageView 
 	    android:padding="4dp"
