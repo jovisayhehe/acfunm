@@ -79,7 +79,7 @@
     <string name="about_url">http://yrom.sinaapp.com/faq.html</string>
     <string name="key_resolution_mode">resolution_mode</string>
     <string name="resolution">Definition Preference</string>
-    <string name="danmakus_loaded">Danmakus loaded.</string>
+    <string name="danmakus_loaded">Danmakus %d loaded.</string>
     <string name="danmakus_load_failed">Danmakus failed to load!</string>
     <string name="danmakus_downloaded">"Danmakus' file downloaded.\nStart parsing..."</string>
     <string name="danmakus_download_failed">"Danmakus' file failed to load."</string>

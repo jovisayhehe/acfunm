@@ -23,16 +23,15 @@ import io.vov.vitamio.MediaPlayer.OnPreparedListener;
 import io.vov.vitamio.Vitamio;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import master.flame.danmaku.controller.DMSiteType;
-import master.flame.danmaku.danmaku.loader.ILoader;
+import master.flame.danmaku.controller.DrawHandler;
 import master.flame.danmaku.danmaku.model.DanmakuTimer;
-import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
+import master.flame.danmaku.danmaku.model.android.DanmakuGlobalConfig;
 import master.flame.danmaku.ui.widget.DanmakuSurfaceView;
 import tv.ac.fun.R;
+import tv.acfun.video.api.DanmakuParser;
 import tv.acfun.video.entity.VideoPart;
 import tv.acfun.video.player.MediaController;
 import tv.acfun.video.player.MediaController.MediaPlayerControl;
@@ -92,6 +91,8 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     private static final int SEEK_COMPLETE = 10;
     private static final int SYNC = 11;
     private static final int HIDE_TEXT = 12;
+    private static final int PREPARED = 13;
+    private static final int RESUME = 14;
     private VideoView mVideoView;
     private View mBufferingIndicator;
     private TextView mProgressText;
@@ -99,7 +100,6 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     private boolean mEnabledHW;
     private DanmakuSurfaceView mDMView;
     private boolean mEnabledDrawingCache;
-
     public static void start(Context context, VideoPart video) {
         Intent intent = new Intent(context.getApplicationContext(), PlayerActivity.class);
         intent.putExtra(EXTRA_VIDEO, video);
@@ -109,13 +109,15 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     OnPreparedListener onPrepared = new OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mp) {
+            Log.w(TAG, "media prepared");
             if (mDMView.isPrepared()) {
                 if (mp instanceof MediaSegmentPlayer)
-                    mDMView.start(((MediaSegmentPlayer) mp).getAbsolutePosition());
+                    mDMView.seekTo(((MediaSegmentPlayer) mp).getAbsolutePosition());
                 else
                     mDMView.start();
             }
             mp.start();
+            mBufferingIndicator.setVisibility(View.GONE);
         }
     };
     private Animation mTextAnimation;
@@ -144,13 +146,12 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START) {
                 mp.pause();
                 mDMView.pause();
-                mHandler.removeMessages(SYNC);
+                mHandler.removeCallbacksAndMessages(null);
                 mBufferingMsg.setText("");
                 mBufferingIndicator.setVisibility(View.VISIBLE);
             } else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
                 mp.start();
-                mDMView.resume();
-                mHandler.sendEmptyMessageDelayed(SYNC, 500);
+                mHandler.sendEmptyMessage(RESUME);
                 mBufferingIndicator.setVisibility(View.GONE);
             }
             return false;
@@ -183,6 +184,8 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     }
     private void markComplete() {
         mComplete = true;
+        mHandler.removeCallbacksAndMessages(null);
+        mDMView.pause();
         mAds.setVisibility(View.VISIBLE);
     }
     private void init() {
@@ -274,6 +277,10 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         mVideoView.setOnCompletionListener(onComplete);
         mDMView = (DanmakuSurfaceView) findViewById(R.id.danmakus);
         mDMView.enableDanmakuDrawingCache(mEnabledDrawingCache);
+        // TODO : danmakus config
+        DanmakuGlobalConfig.DEFAULT.setMaximumVisibleSizeInScreen(100)
+            .setScaleTextSize(1.2f)
+            .setDanmakuStyle(DanmakuGlobalConfig.DANMAKU_STYLE_STROKEN, 1.1f);
         mDMView.setCallback(mDMCallback);
         View holder = findViewById(R.id.holder);
         holder.setOnClickListener(this);
@@ -296,7 +303,6 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         boolean chroma565 = AcApp.getBoolean(getString(R.string.key_chroma_565), false);
         if(chroma565) mVideoView.setVideoChroma(MediaPlayer.VIDEOCHROMA_RGB565);
         
-        
         // ads
         mAds = findViewById(R.id.ads);
         findViewById(R.id.close).setOnClickListener(this);
@@ -318,22 +324,10 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         }
     };
     protected DanmakuTimer mTimer;
-    DanmakuSurfaceView.Callback mDMCallback = new DanmakuSurfaceView.Callback() {
+    DrawHandler.Callback mDMCallback = new DrawHandler.Callback() {
         @Override
         public void prepared() {
-            Log.i("Play", "dm prepared");
-            mProgressText.post(new Runnable() {
-                @Override
-                public void run() {
-                    mProgressText.setText(mProgressText.getText()
-                            +"\n"
-                            + getString(R.string.danmakus_loaded)
-                            +"\n"
-                            +getString(R.string.enable_danmaku_drawing_cache,mEnabledDrawingCache));
-                    mHandler.sendEmptyMessage(SYNC);
-                    hideTextDelayed();
-                }
-            });
+            mHandler.sendEmptyMessage(PREPARED);
         }
 
         @Override
@@ -341,31 +335,19 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             mTimer = timer;
         }
 
-        @Override
-        public void error(Throwable error) {
-            Log.e("Play", "error", error);
-            mProgressText.post(new Runnable() {
-                @Override
-                public void run() {
-                    mProgressText.setText(mProgressText.getText() + "\n"+getString(R.string.danmakus_load_failed));
-                    hideTextDelayed();
-                }
-            });
-        }
     };
     private MediaController mMediaController;
     private Handler mHandler;
     private MediaList mList;
+    private DanmakuParser mParser;
     Response.Listener<String> dmListener = new Response.Listener<String>() {
+
         @Override
         public void onResponse(String response) {
             mProgressText.setText(mProgressText.getText() + "\n"+ getString(R.string.danmakus_downloaded));
             try {
-                DMSiteType type = DMSiteType.ACFUN;
-                ILoader loader = type.getLoader();
-                loader.loadData(response);
-                BaseDanmakuParser parser = type.getParser().load(loader.getDataSource());
-                mDMView.prepare(parser);
+                mParser = new DanmakuParser(response);
+                mDMView.prepare(mParser);
             } catch (Exception e) {
                 Log.e(TAG, "解析失败", e);
                 mProgressText.setText(mProgressText.getText() +"\n" +getString(R.string.parsing_failed));
@@ -399,11 +381,8 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         File dmFile = new File(entry.destination, entry.part.commentId + ".json");
         if (!dmFile.exists()) return false;
         try {
-            DMSiteType type = DMSiteType.ACFUN;
-            ILoader loader = type.getLoader();
-            loader.load(new FileInputStream(dmFile));
-            BaseDanmakuParser parser = type.getParser().load(loader.getDataSource());
-            mDMView.prepare(parser);
+            mParser = new DanmakuParser(dmFile);
+            mDMView.prepare(mParser);
         } catch (Exception e) {
             Log.e(TAG, "解析失败", e);
             mProgressText.setText(mProgressText.getText() + "\n" + getString(R.string.parsing_failed));
@@ -469,25 +448,25 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         mResolver.resolveAsync(getApplicationContext());
         mProgressText.setText(mProgressText.getText() + "\n"+getString(R.string.video_segments_paring));
     }
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        
-        menu.add(Menu.NONE, 0x1, Menu.NONE, "关闭弹幕");
-        menu.add(Menu.NONE, 0x2, Menu.NONE, "发送弹幕");
-    }
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        switch(item.getItemId()){
-        case 0x1:
-            mDMView.stop();
-            break;
-        case 0x2:
-            
-            break;
-        }
-        
-        return super.onContextItemSelected(item);
-    }
+//    @Override
+//    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+//        
+//        menu.add(Menu.NONE, 0x1, Menu.NONE, "关闭弹幕");
+//        menu.add(Menu.NONE, 0x2, Menu.NONE, "发送弹幕");
+//    }
+//    @Override
+//    public boolean onContextItemSelected(MenuItem item) {
+//        switch(item.getItemId()){
+//        case 0x1:
+//            mDMView.stop();
+//            break;
+//        case 0x2:
+//            
+//            break;
+//        }
+//        
+//        return super.onContextItemSelected(item);
+//    }
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.close){
@@ -500,7 +479,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     public void start() {
         mAds.setVisibility(View.GONE);
         if(mComplete){
-            startPlay();
+            restart();
         }else{
             mVideoView.start();
             if(isDMShow()){
@@ -510,12 +489,15 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         }
     }
 
+    private void restart() {
+        mComplete = false;
+        mVideoView.setMediaList(mList);
+    }
     @Override
     public void pause() {
         mVideoView.pause();
         mHandler.removeMessages(SYNC);
         mDMView.pause();
-        
         mAds.setVisibility(View.VISIBLE);
         
     }
@@ -532,7 +514,6 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
 
     @Override
     public void seekTo(long pos) {
-        Log.i(TAG, "seek to "+ pos);
         mVideoView.seekTo(pos);
         mHandler.removeMessages(SYNC);
         mDMView.pause();
@@ -578,13 +559,28 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         if(mDMView != null)
             mDMView.release();
     }
-
+    long mLastTime;
     @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
+        case PREPARED:
+            mProgressText.setText(mProgressText.getText()
+                    +"\n"
+                    + getString(R.string.danmakus_loaded,mParser.size())
+                    +"\n"
+                    +getString(R.string.enable_danmaku_drawing_cache,mEnabledDrawingCache));
+            startDM();
+            hideTextDelayed();
+            break;
+        case RESUME:
+            if(mDMView.isPrepared()){
+                mDMView.resume();
+                mHandler.sendEmptyMessageDelayed(SYNC, 500);
+            }
+            break;
         case SEEK_COMPLETE:
             if(isPlaying()){
-                mDMView.start(getCurrentPosition());
+                mDMView.seekTo(getCurrentPosition());
                 mHandler.sendEmptyMessageDelayed(SYNC, 1500);
             }else
                 mHandler.sendEmptyMessageDelayed(SEEK_COMPLETE, 100);
@@ -593,11 +589,17 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             if (isPlaying()){
                 if(mTimer != null){
                     long cur = getCurrentPosition();
-                    long d = Math.abs(cur -mTimer.currMillisecond );
-                    if(d > 1000){
-                        mDMView.start(cur);
-                        Log.i(TAG, String.format("timer sync::%d",d));
+                    if(mLastTime == cur) {
+                        mDMView.pause();
                     }
+                    long d = cur -mTimer.currMillisecond ;
+                    if(Math.abs(d) > 2000){
+                        mDMView.seekTo(cur);
+                    }else if(d < -500 && d >= -2000){
+                         mDMView.pause();
+                         mHandler.sendEmptyMessageDelayed(RESUME, -d);
+                    }
+                    mLastTime = getCurrentPosition();
                 }
             }else{
                 mDMView.pause();
@@ -640,7 +642,10 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     public void startDM() {
         mDMView.setVisibility(View.VISIBLE);
         if(isPlaying()){
-            mDMView.start(getCurrentPosition());
+            if(mDMView.isPrepared()){
+                mDMView.seekTo(getCurrentPosition());
+            }else
+                mDMView.start(getCurrentPosition());
             mHandler.sendEmptyMessageDelayed(SYNC, 200);
         }
     }

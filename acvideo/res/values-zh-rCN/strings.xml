@@ -41,7 +41,7 @@
     <string name="feed_back">反馈</string>
     <string name="video_chroma_565">视频选用16位彩色</string>
     <string name="resolution">清晰度偏好</string>
-    <string name="danmakus_loaded">弹幕加载完毕.</string>
+    <string name="danmakus_loaded">弹幕加载完毕，共%d条.</string>
     <string name="danmakus_load_failed">弹幕加载失败!</string>
     <string name="danmakus_downloaded">弹幕文件下载完毕.\n开始解析...</string>
     <string name="danmakus_download_failed">弹幕文件下载失败！</string>
