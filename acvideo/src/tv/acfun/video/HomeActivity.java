@@ -49,6 +49,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.ViewDragHelper;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -140,7 +141,7 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         setUserInfo();
         initUmeng();
     }
-
+    
     private void initDrawer() {
         try {
             Field mDragger = mDrawer.getClass().getDeclaredField("mLeftDragger");
@@ -184,9 +185,11 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        int checkedItemPosition = mMenuList.getCheckedItemPosition();
-        if(checkedItemPosition != sTitles.length -1)
-            outState.putInt(KEY_STATE_POSITION, checkedItemPosition);
+        if(mMenuList.getAdapter() != null && mMenuList.getAdapter().getCount() > 0){
+            int checkedItemPosition = mMenuList.getCheckedItemPosition();
+            if(checkedItemPosition != sTitles.length -1)
+                outState.putInt(KEY_STATE_POSITION, checkedItemPosition);
+        }
     }
     @Override
     protected void onPostResume() {
@@ -317,17 +320,21 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         }
         if(f == null) return;
         
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, f);
-        // pop stack
         try {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, f);
+            // pop stack
             getSupportFragmentManager().popBackStack(STACK_NAME, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            if(cat.id != 1023){
+                transaction.addToBackStack(STACK_NAME);
+            }
+            /*
+             * http://stackoverflow.com/questions/7575921/
+             * https://code.google.com/p/android/issues/detail?id=19917
+             */
+            transaction.commitAllowingStateLoss();
         } catch (IllegalStateException e) {
-            // pop error
-        }
-        if(cat.id != 1023){
-            transaction.addToBackStack(STACK_NAME);
-        }
-        transaction.commit();
+            Log.w("----", "fragment transaction",e);
+        } 
         mDrawer.closeDrawer(GravityCompat.START);
         setTitle(cat.name);
         mMenuList.setItemChecked(position, true);
