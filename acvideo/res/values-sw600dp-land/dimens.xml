@@ -1,0 +1,5 @@
+<resources>
+	<dimen name="activity_horizontal_margin">32dp</dimen>
+	<dimen name="drawer_width">300dp</dimen>
+	<dimen name="item_cat_width">180dp</dimen>
+</resources>

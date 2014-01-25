@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/avatar"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="52dp"
+    android:background="?attr/selectableItemBackground"
+    android:onClick="onAvatarClick"
+    android:focusable="true"
+     >
+	<ImageView 
+	    android:padding="4dp"
+	    android:id="@android:id/icon"
+	    android:layout_width="52dp"
+	    android:layout_height="52dp"
+	    android:src="@drawable/acgirl"
+	    />
+	<TextView 
+	    android:id="@android:id/text1"
+	    style="@android:style/TextAppearance.Medium"
+	    android:paddingLeft="@dimen/text_horizontal_padding"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="center_vertical"
+	    android:text="@string/login"
+	    />
+</LinearLayout>

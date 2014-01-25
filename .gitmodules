@@ -1,0 +1,12 @@
+[submodule "libs/DanmakuFlameMaster"]
+	path = libs/DanmakuFlameMaster
+	url = https://github.com/ctiao/DanmakuFlameMaster.git
+[submodule "libs/StickyGridHeaders"]
+	path = libs/StickyGridHeaders
+	url = https://github.com/TonicArtos/StickyGridHeaders.git
+[submodule "libs/PagerSlidingTabStrip"]
+	path = libs/PagerSlidingTabStrip
+	url = https://github.com/astuetz/PagerSlidingTabStrip.git
+[submodule "libs/FadingActionBar"]
+	path = libs/FadingActionBar
+	url = https://github.com/ManuelPeinado/FadingActionBar.git
