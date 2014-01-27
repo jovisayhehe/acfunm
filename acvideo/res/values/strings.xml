@@ -111,6 +111,7 @@
     <string name="action_font_size">Font size</string>
     <string name="comment_font_size">Font size of comment</string>
     <string name="action_comment">Comment</string>
+    <string name="action_share">Share</string>
     <string name="search_result">%d items found.</string>
     <string name="nosdcard">SD card not found.</string>
     <string name="no_download">O(∩_∩)O 没有下载项~</string>
@@ -121,4 +122,5 @@
 	<string name="menu_downlod">Download</string>
 	<string name="menu_watch_later">Watch later</string>
 	<string name="download_manager">下载管理</string>
+	<string name="share_content" formatted="false">"#Acfun# 分享视频：%s，http://www.acfun.tv/v/ac%d。来自#Acfun视频版客户端#"</string>
 </resources>

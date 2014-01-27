@@ -259,7 +259,8 @@ public class AcApp extends Application {
      */
     public static File getExternalCacheDir(String type) {
         File cacheDir = new File(sContext.getExternalCacheDir(), type);
-        cacheDir.mkdirs();
+        if(!cacheDir.isDirectory() && cacheDir.mkdirs())
+            cacheDir = new File(sContext.getCacheDir(),type);
         return cacheDir;
     }
     private String versionName = "";

@@ -16,7 +16,12 @@
 
 package tv.acfun.video;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import master.flame.danmaku.danmaku.util.IOUtils;
 
 import org.apache.commons.httpclient.Cookie;
 
@@ -33,6 +38,7 @@ import tv.acfun.video.player.MediaList.Resolver;
 import tv.acfun.video.player.resolver.BaseResolver;
 import tv.acfun.video.player.resolver.ResolverType;
 import tv.acfun.video.util.FadingActionBarHelper;
+import tv.acfun.video.util.FileUtil;
 import tv.acfun.video.util.MemberUtils;
 import tv.acfun.video.util.TextViewUtils;
 import tv.acfun.video.util.download.DownloadEntry;
@@ -42,6 +48,7 @@ import tv.acfun.video.util.net.FastJsonRequest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.PopupMenu;
@@ -151,6 +158,8 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         @Override
         public void onResponse(Video response) {
             mVideo = response;
+            if(mShareMenuItem != null)
+                mShareMenuItem.setEnabled(true);
             initContent();
             initViews();
             mTitleView.setText(response.name);
@@ -256,6 +265,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
     };
     private int mAcId;
     private DownloadManager manager;
+    private MenuItem mShareMenuItem;
 
     public static class VideoDetailsRequest extends FastJsonRequest<Video> {
         public VideoDetailsRequest(int acId, Listener<Video> listener, ErrorListener errorListner) {
@@ -342,6 +352,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
                 }
             }
         }.start();
+        mShareMenuItem = menu.findItem(R.id.action_share);
         getMenuInflater().inflate(R.menu.main, menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -406,6 +417,34 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
             return true;
         case R.id.action_download_manager:
             startActivity(new Intent(this, DownloadManActivity.class));
+            return true;
+        case R.id.action_share:
+            Intent share = new Intent(Intent.ACTION_SEND);
+            share.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_content,mVideo.name,mVideo.acId));
+            byte[] data = AcApp.getDataInDiskCache(mVideo.previewurl);
+            if(data!= null){
+                File tempFile = new File(AcApp.getExternalCacheDir("temp"),"temp"+FileUtil.getUrlExt(mVideo.previewurl, ".jpg"));
+                FileOutputStream out = null;
+                try {
+                    if(tempFile.exists()) {
+                        tempFile.delete();
+                    }
+                    tempFile.createNewFile();
+                    out = new FileOutputStream(tempFile);
+                    out.write(data);
+                    share.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tempFile));
+                    share.setType("image/jpeg");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    share.setType("text/plain");
+                } finally{
+                    IOUtils.closeQuietly(out);
+                }
+            }else{
+                share.setType("text/plain");
+            }
+            Intent intent  = Intent.createChooser(share, getString(R.string.action_share)+"ac"+mVideo.acId);
+            startActivity(intent);
             return true;
         default:
             return super.onOptionsItemSelected(item);
