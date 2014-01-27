@@ -380,7 +380,6 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
             return;
         }
         Resolver resolver = type.getResolver(part.sourceId);
-        resolver.resolveAsync(this);
         int resolution = Integer.parseInt(AcApp.getString(getString(R.string.key_resolution_mode), "1"));
         if(resolution < BaseResolver.RESOLUTION_HD2) resolution = BaseResolver.RESOLUTION_HD2;
         ((BaseResolver) resolver).setResolution(resolution);
@@ -398,6 +397,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
                 }
             }
         });
+        resolver.resolveAsync(this);
     }
 
     @Override

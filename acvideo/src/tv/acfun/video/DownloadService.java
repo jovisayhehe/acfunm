@@ -114,8 +114,9 @@ public class DownloadService extends Service {
         
         @Override
         public void onDownloadFinished(int status, DownloadJob job) {
-            Log.i(TAG, "service: got finished");
-            mDownloadProvider.complete(status, job);
+            Log.i(TAG, "service: got finished::status="+status);
+            if(status == DownloadDB.STATUS_SUCCESS)
+                mDownloadProvider.complete(status, job);
             showDownloadedNoti(status,job);
         }
 

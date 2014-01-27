@@ -160,10 +160,10 @@ public class DownloadProvider {
     public void removeDownload(DownloadJob job) {
         if(DownloadManager.isRunningStatus(job.getStatus())){ 
             job.cancel();
-            mQueuedJobs.remove(job);
-        }else{
-            mCompletedJobs.remove(job);
         }
+        mQueuedJobs.remove(job);
+        mCompletedJobs.remove(job);
+        
         mDb.remove(job);
         mDownloadManager.notifyAllObservers(2);
     }

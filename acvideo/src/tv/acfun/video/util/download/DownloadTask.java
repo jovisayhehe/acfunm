@@ -43,7 +43,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
     private boolean isPaused;
     private DownloadInfo mInfo;
     private DownloadTaskListener mListener;
-    private String TAG = "DownloadTask - " + mId;
+    private String TAG;
     
     public boolean isCancelled;
     public DownloadTask(DownloadInfo info){
@@ -51,6 +51,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
     }
     public DownloadTask(int id, DownloadInfo info){
         this.mId = id;
+        TAG = "DownloadTask - " + mId;
         this.mInfo = info;
     }
     
@@ -147,6 +148,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
 //                重命名失败。。。
                 values.put(DownloadDB.COLUMN_DATA, state.mSaveFile.getName());
             }
+            mStatus = finalStatus;
             values.put(DownloadDB.COLUMN_STATUS, finalStatus);
             update(values);
             if(mListener != null)
@@ -154,6 +156,13 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
         }
         
     }
+    
+    private int mStatus;
+    
+    public int getDownloadStatus(){
+        return mStatus;
+    }
+    
     private void executeDownload(HttpClient client, HttpGet request, State state) throws RetryDownload, StopRequest {
         byte data[] = new byte[BUFFER_SIZE];
         
@@ -188,7 +197,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
         
     }
     
-    private void transferData(State state, byte[] data, InputStream entityStream) throws StopRequest {
+    private void transferData(State state, byte[] data, InputStream entityStream) throws StopRequest, RetryDownload {
         for (;;) {
             int bytesRead = readFromResponse(state, data, entityStream);
             if (bytesRead == -1) { // success, end of stream already reached
@@ -254,7 +263,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
     private boolean cannotResume(State state) {
         return state.mDownloadedBytes > 0 && state.mHeaderETag == null;
     }
-    private int readFromResponse(State state, byte[] data, InputStream entityStream) throws StopRequest {
+    private int readFromResponse(State state, byte[] data, InputStream entityStream) throws StopRequest, RetryDownload {
         try {
             return entityStream.read(data);
         } catch (IOException ex) {
@@ -267,8 +276,7 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
                 throw new StopRequest(DownloadDB.STATUS_CANNOT_RESUME,
                         message, ex);
             } else {
-                throw new StopRequest(DownloadDB.STATUS_BAD_REQUEST,
-                        "while reading response: " + ex.toString(), ex);
+                throw new RetryDownload(ex);
             }
         }
     }
@@ -480,6 +488,12 @@ public class DownloadTask extends AsyncTask<Void, Integer, Boolean>{
      * retry
      */
     private class RetryDownload extends Exception{
+        public RetryDownload(){
+        }
+        public RetryDownload(Throwable t) {
+            super(t);
+        }
+
         private static final long serialVersionUID = 228796856L;}
     /**
      * stop
