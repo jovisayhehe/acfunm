@@ -240,7 +240,10 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         partView.setTag(item);
         TextView name = (TextView) partView.findViewById(R.id.part_name);
         TextView desc = (TextView) partView.findViewById(R.id.part_desc);
-        String text = TextUtils.isEmpty(item.name) ? "点击查看视频" : (position + 1) + ". " + item.name;
+        if(TextUtils.isEmpty(item.name)){
+            item.name = "Part "+ (position + 1);
+        }
+        String text = (position + 1) + ". " + item.name;
         name.setText(text);
         desc.setText("来源: " + item.type);
         partView.findViewById(R.id.part_overlow).setOnClickListener(this);

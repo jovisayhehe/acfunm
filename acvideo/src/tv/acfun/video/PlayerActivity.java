@@ -105,7 +105,6 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
     OnPreparedListener onPrepared = new OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mp) {
-            Log.w(TAG, "media prepared");
             if (mDMView.isPrepared()) {
                 if (mp instanceof MediaSegmentPlayer)
                     mDMView.seekTo(((MediaSegmentPlayer) mp).getAbsolutePosition());
@@ -274,9 +273,10 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         mDMView = (DanmakuSurfaceView) findViewById(R.id.danmakus);
         mDMView.enableDanmakuDrawingCache(mEnabledDrawingCache);
         // TODO : danmakus config
-        DanmakuGlobalConfig.DEFAULT.setMaximumVisibleSizeInScreen(100)
-            .setScaleTextSize(1.2f)
-            .setDanmakuStyle(DanmakuGlobalConfig.DANMAKU_STYLE_STROKEN, 1.1f);
+        DanmakuGlobalConfig.DEFAULT
+            .setMaximumVisibleSizeInScreen(100)
+            .setScaleTextSize(getResources().getDisplayMetrics().scaledDensity-0.4f)
+            /*.setDanmakuStyle(DanmakuGlobalConfig.DANMAKU_STYLE_STROKEN, 1.1f)*/;
         mDMView.setCallback(mDMCallback);
         View holder = findViewById(R.id.holder);
         holder.setOnClickListener(this);

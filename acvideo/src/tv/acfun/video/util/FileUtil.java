@@ -12,6 +12,7 @@ import java.util.Locale;
 
 import tv.acfun.video.AcApp;
 
+import android.annotation.TargetApi;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -84,6 +85,8 @@ public class FileUtil {
      * 
      * @return SD卡未挂载则返回-1
      */
+    @SuppressWarnings("deprecation")
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public static long getExternalAvailable() {
         if (AcApp.isExternalStorageAvailable()) {
             StatFs sf = new StatFs(Environment.getExternalStorageDirectory().getPath());
@@ -126,7 +129,7 @@ public class FileUtil {
                 
                 return ext.substring(ext.lastIndexOf('.'));
                 }catch (StringIndexOutOfBoundsException e) {
-                   Log.e("Util", "when get url ext : "+url,e);
+                   Log.d("Util", "when get url ext : "+url,e);
                 }
             }
             

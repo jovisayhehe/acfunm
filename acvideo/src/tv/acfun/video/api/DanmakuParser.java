@@ -21,8 +21,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-import tv.acfun.video.player.MediaList;
-
 import master.flame.danmaku.danmaku.model.BaseDanmaku;
 import master.flame.danmaku.danmaku.model.android.Danmakus;
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
@@ -95,7 +93,7 @@ public class DanmakuParser extends BaseDanmakuParser {
                     BaseDanmaku item = DanmakuFactory.createDanmaku(type, mDispWidth/(mDispDensity - 0.9f));
                     if (item != null) {
                         item.time = time;
-                        item.textSize = textSize * (mDispDensity - 0.5f);
+                        item.textSize = textSize;
                         item.textColor = color;
                         item.textShadowColor = color <= Color.BLACK ? Color.WHITE : Color.BLACK;
                         DanmakuFactory.fillText(item, obj.getString("m"));
