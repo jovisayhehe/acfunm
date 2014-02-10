@@ -356,6 +356,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
             }
         }.start();
         mShareMenuItem = menu.findItem(R.id.action_share);
+        if(mVideo != null) mShareMenuItem.setEnabled(true);
         getMenuInflater().inflate(R.menu.main, menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -473,7 +474,6 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
                         item.setIcon(R.drawable.ic_action_favorite);
                     }
                 }
-                
             };
             AcApp.showDeleteFavAlert(this,listener);
         }else{
