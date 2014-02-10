@@ -21,12 +21,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import tv.ac.fun.R;
+
 import master.flame.danmaku.danmaku.model.BaseDanmaku;
 import master.flame.danmaku.danmaku.model.android.Danmakus;
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
 import master.flame.danmaku.danmaku.parser.DanmakuFactory;
 import master.flame.danmaku.danmaku.util.IOUtils;
+import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -38,29 +42,41 @@ import com.alibaba.fastjson.JSONObject;
  *
  */
 public class DanmakuParser extends BaseDanmakuParser {
+    private int mSizeFactor;
+    private static final int TEXT_SIZE_MIN = 16;
     private JSONArray mDanmakuJsonArray;
-    public DanmakuParser(String danmakus){
-        init(danmakus);
+    public DanmakuParser(Context context, String danmakus){
+        init(context, danmakus);
     }
 
 
-    private void init(String danmakus) {
+    private void init(Context context, String danmakus) {
+        if(context == null){
+            mSizeFactor = 5;
+        }else{
+            mSizeFactor = context.getResources().getInteger(R.integer.danmaku_text_size_factor);
+        }
+        Log.i("aaa", "size factor="+mSizeFactor);
         mDanmakuJsonArray = JSON.parseArray(danmakus);
     }
     
     
-    public DanmakuParser(File file) {
+    public DanmakuParser(Context context, File file) {
+        
         InputStream in = null;
         try {
             in = new FileInputStream(file);
             String danmakus = IOUtils.getString(in);
-            init(danmakus);
+            init(context, danmakus);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } finally {
             IOUtils.closeQuietly(in);
         }
-        
+    }
+    @Deprecated
+    public DanmakuParser(File file) {
+        this(null, file);
     }
 
 
@@ -89,7 +105,8 @@ public class DanmakuParser extends BaseDanmakuParser {
                         continue;
                     long time = (long) (Float.parseFloat(values[0]) * 1000); // 出现时间
                     int color = Integer.parseInt(values[1]) | 0xFF000000; // 颜色
-                    float textSize = Float.parseFloat(values[3]); // 字体大小
+                    float textSize = Float.parseFloat(values[3]) - mSizeFactor; // 字体大小
+                    if(textSize < TEXT_SIZE_MIN) textSize = TEXT_SIZE_MIN;
                     BaseDanmaku item = DanmakuFactory.createDanmaku(type, mDispWidth/(mDispDensity - 0.9f));
                     if (item != null) {
                         item.time = time;

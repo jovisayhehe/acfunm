@@ -1,0 +1,8 @@
+<resources>
+	<dimen name="activity_horizontal_margin">64dp</dimen>
+    <dimen name="drawer_width">300dp</dimen>
+    <dimen name="item_cat_width">210dp</dimen>
+	<dimen name="item_cat_height">120dp</dimen>
+	<dimen name="item_width">210dp</dimen>
+	<dimen name="item_height">120dp</dimen>
+</resources>
