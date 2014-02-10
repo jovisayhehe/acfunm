@@ -90,7 +90,7 @@
     <string name="danmakus_buffering">Danmakus buffering...</string>
     <string name="failed">Failed!</string>
     <string name="player_type">"Type of player: %s"</string>
-    <string name="enable_danmaku_drawing_cache">"Enable danmaku drawing cache: %b"</string>
+    <string name="enable_danmaku_drawing_cache">"Enable danmaku drawing cache: %B"</string>
     <string name="hide_requote">Quote hidden.</string>
     <string name="comment_hint">Bu tucao bu shufusiji.</string>
     <string name="user_name">User name</string>
@@ -123,4 +123,5 @@
 	<string name="menu_watch_later">Watch later</string>
 	<string name="download_manager">下载管理</string>
 	<string name="share_content" formatted="false">"#Acfun# 分享视频：%s，http://www.acfun.tv/v/ac%d。来自#Acfun视频版客户端#"</string>
+	<string name="details_info" formatted="false"><![CDATA[<font color=\"#ff8800\">%s</font> / 发布于 %s <br/>%d次播放，%d条评论，%d人收藏"]]></string>
 </resources>

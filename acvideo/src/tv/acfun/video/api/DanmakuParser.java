@@ -21,16 +21,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-import tv.ac.fun.R;
-
 import master.flame.danmaku.danmaku.model.BaseDanmaku;
 import master.flame.danmaku.danmaku.model.android.Danmakus;
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
 import master.flame.danmaku.danmaku.parser.DanmakuFactory;
 import master.flame.danmaku.danmaku.util.IOUtils;
+import tv.ac.fun.R;
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -56,7 +54,6 @@ public class DanmakuParser extends BaseDanmakuParser {
         }else{
             mSizeFactor = context.getResources().getInteger(R.integer.danmaku_text_size_factor);
         }
-        Log.i("aaa", "size factor="+mSizeFactor);
         mDanmakuJsonArray = JSON.parseArray(danmakus);
     }
     
