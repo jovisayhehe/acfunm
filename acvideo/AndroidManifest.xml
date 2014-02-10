@@ -44,6 +44,7 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
             android:name="tv.acfun.video.DetailsActivity"
+            android:uiOptions="splitActionBarWhenNarrow"
             android:theme="@style/AppTheme.TranslucentActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

@@ -236,13 +236,23 @@ public class DownloadJob {
 
     public void notifyDownloadCompleted(int status) {
         if (mListener != null) {
-            if(status == DownloadDB.STATUS_PAUSED)
+            if (status == DownloadDB.STATUS_PAUSED){
                 mListener.onDownloadPaused(this);
-            else if(status == DownloadDB.STATUS_CANCELED){
+            }else if (status == DownloadDB.STATUS_CANCELED) {
                 mListener.onDownloadCancelled(this);
+            } else if(status == DownloadDB.STATUS_SUCCESS){
+                boolean bCompleted = true;
+                for (DownloadTask t : mTasks) {
+                    if (t.getDownloadStatus() != DownloadDB.STATUS_SUCCESS) {
+                        bCompleted = false;
+                        break;
+                    }
+                }
+                if(bCompleted)
+                    mListener.onDownloadFinished( DownloadDB.STATUS_SUCCESS, this);
+            }else{
+                mListener.onDownloadFinished(status,this);
             }
-            else 
-                mListener.onDownloadFinished(status, this);
         }
         mDownloadMan.notifyAllObservers(2);
     }

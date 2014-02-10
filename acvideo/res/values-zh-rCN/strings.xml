@@ -70,6 +70,7 @@
     <string name="action_font_size">字体大小</string>
     <string name="comment_font_size">评论字体大小</string>
     <string name="action_comment">评论</string>
+    <string name="action_share">分享</string>
     <string name="search_result">找到%d条数据</string>
     <string name="no_download">O(∩_∩)O 没有下载项~</string>
 	<string name="nosdcard">没有找到外部存储卡！</string>

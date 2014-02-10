@@ -60,7 +60,7 @@ public class DownloadJobAdapter extends BaseArrayAdapter<DownloadJob> implements
 		}
 		DownloadEntry entry = job.getEntry();
 		holder.title.setText(entry.title);
-		holder.acid.setText("ac"+entry.aid);
+		holder.acid.setText("ac"+entry.aid+"-"+entry.part.name);
 		// TODO 尝试把checkbox也放到holder中
 		CheckBox cb = (CheckBox) row.findViewById(R.id.download_checked);
 		
@@ -69,7 +69,7 @@ public class DownloadJobAdapter extends BaseArrayAdapter<DownloadJob> implements
 	    cb.setChecked(checkedJobs.contains(job));
 	    int totalSize = job.getTotalSize();
 	    int downloadSize = job.getDownloadedSize();
-		if(job.getProgress() == 100){
+		if(totalSize == downloadSize){
 			holder.progressBar.setVisibility(View.GONE);
 			holder.progressText.setText(FileUtil.formatFileSize(totalSize)+"/已完成");
 		}else if(downloadSize== 0 && DownloadManager.isRunningStatus(job.getStatus())){
