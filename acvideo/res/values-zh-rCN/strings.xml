@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Ac视频版</string>
+    <string name="drawer_open">AcFun弹幕视频</string>
+    <string name="action_settings">设置</string>
+    <string name="action_refresh">刷新</string>
+    <string name="title_home">主页列表</string>
+    <string name="title_user_center">个人中心</string>
+    <string name="title_categories">频道分类</string>
+    <string name="logout">注销</string>
+    <string name="login">登录</string>
+
+    <string-array name="titles">
+        <item>首页</item>
+        <item>今日热门</item>
+        <item>我的订阅</item>
+        <item>收藏夹</item>
+        <item>浏览历史</item>
+        <item>稍后观看</item>
+        <item>搜索</item>
+        <item>频道列表</item>
+    </string-array>
+    <string-array name="details_titles">
+        <item>详情</item>
+        <item>分段</item>
+        <item>评论</item>
+    </string-array>
+
+    <string name="buffering">加载中...</string>
+    <string name="source_type_not_support_yet">尚不支持该视频源！</string>
+    <string name="hw_decode">尝试开启硬解码</string>
+    <string name="clear_cache">清除缓存</string>
+    <string name="update">更新</string>
+    <string name="donate">捐助开发者</string>
+    <string name="others">其他</string>
+    <string name="about">关于</string>
+    <string name="dm_cache">开启多线程绘制弹幕</string>
+    <string name="wifi_only">仅限WIFI</string>
+    <string name="rating">评分!</string>
+    <string name="feed_back">反馈</string>
+    <string name="video_chroma_565">视频选用16位彩色</string>
+    <string name="resolution">清晰度偏好</string>
+    <string name="danmakus_loaded">弹幕加载完毕，共%d条.</string>
+    <string name="danmakus_load_failed">弹幕加载失败!</string>
+    <string name="danmakus_downloaded">弹幕文件下载完毕.\n开始解析...</string>
+    <string name="danmakus_download_failed">弹幕文件下载失败！</string>
+    <string name="parsing_failed">解析失败!</string>
+    <string name="video_buffering">开始缓冲视频..请稍候...</string>
+    <string name="video_segments_paring">视频分段解析中...</string>
+    <string name="video_segments_parsing_success">完毕..共%d段</string>
+    <string name="danmakus_buffering">开始加载弹幕...</string>
+    <string name="failed">失败!</string>
+    <string name="player_type">"播放器类型: %s"</string>
+    <string name="enable_danmaku_drawing_cache">"开启弹幕绘制缓存: %B"</string>
+    <string name="user_name">用户名</string>
+    <string name="password">密码</string>
+    <string name="signin">登录</string>
+    <string name="action_fav">收藏</string>
+    <string name="post_comment">评论</string>
+    <string name="time_out">获取超时！点击重试</string>
+    <string name="posting_comment">评论提交中...</string>
+    <string name="comment_success">评论成功! </string>
+    <string name="comment_failed">评论失败! </string>
+    <string name="reloading">点我重新加载</string>
+    <string name="no_comment_yet">尚无评论。</string>
+    <string name="sign_in_first">请先登录。</string>
+    <string name="no_comment">没有评论内容。</string>
+    <string name="comment_not_enough">吐槽得不够！</string>
+    <string name="action_font_size">字体大小</string>
+    <string name="comment_font_size">评论字体大小</string>
+    <string name="action_comment">评论</string>
+    <string name="action_share">分享</string>
+    <string name="search_result">找到%d条数据</string>
+    <string name="no_download">O(∩_∩)O 没有下载项~</string>
+	<string name="nosdcard">没有找到外部存储卡！</string>
+	<string name="menu_download_delete">删除</string>
+	<string name="menu_download_resume">继续</string>
+	<string name="menu_download_pause">暂停</string>
+	<string name="menu_select_all">全选</string>
+	<string name="menu_downlod">下载</string>
+	<string name="menu_watch_later">稍后观看</string>
+</resources>
