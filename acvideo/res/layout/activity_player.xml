@@ -27,7 +27,8 @@
         android:id="@+id/progress_text"
         android:textColor="#fff"
         android:textSize="14sp"
-        android:layout_gravity="bottom"
+        android:layout_gravity="top"
+        android:paddingTop="?attr/actionBarSize"
         />
 	<View 
 	    android:id="@+id/holder"

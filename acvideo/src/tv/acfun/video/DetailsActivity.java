@@ -163,7 +163,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
             initContent();
             initViews();
             mTitleView.setText(response.name);
-            String info = String.format("<font color=\"#ff8800\">%s</font> / 发布于 %s <br/>%d次播放，%d条评论，%d人收藏", response.creator.name,
+            String info =getString(R.string.details_info,/* String.format("<font color=\"#ff8800\">%s</font> / 发布于 %s <br/>%d次播放，%d条评论，%d人收藏",*/ response.creator.name,
                     AcApp.getPubDate(response.createtime), response.viewernum, response.commentnum, response.collectnum);
             mUpInfoView.setText(Html.fromHtml(info));
             mDetailView.setText(Html.fromHtml(TextViewUtils.getSource(response.desc)));
@@ -356,6 +356,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
             }
         }.start();
         mShareMenuItem = menu.findItem(R.id.action_share);
+        if(mVideo != null) mShareMenuItem.setEnabled(true);
         getMenuInflater().inflate(R.menu.main, menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -473,7 +474,6 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
                         item.setIcon(R.drawable.ic_action_favorite);
                     }
                 }
-                
             };
             AcApp.showDeleteFavAlert(this,listener);
         }else{

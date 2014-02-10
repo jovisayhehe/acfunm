@@ -63,6 +63,7 @@ import android.os.Handler.Callback;
 import android.os.Message;
 import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -273,9 +274,10 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         mDMView = (DanmakuSurfaceView) findViewById(R.id.danmakus);
         mDMView.enableDanmakuDrawingCache(mEnabledDrawingCache);
         // TODO : danmakus config
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         DanmakuGlobalConfig.DEFAULT
             .setMaximumVisibleSizeInScreen(100)
-            .setScaleTextSize(getResources().getDisplayMetrics().scaledDensity-0.4f)
+            .setScaleTextSize(displayMetrics.scaledDensity)
             /*.setDanmakuStyle(DanmakuGlobalConfig.DANMAKU_STYLE_STROKEN, 1.1f)*/;
         mDMView.setCallback(mDMCallback);
         View holder = findViewById(R.id.holder);
@@ -342,7 +344,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         public void onResponse(String response) {
             mProgressText.setText(mProgressText.getText() + "\n"+ getString(R.string.danmakus_downloaded));
             try {
-                mParser = new DanmakuParser(response);
+                mParser = new DanmakuParser(getApplicationContext(), response);
                 mDMView.prepare(mParser);
             } catch (Exception e) {
                 Log.e(TAG, "解析失败", e);
@@ -377,7 +379,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         File dmFile = new File(entry.destination, entry.part.commentId + ".json");
         if (!dmFile.exists()) return false;
         try {
-            mParser = new DanmakuParser(dmFile);
+            mParser = new DanmakuParser(getApplicationContext(),dmFile);
             mDMView.prepare(mParser);
         } catch (Exception e) {
             Log.e(TAG, "解析失败", e);
