@@ -24,6 +24,7 @@ import io.vov.vitamio.Vitamio;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import master.flame.danmaku.controller.DrawHandler;
@@ -245,7 +246,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
                     };
                     new AlertDialog.Builder(PlayerActivity.this)
                         .setTitle("你的设备需要下载解码器")
-                        .setMessage(R.string.cpu_not_support)
+                        .setMessage(getString(R.string.cpu_not_support, Environment.getExternalStorageDirectory().getAbsolutePath()))
                         .setNegativeButton("取消", listener)
                         .setPositiveButton("好", listener)
                         .show();
@@ -430,7 +431,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         String sourceType = mVideo.type;
         ResolverType type = null;
         try {
-            type = ResolverType.valueOf(sourceType.toUpperCase());
+            type = ResolverType.valueOf(sourceType.toUpperCase(Locale.US));
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
@@ -446,25 +447,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         mResolver.resolveAsync(getApplicationContext());
         mProgressText.setText(mProgressText.getText() + "\n"+getString(R.string.video_segments_paring));
     }
-//    @Override
-//    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-//        
-//        menu.add(Menu.NONE, 0x1, Menu.NONE, "关闭弹幕");
-//        menu.add(Menu.NONE, 0x2, Menu.NONE, "发送弹幕");
-//    }
-//    @Override
-//    public boolean onContextItemSelected(MenuItem item) {
-//        switch(item.getItemId()){
-//        case 0x1:
-//            mDMView.stop();
-//            break;
-//        case 0x2:
-//            
-//            break;
-//        }
-//        
-//        return super.onContextItemSelected(item);
-//    }
+
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.close){

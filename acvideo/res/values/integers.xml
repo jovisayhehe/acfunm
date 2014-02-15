@@ -6,5 +6,5 @@
     <integer name="high_d_3">3</integer>
     <integer name="max_floors_w">6</integer>
     
-    <integer name="danmaku_text_size_factor">6</integer>
+    <integer name="danmaku_text_size_factor">7</integer>
 </resources>

@@ -16,8 +16,11 @@
 
 package tv.acfun.video.fragment;
 
-import tv.acfun.video.HomeActivity;
+import java.util.ArrayList;
+import java.util.Collections;
+
 import tv.ac.fun.R;
+import tv.acfun.video.HomeActivity;
 import tv.acfun.video.api.API;
 import android.app.Activity;
 import android.os.Bundle;
@@ -37,7 +40,7 @@ import com.astuetz.PagerSlidingTabStrip;
  */
 public class ChannelFragment extends Fragment {
     private static final String TAG = "ChannelFragment";
-    private int[] mCatIds;
+    private ArrayList<Integer> mCatIds;
     private ViewPager mPager;
     private Activity mActivity;
 
@@ -46,7 +49,10 @@ public class ChannelFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mCatIds = getArguments().getIntArray(API.EXTRAS_CATEGORY_IDS);
+        mCatIds = getArguments().getIntegerArrayList(API.EXTRAS_CATEGORY_IDS);
+        if(mCatIds == null) return;
+        Collections.sort(mCatIds);
+        
     }
 
     @Override
@@ -61,6 +67,12 @@ public class ChannelFragment extends Fragment {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mActivity = null;
+    }
+    
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mPager = (ViewPager) view.findViewById(R.id.pager);
@@ -70,6 +82,7 @@ public class ChannelFragment extends Fragment {
     }
 
     private String getChannelName(int id) {
+        if (mActivity == null) mActivity = getActivity();
         if (mActivity instanceof HomeActivity) { return ((HomeActivity) mActivity).findChannelNameById(id); }
         return null;
     }
@@ -81,17 +94,17 @@ public class ChannelFragment extends Fragment {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return getChannelName(mCatIds[position]);
+            return getChannelName(mCatIds.get(position));
         }
 
         @Override
         public Fragment getItem(int position) {
-            return VideosFragment.newInstance(mCatIds[position]);
+            return VideosFragment.newInstance(mCatIds.get(position));
         }
 
         @Override
         public int getCount() {
-            return mCatIds.length;
+            return mCatIds.size();
         }
     }
 }

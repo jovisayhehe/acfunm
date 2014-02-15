@@ -53,9 +53,9 @@
         <item>下载中</item>
         <item>已下载</item>
     </string-array>
-<string name="buffering">Loading...</string>
+	<string name="buffering">Loading...</string>
     <string name="source_type_not_support_yet">"The type of source isn't support yet."</string>
-    <string name="url_area63">http://pan.baidu.com/s/1pJHcqLl</string>
+    <string name="url_area63">http://pan.baidu.com/s/1sjpUaWt</string>
     <string name="key_clear_cache">clear_cache</string>
     <string name="key_update">update</string>
     <string name="key_about">about</string>
@@ -96,7 +96,7 @@
     <string name="user_name">User name</string>
     <string name="password">Password</string>
     <string name="signin">Sign In</string>
-    <string name="cpu_not_support">请手动下载解码器到SD卡根目录下..</string>
+    <string name="cpu_not_support">请手动下载解码器到SD卡根目录(%s)下..</string>
     <string name="action_fav">Favorite</string>
     <string name="post_comment">Comment</string>
     <string name="time_out">Request time out.</string>
@@ -124,4 +124,5 @@
 	<string name="download_manager">下载管理</string>
 	<string name="share_content" formatted="false">"#Acfun# 分享视频：%s，http://www.acfun.tv/v/ac%d。来自#Acfun视频版客户端#"</string>
 	<string name="details_info" formatted="false"><![CDATA[<font color=\"#ff8800\">%s</font> / 发布于 %s <br/>%d次播放，%d条评论，%d人收藏"]]></string>
+	<string name="click_to_see_more">点击查看更多...</string>
 </resources>

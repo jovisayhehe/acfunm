@@ -170,6 +170,7 @@ public class SearchFragment extends Fragment implements OnClickListener, OnEdito
                 mAdapter.addData(response.contents);
             } else {
                 mAdapter.setData(response.contents);
+                mResultList.smoothScrollToPosition(0);
             }
 
         }
@@ -211,6 +212,13 @@ public class SearchFragment extends Fragment implements OnClickListener, OnEdito
         
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(mAdapter != null){
+            mAdapter.destory();
+        }
+    }
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mActivity = activity;

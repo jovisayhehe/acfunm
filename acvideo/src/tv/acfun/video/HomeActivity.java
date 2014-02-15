@@ -18,6 +18,7 @@ package tv.acfun.video;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import tv.ac.fun.BuildConfig;
@@ -37,7 +38,6 @@ import tv.acfun.video.fragment.VideosFragment;
 import tv.acfun.video.util.CommonUtil;
 import tv.acfun.video.util.net.CategoriesRequest;
 import android.app.AlertDialog;
-import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -120,11 +120,13 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
 
             public void onDrawerClosed(View view) {
                 getSupportActionBar().setTitle(getTitle());
+                supportInvalidateOptionsMenu();
             }
 
             public void onDrawerOpened(View drawerView) {
                 getSupportActionBar().setTitle(R.string.drawer_open);
                 mMenuList.requestFocus();
+                supportInvalidateOptionsMenu();
             }
         };
         mDrawer.setDrawerListener(mDrawerToggle);
@@ -155,7 +157,16 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
             e.printStackTrace();
         }
     }
-
+    
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // If the nav drawer is open, hide action items related to the content view
+        boolean drawerOpen = mDrawer.isDrawerOpen(GravityCompat.START);
+        MenuItem findItem = menu.findItem(R.id.action_refresh);
+        if (findItem != null)
+            findItem.setVisible(!drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
+    }
     private void initUmeng() {
         MobclickAgent.setDebugMode(BuildConfig.DEBUG);
         UmengUpdateAgent.update(this);
@@ -257,7 +268,6 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         if (mDrawerToggle.onOptionsItemSelected(item)) {
           return true;
         }
-        // Handle your other action bar items...
         switch (item.getItemId()) {
         case R.id.action_settings:
             SettingsActivity.start(this);
@@ -322,8 +332,9 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         
         try {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, f);
+            getSupportFragmentManager();
             // pop stack
-            getSupportFragmentManager().popBackStack(STACK_NAME, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            getSupportFragmentManager().popBackStack(STACK_NAME, android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
             if(cat.id != 1023){
                 transaction.addToBackStack(STACK_NAME);
             }
@@ -351,11 +362,13 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
              * 有子分类的
              */
             f = new ChannelFragment();
-            int[] ids = new int[cat.subclasse.size()];
-            for(int i =0;i<ids.length;i++){
-                ids[i] = cat.subclasse.get(i).id;
+            ArrayList<Integer> iDs = new ArrayList<Integer>(cat.subclasse.size());
+            for(int i =0;i<cat.subclasse.size();i++){
+                int id = cat.subclasse.get(i).id;
+                if(id != 71) // filter flash
+                    iDs.add(Integer.valueOf(id));
             }
-            args.putIntArray(API.EXTRAS_CATEGORY_IDS, ids);
+            args.putIntegerArrayList(API.EXTRAS_CATEGORY_IDS, iDs);
             f.setArguments(args);
             f.setRetainInstance(true);
             

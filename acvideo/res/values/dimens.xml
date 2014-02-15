@@ -14,4 +14,6 @@
 	<dimen name="emotions_height">200dp</dimen>
     <dimen name="emotions_column_width">48dp</dimen>
     <dimen name="item_text_size">14sp</dimen>
+    <dimen name="item_contents_image_width">75dp</dimen>
+    <dimen name="item_contents_image_heght">54dp</dimen>
 </resources>
