@@ -16,6 +16,8 @@
 
 package tv.acfun.video.fragment;
 
+import java.util.Arrays;
+
 import tv.acfun.video.HomeActivity;
 import tv.ac.fun.R;
 import tv.acfun.video.api.API;
@@ -47,6 +49,8 @@ public class ChannelFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCatIds = getArguments().getIntArray(API.EXTRAS_CATEGORY_IDS);
+        Arrays.sort(mCatIds);
+        
     }
 
     @Override
@@ -61,6 +65,12 @@ public class ChannelFragment extends Fragment {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mActivity = null;
+    }
+    
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mPager = (ViewPager) view.findViewById(R.id.pager);
@@ -70,6 +80,7 @@ public class ChannelFragment extends Fragment {
     }
 
     private String getChannelName(int id) {
+        if (mActivity == null) mActivity = getActivity();
         if (mActivity instanceof HomeActivity) { return ((HomeActivity) mActivity).findChannelNameById(id); }
         return null;
     }
