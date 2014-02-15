@@ -16,10 +16,11 @@
 
 package tv.acfun.video.fragment;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 
-import tv.acfun.video.HomeActivity;
 import tv.ac.fun.R;
+import tv.acfun.video.HomeActivity;
 import tv.acfun.video.api.API;
 import android.app.Activity;
 import android.os.Bundle;
@@ -39,7 +40,7 @@ import com.astuetz.PagerSlidingTabStrip;
  */
 public class ChannelFragment extends Fragment {
     private static final String TAG = "ChannelFragment";
-    private int[] mCatIds;
+    private ArrayList<Integer> mCatIds;
     private ViewPager mPager;
     private Activity mActivity;
 
@@ -48,8 +49,9 @@ public class ChannelFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mCatIds = getArguments().getIntArray(API.EXTRAS_CATEGORY_IDS);
-        Arrays.sort(mCatIds);
+        mCatIds = getArguments().getIntegerArrayList(API.EXTRAS_CATEGORY_IDS);
+        if(mCatIds == null) return;
+        Collections.sort(mCatIds);
         
     }
 
@@ -92,17 +94,17 @@ public class ChannelFragment extends Fragment {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return getChannelName(mCatIds[position]);
+            return getChannelName(mCatIds.get(position));
         }
 
         @Override
         public Fragment getItem(int position) {
-            return VideosFragment.newInstance(mCatIds[position]);
+            return VideosFragment.newInstance(mCatIds.get(position));
         }
 
         @Override
         public int getCount() {
-            return mCatIds.length;
+            return mCatIds.size();
         }
     }
 }

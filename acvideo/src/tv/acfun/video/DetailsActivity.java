@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import master.flame.danmaku.danmaku.util.IOUtils;
 
@@ -94,6 +95,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         initActionBar();
         User user = AcApp.getUser();
         if (user != null) mCookies = JSON.parseObject(user.cookies, Cookie[].class);
+        AcApp.addRequest(new VideoDetailsRequest(mAcId, mVideoListener, mErrorListener));
     }
 
     @Override
@@ -140,7 +142,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         if (mAcId == 0)
             throw new IllegalArgumentException("没有 id");
         getSupportActionBar().setTitle("ac" + mAcId);
-        AcApp.addRequest(new VideoDetailsRequest(mAcId, mVideoListener, mErrorListener));
+        
     }
 
     private void initContent() {
@@ -373,7 +375,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         Log.i("D", "start download:::"+part.name);
         ResolverType type = null;
         try {
-            type = ResolverType.valueOf(part.type.toUpperCase());
+            type = ResolverType.valueOf(part.type.toUpperCase(Locale.US));
         } catch (Exception e) {
         }
         if(type == null){
