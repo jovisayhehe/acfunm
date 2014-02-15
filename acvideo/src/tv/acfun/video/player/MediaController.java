@@ -473,7 +473,7 @@ public class MediaController extends FrameLayout {
 
   @Override
   public boolean onTouchEvent(MotionEvent event) {
-      hide();
+      show(300); 
     return false;
   }
 
