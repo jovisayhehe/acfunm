@@ -124,4 +124,5 @@
 	<string name="download_manager">下载管理</string>
 	<string name="share_content" formatted="false">"#Acfun# 分享视频：%s，http://www.acfun.tv/v/ac%d。来自#Acfun视频版客户端#"</string>
 	<string name="details_info" formatted="false"><![CDATA[<font color=\"#ff8800\">%s</font> / 发布于 %s <br/>%d次播放，%d条评论，%d人收藏"]]></string>
+	<string name="click_to_see_more">点击查看更多...</string>
 </resources>
