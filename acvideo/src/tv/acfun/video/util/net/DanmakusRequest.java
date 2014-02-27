@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import master.flame.danmaku.danmaku.util.IOUtils;
+import tv.acfun.util.net.Connectivity;
 import tv.acfun.video.player.resolver.BaseResolver;
 import android.util.Log;
 

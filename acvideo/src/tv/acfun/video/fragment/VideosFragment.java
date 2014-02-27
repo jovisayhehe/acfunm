@@ -5,6 +5,7 @@ import java.text.NumberFormat;
 import java.util.List;
 
 import tv.ac.fun.R;
+import tv.acfun.util.net.FastJsonRequest;
 import tv.acfun.video.AcApp;
 import tv.acfun.video.DetailsActivity;
 import tv.acfun.video.adapter.BaseArrayAdapter;
@@ -14,7 +15,6 @@ import tv.acfun.video.entity.Category;
 import tv.acfun.video.entity.Video;
 import tv.acfun.video.entity.Videos;
 import tv.acfun.video.util.TextViewUtils;
-import tv.acfun.video.util.net.FastJsonRequest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;

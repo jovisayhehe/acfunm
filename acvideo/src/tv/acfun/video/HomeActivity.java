@@ -23,6 +23,7 @@ import java.util.List;
 
 import tv.ac.fun.BuildConfig;
 import tv.ac.fun.R;
+import tv.acfun.util.CommonUtil;
 import tv.acfun.video.adapter.MenuAdapter;
 import tv.acfun.video.api.API;
 import tv.acfun.video.entity.Category;
@@ -35,7 +36,6 @@ import tv.acfun.video.fragment.NotCompleteFragment;
 import tv.acfun.video.fragment.PushContentFragment;
 import tv.acfun.video.fragment.SearchFragment;
 import tv.acfun.video.fragment.VideosFragment;
-import tv.acfun.video.util.CommonUtil;
 import tv.acfun.video.util.net.CategoriesRequest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;

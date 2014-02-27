@@ -12,16 +12,15 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.PostMethod;
 
+import tv.acfun.util.net.Connectivity;
 import tv.acfun.video.entity.Comment;
 import tv.acfun.video.entity.Contents;
 import tv.acfun.video.entity.User;
-import tv.acfun.video.util.net.Connectivity;
 import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
-
 
 public class MemberUtils{
 	

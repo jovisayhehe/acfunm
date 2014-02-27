@@ -21,7 +21,7 @@ import io.vov.vitamio.utils.Log;
 import io.vov.vitamio.utils.StringUtils;
 import io.vov.vitamio.widget.OutlineTextView;
 import tv.ac.fun.R;
-import tv.acfun.video.util.SystemBarConfig;
+import tv.acfun.util.SystemBarConfig;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;

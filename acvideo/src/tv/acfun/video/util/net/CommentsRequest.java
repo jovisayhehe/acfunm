@@ -3,6 +3,8 @@ package tv.acfun.video.util.net;
 
 import java.util.Iterator;
 
+import tv.acfun.util.net.Connectivity;
+import tv.acfun.util.net.CustomUARequest;
 import tv.acfun.video.api.API;
 import tv.acfun.video.entity.Comment;
 import tv.acfun.video.entity.Comments;

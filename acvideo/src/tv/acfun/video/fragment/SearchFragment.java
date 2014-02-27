@@ -20,6 +20,7 @@ import java.util.List;
 
 import tv.ac.fun.BuildConfig;
 import tv.ac.fun.R;
+import tv.acfun.util.net.FastJsonRequest;
 import tv.acfun.video.AcApp;
 import tv.acfun.video.DetailsActivity;
 import tv.acfun.video.HomeActivity;
@@ -28,7 +29,6 @@ import tv.acfun.video.api.API;
 import tv.acfun.video.entity.Content;
 import tv.acfun.video.entity.Contents;
 import tv.acfun.video.util.TextViewUtils;
-import tv.acfun.video.util.net.FastJsonRequest;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -51,8 +51,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response.ErrorListener;

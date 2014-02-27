@@ -24,15 +24,15 @@ import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpException;
 
 import tv.ac.fun.R;
+import tv.acfun.util.ArrayUtil;
+import tv.acfun.util.net.Connectivity;
 import tv.acfun.video.adapter.CommentsAdapter;
 import tv.acfun.video.entity.Comment;
 import tv.acfun.video.entity.Comments;
 import tv.acfun.video.entity.User;
-import tv.acfun.video.util.ArrayUtil;
 import tv.acfun.video.util.MemberUtils;
 import tv.acfun.video.util.TextViewUtils;
 import tv.acfun.video.util.net.CommentsRequest;
-import tv.acfun.video.util.net.Connectivity;
 import tv.acfun.video.widget.EmotionView;
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
