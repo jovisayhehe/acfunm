@@ -20,12 +20,12 @@ import java.io.File;
 import java.util.List;
 
 import tv.ac.fun.R;
+import tv.acfun.util.net.Connectivity;
 import tv.acfun.video.api.API;
 import tv.acfun.video.db.DB;
 import tv.acfun.video.entity.Category;
 import tv.acfun.video.entity.User;
 import tv.acfun.video.util.download.DownloadManager;
-import tv.acfun.video.util.net.Connectivity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;

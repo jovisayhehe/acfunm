@@ -16,8 +16,8 @@
 package tv.acfun.video.fragment;
 
 import tv.ac.fun.R;
+import tv.acfun.util.net.Connectivity;
 import tv.acfun.video.AcApp;
-import tv.acfun.video.util.net.Connectivity;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -35,7 +35,6 @@ import com.android.volley.Cache;
 import com.android.volley.Request;
 import com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView;
 import com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView.OnHeaderClickListener;
-
 
 /**
  * @author Yrom

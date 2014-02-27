@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package tv.acfun.video.util;
+package tv.acfun.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

@@ -1,4 +1,4 @@
-package tv.acfun.video.util.net;
+package tv.acfun.util.net;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -18,9 +18,9 @@ import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 
-import tv.ac.fun.BuildConfig;
-import tv.acfun.video.util.BitmapCache;
-import tv.acfun.video.util.CommonUtil;
+import tv.acfun.util.BitmapCache;
+import tv.acfun.util.BuildConfig;
+import tv.acfun.util.CommonUtil;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;

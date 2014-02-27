@@ -1,4 +1,4 @@
-package tv.acfun.video.util;
+package tv.acfun.util;
 
 import android.content.Context;
 

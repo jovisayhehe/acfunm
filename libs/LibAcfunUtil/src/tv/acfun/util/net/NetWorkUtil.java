@@ -1,4 +1,4 @@
-package tv.acfun.video.util.net;
+package tv.acfun.util.net;
 
 import android.app.Activity;
 import android.app.AlertDialog;

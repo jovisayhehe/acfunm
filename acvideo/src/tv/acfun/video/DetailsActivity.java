@@ -27,6 +27,7 @@ import master.flame.danmaku.danmaku.util.IOUtils;
 import org.apache.commons.httpclient.Cookie;
 
 import tv.ac.fun.R;
+import tv.acfun.util.net.FastJsonRequest;
 import tv.acfun.video.api.API;
 import tv.acfun.video.entity.Comment;
 import tv.acfun.video.entity.Comments;
@@ -45,7 +46,6 @@ import tv.acfun.video.util.TextViewUtils;
 import tv.acfun.video.util.download.DownloadEntry;
 import tv.acfun.video.util.download.DownloadManager;
 import tv.acfun.video.util.net.CommentsRequest;
-import tv.acfun.video.util.net.FastJsonRequest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
