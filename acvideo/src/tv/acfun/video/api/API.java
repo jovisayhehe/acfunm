@@ -37,8 +37,8 @@ public class API {
     public static final String EXTRAS_CATEGORY_ID = "extras_category_id";
     public static final String EXTRAS_CATEGORY_IDS = "extras_category_ids";
     
-    public static final String COMMENTS = "http://www.acfun.tv/comment_list_json.aspx?contentId=%d&currentPage=%d";
-    public static final String URL_SEARCH = "http://www.acfun.tv/api/search.aspx?query=%s&exact=1&channelIds=1,58,59,60,70,69,68&orderId=%d&orderBy=%d&pageNo=%d&pageSize=%d";
+    public static final String COMMENTS = "http://www.acfun.com/comment_list_json.aspx?contentId=%d&currentPage=%d";
+    public static final String URL_SEARCH = "http://www.acfun.com/api/search.aspx?query=%s&exact=1&channelIds=1,58,59,60,70,69,68&orderId=%d&orderBy=%d&pageNo=%d&pageSize=%d";
     
     public static String getVideosUrl(int catId, int page, boolean isoriginal) {
         String url = String.format(API.VIDEO_LIST, catId, page*20);

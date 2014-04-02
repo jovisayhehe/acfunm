@@ -118,6 +118,8 @@ public class HomeFragment extends RefreshActionGridFragment {
                     listener.onResponse(items);
                 }
             }
+            if(mActivity == null) mActivity = getActivity();
+            if(mActivity == null) return;
             Toast.makeText(mActivity, "读取数据失败，请重试！", 0).show();
         }
     };

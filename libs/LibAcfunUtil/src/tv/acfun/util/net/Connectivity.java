@@ -54,7 +54,7 @@ import com.android.volley.toolbox.ImageLoader;
 public class Connectivity {
     private static BitmapCache sCache;
     private static final String DEFAULT_CACHE_DIR = "acfun";
-    public static final String UA = "acfun/1.0 (Linux; U; Android " 
+    public static final String UA = "acfun/1.1 (Linux; U; Android " 
             + Build.VERSION.RELEASE + "; "
             + Build.MODEL + "; " + Locale.getDefault().getLanguage() + "-"
             + Locale.getDefault().getCountry().toLowerCase()
@@ -126,7 +126,7 @@ public class Connectivity {
     }
 
     public static int doPost(PostMethod post, Cookie[] cks) throws HttpException, IOException {
-        return doPost(post, "www.acfun.tv", 0, null, cks);
+        return doPost(post, "www.acfun.com", 0, null, cks);
     }
 
     public static JSONObject postResultJson(String url, NameValuePair[] nps, Cookie[] cks) {
@@ -157,7 +157,7 @@ public class Connectivity {
     }
 
     public static int doGet(GetMethod get, Cookie[] cookies) throws HttpException, IOException {
-        return doGet(get, "www.acfun.tv", 0, null, cookies);
+        return doGet(get, "www.acfun.com", 0, null, cookies);
     }
 
     public static String doGet(String url, String queryString, Cookie[] cookies) {

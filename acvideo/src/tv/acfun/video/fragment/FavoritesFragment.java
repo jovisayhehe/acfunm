@@ -125,6 +125,7 @@ public class FavoritesFragment extends ListFragment {
 
         @Override
         protected void onPostExecute(Contents result) {
+            if(mActivity == null) return;
             if(mCurrentPage == 1 || mAdapter== null){
                 mAdapter = new FavsAdapter(mActivity, result.contents);
                 setListAdapter(mAdapter);
