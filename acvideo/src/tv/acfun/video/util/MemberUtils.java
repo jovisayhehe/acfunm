@@ -128,7 +128,10 @@ public class MemberUtils{
 	public static boolean checkFavourite(Cookie[] cookies, int cid){
 	    JSONObject result = Connectivity.getResultJson("/member/collect_exist.aspx", String.format("cId=%d",cid), cookies);
 	    if(result != null){
-	        return result.getBooleanValue("result");
+	        try {
+                return result.getBooleanValue("result");
+            } catch (JSONException e) {
+            }
 	    }
 	    return false;
 	}
