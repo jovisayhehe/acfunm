@@ -374,15 +374,6 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
 
     private void download(final VideoPart part) {
         Log.i("D", "start download:::"+part.name);
-        ResolverType type = null;
-        try {
-            type = ResolverType.valueOf(part.type.toUpperCase(Locale.US));
-        } catch (Exception e) {
-        }
-        if(type == null){
-            Toast.makeText(getApplicationContext(), getString(R.string.source_type_not_support_yet), Toast.LENGTH_SHORT).show();
-            return;
-        }
         Resolver resolver = /*type.getResolver(part.sourceId);*/ new WebResolver(part.sourceId);
         int resolution = Integer.parseInt(AcApp.getString(getString(R.string.key_resolution_mode), "1"));
         if(resolution < BaseResolver.RESOLUTION_HD2) resolution = BaseResolver.RESOLUTION_HD2;
