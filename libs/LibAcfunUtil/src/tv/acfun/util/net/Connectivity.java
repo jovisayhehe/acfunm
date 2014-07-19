@@ -124,12 +124,12 @@ public class Connectivity {
             throws HttpException, IOException {
         return request(post, host, port, protocal, cks);
     }
-
-    public static int doPost(PostMethod post, Cookie[] cks) throws HttpException, IOException {
-        return doPost(post, "www.acfun.com", 0, null, cks);
+    
+    public static int doPost(PostMethod post, String host, Cookie[] cks) throws HttpException, IOException {
+        return doPost(post, host, 0, null, cks);
     }
-
-    public static JSONObject postResultJson(String url, NameValuePair[] nps, Cookie[] cks) {
+    
+    public static JSONObject postResultJson(String host, String url, NameValuePair[] nps, Cookie[] cks) {
         if (TextUtils.isEmpty(url))
             throw new NullPointerException("url cannot be null!");
         PostMethod post = new PostMethod(url);
@@ -138,7 +138,7 @@ public class Connectivity {
             post.setRequestHeader("Content-Type", CONTENT_TYPE_FORM);
         }
         try {
-            int state = Connectivity.doPost(post, cks);
+            int state = Connectivity.doPost(post, host, cks);
             if (state == 200) {
                 String json = post.getResponseBodyAsString();
                 JSONObject re = JSON.parseObject(json);
@@ -156,11 +156,11 @@ public class Connectivity {
                 cookies);
     }
 
-    public static int doGet(GetMethod get, Cookie[] cookies) throws HttpException, IOException {
-        return doGet(get, "www.acfun.com", 0, null, cookies);
+    public static int doGet(GetMethod get, String host, Cookie[] cookies) throws HttpException, IOException {
+        return doGet(get, host, 0, null, cookies);
     }
 
-    public static String doGet(String url, String queryString, Cookie[] cookies) {
+    public static String doGet(String host, String url, String queryString, Cookie[] cookies) {
         if (TextUtils.isEmpty(url))
             throw new NullPointerException("url cannot be null!");
         GetMethod get = new GetMethod(url);
@@ -168,7 +168,7 @@ public class Connectivity {
         if (queryString != null)
             get.setQueryString(queryString);
         try {
-            int state = doGet(get, cookies);
+            int state = doGet(get, host, cookies);
             if (state == 200) {
                 return readData(get.getResponseBodyAsStream(), "utf-8");
             }
@@ -191,8 +191,8 @@ public class Connectivity {
         return new String(baos.toByteArray(), encoding);
     }
 
-    public static JSONObject getResultJson(String url, String queryString, Cookie[] cookies) {
-        String result = doGet(url, queryString, cookies);
+    public static JSONObject getResultJson(String host, String url, String queryString, Cookie[] cookies) {
+        String result = doGet(host, url, queryString, cookies);
         try {
             return TextUtils.isEmpty(result) ? null : JSON.parseObject(result);
         } catch (JSONException e) {

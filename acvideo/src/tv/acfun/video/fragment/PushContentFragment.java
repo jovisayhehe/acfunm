@@ -25,6 +25,7 @@ import tv.acfun.video.AcApp;
 import tv.acfun.video.DetailsActivity;
 import tv.acfun.video.HomeActivity;
 import tv.acfun.video.adapter.BaseArrayAdapter;
+import tv.acfun.video.api.API;
 import tv.acfun.video.entity.Content;
 import tv.acfun.video.entity.Contents;
 import tv.acfun.video.entity.User;
@@ -121,7 +122,7 @@ public class PushContentFragment extends ListFragment {
         }
         @Override
         protected Contents doInBackground(Integer... params) {
-            return MemberUtils.getPushContents(mCookies, params[0]);
+            return MemberUtils.getPushContents(API.getDomainRoot(mActivity), mCookies, params[0]);
         }
 
         @Override

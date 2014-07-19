@@ -25,6 +25,7 @@ import tv.acfun.video.AcApp;
 import tv.acfun.video.DetailsActivity;
 import tv.acfun.video.HomeActivity;
 import tv.acfun.video.adapter.BaseArrayAdapter;
+import tv.acfun.video.api.API;
 import tv.acfun.video.entity.Content;
 import tv.acfun.video.entity.Contents;
 import tv.acfun.video.entity.User;
@@ -120,7 +121,7 @@ public class FavoritesFragment extends ListFragment {
         }
         @Override
         protected Contents doInBackground(Integer... params) {
-            return MemberUtils.getFavouriteOnline(mCookies, params[0]);
+            return MemberUtils.getFavouriteOnline(API.getDomainRoot(mActivity), mCookies, params[0]);
         }
 
         @Override
@@ -181,7 +182,7 @@ public class FavoritesFragment extends ListFragment {
                     final Content remove = mAdapter.remove(position);
                     new Thread(){
                         public void run() {
-                            boolean deleteFavourite = MemberUtils.deleteFavourite(String.valueOf(remove.aid), mCookies);
+                            boolean deleteFavourite = MemberUtils.deleteFavourite(API.getDomainRoot(mActivity), String.valueOf(remove.aid), mCookies);
                             Log.i("Delete", "deleteFavourite::"+remove.aid+":"+deleteFavourite);
                         }
                     }.start();

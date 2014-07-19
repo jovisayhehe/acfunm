@@ -87,9 +87,18 @@ public class DanmakuParser extends BaseDanmakuParser {
     
     private int mSize = 0;
     private Danmakus _parse(JSONArray jsonArray) {
-        Danmakus danmakus = null;
+        Danmakus danmakus = new Danmakus();
         if (jsonArray != null && jsonArray.size() > 0)
-            danmakus = new Danmakus();
+            for(int i=0;i<jsonArray.size();i++)
+                parseArray(jsonArray.getJSONArray(i), danmakus);
+        
+        mSize = danmakus.size();
+        return danmakus;
+    }
+
+
+    private void parseArray(JSONArray jsonArray, Danmakus danmakus) {
+        if (jsonArray != null && jsonArray.size() > 0)
         for (int i = 0; i < jsonArray.size(); i++) {
             try {
                 JSONObject obj = jsonArray.getJSONObject(i);
@@ -120,8 +129,6 @@ public class DanmakuParser extends BaseDanmakuParser {
             } catch (JSONException e) {
             }
         }
-        mSize = danmakus.size();
-        return danmakus;
     }
 
 

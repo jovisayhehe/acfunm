@@ -175,7 +175,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
     };
 
     private void requestComments() {
-        AcApp.addRequest(new CommentsRequest(mVideo.acId, 1, mCommentListener, new ErrorListener() {
+        AcApp.addRequest(new CommentsRequest(getApplicationContext(), mVideo.acId, 1, mCommentListener, new ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 mCommentsGroup.findViewById(R.id.progressBar).setVisibility(View.GONE);
@@ -344,7 +344,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         getMenuInflater().inflate(R.menu.details, menu);
         if (mCookies != null) new Thread() {
             public void run() {
-                isFaved = MemberUtils.checkFavourite(mCookies, mAcId);
+                isFaved = MemberUtils.checkFavourite(API.getDomainRoot(getApplicationContext()), mCookies, mAcId);
                 if (isFaved) {
                     runOnUiThread(new Runnable() {
                         @Override
@@ -466,7 +466,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
                     if(which == DialogInterface.BUTTON_POSITIVE){
                         new Thread(){
                             public void run() {
-                                boolean deleteFavourite = MemberUtils.deleteFavourite(String.valueOf(mAcId), mCookies);
+                                boolean deleteFavourite = MemberUtils.deleteFavourite(API.getDomainRoot(getApplicationContext()), String.valueOf(mAcId), mCookies);
                                 //TODO 提示
                                 isFaved = !deleteFavourite;
                                 Log.i("Delete", "deleteFavourite::"+mAcId+":"+deleteFavourite);
@@ -485,7 +485,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
             }else{
                 new Thread(){
                     public void run() {
-                        boolean add = MemberUtils.addFavourite(String.valueOf(mAcId), mCookies);
+                        boolean add = MemberUtils.addFavourite(String.valueOf(mAcId),API.getDomainRoot(getApplicationContext()), mCookies);
                       //TODO 提示
                         Log.i("add", "addFavourite::"+mAcId+":"+add);
                     }

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import org.apache.commons.httpclient.HttpException;
 
 import tv.ac.fun.R;
+import tv.acfun.video.api.API;
 import tv.acfun.video.db.DB;
 import tv.acfun.video.entity.User;
 import tv.acfun.video.util.MemberUtils;
@@ -89,7 +90,7 @@ public class SigninActivity extends Activity {
         protected Boolean doInBackground(Void... params) {
             
             try {
-                HashMap<String, Object> map = MemberUtils.login(mNameView.getText().toString(), mPwdView.getText().toString());
+                HashMap<String, Object> map = MemberUtils.login(API.getDomainRoot(getApplicationContext()), mNameView.getText().toString(), mPwdView.getText().toString());
                 if((Boolean)map.get("success")){
                     user = (User) map.get("user");
                     user.savedTime = System.currentTimeMillis();

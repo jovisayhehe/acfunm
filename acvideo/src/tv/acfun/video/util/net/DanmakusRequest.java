@@ -28,7 +28,9 @@ import java.util.Map;
 
 import master.flame.danmaku.danmaku.util.IOUtils;
 import tv.acfun.util.net.Connectivity;
+import tv.acfun.video.api.API;
 import tv.acfun.video.player.resolver.BaseResolver;
+import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -46,8 +48,8 @@ public class DanmakusRequest extends StringRequest {
     private static final String TAG = DanmakusRequest.class.getSimpleName();
     private File mDmFile;
     private Listener<String> mListener;
-    public DanmakusRequest(String cid, String savePath, Listener<String> listener, ErrorListener errorListener) {
-        super(String.format("http://comment.acfun.tv/%s.json", cid), listener, errorListener);
+    public DanmakusRequest(Context context, String cid, String savePath, Listener<String> listener, ErrorListener errorListener) {
+        super(String.format("http://%s/%s",API.getDomainComment(context), cid), listener, errorListener);
         mListener = listener;
         if(savePath!= null)
             mDmFile = new File(savePath,cid+".json");

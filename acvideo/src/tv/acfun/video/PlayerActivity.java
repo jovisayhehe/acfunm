@@ -371,13 +371,13 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         }
         // TODO: acfun lock danmakus
         String save =entry ==null?null: entry.destination;
-        StringRequest request = new DanmakusRequest(mVideo.commentId,save,dmListener , err);
+        StringRequest request = new DanmakusRequest(getApplicationContext(), String.valueOf(mVideo.videoId),save,dmListener , err);
         Connectivity.addRequest(request);
     }
 
     private boolean loadDownloadedDanmakus(DownloadEntry entry) {
         
-        File dmFile = new File(entry.destination, entry.part.commentId + ".json");
+        File dmFile = new File(entry.destination, entry.part.videoId + ".json");
         if (!dmFile.exists()) return false;
         try {
             mParser = new DanmakuParser(getApplicationContext(),dmFile);
