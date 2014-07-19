@@ -23,6 +23,13 @@ import io.vov.vitamio.MediaPlayer.OnPreparedListener;
 import io.vov.vitamio.Vitamio;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +52,7 @@ import tv.acfun.video.player.MediaSegmentPlayer;
 import tv.acfun.video.player.VideoView;
 import tv.acfun.video.player.resolver.BaseResolver;
 import tv.acfun.video.player.resolver.WebResolver;
+import tv.acfun.video.util.FileUtil;
 import tv.acfun.video.util.download.DownloadEntry;
 import tv.acfun.video.util.net.DanmakusRequest;
 import android.annotation.TargetApi;
@@ -63,6 +71,7 @@ import android.os.Handler.Callback;
 import android.os.Message;
 import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -74,6 +83,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.util.IOUtils;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
@@ -229,17 +239,31 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
                 mPD.dismiss();
                 if (inited) {
                     init();
-                } else {
+                } else{
                     DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
 
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                             if(which == DialogInterface.BUTTON_POSITIVE){
-                                Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse("http://pan.baidu.com/s/1c03RAUG"));
+                                String link = MobclickAgent.getConfigParams(getApplicationContext(), "codec_link");
+                                if(TextUtils.isEmpty(link))
+                                    link = "http://pan.baidu.com/s/1ENrlk";
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
                                 startActivity(intent);
+                                finish();
+                            }else if(which ==DialogInterface.BUTTON_NEUTRAL){
+                                String libUrl = "http://yrom.qiniudn.com/codec"+Vitamio.getVitamioType()+".7z";
+                                try {
+                                    URL url = new URL(libUrl);
+                                    new DownloadTask().execute(url);
+                                } catch (MalformedURLException e) {
+                                    e.printStackTrace();
+                                }
+                            }else{
+                                finish();
                             }
-                            finish();
+                            
                             
                         }
                     };
@@ -247,13 +271,78 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
                         .setTitle("你的设备需要下载解码器")
                         .setMessage(getString(R.string.cpu_not_support, Environment.getExternalStorageDirectory().getAbsolutePath()))
                         .setNegativeButton("取消", listener)
-                        .setPositiveButton("好", listener)
+                        .setNeutralButton("黑洞", listener)
+                        .setPositiveButton("网盘", listener)
                         .show();
                     
                 }
             }
 
           }.execute();
+    }
+    
+    class DownloadTask extends AsyncTask<URL, Boolean, Boolean>{
+        private ProgressDialog mPD;
+        @Override
+        protected void onPreExecute() {
+            mPD = new ProgressDialog(PlayerActivity.this);
+            mPD.setCancelable(false);
+            mPD.setMessage("开始下载....");
+            mPD.show();
+        }
+        @Override
+        protected void onProgressUpdate(Boolean... values) {
+            if(values[0].booleanValue()){
+                mPD.setMessage("下载完成，开始解压...."); 
+            }
+        }
+        @Override
+        protected void onPostExecute(Boolean result) {
+            mPD.dismiss();
+            if(result.booleanValue()){
+                Toast.makeText(getApplicationContext(), "解码器安装完毕", Toast.LENGTH_SHORT).show();
+                init();
+            }else{
+                Toast.makeText(getApplicationContext(), "解码器安装失败！", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+        @Override
+        protected Boolean doInBackground(URL... params) {
+            File file = new File(Environment.getExternalStorageDirectory()+"/codec.7z");
+            URL parsedUrl = params[0];
+            FileOutputStream out = null;
+            InputStream in = null;
+            try {
+                HttpURLConnection connection = (HttpURLConnection) parsedUrl.openConnection();
+                connection.setConnectTimeout(3000);
+                connection.setReadTimeout(3000);
+                connection.setUseCaches(false);
+                connection.addRequestProperty("User-Agent", Connectivity.UA);
+                out = new FileOutputStream(file);
+                int responseCode = connection.getResponseCode();
+                if (responseCode == 200) {
+                    in = connection.getInputStream();
+                    FileUtil.copyStream(in, out);
+                }
+                boolean inited = false;
+                if(file.length() == connection.getContentLength()){
+                    publishProgress(Boolean.TRUE);
+                    inited = Vitamio.initialize(PlayerActivity.this, file.getAbsolutePath());
+                }
+                connection.disconnect();
+                return Boolean.valueOf(inited);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally{
+                IOUtils.close(in);
+                IOUtils.close(out);
+            }
+            return Boolean.FALSE;
+        }
+        
     }
     private void initViews() {
         ViewStub stub = (ViewStub) findViewById(R.id.view_stub);
