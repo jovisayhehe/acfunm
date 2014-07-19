@@ -94,18 +94,18 @@ public class MemberUtils{
         NameValuePair[] nps = new NameValuePair[2];
         nps[0] = new NameValuePair("cId", cid);
         nps[1] = new NameValuePair("operate", "1");
-        return Connectivity.postResultJson("/member/collect.aspx", host, nps, cks).getBooleanValue("success");
+        return Connectivity.postResultJson(host, "/member/collect.aspx",  nps, cks).getBooleanValue("success");
     }
 
     public static boolean deleteFavourite(String cid, String host, Cookie[] cookies) {
         NameValuePair[] nps = new NameValuePair[2];
         nps[0] = new NameValuePair("cId", cid);
         nps[1] = new NameValuePair("operate", "0");
-        return Connectivity.postResultJson("/member/collect.aspx", host, nps, cookies).getBooleanValue("success");
+        return Connectivity.postResultJson(host, "/member/collect.aspx", nps, cookies).getBooleanValue("success");
     }
 
     public static JSONObject checkIn(String host, Cookie[] cks) {
-        return Connectivity.postResultJson("/member/checkin.aspx", host, null, cks);
+        return Connectivity.postResultJson(host, "/member/checkin.aspx", null, cks);
     }
 	/**
 	 * 
