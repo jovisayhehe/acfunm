@@ -24,7 +24,6 @@ import io.vov.vitamio.Vitamio;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import master.flame.danmaku.controller.DrawHandler;
@@ -45,7 +44,7 @@ import tv.acfun.video.player.MediaList.Resolver;
 import tv.acfun.video.player.MediaSegmentPlayer;
 import tv.acfun.video.player.VideoView;
 import tv.acfun.video.player.resolver.BaseResolver;
-import tv.acfun.video.player.resolver.ResolverType;
+import tv.acfun.video.player.resolver.WebResolver;
 import tv.acfun.video.util.download.DownloadEntry;
 import tv.acfun.video.util.net.DanmakusRequest;
 import android.annotation.TargetApi;
@@ -428,19 +427,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             addDanmakusRequest();
             return;
         }
-        String sourceType = mVideo.type;
-        ResolverType type = null;
-        try {
-            type = ResolverType.valueOf(sourceType.toUpperCase(Locale.US));
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
-        if (type == null) {
-            mProgressText.setText(mProgressText.getText() + "\n" + getString(R.string.source_type_not_support_yet));
-            Toast.makeText(this, getString(R.string.source_type_not_support_yet), Toast.LENGTH_SHORT).show();
-            return;
-        }
-        mResolver = (BaseResolver) type.getResolver(mVideo.sourceId);
+        mResolver = new WebResolver(mVideo.sourceId);
         int resolution = Integer.parseInt(AcApp.getString(getString(R.string.key_resolution_mode), "1"));
         mResolver.setResolution(resolution);
         mResolver.setOnResolvedListener(OnResolved);

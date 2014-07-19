@@ -39,6 +39,7 @@ import tv.acfun.video.player.MediaList.OnResolvedListener;
 import tv.acfun.video.player.MediaList.Resolver;
 import tv.acfun.video.player.resolver.BaseResolver;
 import tv.acfun.video.player.resolver.ResolverType;
+import tv.acfun.video.player.resolver.WebResolver;
 import tv.acfun.video.util.FadingActionBarHelper;
 import tv.acfun.video.util.FileUtil;
 import tv.acfun.video.util.MemberUtils;
@@ -382,7 +383,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
             Toast.makeText(getApplicationContext(), getString(R.string.source_type_not_support_yet), Toast.LENGTH_SHORT).show();
             return;
         }
-        Resolver resolver = type.getResolver(part.sourceId);
+        Resolver resolver = /*type.getResolver(part.sourceId);*/ new WebResolver(part.sourceId);
         int resolution = Integer.parseInt(AcApp.getString(getString(R.string.key_resolution_mode), "1"));
         if(resolution < BaseResolver.RESOLUTION_HD2) resolution = BaseResolver.RESOLUTION_HD2;
         ((BaseResolver) resolver).setResolution(resolution);
