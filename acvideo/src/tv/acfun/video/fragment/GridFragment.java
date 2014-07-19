@@ -15,28 +15,26 @@
  */
 package tv.acfun.video.fragment;
 
+import tv.ac.fun.R;
+import tv.acfun.util.net.Connectivity;
+import tv.acfun.video.AcApp;
+import android.app.Activity;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.GridView;
+import android.widget.ListAdapter;
+
 import com.android.volley.Cache;
 import com.android.volley.Request;
 import com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView;
 import com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView.OnHeaderClickListener;
-
-import tv.acfun.video.AcApp;
-import tv.ac.fun.R;
-import tv.acfun.video.util.net.Connectivity;
-import android.app.Activity;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AbsListView.OnScrollListener;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.GridView;
-import android.widget.ListAdapter;
-import android.widget.AdapterView.OnItemClickListener;
-
 
 /**
  * @author Yrom

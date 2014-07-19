@@ -20,6 +20,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import tv.ac.fun.R;
+import tv.acfun.util.net.Connectivity;
+import tv.acfun.util.net.CustomUARequest;
 import tv.acfun.video.AcApp;
 import tv.acfun.video.DetailsActivity;
 import tv.acfun.video.HomeActivity;
@@ -27,8 +29,6 @@ import tv.acfun.video.api.API;
 import tv.acfun.video.entity.HomeCat;
 import tv.acfun.video.entity.Video;
 import tv.acfun.video.util.TextViewUtils;
-import tv.acfun.video.util.net.Connectivity;
-import tv.acfun.video.util.net.CustomUARequest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -118,7 +118,9 @@ public class HomeFragment extends RefreshActionGridFragment {
                     listener.onResponse(items);
                 }
             }
-            Toast.makeText(getActivity(), "读取数据失败，请重试！", 0).show();
+            if(mActivity == null) mActivity = getActivity();
+            if(mActivity == null) return;
+            Toast.makeText(mActivity, "读取数据失败，请重试！", 0).show();
         }
     };
 

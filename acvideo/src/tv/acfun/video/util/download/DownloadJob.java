@@ -112,7 +112,7 @@ public class DownloadJob {
         }
         final File dmFile = new File(mEntry.destination,mEntry.part.commentId+".json");
         if(!dmFile.exists()){
-            StringRequest request = new DanmakusRequest(mEntry.part.commentId, mEntry.destination, null, null);
+            StringRequest request = new DanmakusRequest(null, mEntry.part.commentId, mEntry.destination, null, null);
             AcApp.addRequest(request);
         }
         

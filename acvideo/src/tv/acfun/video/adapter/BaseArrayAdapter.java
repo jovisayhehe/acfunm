@@ -58,9 +58,10 @@ public abstract class BaseArrayAdapter<T> extends BaseAdapter {
     public void setData(List<T> data) {
         if(mItems == null) mItems =data;
         else{
-            clear();
+            mItems.clear();
             mItems.addAll(data);
         }
+        notifyDataSetChanged();
     }
 
     public void clear() {
@@ -70,6 +71,13 @@ public abstract class BaseArrayAdapter<T> extends BaseAdapter {
         }
     }
 
+    public void destory(){
+        if (mItems != null) {
+            mItems.clear();
+            mItems = null;
+            notifyDataSetInvalidated();
+        }
+    }
     // TODO : 去重
     public void addData(List<T> data) {
         if (mItems != null) {

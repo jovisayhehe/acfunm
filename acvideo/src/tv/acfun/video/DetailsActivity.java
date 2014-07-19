@@ -20,12 +20,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import master.flame.danmaku.danmaku.util.IOUtils;
 
 import org.apache.commons.httpclient.Cookie;
 
 import tv.ac.fun.R;
+import tv.acfun.util.net.FastJsonRequest;
 import tv.acfun.video.api.API;
 import tv.acfun.video.entity.Comment;
 import tv.acfun.video.entity.Comments;
@@ -37,6 +39,7 @@ import tv.acfun.video.player.MediaList.OnResolvedListener;
 import tv.acfun.video.player.MediaList.Resolver;
 import tv.acfun.video.player.resolver.BaseResolver;
 import tv.acfun.video.player.resolver.ResolverType;
+import tv.acfun.video.player.resolver.WebResolver;
 import tv.acfun.video.util.FadingActionBarHelper;
 import tv.acfun.video.util.FileUtil;
 import tv.acfun.video.util.MemberUtils;
@@ -44,7 +47,6 @@ import tv.acfun.video.util.TextViewUtils;
 import tv.acfun.video.util.download.DownloadEntry;
 import tv.acfun.video.util.download.DownloadManager;
 import tv.acfun.video.util.net.CommentsRequest;
-import tv.acfun.video.util.net.FastJsonRequest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -94,6 +96,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         initActionBar();
         User user = AcApp.getUser();
         if (user != null) mCookies = JSON.parseObject(user.cookies, Cookie[].class);
+        AcApp.addRequest(new VideoDetailsRequest(mAcId, mVideoListener, mErrorListener));
     }
 
     @Override
@@ -140,7 +143,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         if (mAcId == 0)
             throw new IllegalArgumentException("没有 id");
         getSupportActionBar().setTitle("ac" + mAcId);
-        AcApp.addRequest(new VideoDetailsRequest(mAcId, mVideoListener, mErrorListener));
+        
     }
 
     private void initContent() {
@@ -163,7 +166,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
             initContent();
             initViews();
             mTitleView.setText(response.name);
-            String info = String.format("<font color=\"#ff8800\">%s</font> / 发布于 %s <br/>%d次播放，%d条评论，%d人收藏", response.creator.name,
+            String info =getString(R.string.details_info,/* String.format("<font color=\"#ff8800\">%s</font> / 发布于 %s <br/>%d次播放，%d条评论，%d人收藏",*/ response.creator.name,
                     AcApp.getPubDate(response.createtime), response.viewernum, response.commentnum, response.collectnum);
             mUpInfoView.setText(Html.fromHtml(info));
             mDetailView.setText(Html.fromHtml(TextViewUtils.getSource(response.desc)));
@@ -173,7 +176,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
     };
 
     private void requestComments() {
-        AcApp.addRequest(new CommentsRequest(mVideo.acId, 1, mCommentListener, new ErrorListener() {
+        AcApp.addRequest(new CommentsRequest(getApplicationContext(), mVideo.acId, 1, mCommentListener, new ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 mCommentsGroup.findViewById(R.id.progressBar).setVisibility(View.GONE);
@@ -342,7 +345,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         getMenuInflater().inflate(R.menu.details, menu);
         if (mCookies != null) new Thread() {
             public void run() {
-                isFaved = MemberUtils.checkFavourite(mCookies, mAcId);
+                isFaved = MemberUtils.checkFavourite(API.getDomainRoot(getApplicationContext()), mCookies, mAcId);
                 if (isFaved) {
                     runOnUiThread(new Runnable() {
                         @Override
@@ -356,6 +359,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
             }
         }.start();
         mShareMenuItem = menu.findItem(R.id.action_share);
+        if(mVideo != null) mShareMenuItem.setEnabled(true);
         getMenuInflater().inflate(R.menu.main, menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -370,16 +374,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
 
     private void download(final VideoPart part) {
         Log.i("D", "start download:::"+part.name);
-        ResolverType type = null;
-        try {
-            type = ResolverType.valueOf(part.type.toUpperCase());
-        } catch (Exception e) {
-        }
-        if(type == null){
-            Toast.makeText(getApplicationContext(), getString(R.string.source_type_not_support_yet), Toast.LENGTH_SHORT).show();
-            return;
-        }
-        Resolver resolver = type.getResolver(part.sourceId);
+        Resolver resolver = /*type.getResolver(part.sourceId);*/ new WebResolver(part.sourceId);
         int resolution = Integer.parseInt(AcApp.getString(getString(R.string.key_resolution_mode), "1"));
         if(resolution < BaseResolver.RESOLUTION_HD2) resolution = BaseResolver.RESOLUTION_HD2;
         ((BaseResolver) resolver).setResolution(resolution);
@@ -463,7 +458,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
                     if(which == DialogInterface.BUTTON_POSITIVE){
                         new Thread(){
                             public void run() {
-                                boolean deleteFavourite = MemberUtils.deleteFavourite(String.valueOf(mAcId), mCookies);
+                                boolean deleteFavourite = MemberUtils.deleteFavourite(API.getDomainRoot(getApplicationContext()), String.valueOf(mAcId), mCookies);
                                 //TODO 提示
                                 isFaved = !deleteFavourite;
                                 Log.i("Delete", "deleteFavourite::"+mAcId+":"+deleteFavourite);
@@ -473,7 +468,6 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
                         item.setIcon(R.drawable.ic_action_favorite);
                     }
                 }
-                
             };
             AcApp.showDeleteFavAlert(this,listener);
         }else{
@@ -483,7 +477,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
             }else{
                 new Thread(){
                     public void run() {
-                        boolean add = MemberUtils.addFavourite(String.valueOf(mAcId), mCookies);
+                        boolean add = MemberUtils.addFavourite(String.valueOf(mAcId),API.getDomainRoot(getApplicationContext()), mCookies);
                       //TODO 提示
                         Log.i("add", "addFavourite::"+mAcId+":"+add);
                     }

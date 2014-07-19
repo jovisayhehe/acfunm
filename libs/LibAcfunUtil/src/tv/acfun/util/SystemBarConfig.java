@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package tv.acfun.video.util;
+package tv.acfun.util;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;

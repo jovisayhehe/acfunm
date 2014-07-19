@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package tv.acfun.video.util.net;
+package tv.acfun.util.net;
 
 import java.util.Map;
 

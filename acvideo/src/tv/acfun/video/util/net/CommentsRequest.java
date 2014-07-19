@@ -3,9 +3,12 @@ package tv.acfun.video.util.net;
 
 import java.util.Iterator;
 
+import tv.acfun.util.net.Connectivity;
+import tv.acfun.util.net.CustomUARequest;
 import tv.acfun.video.api.API;
 import tv.acfun.video.entity.Comment;
 import tv.acfun.video.entity.Comments;
+import android.content.Context;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -22,8 +25,8 @@ import com.android.volley.toolbox.HttpHeaderParser;
 public class CommentsRequest extends CustomUARequest<Comments> {
     private static final String TAG = CommentsRequest.class.getSimpleName();
 
-    public CommentsRequest(int aid, int page, Listener<Comments> listener, ErrorListener errListener) {
-        super(API.getCommentUrl(aid, page), Comments.class, listener, errListener);
+    public CommentsRequest(Context context, int aid, int page, Listener<Comments> listener, ErrorListener errListener) {
+        super(API.getCommentUrl(context, aid, page), Comments.class, listener, errListener);
     }
 
     @Override

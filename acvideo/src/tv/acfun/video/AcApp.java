@@ -20,12 +20,12 @@ import java.io.File;
 import java.util.List;
 
 import tv.ac.fun.R;
+import tv.acfun.util.net.Connectivity;
 import tv.acfun.video.api.API;
 import tv.acfun.video.db.DB;
 import tv.acfun.video.entity.Category;
 import tv.acfun.video.entity.User;
 import tv.acfun.video.util.download.DownloadManager;
-import tv.acfun.video.util.net.Connectivity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
@@ -51,6 +51,7 @@ import com.alibaba.fastjson.JSON;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue.RequestFilter;
 import com.android.volley.toolbox.ImageLoader;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * @author Yrom
@@ -220,7 +221,10 @@ public class AcApp extends Application {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if(which == DialogInterface.BUTTON_POSITIVE){
-                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.url_area63))));
+                    String link = MobclickAgent.getConfigParams(context, "area63_link");
+                    if(TextUtils.isEmpty(link))
+                        link = context.getString(R.string.url_area63);
+                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(link)));
                 }
                 dialog.dismiss();
             }

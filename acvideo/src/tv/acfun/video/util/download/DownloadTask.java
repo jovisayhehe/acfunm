@@ -20,10 +20,10 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 
 import tv.ac.fun.BuildConfig;
+import tv.acfun.util.net.NetWorkUtil;
 import tv.acfun.video.AcApp;
 import tv.acfun.video.player.resolver.BaseResolver;
 import tv.acfun.video.util.FileUtil;
-import tv.acfun.video.util.net.NetWorkUtil;
 import android.content.ContentValues;
 import android.net.Uri;
 import android.os.AsyncTask;

@@ -28,7 +28,6 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 import tv.acfun.video.player.MediaList;
 import tv.acfun.video.player.ResolveException;
-import tv.acfun.video.util.net.Connectivity;
 import android.content.Context;
 import android.util.Log;
 

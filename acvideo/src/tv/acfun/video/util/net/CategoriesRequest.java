@@ -3,6 +3,8 @@ package tv.acfun.video.util.net;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import tv.acfun.util.net.Connectivity;
+import tv.acfun.util.net.CustomUARequest;
 import tv.acfun.video.api.API;
 import tv.acfun.video.entity.Category;
 

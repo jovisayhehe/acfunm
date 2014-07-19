@@ -42,7 +42,7 @@ import android.widget.TextView;
  * @author Yrom
  * 
  */
-public class HistoryFragment extends ListFragment implements OnItemClickListener {
+public class HistoryFragment extends ListFragment{
     private DB mDb;
     private ListAdapter mAdapter;
     @Override

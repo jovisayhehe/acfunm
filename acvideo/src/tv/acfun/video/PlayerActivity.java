@@ -23,6 +23,13 @@ import io.vov.vitamio.MediaPlayer.OnPreparedListener;
 import io.vov.vitamio.Vitamio;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +38,9 @@ import master.flame.danmaku.danmaku.model.DanmakuTimer;
 import master.flame.danmaku.danmaku.model.android.DanmakuGlobalConfig;
 import master.flame.danmaku.ui.widget.DanmakuSurfaceView;
 import tv.ac.fun.R;
+import tv.acfun.util.SystemBarConfig;
+import tv.acfun.util.net.Connectivity;
+import tv.acfun.util.net.NetWorkUtil;
 import tv.acfun.video.api.DanmakuParser;
 import tv.acfun.video.entity.VideoPart;
 import tv.acfun.video.player.MediaController;
@@ -41,12 +51,10 @@ import tv.acfun.video.player.MediaList.Resolver;
 import tv.acfun.video.player.MediaSegmentPlayer;
 import tv.acfun.video.player.VideoView;
 import tv.acfun.video.player.resolver.BaseResolver;
-import tv.acfun.video.player.resolver.ResolverType;
-import tv.acfun.video.util.SystemBarConfig;
+import tv.acfun.video.player.resolver.WebResolver;
+import tv.acfun.video.util.FileUtil;
 import tv.acfun.video.util.download.DownloadEntry;
-import tv.acfun.video.util.net.Connectivity;
 import tv.acfun.video.util.net.DanmakusRequest;
-import tv.acfun.video.util.net.NetWorkUtil;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -63,6 +71,8 @@ import android.os.Handler.Callback;
 import android.os.Message;
 import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
+import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -73,6 +83,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.util.IOUtils;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
@@ -228,31 +239,110 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
                 mPD.dismiss();
                 if (inited) {
                     init();
-                } else {
+                } else{
                     DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
 
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                             if(which == DialogInterface.BUTTON_POSITIVE){
-                                Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse("http://pan.baidu.com/s/1c03RAUG"));
+                                String link = MobclickAgent.getConfigParams(getApplicationContext(), "codec_link");
+                                if(TextUtils.isEmpty(link))
+                                    link = "http://pan.baidu.com/s/1ENrlk";
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
                                 startActivity(intent);
+                                finish();
+                            }else if(which ==DialogInterface.BUTTON_NEUTRAL){
+                                String libUrl = "http://yrom.qiniudn.com/codec"+Vitamio.getVitamioType()+".7z";
+                                try {
+                                    URL url = new URL(libUrl);
+                                    new DownloadTask().execute(url);
+                                } catch (MalformedURLException e) {
+                                    e.printStackTrace();
+                                }
+                            }else{
+                                finish();
                             }
-                            finish();
+                            
                             
                         }
                     };
                     new AlertDialog.Builder(PlayerActivity.this)
                         .setTitle("你的设备需要下载解码器")
-                        .setMessage(R.string.cpu_not_support)
+                        .setMessage(getString(R.string.cpu_not_support, Environment.getExternalStorageDirectory().getAbsolutePath()))
                         .setNegativeButton("取消", listener)
-                        .setPositiveButton("好", listener)
+                        .setNeutralButton("黑洞", listener)
+                        .setPositiveButton("网盘", listener)
                         .show();
                     
                 }
             }
 
           }.execute();
+    }
+    
+    class DownloadTask extends AsyncTask<URL, Boolean, Boolean>{
+        private ProgressDialog mPD;
+        @Override
+        protected void onPreExecute() {
+            mPD = new ProgressDialog(PlayerActivity.this);
+            mPD.setCancelable(false);
+            mPD.setMessage("开始下载....");
+            mPD.show();
+        }
+        @Override
+        protected void onProgressUpdate(Boolean... values) {
+            if(values[0].booleanValue()){
+                mPD.setMessage("下载完成，开始解压...."); 
+            }
+        }
+        @Override
+        protected void onPostExecute(Boolean result) {
+            mPD.dismiss();
+            if(result.booleanValue()){
+                Toast.makeText(getApplicationContext(), "解码器安装完毕", Toast.LENGTH_SHORT).show();
+                init();
+            }else{
+                Toast.makeText(getApplicationContext(), "解码器安装失败！", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+        @Override
+        protected Boolean doInBackground(URL... params) {
+            File file = new File(Environment.getExternalStorageDirectory()+"/codec.7z");
+            URL parsedUrl = params[0];
+            FileOutputStream out = null;
+            InputStream in = null;
+            try {
+                HttpURLConnection connection = (HttpURLConnection) parsedUrl.openConnection();
+                connection.setConnectTimeout(3000);
+                connection.setReadTimeout(3000);
+                connection.setUseCaches(false);
+                connection.addRequestProperty("User-Agent", Connectivity.UA);
+                out = new FileOutputStream(file);
+                int responseCode = connection.getResponseCode();
+                if (responseCode == 200) {
+                    in = connection.getInputStream();
+                    FileUtil.copyStream(in, out);
+                }
+                boolean inited = false;
+                if(file.length() == connection.getContentLength()){
+                    publishProgress(Boolean.TRUE);
+                    inited = Vitamio.initialize(PlayerActivity.this, file.getAbsolutePath());
+                }
+                connection.disconnect();
+                return Boolean.valueOf(inited);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally{
+                IOUtils.close(in);
+                IOUtils.close(out);
+            }
+            return Boolean.FALSE;
+        }
+        
     }
     private void initViews() {
         ViewStub stub = (ViewStub) findViewById(R.id.view_stub);
@@ -273,9 +363,10 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         mDMView = (DanmakuSurfaceView) findViewById(R.id.danmakus);
         mDMView.enableDanmakuDrawingCache(mEnabledDrawingCache);
         // TODO : danmakus config
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         DanmakuGlobalConfig.DEFAULT
             .setMaximumVisibleSizeInScreen(100)
-            .setScaleTextSize(getResources().getDisplayMetrics().scaledDensity-0.4f)
+            .setScaleTextSize(displayMetrics.scaledDensity)
             /*.setDanmakuStyle(DanmakuGlobalConfig.DANMAKU_STYLE_STROKEN, 1.1f)*/;
         mDMView.setCallback(mDMCallback);
         View holder = findViewById(R.id.holder);
@@ -342,7 +433,7 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         public void onResponse(String response) {
             mProgressText.setText(mProgressText.getText() + "\n"+ getString(R.string.danmakus_downloaded));
             try {
-                mParser = new DanmakuParser(response);
+                mParser = new DanmakuParser(getApplicationContext(), response);
                 mDMView.prepare(mParser);
             } catch (Exception e) {
                 Log.e(TAG, "解析失败", e);
@@ -368,16 +459,16 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
         }
         // TODO: acfun lock danmakus
         String save =entry ==null?null: entry.destination;
-        StringRequest request = new DanmakusRequest(mVideo.commentId,save,dmListener , err);
+        StringRequest request = new DanmakusRequest(getApplicationContext(), String.valueOf(mVideo.videoId),save,dmListener , err);
         Connectivity.addRequest(request);
     }
 
     private boolean loadDownloadedDanmakus(DownloadEntry entry) {
         
-        File dmFile = new File(entry.destination, entry.part.commentId + ".json");
+        File dmFile = new File(entry.destination, entry.part.videoId + ".json");
         if (!dmFile.exists()) return false;
         try {
-            mParser = new DanmakuParser(dmFile);
+            mParser = new DanmakuParser(getApplicationContext(),dmFile);
             mDMView.prepare(mParser);
         } catch (Exception e) {
             Log.e(TAG, "解析失败", e);
@@ -425,44 +516,14 @@ public class PlayerActivity extends ActionBarActivity implements OnClickListener
             addDanmakusRequest();
             return;
         }
-        String sourceType = mVideo.type;
-        ResolverType type = null;
-        try {
-            type = ResolverType.valueOf(sourceType.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
-        if (type == null) {
-            mProgressText.setText(mProgressText.getText() + "\n" + getString(R.string.source_type_not_support_yet));
-            Toast.makeText(this, getString(R.string.source_type_not_support_yet), Toast.LENGTH_SHORT).show();
-            return;
-        }
-        mResolver = (BaseResolver) type.getResolver(mVideo.sourceId);
+        mResolver = new WebResolver(mVideo.sourceId);
         int resolution = Integer.parseInt(AcApp.getString(getString(R.string.key_resolution_mode), "1"));
         mResolver.setResolution(resolution);
         mResolver.setOnResolvedListener(OnResolved);
         mResolver.resolveAsync(getApplicationContext());
         mProgressText.setText(mProgressText.getText() + "\n"+getString(R.string.video_segments_paring));
     }
-//    @Override
-//    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-//        
-//        menu.add(Menu.NONE, 0x1, Menu.NONE, "关闭弹幕");
-//        menu.add(Menu.NONE, 0x2, Menu.NONE, "发送弹幕");
-//    }
-//    @Override
-//    public boolean onContextItemSelected(MenuItem item) {
-//        switch(item.getItemId()){
-//        case 0x1:
-//            mDMView.stop();
-//            break;
-//        case 0x2:
-//            
-//            break;
-//        }
-//        
-//        return super.onContextItemSelected(item);
-//    }
+
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.close){

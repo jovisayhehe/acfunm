@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:text="点击查看更多..."
+    android:text="@string/click_to_see_more"
     android:id="@+id/item_more"
     android:gravity="center"
     android:padding="8dp"
@@ -8,5 +8,6 @@
     android:background="?attr/selectableItemBackground"
     style="?android:attr/textAppearanceMedium"
     android:layout_width="match_parent"
+    android:minHeight="40dp"
     android:layout_height="wrap_content" />
 
