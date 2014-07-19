@@ -51,6 +51,7 @@ import com.alibaba.fastjson.JSON;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue.RequestFilter;
 import com.android.volley.toolbox.ImageLoader;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * @author Yrom
@@ -220,7 +221,10 @@ public class AcApp extends Application {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if(which == DialogInterface.BUTTON_POSITIVE){
-                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.url_area63))));
+                    String link = MobclickAgent.getConfigParams(context, "area63_link");
+                    if(TextUtils.isEmpty(link))
+                        link = context.getString(R.string.url_area63);
+                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(link)));
                 }
                 dialog.dismiss();
             }

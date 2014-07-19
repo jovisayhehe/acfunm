@@ -24,59 +24,59 @@ import com.alibaba.fastjson.JSONObject;
 
 public class MemberUtils{
 	
-	public static HashMap<String, Object> login(String username,String password) throws HttpException, IOException,UnknownHostException, JSONException{
-			HashMap<String, Object> map = new HashMap<String, Object>();
-			PostMethod post = new PostMethod("/login.aspx");
-	        NameValuePair[] nps = new NameValuePair[2];
-	        nps[0] = new NameValuePair("username", username);
-	        nps[1] = new NameValuePair("password", password);
-	        post.setRequestBody(nps);
-	        post.setRequestHeader("Content-Type", Connectivity.CONTENT_TYPE_FORM);
-	        HttpClient client = new HttpClient();
-	        client.getParams().setParameter("http.protocol.single-cookie-header", true);
-	        client.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
-	        client.getHostConfiguration().setHost("www.acfun.tv", 80, "http");
-	        int state = client.executeMethod(post);
-	        
-	        if(state>200){
-	        	map.put("success", false);
-	        	map.put("result", "ac娘大姨妈？");
-	        }else{
-	            JSONObject re = JSON.parseObject(post.getResponseBodyAsString());
-		        
-		        if(re.getBoolean("success")){
-			        Cookie[] cks = client.getState().getCookies();
-			        PostMethod mempost = new PostMethod("/user_check.aspx");
-			        HttpState localHttpState = new HttpState();
-			        localHttpState.addCookies(cks);
-			        client.setState(localHttpState);
-			        client.executeMethod(mempost);
-			        String jsonstring = mempost.getResponseBodyAsString();
-			        
-			        JSONObject job =  JSON.parseObject(jsonstring);
-			        
-			        String uname = job.getString("uname");
-			        String signature = job.getString("signature");
-			        String avatar = job.getString("avatar");
-			        int uid = job.getIntValue("uid");
-			        User user = new User(uid, uname, avatar, signature);
-			        user.cookies = JSON.toJSONString(cks,false);
-			        map.put("user", user);
-			        map.put("success", true);
-		        }else{
-		        	map.put("success", false);
-		        	map.put("result", re.get("result"));
-		        }
-	        }
-	    
-	        return map;
-	}
+    public static HashMap<String, Object> login(String host, String username,String password) throws HttpException, IOException,UnknownHostException, JSONException{
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        PostMethod post = new PostMethod("/login.aspx");
+        NameValuePair[] nps = new NameValuePair[2];
+        nps[0] = new NameValuePair("username", username);
+        nps[1] = new NameValuePair("password", password);
+        post.setRequestBody(nps);
+        post.setRequestHeader("Content-Type", Connectivity.CONTENT_TYPE_FORM);
+        HttpClient client = new HttpClient();
+        client.getParams().setParameter("http.protocol.single-cookie-header", true);
+        client.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+        client.getHostConfiguration().setHost(host, 80, "http");
+        int state = client.executeMethod(post);
+        
+        if(state>200){
+            map.put("success", false);
+            map.put("result", "ac娘大姨妈？");
+        }else{
+            JSONObject re = JSON.parseObject(post.getResponseBodyAsString());
+            
+            if(re.getBoolean("success")){
+                Cookie[] cks = client.getState().getCookies();
+                PostMethod mempost = new PostMethod("/user_check.aspx");
+                HttpState localHttpState = new HttpState();
+                localHttpState.addCookies(cks);
+                client.setState(localHttpState);
+                client.executeMethod(mempost);
+                String jsonstring = mempost.getResponseBodyAsString();
+                
+                JSONObject job =  JSON.parseObject(jsonstring);
+                
+                String uname = job.getString("uname");
+                String signature = job.getString("signature");
+                String avatar = job.getString("avatar");
+                int uid = job.getIntValue("uid");
+                User user = new User(uid, uname, avatar, signature);
+                user.cookies = JSON.toJSONString(cks,false);
+                map.put("user", user);
+                map.put("success", true);
+            }else{
+                map.put("success", false);
+                map.put("result", re.get("result"));
+            }
+        }
+    
+        return map;
+    }
 	
-	public static boolean postComments(String comment,int aid,Cookie[] cks) throws HttpException, IOException{
-	    return postComments(comment, null, aid, cks);
-	}
-	public static boolean postComments(String comment, Comment quote,int aid, Cookie[] cks) throws HttpException, IOException{
-	    PostMethod post = new PostMethod("/comment.aspx");
+    public static boolean postComments(String comment,int aid, String host, Cookie[] cks) throws HttpException, IOException{
+        return postComments(comment, null, aid,host, cks);
+    }
+    public static boolean postComments(String comment, Comment quote,int aid, String host, Cookie[] cks) throws HttpException, IOException{
+        PostMethod post = new PostMethod("/comment.aspx");
         NameValuePair[] nps = { new NameValuePair("name", "sendComm()"),
                 new NameValuePair("name", "mimiko"), 
                 new NameValuePair("text", comment),
@@ -86,53 +86,59 @@ public class MemberUtils{
                 new NameValuePair("quoteName", quote == null ? "" : quote.userName) };
         post.setRequestBody(nps);
         post.setRequestHeader("Content-Type",Connectivity.CONTENT_TYPE_FORM);
-        int state  = Connectivity.doPost(post, cks);
+        int state  = Connectivity.doPost(post, host, cks);
         return state == 200;
-	}
-	public static boolean addFavourite(String cid, Cookie[] cks){
+    }
+
+    public static boolean addFavourite(String cid, String host, Cookie[] cks) {
         NameValuePair[] nps = new NameValuePair[2];
         nps[0] = new NameValuePair("cId", cid);
         nps[1] = new NameValuePair("operate", "1");
-        return Connectivity.postResultJson("/member/collect.aspx", nps, cks).getBooleanValue("success");
-	}
-	public static boolean deleteFavourite(String cid, Cookie[] cookies){
-	    NameValuePair[] nps = new NameValuePair[2];
-	    nps[0] = new NameValuePair("cId", cid);
+        return Connectivity.postResultJson(host, "/member/collect.aspx",  nps, cks).getBooleanValue("success");
+    }
+
+    public static boolean deleteFavourite(String cid, String host, Cookie[] cookies) {
+        NameValuePair[] nps = new NameValuePair[2];
+        nps[0] = new NameValuePair("cId", cid);
         nps[1] = new NameValuePair("operate", "0");
-        return Connectivity.postResultJson("/member/collect.aspx", nps, cookies).getBooleanValue("success");
-	}
+        return Connectivity.postResultJson(host, "/member/collect.aspx", nps, cookies).getBooleanValue("success");
+    }
+
+    public static JSONObject checkIn(String host, Cookie[] cks) {
+        return Connectivity.postResultJson(host, "/member/checkin.aspx", null, cks);
+    }
 	/**
 	 * 
 	 * @param cookies
 	 * @param pageNo 1~
 	 * @return
 	 */
-	public static Contents getFavouriteOnline(Cookie[] cookies, int pageNo){
-	    return getFavouriteOnline(cookies, 20, pageNo);
+	public static Contents getFavouriteOnline(String host, Cookie[] cookies, int pageNo){
+	    return getFavouriteOnline(host, cookies, 20, pageNo);
 	}
-	public static Contents getFavouriteOnline(Cookie[] cookies, int pageSize, int pageNo){
-	    String result = Connectivity.doGet("/member/collection.aspx", String.format("count=%d&pageNo=%d&channelId=0",pageSize,pageNo), cookies);
+	public static Contents getFavouriteOnline(String host, Cookie[] cookies, int pageSize, int pageNo){
+	    String result = Connectivity.doGet(host, "/member/collection.aspx", String.format("count=%d&pageNo=%d&channelId=0",pageSize,pageNo), cookies);
         if(TextUtils.isEmpty(result)){
             return null;
         }
         return JSON.parseObject(result, Contents.class);
 	}
 	
-	public static Contents getPushContents(Cookie[] cookies, int pageNo){
-	    String result = Connectivity.doGet("/api/member.aspx", String.format("name=publishContent&isGroup=0&groupId=-1&pageSize=10&pageNo=%d",pageNo), cookies);
+	public static Contents getPushContents(String host, Cookie[] cookies, int pageNo){
+	    String result = Connectivity.doGet(host, "/api/member.aspx", String.format("name=publishContent&isGroup=0&groupId=-1&pageSize=10&pageNo=%d",pageNo), cookies);
         if(TextUtils.isEmpty(result)){
             return null;
         }
         return JSON.parseObject(result, Contents.class);
 	}
-	public static boolean checkFavourite(Cookie[] cookies, int cid){
-	    JSONObject result = Connectivity.getResultJson("/member/collect_exist.aspx", String.format("cId=%d",cid), cookies);
+	public static boolean checkFavourite(String host, Cookie[] cookies, int cid){
+	    JSONObject result = Connectivity.getResultJson(host, "/member/collect_exist.aspx", String.format("cId=%d",cid), cookies);
 	    if(result != null){
-	        return result.getBooleanValue("result");
+	        try {
+                return result.getBooleanValue("result");
+            } catch (JSONException e) {
+            }
 	    }
 	    return false;
-	}
-	public static JSONObject checkIn(Cookie[] cks){
-	    return Connectivity.postResultJson("/member/checkin.aspx", null, cks);
 	}
 }

@@ -100,6 +100,7 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         setContentView(R.layout.activity_home);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+        initUmeng();
         mUser = AcApp.getUser();
         mAvatarFrame = findViewById(R.id.avatar);
         mAvatar = (ImageView) mAvatarFrame.findViewById(android.R.id.icon);
@@ -141,7 +142,6 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
             select(position);
         }
         setUserInfo();
-        initUmeng();
     }
     
     private void initDrawer() {
@@ -171,6 +171,7 @@ public class HomeActivity extends ActionBarActivity implements OnItemClickListen
         MobclickAgent.setDebugMode(BuildConfig.DEBUG);
         UmengUpdateAgent.update(this);
         MobclickAgent.onError(this);
+        API.updateConfig(getApplicationContext());
         SyncListener listener = new Conversation.SyncListener() {
 
             @Override

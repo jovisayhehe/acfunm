@@ -55,7 +55,7 @@
     </string-array>
 	<string name="buffering">Loading...</string>
     <string name="source_type_not_support_yet">"The type of source isn't support yet."</string>
-    <string name="url_area63">http://pan.baidu.com/s/1gdyw7nl</string>
+    <string name="url_area63">http://pan.baidu.com/s/16Jl2A</string>
     <string name="key_clear_cache">clear_cache</string>
     <string name="key_update">update</string>
     <string name="key_about">about</string>
@@ -122,7 +122,7 @@
 	<string name="menu_downlod">Download</string>
 	<string name="menu_watch_later">Watch later</string>
 	<string name="download_manager">下载管理</string>
-	<string name="share_content" formatted="false">"#Acfun# 分享视频：%s，http://www.acfun.tv/v/ac%d。来自#Acfun视频版客户端#"</string>
+	<string name="share_content" formatted="false">"#Acfun# 分享视频：%s，http://www.acfun.com/v/ac%d。来自#Acfun视频版客户端#"</string>
 	<string name="details_info" formatted="false"><![CDATA[<font color=\"#ff8800\">%s</font> / 发布于 %s <br/>%d次播放，%d条评论，%d人收藏"]]></string>
 	<string name="click_to_see_more">点击查看更多...</string>
 </resources>

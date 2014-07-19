@@ -39,6 +39,7 @@ import tv.acfun.video.player.MediaList.OnResolvedListener;
 import tv.acfun.video.player.MediaList.Resolver;
 import tv.acfun.video.player.resolver.BaseResolver;
 import tv.acfun.video.player.resolver.ResolverType;
+import tv.acfun.video.player.resolver.WebResolver;
 import tv.acfun.video.util.FadingActionBarHelper;
 import tv.acfun.video.util.FileUtil;
 import tv.acfun.video.util.MemberUtils;
@@ -175,7 +176,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
     };
 
     private void requestComments() {
-        AcApp.addRequest(new CommentsRequest(mVideo.acId, 1, mCommentListener, new ErrorListener() {
+        AcApp.addRequest(new CommentsRequest(getApplicationContext(), mVideo.acId, 1, mCommentListener, new ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 mCommentsGroup.findViewById(R.id.progressBar).setVisibility(View.GONE);
@@ -344,7 +345,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
         getMenuInflater().inflate(R.menu.details, menu);
         if (mCookies != null) new Thread() {
             public void run() {
-                isFaved = MemberUtils.checkFavourite(mCookies, mAcId);
+                isFaved = MemberUtils.checkFavourite(API.getDomainRoot(getApplicationContext()), mCookies, mAcId);
                 if (isFaved) {
                     runOnUiThread(new Runnable() {
                         @Override
@@ -373,16 +374,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
 
     private void download(final VideoPart part) {
         Log.i("D", "start download:::"+part.name);
-        ResolverType type = null;
-        try {
-            type = ResolverType.valueOf(part.type.toUpperCase(Locale.US));
-        } catch (Exception e) {
-        }
-        if(type == null){
-            Toast.makeText(getApplicationContext(), getString(R.string.source_type_not_support_yet), Toast.LENGTH_SHORT).show();
-            return;
-        }
-        Resolver resolver = type.getResolver(part.sourceId);
+        Resolver resolver = /*type.getResolver(part.sourceId);*/ new WebResolver(part.sourceId);
         int resolution = Integer.parseInt(AcApp.getString(getString(R.string.key_resolution_mode), "1"));
         if(resolution < BaseResolver.RESOLUTION_HD2) resolution = BaseResolver.RESOLUTION_HD2;
         ((BaseResolver) resolver).setResolution(resolution);
@@ -466,7 +458,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
                     if(which == DialogInterface.BUTTON_POSITIVE){
                         new Thread(){
                             public void run() {
-                                boolean deleteFavourite = MemberUtils.deleteFavourite(String.valueOf(mAcId), mCookies);
+                                boolean deleteFavourite = MemberUtils.deleteFavourite(API.getDomainRoot(getApplicationContext()), String.valueOf(mAcId), mCookies);
                                 //TODO 提示
                                 isFaved = !deleteFavourite;
                                 Log.i("Delete", "deleteFavourite::"+mAcId+":"+deleteFavourite);
@@ -485,7 +477,7 @@ public class DetailsActivity extends ActionBarActivity implements OnClickListene
             }else{
                 new Thread(){
                     public void run() {
-                        boolean add = MemberUtils.addFavourite(String.valueOf(mAcId), mCookies);
+                        boolean add = MemberUtils.addFavourite(String.valueOf(mAcId),API.getDomainRoot(getApplicationContext()), mCookies);
                       //TODO 提示
                         Log.i("add", "addFavourite::"+mAcId+":"+add);
                     }

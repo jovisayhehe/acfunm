@@ -27,6 +27,7 @@ import tv.ac.fun.R;
 import tv.acfun.util.ArrayUtil;
 import tv.acfun.util.net.Connectivity;
 import tv.acfun.video.adapter.CommentsAdapter;
+import tv.acfun.video.api.API;
 import tv.acfun.video.entity.Comment;
 import tv.acfun.video.entity.Comments;
 import tv.acfun.video.entity.User;
@@ -132,7 +133,7 @@ public class CommentsActivity extends ActionBarActivity implements OnClickListen
     }
     private void requestData(int page, boolean requestNewData) {
         isloading = true;
-        Request<?> request = new CommentsRequest(aid, page, mCommentListener,this);
+        Request<?> request = new CommentsRequest(getApplicationContext(), aid, page, mCommentListener,this);
         request.setTag(TAG);
         request.setShouldCache(true);
         if (requestNewData) {
@@ -531,7 +532,7 @@ public class CommentsActivity extends ActionBarActivity implements OnClickListen
             Cookie[] cookies = JSON.parseObject(mUser.cookies, Cookie[].class);
             for (int i = 0; i < 3; i++)
                 try {
-                    if (MemberUtils.postComments(comment, quote, aid, cookies))
+                    if (MemberUtils.postComments(comment, quote, aid, API.getDomainRoot(getApplicationContext()), cookies))
                         return true;
                 } catch (HttpException e) {
                     e.printStackTrace();

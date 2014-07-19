@@ -147,7 +147,7 @@ public class SearchFragment extends Fragment implements OnClickListener, OnEdito
         mInputMethod.hideSoftInputFromWindow(mSearchText.getWindowToken(), 0);
         mProgress.setVisibility(View.VISIBLE);
         mPage = page;
-        String url = API.getSearchUrl(query, 2, 1, mPage, 20);
+        String url = API.getSearchUrl(mActivity, query, 2, 1, mPage, 20);
         if (BuildConfig.DEBUG) Log.d(TAG, "query url=" + url);
         Request<?> request = new FastJsonRequest<Contents>(url, Contents.class, listener, errorListner);
         request.setTag(TAG);
